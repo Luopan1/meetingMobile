@@ -6,7 +6,7 @@ import android.os.Parcelable;
 /**
  * Created by whatisjava on 15/11/11.
  */
-public class RespStatus implements Parcelable, Entity {
+public class RespStatus implements Parcelable {
 
     private int errcode;
 

@@ -14,7 +14,7 @@ import java.lang.reflect.Type;
  * 基本的回调
  */
 
-public abstract class OkHttpCallback<Entity> {
+public abstract class OkHttpCallback<T> {
 
     /**
      * type用于方便JSON的解析
@@ -53,7 +53,7 @@ public abstract class OkHttpCallback<Entity> {
      *
      * @param entity Entity
      */
-    public abstract void onSuccess(Entity entity);
+    public abstract void onSuccess(T entity);
 
     /**
      * 请求失败调用（网络问题）
