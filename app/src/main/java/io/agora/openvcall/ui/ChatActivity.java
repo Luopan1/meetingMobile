@@ -30,7 +30,6 @@ import io.agora.openvcall.model.ConstantApp;
 import io.agora.propeller.Constant;
 import io.agora.propeller.UserStatusData;
 import io.agora.propeller.VideoInfoData;
-import io.agora.propeller.ui.RtlLinearLayoutManager;
 import io.agora.rtc.IRtcEngineEventHandler;
 import io.agora.rtc.RtcEngine;
 import io.agora.rtc.video.VideoCanvas;

@@ -50,7 +50,6 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
@@ -62,7 +61,9 @@
         </activity>
 
         <activity android:name="io.agora.openvcall.ui.MainActivity" />
-        <activity android:name="io.agora.openvcall.ui.ChatActivity" />
+
+        <activity android:name="io.agora.openvcall.ui.ChatActivity"
+            android:screenOrientation="landscape" />
 
     </application>
 
