@@ -8,20 +8,13 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SurfaceView;
 import android.view.View;
-import android.view.ViewParent;
 import android.view.ViewStub;
 import android.view.WindowManager;
-import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -30,18 +23,13 @@ import com.hezy.guide.phone.R;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import io.agora.openvcall.model.AGEventHandler;
 import io.agora.openvcall.model.ConstantApp;
-import io.agora.openvcall.model.Message;
-import io.agora.openvcall.model.User;
 import io.agora.propeller.Constant;
 import io.agora.propeller.UserStatusData;
 import io.agora.propeller.VideoInfoData;
-import io.agora.propeller.preprocessing.VideoPreProcessing;
 import io.agora.propeller.ui.RtlLinearLayoutManager;
 import io.agora.rtc.IRtcEngineEventHandler;
 import io.agora.rtc.RtcEngine;
@@ -132,76 +120,6 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
 
         optional();
 
-        LinearLayout bottomContainer = (LinearLayout) findViewById(R.id.bottom_container);
-        FrameLayout.MarginLayoutParams fmp = (FrameLayout.MarginLayoutParams) bottomContainer.getLayoutParams();
-        fmp.bottomMargin = virtualKeyHeight() + 16;
-
-        initMessageList();
-    }
-
-    public void onClickHideIME(View view) {
-        log.debug("onClickHideIME " + view);
-
-        closeIME(findViewById(R.id.msg_content));
-
-        findViewById(R.id.msg_input_container).setVisibility(View.GONE);
-        findViewById(R.id.bottom_action_end_call).setVisibility(View.VISIBLE);
-        findViewById(R.id.bottom_action_container).setVisibility(View.VISIBLE);
-    }
-
-    private InChannelMessageListAdapter mMsgAdapter;
-
-    private ArrayList<Message> mMsgList;
-
-    private void initMessageList() {
-        mMsgList = new ArrayList<>();
-        RecyclerView msgListView = (RecyclerView) findViewById(R.id.msg_list);
-
-        mMsgAdapter = new InChannelMessageListAdapter(this, mMsgList);
-        mMsgAdapter.setHasStableIds(true);
-        msgListView.setAdapter(mMsgAdapter);
-        msgListView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
-        msgListView.addItemDecoration(new MessageListDecoration());
-    }
-
-    private void notifyMessageChanged(Message msg) {
-        mMsgList.add(msg);
-
-        int MAX_MESSAGE_COUNT = 16;
-
-        if (mMsgList.size() > MAX_MESSAGE_COUNT) {
-            int toRemove = mMsgList.size() - MAX_MESSAGE_COUNT;
-            for (int i = 0; i < toRemove; i++) {
-                mMsgList.remove(i);
-            }
-        }
-
-        mMsgAdapter.notifyDataSetChanged();
-    }
-
-    private int mDataStreamId;
-
-    private void sendChannelMsg(String msgStr) {
-        RtcEngine rtcEngine = rtcEngine();
-        if (mDataStreamId <= 0) {
-            mDataStreamId = rtcEngine.createDataStream(true, true); // boolean reliable, boolean ordered
-        }
-
-        if (mDataStreamId < 0) {
-            String errorMsg = "Create data stream error happened " + mDataStreamId;
-            log.warn(errorMsg);
-            showLongToast(errorMsg);
-            return;
-        }
-
-        byte[] encodedMsg;
-        try {
-            encodedMsg = msgStr.getBytes("UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            encodedMsg = msgStr.getBytes();
-        }
-
-        rtcEngine.sendStreamMessage(mDataStreamId, encodedMsg);
     }
 
     private void optional() {
@@ -234,63 +152,6 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
         worker().configEngine(vProfile, encryptionKey, encryptionMode);
     }
 
-    public void onBtn0Clicked(View view) {
-        log.info("onBtn0Clicked " + view + " " + mVideoMuted + " " + mAudioMuted);
-        showMessageEditContainer();
-    }
-
-    private void showMessageEditContainer() {
-        findViewById(R.id.bottom_action_container).setVisibility(View.GONE);
-        findViewById(R.id.bottom_action_end_call).setVisibility(View.GONE);
-        findViewById(R.id.msg_input_container).setVisibility(View.VISIBLE);
-
-        EditText edit = (EditText) findViewById(R.id.msg_content);
-
-        edit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_SEND
-                        || (event != null && event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
-                    String msgStr = v.getText().toString();
-                    if (TextUtils.isEmpty(msgStr)) {
-                        return false;
-                    }
-                    sendChannelMsg(msgStr);
-
-                    v.setText("");
-
-                    Message msg = new Message(Message.MSG_TYPE_TEXT,
-                            new User(config().mUid, String.valueOf(config().mUid)), msgStr);
-                    notifyMessageChanged(msg);
-
-                    return true;
-                }
-                return false;
-            }
-        });
-
-        openIME(edit);
-    }
-
-    public void onCustomizedFunctionClicked(View view) {
-        log.info("onCustomizedFunctionClicked " + view + " " + mVideoMuted + " " + mAudioMuted + " " + mAudioRouting);
-        if (mVideoMuted) {
-            onSwitchSpeakerClicked();
-        } else {
-            onSwitchCameraClicked();
-        }
-    }
-
-    private void onSwitchCameraClicked() {
-        RtcEngine rtcEngine = rtcEngine();
-        rtcEngine.switchCamera();
-    }
-
-    private void onSwitchSpeakerClicked() {
-        RtcEngine rtcEngine = rtcEngine();
-        rtcEngine.setEnableSpeakerphone(mAudioRouting != 3);
-    }
-
     @Override
     protected void deInitUIandEvent() {
         optionalDestroy();
@@ -312,76 +173,6 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
         finish();
     }
 
-    private VideoPreProcessing mVideoPreProcessing;
-
-    public void onBtnNClicked(View view) {
-        if (mVideoPreProcessing == null) {
-            mVideoPreProcessing = new VideoPreProcessing();
-        }
-
-        ImageView iv = (ImageView) view;
-        Object showing = view.getTag();
-        if (showing != null && (Boolean) showing) {
-            mVideoPreProcessing.enablePreProcessing(false);
-            iv.setTag(null);
-            iv.clearColorFilter();
-        } else {
-            mVideoPreProcessing.enablePreProcessing(true);
-            iv.setTag(true);
-            iv.setColorFilter(getResources().getColor(R.color.agora_blue), PorterDuff.Mode.MULTIPLY);
-        }
-    }
-
-    public void onVoiceChatClicked(View view) {
-        log.info("onVoiceChatClicked " + view + " " + mUidsList.size() + " video_status: " + mVideoMuted + " audio_status: " + mAudioMuted);
-        if (mUidsList.size() == 0) {
-            return;
-        }
-
-        SurfaceView surfaceV = getLocalView();
-        ViewParent parent;
-        if (surfaceV == null || (parent = surfaceV.getParent()) == null) {
-            log.warn("onVoiceChatClicked " + view + " " + surfaceV);
-            return;
-        }
-
-        RtcEngine rtcEngine = rtcEngine();
-        mVideoMuted = !mVideoMuted;
-
-        if (mVideoMuted) {
-            rtcEngine.disableVideo();
-        } else {
-            rtcEngine.enableVideo();
-        }
-
-        ImageView iv = (ImageView) view;
-
-        iv.setImageResource(mVideoMuted ? R.drawable.btn_video : R.drawable.btn_voice);
-
-        hideLocalView(mVideoMuted);
-
-        if (mVideoMuted) {
-            resetToVideoDisabledUI();
-        } else {
-            resetToVideoEnabledUI();
-        }
-    }
-
-    private SurfaceView getLocalView() {
-        for (HashMap.Entry<Integer, SurfaceView> entry : mUidsList.entrySet()) {
-            if (entry.getKey() == 0 || entry.getKey() == config().mUid) {
-                return entry.getValue();
-            }
-        }
-
-        return null;
-    }
-
-    private void hideLocalView(boolean hide) {
-        int uid = config().mUid;
-        doHideTargetView(uid, hide);
-    }
-
     private void doHideTargetView(int targetUid, boolean hide) {
         HashMap<Integer, Integer> status = new HashMap<>();
         status.put(targetUid, hide ? UserStatusData.VIDEO_MUTED : UserStatusData.DEFAULT_STATUS);
@@ -395,40 +186,6 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
                 log.warn("SmallVideoViewAdapter call notifyUiChanged " + mUidsList + " " + (bigBgUser.mUid & 0xFFFFFFFFL) + " target: " + (targetUid & 0xFFFFFFFFL) + "==" + targetUid + " " + status);
                 mSmallVideoViewAdapter.notifyUiChanged(mUidsList, bigBgUser.mUid, status, null);
             }
-        }
-    }
-
-    private void resetToVideoEnabledUI() {
-        ImageView iv = (ImageView) findViewById(R.id.customized_function_id);
-        iv.setImageResource(R.drawable.btn_switch_camera);
-        iv.clearColorFilter();
-
-        notifyHeadsetPlugged(mAudioRouting);
-    }
-
-    private void resetToVideoDisabledUI() {
-        ImageView iv = (ImageView) findViewById(R.id.customized_function_id);
-        iv.setImageResource(R.drawable.btn_speaker);
-        iv.clearColorFilter();
-
-        notifyHeadsetPlugged(mAudioRouting);
-    }
-
-    public void onVoiceMuteClicked(View view) {
-        log.info("onVoiceMuteClicked " + view + " " + mUidsList.size() + " video_status: " + mVideoMuted + " audio_status: " + mAudioMuted);
-        if (mUidsList.size() == 0) {
-            return;
-        }
-
-        RtcEngine rtcEngine = rtcEngine();
-        rtcEngine.muteLocalAudioStream(mAudioMuted = !mAudioMuted);
-
-        ImageView iv = (ImageView) view;
-
-        if (mAudioMuted) {
-            iv.setColorFilter(getResources().getColor(R.color.agora_blue), PorterDuff.Mode.MULTIPLY);
-        } else {
-            iv.clearColorFilter();
         }
     }
 
@@ -601,15 +358,12 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
 
                 peerUid = (Integer) data[0];
                 final byte[] content = (byte[]) data[1];
-                notifyMessageChanged(new Message(new User(peerUid, String.valueOf(peerUid)), new String(content)));
 
                 break;
 
             case AGEventHandler.EVENT_TYPE_ON_AGORA_MEDIA_ERROR: {
                 int error = (int) data[0];
                 String description = (String) data[1];
-
-                notifyMessageChanged(new Message(new User(0, null), error + " " + description));
 
                 break;
             }
@@ -710,11 +464,11 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
 
         log.debug("bindToSmallVideoView " + twoWayVideoCall + " " + (exceptUid & 0xFFFFFFFFL));
 
-        if (twoWayVideoCall) {
-            recycler.setLayoutManager(new RtlLinearLayoutManager(this, RtlLinearLayoutManager.HORIZONTAL, false));
-        } else {
+//        if (twoWayVideoCall) {
+//            recycler.setLayoutManager(new RtlLinearLayoutManager(this, RtlLinearLayoutManager.HORIZONTAL, false));
+//        } else {
             recycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        }
+//        }
         recycler.addItemDecoration(new SmallVideoViewDecoration());
         recycler.setAdapter(mSmallVideoViewAdapter);
 
