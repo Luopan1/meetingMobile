@@ -1,8 +1,47 @@
 apply plugin: 'com.android.application'
 
+def getDate() {
+    def date = new Date()
+    def formattedDate = date.format('yyyyMMdd')
+    return formattedDate
+}
+
+def getGitCommitId() {
+    def cmd = 'git rev-parse --short HEAD'
+    return cmd.execute().text.trim().toString()
+}
+
+def getGitBranch() {
+    def cmd = 'git symbolic-ref --short -q HEAD'
+    return cmd.execute().text.trim().toString()
+}
+
+def getGitLog() {
+    def cmd = 'git log -1 --pretty=oneline'
+    return cmd.execute().text.trim().toString()
+}
+
+// Create a variable called keystorePropertiesFile, and initialize it to your
+// keystore.properties file, in the rootProject folder.
+def keystorePropertiesFile = rootProject.file("keystore.properties")
+// Initialize a new Properties() object called keystoreProperties.
+def keystoreProperties = new Properties()
+// Load your keystore.properties file into the keystoreProperties object.
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
 android {
     compileSdkVersion 25
     buildToolsVersion "25.0.3"
+
+    signingConfigs {
+        config {
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
+        }
+    }
+
     defaultConfig {
         applicationId "com.hezy.guide.phone"
         minSdkVersion 15
@@ -14,6 +53,12 @@ android {
         jackOptions {
             enabled false
         }
+
+        //默认编译赋值
+        buildConfigField "String", "GIT_BRANCH", '"' + getGitBranch() + '"'
+        buildConfigField 'String', 'GIT_COMMIT', '"' + getGitCommitId() + '"'
+        buildConfigField 'String', 'GIT_LOG', '"' + getGitLog() + '"'
+        buildConfigField 'String', 'DATE', '"' + getDate().toString() + '"'
 
         ndk {
             abiFilters "armeabi-v7a", "x86" // DO NOT MODIFY THIS LINE, IT'S UPDATED BY BUILD MACHINE AUTOMATICALLY.
@@ -52,4 +97,7 @@ dependencies {
     compile 'com.squareup.okhttp3:logging-interceptor:3.8.1'
     compile 'com.squareup.okhttp3:okhttp-ws:3.4.2'
     compile 'com.google.code.gson:gson:2.8.1'
+
+    // ================微信相关================
+    compile 'com.tencent.mm.opensdk:wechat-sdk-android-with-mta:+'
 }
