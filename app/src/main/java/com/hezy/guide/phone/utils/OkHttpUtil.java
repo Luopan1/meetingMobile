@@ -267,4 +267,34 @@ public class OkHttpUtil {
         DELETE_JSON
     }
 
+    /**
+     * 根据Tag取消请求
+     *
+     * @param tag
+     */
+    public void cancelTag(Object tag) {
+        for (Call call : okHttpClient.dispatcher().queuedCalls()) {
+            if (tag.equals(call.request().tag())) {
+                call.cancel();
+            }
+        }
+        for (Call call : okHttpClient.dispatcher().runningCalls()) {
+            if (tag.equals(call.request().tag())) {
+                call.cancel();
+            }
+        }
+    }
+
+    /**
+     * 取消所有请求请求
+     */
+    public void cancelAll() {
+        for (Call call : okHttpClient.dispatcher().queuedCalls()) {
+            call.cancel();
+        }
+        for (Call call : okHttpClient.dispatcher().runningCalls()) {
+            call.cancel();
+        }
+    }
+
 }

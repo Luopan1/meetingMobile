@@ -65,13 +65,30 @@ android {
         }
     }
 
+    dataBinding {
+        enabled = true
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_7
         targetCompatibility JavaVersion.VERSION_1_7
     }
 
     buildTypes {
+        debug { // debug模式
+            signingConfig signingConfigs.config
+            buildConfigField "boolean", "IS_DEBUG_LOG", "true"  //显示LOG
+            buildConfigField "boolean", "IS_DEBUG_TOAST", "true"  //显示LOG的TOAST
+            buildConfigField 'String', 'WEIXIN_APP_ID', '"wxcd220f151738cab5"'
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+        }
         release {
+            signingConfig signingConfigs.config
+            buildConfigField "boolean", "IS_DEBUG_LOG", "false"  //显示LOG
+            buildConfigField "boolean", "IS_DEBUG_TOAST", "false"  //显示LOG的TOAST
+            buildConfigField 'String', 'WEIXIN_APP_ID', '"wxcd220f151738cab5"'
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
