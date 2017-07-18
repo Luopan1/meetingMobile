@@ -13,11 +13,11 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-import com.hezy.guide.phone.ApiClient;
+import com.hezy.guide.phone.net.ApiClient;
 import com.hezy.guide.phone.BaseApplication;
 import com.hezy.guide.phone.R;
 import com.hezy.guide.phone.utils.NetUtils;
-import com.hezy.guide.phone.utils.OkHttpUtil;
+import com.hezy.guide.phone.net.OkHttpUtil;
 import com.hezy.guide.phone.utils.ToastUtils;
 import com.hezy.guide.phone.utils.LogUtils;
 

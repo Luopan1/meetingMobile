@@ -63,7 +63,7 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
     protected void checkNetWorkOnClick(View v) {
         switch (v.getId()) {
             case R.id.mIvWeChat:
-
+                wxLogin();
                 break;
 
         }
@@ -82,6 +82,8 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
         switch (baseResp.errCode) {
             case BaseResp.ErrCode.ERR_OK:
                 result = "登录成功";
+                String code = ((SendAuth.Resp) baseResp).code;
+                Log.i(TAG,"code = " + code);
                 break;
             case BaseResp.ErrCode.ERR_AUTH_DENIED:
                 result = "用户拒绝授权";

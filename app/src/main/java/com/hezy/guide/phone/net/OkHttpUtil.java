@@ -1,4 +1,4 @@
-package com.hezy.guide.phone.utils;
+package com.hezy.guide.phone.net;
 
 /**
  * Created by whatisjava on 17-1-3.
@@ -171,10 +171,55 @@ public class OkHttpUtil {
         request(request, callback);
     }
 
+    //-----------------------------------------  get请求 -----------------------------------------
+
+    /**
+     * get请求
+     */
+    public void get(String url, Object tag, OkHttpCallback callback) {
+        Request request = buildRequest(url, null, null, HttpMethodType.GET, tag);
+        request(request, callback);
+    }
+
+    /**
+     * get请求_使用map设置请求
+     */
+    public void get(String url, Map<String, String> params, Object tag, OkHttpCallback callback) {
+        get(generateUrlString(url, params), tag, callback);
+    }
+
+    /**
+     * 用来拼接get请求的url地址,做了URLENCODE
+     *
+     * @param url    请求的链接
+     * @param params 各种参数
+     * @return 拼接完成的链接
+     */
+    public static String generateUrlString(String url, Map<String, String> params) {
+        if (params != null && params.size() > 0) {
+            Uri uri = Uri.parse(url);
+            Uri.Builder b = uri.buildUpon();
+            for (Map.Entry<String, String> entry : params.entrySet()) {
+                b.appendQueryParameter(entry.getKey(), entry.getValue());
+            }
+            return b.build().toString();
+        }
+        return url;
+    }
+
+
     private Request buildRequest(String url, Map<String, String> headers, Map<String, String> params, HttpMethodType type) {
+
+        return buildRequest(url,headers,params,type,null);
+    }
+
+    private Request buildRequest(String url, Map<String, String> headers, Map<String, String> params, HttpMethodType type,Object tag) {
         Request.Builder builder = new Request.Builder();
         addHeader(headers, builder);
         builder.url(url);
+        if (tag != null) {
+            builder.tag(tag);
+        }
         if (type == HttpMethodType.GET) {
             builder.get();
         } else if (type == HttpMethodType.POST) {
