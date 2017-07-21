@@ -23,6 +23,16 @@ public abstract class OkHttpBaseCallback<T> extends OkHttpCallback<T> {
         Log.i(TAG, mType.toString());
     }
 
+    @Override
+    public void onStart() {
+
+    }
+
+    @Override
+    public void onFinish() {
+
+    }
+
     /**
      * 请求失败调用（网络问题）
      */

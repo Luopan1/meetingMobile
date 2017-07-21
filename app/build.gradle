@@ -79,6 +79,7 @@ android {
             signingConfig signingConfigs.config
             buildConfigField "boolean", "IS_DEBUG_LOG", "true"  //显示LOG
             buildConfigField "boolean", "IS_DEBUG_TOAST", "true"  //显示LOG的TOAST
+            buildConfigField 'String', 'API_DOMAIN_NAME', '"http://osg.apitest.haierzhongyou.com"'
             buildConfigField 'String', 'WEIXIN_APP_ID', '"wxcd220f151738cab5"'
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -88,6 +89,7 @@ android {
             signingConfig signingConfigs.config
             buildConfigField "boolean", "IS_DEBUG_LOG", "false"  //显示LOG
             buildConfigField "boolean", "IS_DEBUG_TOAST", "false"  //显示LOG的TOAST
+            buildConfigField 'String', 'API_DOMAIN_NAME', '"http://osg.api.haierzhongyou.com"'
             buildConfigField 'String', 'WEIXIN_APP_ID', '"wxcd220f151738cab5"'
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'

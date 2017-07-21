@@ -10,8 +10,7 @@ import java.util.Map;
  */
 public class ApiClient {
 
-    private static final String API_DOMAIN_NAME_TEST = "apitest.haierzhongyou.com";
-    private static final String API_DOMAIN_NAME = "api.haierzhongyou.com";
+    private static final String API_DOMAIN_NAME = BuildConfig.API_DOMAIN_NAME;
 
     private static final String URL_API_USER = "/liveapp/user";
 
@@ -29,29 +28,24 @@ public class ApiClient {
         okHttpUtil = OkHttpUtil.getInstance();
     }
 
-    private String jointBaseUrl(String apiName) {
-        if (BuildConfig.DEBUG) {
-            return "http://" + API_DOMAIN_NAME_TEST + "/dz" + apiName;
-        } else {
-            return "http://" + API_DOMAIN_NAME + "/dz" + apiName;
-        }
+
+    /**
+     *
+     */
+    public void requestWxToken(Object tag, OkHttpBaseCallback callback) {
+        Map<String, String> params = new HashMap<>();
+        OkHttpUtil.getInstance().get("https://api.weixin.qq.com/sns/oauth2/access_token", params, tag, callback);
     }
 
-    //  登录
-    public void signIn(OkHttpCallback responseCallback) {
-        okHttpUtil.get(jointBaseUrl(URL_API_USER), null, null, responseCallback);
+    /**
+     *
+     */
+    public void requestWechat(String code, String state, Object tag, OkHttpBaseCallback callback) {
+        Map<String, String> params = new HashMap<>();
+        params.put("code", code);
+        params.put("state", state);
+        OkHttpUtil.getInstance().get(API_DOMAIN_NAME + "/osg/app/wechat",params, tag, callback);
     }
-
-    //微信登录,第二步：通过code获取access_token
-     /**
-      *
-      */
-      public void requestWxToken(Object tag, OkHttpBaseCallback callback) {
-          Map<String, String> params = new HashMap<>();
-          params.put("pageNo", "1");
-          params.put("pageSize", "300");
-          OkHttpUtil.getInstance().get("https://api.weixin.qq.com/sns/oauth2/access_token",params, tag, callback);
-      }
 
 
 }
