@@ -29,6 +29,9 @@ public class Preferences {
     private static final String PREFERENCE_USER_ZY_ID = "u_zy_id";
     private static final String PREFERENCE_USER_NAME = "u_name";
     private static final String PREFERENCE_USER_MOBILE = "u_mobile";
+    private static final String PREFERENCE_USER_ADDRESS = "u_address";
+    private static final String PREFERENCE_USER_PHOTO = "u_photo";
+    private static final String PREFERENCE_USER_SIGNATURE = "u_signature";
     private static final String PREFERENCE_USER_SOURCE = "u_source";
 
     private static final String PREFERENCE_CLASS_ID = "c_id";
@@ -241,6 +244,19 @@ public class Preferences {
         }
     }
 
+    public static String getUserId() {
+        return getPreferences().getString(PREFERENCE_USER_ID, null);
+    }
+
+    public static void setUserId(String userId) {
+        SharedPreferences.Editor editor = getPreferences().edit();
+        editor.putString(PREFERENCE_USER_ID, userId);
+        if (!editor.commit()) {
+            Log.d(tag, "User id save failure");
+        } else {
+            Log.d(tag, "User id save success");
+        }
+    }
 
     public static String getUserSource() {
         return getPreferences().getString(PREFERENCE_USER_SOURCE, null);
@@ -284,19 +300,51 @@ public class Preferences {
         }
     }
 
-    public static String getUserId() {
-        return getPreferences().getString(PREFERENCE_USER_ID, null);
+    public static String getUserAddress() {
+        return getPreferences().getString(PREFERENCE_USER_ADDRESS, null);
     }
 
-    public static void setUserId(String userId) {
+    public static void setUserAddress(String userName) {
         SharedPreferences.Editor editor = getPreferences().edit();
-        editor.putString(PREFERENCE_USER_ID, userId);
+        editor.putString(PREFERENCE_USER_ADDRESS, userName);
         if (!editor.commit()) {
-            Log.d(tag, "User id save failure");
+            Log.d(tag, "User address save failure");
         } else {
-            Log.d(tag, "User id save success");
+            Log.d(tag, "User address save success");
         }
     }
+
+    public static String getUserPhoto() {
+        return getPreferences().getString(PREFERENCE_USER_PHOTO, null);
+    }
+
+    public static void setUserPhoto(String userName) {
+        SharedPreferences.Editor editor = getPreferences().edit();
+        editor.putString(PREFERENCE_USER_PHOTO, userName);
+        if (!editor.commit()) {
+            Log.d(tag, "User photo save failure");
+        } else {
+            Log.d(tag, "User photo save success");
+        }
+    }
+
+    public static String getUserSignature() {
+        return getPreferences().getString(PREFERENCE_USER_SIGNATURE, null);
+    }
+
+    public static void setUserSignature(String userName) {
+        SharedPreferences.Editor editor = getPreferences().edit();
+        editor.putString(PREFERENCE_USER_SIGNATURE, userName);
+        if (!editor.commit()) {
+            Log.d(tag, "User Signature save failure");
+        } else {
+            Log.d(tag, "User Signature save success");
+        }
+    }
+
+
+
+
 
     public static int getUserRoleType() {
         return getPreferences().getInt(PREFERENCE_USER_ROLE_TYPE, 1);
@@ -548,5 +596,7 @@ public class Preferences {
             Log.d(tag, "User mobile save success");
         }
     }
+
+
 
 }

@@ -9,9 +9,12 @@ import com.hezy.guide.phone.R;
 import com.hezy.guide.phone.base.BaseDataBindingActivity;
 import com.hezy.guide.phone.databinding.LoginActivityBinding;
 import com.hezy.guide.phone.entities.LoginWechat;
+import com.hezy.guide.phone.entities.User;
+import com.hezy.guide.phone.entities.Wechat;
 import com.hezy.guide.phone.entities.base.BaseBean;
 import com.hezy.guide.phone.net.ApiClient;
 import com.hezy.guide.phone.net.OkHttpBaseCallback;
+import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.utils.ToastUtils;
 import com.tencent.mm.opensdk.modelbase.BaseReq;
 import com.tencent.mm.opensdk.modelbase.BaseResp;
@@ -135,6 +138,8 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
                     return;
                 }
                 LoginWechat loginWechat = entity.getData();
+                Wechat wechat=loginWechat.getWechat();
+                User user = loginWechat.getUser();
                 if (loginWechat.getUser() == null) {
                     //没有获取到用户
                     Log.i(TAG, "没有用户数据");
@@ -143,6 +148,13 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
                     //保存用户,进入主页
                     Log.i(TAG, "用户登录成功");
                     showToast("用户登录成功");
+                    Preferences.setToken(user.getToken());
+                    Preferences.setUserId(user.getId());
+                    Preferences.setUserName(user.getName());
+                    Preferences.setUserMobile(user.getMobile());
+                    Preferences.setUserAddress(user.getAddress());
+                    Preferences.setUserPhoto(user.getPhoto());
+                    Preferences.setUserSignature(user.getSignature());
 
                 }
 

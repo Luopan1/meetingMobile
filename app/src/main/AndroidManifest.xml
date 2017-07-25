@@ -2,11 +2,11 @@
     package="com.hezy.guide.phone">
 
     <!--微信接入权限 -->
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:name=".BaseApplication"
@@ -17,16 +17,23 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".LauncherActivity">
-        </activity>
+        <activity android:name=".LauncherActivity"></activity>
 
-        <activity android:name=".wxapi.WXEntryActivity"
+        <!--微信登录页面-->
+        <activity
+            android:name=".wxapi.WXEntryActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!--主页-->
+        <activity
+            android:name=".ui.HomeActivity"
+            android:theme="@style/NoTitle" />
+
 
     </application>
 
