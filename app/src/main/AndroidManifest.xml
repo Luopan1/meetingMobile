@@ -44,7 +44,13 @@
         <!--主页-->
         <activity
             android:name=".ui.HomeActivity"
-            android:theme="@style/NoTitle" />
+            android:theme="@style/NoTitle" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            </activity>
+
 
 
 
