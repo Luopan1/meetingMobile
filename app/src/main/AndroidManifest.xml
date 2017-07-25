@@ -1,23 +1,16 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.hezy.guide.phone">
 
-    <!--微信接入权限 开始 -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <!--微信接入权限 结束 -->
-
-    <!--TD接入权限 开始 -->
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE"  />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"  />
     <uses-permission android:name="android.permission.GET_TASKS"  />
-    <!--TD接入权限 结束 -->
-
-
 
 
     <application
@@ -28,8 +21,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
-        <activity android:name=".LauncherActivity"></activity>
 
         <!--微信登录页面-->
         <activity
@@ -46,7 +37,11 @@
             android:name=".ui.HomeActivity"
             android:theme="@style/NoTitle" />
 
+        <activity android:name="io.agora.openvcall.ui.ChatActivity"
+            android:configChanges="keyboard|keyboardHidden|navigation|screenSize" />
 
+        <activity android:name="io.agora.openvcall.ui.MainActivity"
+            android:configChanges="keyboard|keyboardHidden|navigation|screenSize" />
 
         <!-- TD统计 开始-->
         <service android:name="com.talkingdata.sdk.TDAntiCheatingService"

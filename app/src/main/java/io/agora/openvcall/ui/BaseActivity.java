@@ -21,6 +21,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.hezy.guide.phone.BaseApplication;
 import com.hezy.guide.phone.BuildConfig;
 
 import org.slf4j.Logger;
@@ -28,8 +29,11 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 
-import io.agora.openvcall.AGApplication;
-import io.agora.openvcall.model.*;
+import io.agora.openvcall.model.ConstantApp;
+import io.agora.openvcall.model.CurrentUserSettings;
+import io.agora.openvcall.model.EngineConfig;
+import io.agora.openvcall.model.MyEngineEventHandler;
+import io.agora.openvcall.model.WorkerThread;
 import io.agora.propeller.Constant;
 import io.agora.rtc.RtcEngine;
 
@@ -130,25 +134,25 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
 
         if (Manifest.permission.CAMERA.equals(permission)) {
-            ((AGApplication) getApplication()).initWorkerThread();
+            ((BaseApplication) getApplication()).initWorkerThread();
         }
         return true;
     }
 
     protected RtcEngine rtcEngine() {
-        return ((AGApplication) getApplication()).getWorkerThread().getRtcEngine();
+        return ((BaseApplication) getApplication()).getWorkerThread().getRtcEngine();
     }
 
     protected final WorkerThread worker() {
-        return ((AGApplication) getApplication()).getWorkerThread();
+        return ((BaseApplication) getApplication()).getWorkerThread();
     }
 
     protected final EngineConfig config() {
-        return ((AGApplication) getApplication()).getWorkerThread().getEngineConfig();
+        return ((BaseApplication) getApplication()).getWorkerThread().getEngineConfig();
     }
 
     protected final MyEngineEventHandler event() {
-        return ((AGApplication) getApplication()).getWorkerThread().eventHandler();
+        return ((BaseApplication) getApplication()).getWorkerThread().eventHandler();
     }
 
     public final void showLongToast(final String msg) {
@@ -178,7 +182,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, ConstantApp.PERMISSION_REQ_ID_WRITE_EXTERNAL_STORAGE);
-                    ((AGApplication) getApplication()).initWorkerThread();
+                    ((BaseApplication) getApplication()).initWorkerThread();
                 } else {
                     finish();
                 }
@@ -196,7 +200,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     protected CurrentUserSettings vSettings() {
-        return AGApplication.mVideoSettings;
+        return BaseApplication.mVideoSettings;
     }
 
     protected int virtualKeyHeight() {

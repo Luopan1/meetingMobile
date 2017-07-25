@@ -42,6 +42,7 @@ public class MainActivity extends BaseActivity {
                 findViewById(R.id.button_join).setEnabled(!isEmpty);
             }
         });
+
         v_channel.setText("123456");
 
         Spinner encryptionSpinner = (Spinner) findViewById(R.id.encryption_mode);

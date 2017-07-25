@@ -41,7 +41,6 @@ import io.agora.openvcall.model.User;
 import io.agora.propeller.Constant;
 import io.agora.propeller.UserStatusData;
 import io.agora.propeller.VideoInfoData;
-import io.agora.propeller.preprocessing.VideoPreProcessing;
 import io.agora.propeller.ui.RtlLinearLayoutManager;
 import io.agora.rtc.IRtcEngineEventHandler;
 import io.agora.rtc.RtcEngine;
@@ -312,21 +311,13 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
         finish();
     }
 
-    private VideoPreProcessing mVideoPreProcessing;
-
     public void onBtnNClicked(View view) {
-        if (mVideoPreProcessing == null) {
-            mVideoPreProcessing = new VideoPreProcessing();
-        }
-
         ImageView iv = (ImageView) view;
         Object showing = view.getTag();
         if (showing != null && (Boolean) showing) {
-            mVideoPreProcessing.enablePreProcessing(false);
             iv.setTag(null);
             iv.clearColorFilter();
         } else {
-            mVideoPreProcessing.enablePreProcessing(true);
             iv.setTag(true);
             iv.setColorFilter(getResources().getColor(R.color.agora_blue), PorterDuff.Mode.MULTIPLY);
         }

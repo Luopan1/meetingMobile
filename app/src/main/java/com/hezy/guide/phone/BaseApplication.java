@@ -15,9 +15,6 @@ public class BaseApplication extends Application {
     public static final String TAG = "BaseApplication";
     private static BaseApplication instance;
 
-    private WorkerThread mWorkerThread;
-
-
     @Override
     public void onCreate() {
         super.onCreate();
@@ -61,6 +58,7 @@ public class BaseApplication extends Application {
 //        }
     }
 
+    private WorkerThread mWorkerThread;
 
     public synchronized void initWorkerThread() {
         if (mWorkerThread == null) {
