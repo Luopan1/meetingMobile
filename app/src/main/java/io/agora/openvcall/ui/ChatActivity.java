@@ -173,63 +173,6 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
         finish();
     }
 
-    public void onBtnNClicked(View view) {
-        ImageView iv = (ImageView) view;
-        Object showing = view.getTag();
-        if (showing != null && (Boolean) showing) {
-            iv.setTag(null);
-            iv.clearColorFilter();
-        } else {
-            iv.setTag(true);
-            iv.setColorFilter(getResources().getColor(R.color.agora_blue), PorterDuff.Mode.MULTIPLY);
-        }
-    }
-
-    public void onVoiceChatClicked(View view) {
-        log.info("onVoiceChatClicked " + view + " " + mUidsList.size() + " video_status: " + mVideoMuted + " audio_status: " + mAudioMuted);
-        if (mUidsList.size() == 0) {
-            return;
-        }
-
-        SurfaceView surfaceV = getLocalView();
-        ViewParent parent;
-        if (surfaceV == null || (parent = surfaceV.getParent()) == null) {
-            log.warn("onVoiceChatClicked " + view + " " + surfaceV);
-            return;
-        }
-
-        RtcEngine rtcEngine = rtcEngine();
-        mVideoMuted = !mVideoMuted;
-
-        if (mVideoMuted) {
-            rtcEngine.disableVideo();
-        } else {
-            rtcEngine.enableVideo();
-        }
-
-        ImageView iv = (ImageView) view;
-
-        iv.setImageResource(mVideoMuted ? R.drawable.btn_video : R.drawable.btn_voice);
-
-        hideLocalView(mVideoMuted);
-
-    }
-
-    private SurfaceView getLocalView() {
-        for (HashMap.Entry<Integer, SurfaceView> entry : mUidsList.entrySet()) {
-            if (entry.getKey() == 0 || entry.getKey() == config().mUid) {
-                return entry.getValue();
-            }
-        }
-
-        return null;
-    }
-
-    private void hideLocalView(boolean hide) {
-        int uid = config().mUid;
-        doHideTargetView(uid, hide);
-    }
-
     private void doHideTargetView(int targetUid, boolean hide) {
         HashMap<Integer, Integer> status = new HashMap<>();
         status.put(targetUid, hide ? UserStatusData.VIDEO_MUTED : UserStatusData.DEFAULT_STATUS);
