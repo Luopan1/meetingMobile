@@ -13,4 +13,8 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
     protected int initContentView() {
         return R.layout.userinfo_fragment;
     }
+
+    @Override
+    protected void initView() {
+    }
 }

@@ -15,7 +15,9 @@ import com.hezy.guide.phone.entities.base.BaseBean;
 import com.hezy.guide.phone.net.ApiClient;
 import com.hezy.guide.phone.net.OkHttpBaseCallback;
 import com.hezy.guide.phone.persistence.Preferences;
+import com.hezy.guide.phone.ui.HomeActivity;
 import com.hezy.guide.phone.utils.ToastUtils;
+import com.hezy.guide.phone.utils.statistics.ZYAgent;
 import com.tencent.mm.opensdk.modelbase.BaseReq;
 import com.tencent.mm.opensdk.modelbase.BaseResp;
 import com.tencent.mm.opensdk.modelmsg.SendAuth;
@@ -46,6 +48,18 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
     @Override
     protected void initListener() {
         mBinding.mIvWeChat.setOnClickListener(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ZYAgent.onPageStart(mContext,"登录");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        ZYAgent.onPageEnd(mContext,"登录");
     }
 
     private void reToWx() {
@@ -155,7 +169,7 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
                     Preferences.setUserAddress(user.getAddress());
                     Preferences.setUserPhoto(user.getPhoto());
                     Preferences.setUserSignature(user.getSignature());
-
+                    HomeActivity.actionStart(mContext);
                 }
 
 
