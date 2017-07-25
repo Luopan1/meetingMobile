@@ -30,4 +30,6 @@
 
     <color name="purple_811fcd">#811fcd</color>
     <color name="hint_b985e2">#b985e2</color>
+    <color name="text_gray_909090">#909090</color>
+    <color name="text_yellow_ff9c00">#ff9c00</color>
 </resources>
