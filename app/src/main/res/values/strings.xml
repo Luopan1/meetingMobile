@@ -19,4 +19,7 @@
     <string name="frame_rate_value_with_unit">%d fps</string>
     <!-- agora string -->
 
+    <!--公共复用-->
+    <string name="network_err_toast">网络异常,请检查网络配置</string>
+
 </resources>

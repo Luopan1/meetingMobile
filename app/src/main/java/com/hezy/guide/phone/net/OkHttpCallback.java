@@ -1,4 +1,4 @@
-package com.hezy.guide.phone.utils;
+package com.hezy.guide.phone.net;
 
 /**
  * Created by whatisjava on 17-1-3.

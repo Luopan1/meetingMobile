@@ -1,5 +1,4 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-
     package="com.hezy.guide.phone">
 
     <supports-screens
@@ -53,17 +52,42 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".LauncherActivity">
+        <!--微信登录页面-->
+        <activity
+            android:name=".wxapi.WXEntryActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <activity android:name="io.agora.openvcall.ui.MainActivity" />
+        <!--主页-->
+        <activity
+            android:name=".ui.HomeActivity"
+            android:theme="@style/NoTitle" />
 
         <activity android:name="io.agora.openvcall.ui.ChatActivity"
-            android:screenOrientation="landscape" />
+            android:configChanges="keyboard|keyboardHidden|navigation|screenSize"
+            android:screenOrientation="landscape"/>
+
+        <activity android:name="io.agora.openvcall.ui.MainActivity"
+            android:configChanges="keyboard|keyboardHidden|navigation|screenSize" />
+
+        <!-- TD统计 开始-->
+        <service android:name="com.talkingdata.sdk.TDAntiCheatingService"
+            android:process="com.talkingdata.sdk.TDAntiCheatingService">  <!--用户质量评估Service可以配置在主进程或者单独进程-->
+            <intent-filter>
+                <action android:name="com.talkingdata.sdk.TDAntiCheatingService" />
+            </intent-filter>
+        </service>
+
+
+        <!-- TD统计 使用build配置-->
+        <meta-data  android:name="TD_APP_ID" android:value="${TD_APP_ID}" />
+        <meta-data android:name="TD_CHANNEL_ID"  android:value="${TD_CHANNEL_ID}" />
+        <!-- TD统计 结束-->
+
 
     </application>
 
