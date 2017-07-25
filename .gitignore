@@ -7,8 +7,7 @@
 /build
 /captures
 .externalNativeBuild
-/.idea
-/.idea/
+.idea/
 /.idea/markdown-navigator/profiles_settings.xml
 /.idea/compiler.xml
 /.idea/copyright/profiles_settings.xml
@@ -17,4 +16,5 @@
 
 /.idea/runConfigurations.xml
 /.idea/vcs.xml
-/.idea/vcs.xml
+/.idea/misc.xml
+*.apk

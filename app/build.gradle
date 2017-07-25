@@ -50,15 +50,15 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
-        jackOptions {
-            enabled false
-        }
-
         //默认编译赋值
         buildConfigField "String", "GIT_BRANCH", '"' + getGitBranch() + '"'
         buildConfigField 'String', 'GIT_COMMIT', '"' + getGitCommitId() + '"'
         buildConfigField 'String', 'GIT_LOG', '"' + getGitLog() + '"'
         buildConfigField 'String', 'DATE', '"' + getDate().toString() + '"'
+
+        jackOptions {
+            enabled false
+        }
 
 
         ndk {
@@ -102,6 +102,17 @@ android {
                                     TD_CHANNEL_ID: "default"]
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    android.applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            def outputFile = output.outputFile
+            if (outputFile != null && outputFile.name.endsWith('.apk')) {
+                //这里修改apk文件名
+                def fileName = "GuideMobile_"  + getGitBranch() + "_" + variant.buildType.name + "_" + variant.versionName + "_" + variant.versionCode + "_" + getGitCommitId() + "_" + getDate() + ".apk"
+                output.outputFile = new File(outputFile.parent, fileName)
+            }
         }
     }
 }
