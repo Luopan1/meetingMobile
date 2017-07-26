@@ -36,7 +36,7 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
     @Override
     protected void initView() {
         mBinding.mEtName.setText(Preferences.getUserName());
-        mBinding.mEtPhone.setText(Preferences.getUserPhoto());
+        mBinding.mEtPhone.setText(Preferences.getUserMobile());
         mBinding.mEtAddress.setText(Preferences.getUserAddress());
         mBinding.mEtSignature.setText(Preferences.getUserSignature());
         if (!TextUtils.isEmpty(Preferences.getUserPhoto())) {
