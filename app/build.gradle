@@ -135,6 +135,9 @@ dependencies {
     compile 'com.squareup.okhttp3:logging-interceptor:3.8.1'
     compile 'com.google.code.gson:gson:2.8.1'
 
+    //图片加载
+    compile 'com.squareup.picasso:picasso:2.5.2'
+
     // ================微信相关================
     compile 'com.tencent.mm.opensdk:wechat-sdk-android-with-mta:1.3.4'
     //崩溃检测
@@ -151,5 +154,7 @@ dependencies {
     compile 'com.rengwuxian.materialedittext:library:2.1.4'
     //垂直ViewPager
     compile 'me.kaelaela:verticalviewpager:1.0.0@aar'
+    //照片选择
+    compile 'com.jph.takephoto:takephoto_library:4.0.3'
 
 }

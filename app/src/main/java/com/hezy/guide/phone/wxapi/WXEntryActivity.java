@@ -41,6 +41,8 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
 
     @Override
     protected void initView() {
+        if(Preferences.isLogin())
+            HomeActivity.actionStart(mContext);
         reToWx();
         mWxApi.handleIntent(getIntent(), this);
     }

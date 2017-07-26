@@ -81,7 +81,10 @@ public class OkHttpUtil {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-//                if (response.isSuccessful() && response.body() != null) {
+                if (!response.isSuccessful()) {
+                    callbackError(response, callback, new BaseException("服务器异常,请稍后重试"));
+                    return;
+                }
                 if (response.body() != null) {
                     String resString = response.body().string();
                     if (callback.mType == String.class) {
@@ -151,6 +154,8 @@ public class OkHttpUtil {
         mHandler.post(task);
     }
 
+
+
     public void get(String url, Map<String, String> headers, Map<String, String> params, OkHttpCallback callback) {
         Request request = buildRequest(jointUrl(url, params), headers, null, HttpMethodType.GET);
         request(request, callback);
@@ -178,6 +183,11 @@ public class OkHttpUtil {
      */
     public void get(String url, Object tag, OkHttpCallback callback) {
         Request request = buildRequest(url, null, null, HttpMethodType.GET, tag);
+        request(request, callback);
+    }
+
+    public void put(String url, Map<String, String> headers, Map<String, String> params, OkHttpCallback callback,Object tag){
+        Request request = buildRequest(url, headers, params, HttpMethodType.PUT_JSON,tag);
         request(request, callback);
     }
 

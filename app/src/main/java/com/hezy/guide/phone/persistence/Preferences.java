@@ -287,7 +287,7 @@ public class Preferences {
     }
 
     public static String getUserName() {
-        return getPreferences().getString(PREFERENCE_USER_NAME, null);
+        return getPreferences().getString(PREFERENCE_USER_NAME, "");
     }
 
     public static void setUserName(String userName) {
@@ -301,7 +301,7 @@ public class Preferences {
     }
 
     public static String getUserAddress() {
-        return getPreferences().getString(PREFERENCE_USER_ADDRESS, null);
+        return getPreferences().getString(PREFERENCE_USER_ADDRESS, "");
     }
 
     public static void setUserAddress(String userName) {
@@ -315,7 +315,7 @@ public class Preferences {
     }
 
     public static String getUserPhoto() {
-        return getPreferences().getString(PREFERENCE_USER_PHOTO, null);
+        return getPreferences().getString(PREFERENCE_USER_PHOTO, "");
     }
 
     public static void setUserPhoto(String userName) {
@@ -329,7 +329,7 @@ public class Preferences {
     }
 
     public static String getUserSignature() {
-        return getPreferences().getString(PREFERENCE_USER_SIGNATURE, null);
+        return getPreferences().getString(PREFERENCE_USER_SIGNATURE, "");
     }
 
     public static void setUserSignature(String userName) {
