@@ -3,146 +3,224 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:background="@color/purple_811fcd"
-        android:orientation="vertical"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp"
-        android:paddingTop="30dp">
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:layout_height="wrap_content"
+            android:background="@color/purple_811fcd"
+            android:orientation="vertical"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingTop="30dp">
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@mipmap/ic_input_name" />
-
-            <EditText
-                android:id="@+id/mEtName"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="5dp"
-                android:background="@mipmap/img_input_small"
+                android:layout_height="50dp"
                 android:gravity="center_vertical"
-                android:paddingLeft="30dp"
-                android:textColor="@android:color/white"
-                android:textSize="16sp"
-                tools:text="唐搭讪" />
+                android:orientation="horizontal">
 
-        </LinearLayout>
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@mipmap/ic_input_name" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginTop="8dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+                <EditText
+                    android:id="@+id/mEtName"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="5dp"
+                    android:background="@mipmap/img_input_small"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="30dp"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp"
+                    tools:text="唐搭讪" />
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@mipmap/ic_input_phone" />
+            </LinearLayout>
 
-            <EditText
-                android:id="@+id/mEtPhone"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="5dp"
-                android:background="@mipmap/img_input_small"
+                android:layout_height="50dp"
+                android:layout_marginTop="8dp"
                 android:gravity="center_vertical"
-                android:paddingLeft="30dp"
-                android:textColor="@android:color/white"
-                android:textSize="16sp"
-                tools:text="1851234567" />
+                android:orientation="horizontal">
 
-        </LinearLayout>
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@mipmap/ic_input_phone" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginTop="8dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+                <EditText
+                    android:id="@+id/mEtPhone"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="5dp"
+                    android:background="@mipmap/img_input_small"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="30dp"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp"
+                    tools:text="1851234567" />
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@mipmap/ic_input_address" />
+            </LinearLayout>
 
-            <EditText
-                android:id="@+id/mEtAddress"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="5dp"
-                android:background="@mipmap/img_input_small"
+                android:layout_height="50dp"
+                android:layout_marginTop="8dp"
                 android:gravity="center_vertical"
-                android:hint="输入省市地址"
-                android:paddingLeft="30dp"
-                android:textColor="@android:color/white"
-                android:textColorHint="@color/hint_b985e2"
-                android:textSize="16sp" />
+                android:orientation="horizontal">
 
-        </LinearLayout>
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@mipmap/ic_input_address" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="125dp"
-            android:layout_marginTop="18dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+                <EditText
+                    android:id="@+id/mEtAddress"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="5dp"
+                    android:background="@mipmap/img_input_small"
+                    android:gravity="center_vertical"
+                    android:hint="输入省市地址"
+                    android:paddingLeft="30dp"
+                    android:textColor="@android:color/white"
+                    android:textColorHint="@color/hint_b985e2"
+                    android:textSize="16sp" />
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@mipmap/ic_input_picture" />
+            </LinearLayout>
 
-            <ImageView
-                android:id="@+id/mIvPicture"
-                android:layout_width="135dp"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="125dp"
-                android:layout_marginLeft="60dp"
-                android:background="@color/white"
-                android:padding="1dp"
-                tools:src="@color/green" />
+                android:layout_marginTop="18dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@mipmap/ic_input_picture" />
+
+                <ImageView
+                    android:id="@+id/mIvPicture"
+                    android:layout_width="135dp"
+                    android:layout_height="125dp"
+                    android:layout_marginLeft="60dp"
+                    android:background="@color/white"
+                    android:padding="1dp"
+                    tools:src="@color/green" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_marginTop="18dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@mipmap/ic_input_signature" />
+
+                <EditText
+                    android:id="@+id/mEtSignature"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="5dp"
+                    android:background="@mipmap/img_input_big"
+                    android:gravity="center_vertical"
+                    android:hint="输入30字以内的个性签名"
+                    android:paddingLeft="30dp"
+                    android:textColor="@android:color/white"
+                    android:textColorHint="@color/hint_b985e2"
+                    android:textSize="16sp" />
+
+            </LinearLayout>
 
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:layout_marginTop="18dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@mipmap/ic_input_signature" />
-
-            <EditText
-                android:id="@+id/mEtSignature"
+            <View
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="5dp"
-                android:background="@mipmap/img_input_big"
-                android:gravity="center_vertical"
-                android:hint="输入30字以内的个性签名"
-                android:paddingLeft="30dp"
-                android:textColor="@android:color/white"
-                android:textColorHint="@color/hint_b985e2"
-                android:textSize="16sp" />
+                android:layout_height="20dp"
+                android:background="@color/purple_811fcd" />
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@mipmap/home_head_bg">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/mIvHead"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:layout_gravity="center"
+                    android:padding="4dp"
+                    android:src="@mipmap/baby_default_avatar"
+                    app:civ_border_color="@color/white"
+                    app:civ_border_width="2dp"
+
+                    />
+
+            </FrameLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@mipmap/ic_home_record" />
+
+                <TextView
+                    android:id="@+id/mTvM"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:text="分钟"
+                    android:textColor="@color/text_gray_909090"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/mTvTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@+id/mTvM"
+                    android:textColor="@color/text_yellow_ff9c00"
+                    android:textSize="15sp"
+                    tools:text="123456" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@+id/mTvTime"
+                    android:text="累计"
+                    android:textColor="@color/text_gray_909090"
+                    android:textSize="15sp" />
+
+
+            </RelativeLayout>
+
 
         </LinearLayout>
-
-
 
     </LinearLayout>
+
 
 </layout>

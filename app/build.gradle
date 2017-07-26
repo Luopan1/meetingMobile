@@ -44,7 +44,7 @@ android {
 
     defaultConfig {
         applicationId "com.hezy.guide.phone"
-        minSdkVersion 15
+        minSdkVersion 16
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
@@ -149,5 +149,7 @@ dependencies {
     //图片带边
     compile 'de.hdodenhof:circleimageview:2.1.0'
     compile 'com.rengwuxian.materialedittext:library:2.1.4'
+    //垂直ViewPager
+    compile 'me.kaelaela:verticalviewpager:1.0.0@aar'
 
 }
