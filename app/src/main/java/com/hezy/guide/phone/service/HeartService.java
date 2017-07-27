@@ -14,6 +14,7 @@ import com.hezy.guide.phone.net.OkHttpBaseCallback;
 import com.hezy.guide.phone.net.OkHttpUtil;
 import com.hezy.guide.phone.utils.LogUtils;
 import com.hezy.guide.phone.utils.RxBus;
+import com.hezy.guide.phone.utils.ToastUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -89,10 +90,12 @@ public class HeartService   extends Service{
         @Override
         public void onSuccess(BaseErrorBean entity) {
             if(!USER_SET_OFFLINE && OffLineFlagStage ){
+                OffLineFlagStage = false;
                 //用户设置为离线,不受心跳影响.
                 //用户设置为在线,心跳为离线,通知改变为在线
-                LogUtils.i(TAG,"用户设置为在线,心跳为离线,通知改变为在线");
-                RxBus.sendMessage(new UserState(1));
+                LogUtils.i(TAG,"心跳成功,用户设置为在线,旧状态心跳为离线,通知改变为在线");
+                ToastUtils.showToast("心跳成功,用户设置为在线,旧状态心跳为离线,通知改变为在线");
+                RxBus.sendMessage(new UserState());
             }
             OffLineFlagStage = false;
         }
@@ -101,9 +104,11 @@ public class HeartService   extends Service{
         public void onErrorAll(Exception e) {
             super.onErrorAll(e);
             if(!USER_SET_OFFLINE && !OffLineFlagStage ){
+                OffLineFlagStage = true;
                 //用户设置为在线,心跳为离线,通知改变为在线
-                LogUtils.i(TAG,"用户设置为在线,心跳为离线,通知改变为在线");
-                RxBus.sendMessage(new UserState(2));
+                LogUtils.i(TAG,"心跳失败,用户设置为在线,旧状态心跳为在线,通知改变为离线");
+                ToastUtils.showToast("心跳失败,用户设置为在线,旧状态心跳为在线,通知改变为离线");
+                RxBus.sendMessage(new UserState());
             }
             OffLineFlagStage = true;
         }
@@ -118,6 +123,18 @@ public class HeartService   extends Service{
         handler.removeCallbacksAndMessages(null);
         if(serviceIsCreate){
             handler.postDelayed(heartRunnable, KEEP_ALIVE_TIME);
+        }
+    }
+
+    public static boolean isOnline(){
+        if(USER_SET_OFFLINE){
+            return false;
+        }else{
+            if(OffLineFlagStage){
+                return false;
+            }else{
+                return true;
+            }
         }
     }
 

@@ -8,13 +8,20 @@ import com.hezy.guide.phone.R;
 import com.hezy.guide.phone.base.BaseDataBindingFragment;
 import com.hezy.guide.phone.databinding.UserinfoFragmentBinding;
 import com.hezy.guide.phone.entities.base.BaseErrorBean;
+import com.hezy.guide.phone.event.UserState;
 import com.hezy.guide.phone.net.ApiClient;
 import com.hezy.guide.phone.net.OkHttpBaseCallback;
 import com.hezy.guide.phone.persistence.Preferences;
+import com.hezy.guide.phone.service.HeartService;
+import com.hezy.guide.phone.utils.RxBus;
 import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import rx.Subscription;
+import rx.functions.Action1;
+
 
 /**
  * 用户信息fragment
@@ -35,6 +42,8 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
 
     @Override
     protected void initView() {
+
+
         mBinding.mEtName.setText(Preferences.getUserName());
         mBinding.mEtPhone.setText(Preferences.getUserMobile());
         mBinding.mEtAddress.setText(Preferences.getUserAddress());
@@ -105,7 +114,41 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
                 }
             }
         });
+
+        if (!TextUtils.isEmpty(Preferences.getWeiXinHead())) {
+            Picasso.with(BaseApplication.getInstance()).load(Preferences.getWeiXinHead()).into(mBinding.views.mIvHead);
+        }
+
+
+        setState(HeartService.isOnline());
+
+        subscription = RxBus.handleMessage(new Action1() {
+            @Override
+            public void call(Object o) {
+                if (o instanceof UserState) {
+                    setState(HeartService.isOnline());
+                }
+            }
+        });
     }
 
+
+    private void setState(boolean isOnline) {
+        if (isOnline) {
+            mBinding.views.mTvState.setText("在线状态");
+            mBinding.views.mTvState.setBackgroundResource(R.drawable.userinfo_set_state_online_bg_shape);
+        } else {
+            mBinding.views.mTvState.setText("离线状态");
+            mBinding.views.mTvState.setBackgroundResource(R.drawable.userinfo_set_state_offline_bg_shape);
+        }
+    }
+
+    private Subscription subscription;
+
+    @Override
+    public void onDestroy() {
+        subscription.unsubscribe();
+        super.onDestroy();
+    }
 
 }

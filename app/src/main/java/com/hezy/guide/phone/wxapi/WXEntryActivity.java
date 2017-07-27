@@ -155,6 +155,7 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
                 }
                 LoginWechat loginWechat = entity.getData();
                 Wechat wechat=loginWechat.getWechat();
+                Preferences.setWeiXinHead(wechat.getHeadimgurl());
                 User user = loginWechat.getUser();
                 if (loginWechat.getUser() == null) {
                     //没有获取到用户

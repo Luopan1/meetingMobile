@@ -5,19 +5,11 @@ package com.hezy.guide.phone.event;
  */
 
 public class UserState {
-    int state;
 
-    public UserState(int state) {
-        this.state = state;
+    public UserState() {
     }
 
-    public int getState() {
-        return state;
-    }
 
-    public void setState(int state) {
-        this.state = state;
-    }
 
 
 }

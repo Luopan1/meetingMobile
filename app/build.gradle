@@ -81,7 +81,7 @@ android {
             signingConfig signingConfigs.config
             buildConfigField "boolean", "IS_DEBUG_LOG", "true"  //显示LOG
             buildConfigField "boolean", "IS_DEBUG_TOAST", "true"  //显示LOG的TOAST
-            buildConfigField "boolean", "IS_HEART_LOG", "false"  //显示心跳的http日志
+            buildConfigField "boolean", "IS_HEART_LOG", "true"  //显示心跳的http日志
             buildConfigField 'String', 'API_DOMAIN_NAME', '"http://osg.apitest.haierzhongyou.com"'
             buildConfigField 'String', 'WEIXIN_APP_ID', '"wxcd220f151738cab5"' //微信id
             buildConfigField 'String', 'BUGLY_APPID', '"d2b5a75181"' //bugly
@@ -120,6 +120,8 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+    //底部弹窗
+    compile project(':IosDialog')
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })

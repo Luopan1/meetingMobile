@@ -34,6 +34,8 @@ public class Preferences {
     private static final String PREFERENCE_USER_SIGNATURE = "u_signature";
     private static final String PREFERENCE_USER_SOURCE = "u_source";
 
+    private static final String PREFERENCE_WECHAT_HEAD = "u_wechat_head";
+
     private static final String PREFERENCE_CLASS_ID = "c_id";
     private static final String PREFERENCE_CLASS_NAME = "c_name";
     private static final String PREFERENCE_CLASS_IS_DEMO_CLASS = "c_is_demo_CLASS";
@@ -321,6 +323,20 @@ public class Preferences {
     public static void setUserPhoto(String userName) {
         SharedPreferences.Editor editor = getPreferences().edit();
         editor.putString(PREFERENCE_USER_PHOTO, userName);
+        if (!editor.commit()) {
+            Log.d(tag, "User photo save failure");
+        } else {
+            Log.d(tag, "User photo save success");
+        }
+    }
+
+    public static String getUserWeChatHead() {
+        return getPreferences().getString(PREFERENCE_WECHAT_HEAD, "");
+    }
+
+    public static void setUserUserWeChatHead(String str) {
+        SharedPreferences.Editor editor = getPreferences().edit();
+        editor.putString(PREFERENCE_WECHAT_HEAD, str);
         if (!editor.commit()) {
             Log.d(tag, "User photo save failure");
         } else {
