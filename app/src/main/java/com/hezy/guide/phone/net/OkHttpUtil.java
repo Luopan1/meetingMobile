@@ -26,7 +26,6 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import okhttp3.logging.HttpLoggingInterceptor;
 
 public class OkHttpUtil {
 
@@ -42,8 +41,8 @@ public class OkHttpUtil {
         clientBuilder.readTimeout(10, TimeUnit.SECONDS);
         clientBuilder.writeTimeout(30, TimeUnit.SECONDS);
 
-        HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
-        httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        MyHttpLoggingInterceptor httpLoggingInterceptor = new MyHttpLoggingInterceptor();
+        httpLoggingInterceptor.setLevel(MyHttpLoggingInterceptor.Level.BODY);
         clientBuilder.addInterceptor(httpLoggingInterceptor);
 
         okHttpClient = clientBuilder.build();

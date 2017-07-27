@@ -80,6 +80,10 @@
         <activity android:name="io.agora.openvcall.ui.MainActivity"
             android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale" />
 
+        <!--服务开始-->
+        <service android:name=".service.HeartService" />
+        <!--服务结束-->
+
         <!-- TD统计 开始-->
         <service android:name="com.talkingdata.sdk.TDAntiCheatingService"
             android:process="com.talkingdata.sdk.TDAntiCheatingService">  <!--用户质量评估Service可以配置在主进程或者单独进程-->

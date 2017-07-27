@@ -23,6 +23,8 @@ public class ApiClient {
 
     private OkHttpUtil okHttpUtil;
 
+    public static final String HEART_URL="/state";
+
     private static class SingletonHolder {
         private static ApiClient instance = new ApiClient();
     }
@@ -94,6 +96,12 @@ public class ApiClient {
      */
     public void requestUserExpostor(Object tag, Map<String, String> params, OkHttpBaseCallback callback) {
         okHttpUtil.getInstance().put(API_DOMAIN_NAME+"/osg/app/user/expostor/"+ Preferences.getUserId(),getCommonHead(),params,callback,tag);
+    }
+
+
+    public void requestUserExpostorState(Object tag, Map<String, String> params, OkHttpBaseCallback callback){
+        okHttpUtil.getInstance().put(API_DOMAIN_NAME+"/osg/app/user/expostor/"+ Preferences.getUserId()+"/state"
+                ,getCommonHead(),params,callback,tag);
     }
 
 

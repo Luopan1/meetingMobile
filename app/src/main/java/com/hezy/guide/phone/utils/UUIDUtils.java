@@ -20,6 +20,7 @@ public class UUIDUtils {
     private static boolean yunosID = true;
     private static final String INSTALLATION = "INSTALLATION";
     public static final String TAG = "UUID";
+    private static boolean isFirst = true;
 
     /**
      * 当前获取UUID,先尝试获取阿里云ID,如果为空在代码生成UUID
@@ -52,7 +53,10 @@ public class UUIDUtils {
             }
 
         }
-        Log.i(TAG, "UUIDUtils UUID "+UUID);
+        if(isFirst){
+            isFirst = false;
+            Log.i(TAG, "UUIDUtils UUID "+UUID);
+        }
         return UUID;
 
     }
