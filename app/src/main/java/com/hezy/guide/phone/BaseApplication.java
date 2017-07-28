@@ -8,17 +8,25 @@ import com.squareup.leakcanary.LeakCanary;
 import com.tencent.bugly.crashreport.CrashReport;
 import com.tendcloud.tenddata.TCAgent;
 
+import java.net.URISyntaxException;
+
 import io.agora.openvcall.model.CurrentUserSettings;
 import io.agora.openvcall.model.WorkerThread;
+import io.socket.client.IO;
+import io.socket.client.Socket;
 
 public class BaseApplication extends Application {
     public static final String TAG = "BaseApplication";
     private static BaseApplication instance;
+    private Socket mSocket;
+    private static String WS_URL = "http://nettytest.haierzhongyou.com:3000/device";
+
 
     @Override
     public void onCreate() {
         super.onCreate();
         instance = this;
+        initSocket();
         //内存泄露检测工具,开发中最好开启
         if(BuildConfig.DEBUG){
             Log.i(TAG,"debug下开启LeakCanary");
@@ -84,4 +92,16 @@ public class BaseApplication extends Application {
     }
 
     public static final CurrentUserSettings mVideoSettings = new CurrentUserSettings();
+
+    private void initSocket(){
+        try {
+            mSocket = IO.socket(WS_URL);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Socket getSocket() {
+        return mSocket;
+    }
 }

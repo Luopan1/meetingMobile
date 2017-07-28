@@ -32,6 +32,11 @@ public class OkHttpUtil {
     private static OkHttpUtil okHttpUtil;
     private static OkHttpClient okHttpClient;
     private Handler mHandler;
+
+    public static Gson getGson() {
+        return gson;
+    }
+
     private static Gson gson;
 
     private OkHttpUtil() {
@@ -156,22 +161,27 @@ public class OkHttpUtil {
 
 
     public void get(String url, Map<String, String> headers, Map<String, String> params, OkHttpCallback callback) {
-        Request request = buildRequest(jointUrl(url, params), headers, null, HttpMethodType.GET);
+        Request request = buildRequest(jointUrl(url, params), headers, null, null, HttpMethodType.GET);
         request(request, callback);
     }
 
     public void post(String url, Map<String, String> headers, Map<String, String> params, OkHttpCallback callback) {
-        Request request = buildRequest(url, headers, params, HttpMethodType.POST);
+        Request request = buildRequest(url, headers, params,null, HttpMethodType.POST);
+        request(request, callback);
+    }
+
+    public void postJson(String url, Map<String, String> headers,String jsonStr, OkHttpCallback callback,Object tag) {
+        Request request = buildRequest(url, headers, null, jsonStr, HttpMethodType.POST_JSON);
         request(request, callback);
     }
 
     public void put(String url, Map<String, String> headers, Map<String, String> params, OkHttpCallback callback){
-        Request request = buildRequest(url, headers, params, HttpMethodType.PUT);
+        Request request = buildRequest(url, headers, params, null,HttpMethodType.PUT);
         request(request, callback);
     }
 
     public void delete(String url, Map<String, String> headers, Map<String, String> params, OkHttpCallback callback){
-        Request request = buildRequest(url, headers, params, HttpMethodType.DELETE);
+        Request request = buildRequest(url, headers, params, null,HttpMethodType.DELETE);
         request(request, callback);
     }
 
@@ -181,12 +191,12 @@ public class OkHttpUtil {
      * get请求
      */
     public void get(String url, Object tag, OkHttpCallback callback) {
-        Request request = buildRequest(url, null, null, HttpMethodType.GET, tag);
+        Request request = buildRequest(url, null, null,null, HttpMethodType.GET, tag);
         request(request, callback);
     }
 
-    public void put(String url, Map<String, String> headers, Map<String, String> params, OkHttpCallback callback,Object tag){
-        Request request = buildRequest(url, headers, params, HttpMethodType.PUT_JSON,tag);
+    public void putJson(String url, Map<String, String> headers, String jsonStr, OkHttpCallback callback,Object tag){
+        Request request = buildRequest(url, headers, null,jsonStr, HttpMethodType.PUT_JSON,tag);
         request(request, callback);
     }
 
@@ -196,6 +206,8 @@ public class OkHttpUtil {
     public void get(String url, Map<String, String> params, Object tag, OkHttpCallback callback) {
         get(generateUrlString(url, params), tag, callback);
     }
+
+
 
     /**
      * 用来拼接get请求的url地址,做了URLENCODE
@@ -217,12 +229,12 @@ public class OkHttpUtil {
     }
 
 
-    private Request buildRequest(String url, Map<String, String> headers, Map<String, String> params, HttpMethodType type) {
+    private Request buildRequest(String url, Map<String, String> headers, Map<String, String> params,String jsonStr, HttpMethodType type) {
 
-        return buildRequest(url,headers,params,type,null);
+        return buildRequest(url,headers,params,jsonStr,type,null);
     }
 
-    private Request buildRequest(String url, Map<String, String> headers, Map<String, String> params, HttpMethodType type,Object tag) {
+    private Request buildRequest(String url, Map<String, String> headers, Map<String, String> params,String jsonStr,HttpMethodType type,Object tag) {
         Request.Builder builder = new Request.Builder();
         addHeader(headers, builder);
         builder.url(url);
@@ -234,13 +246,13 @@ public class OkHttpUtil {
         } else if (type == HttpMethodType.POST) {
             builder.post(buildRequestBody(params));
         } else if (type == HttpMethodType.POST_JSON) {
-            builder.post(buildRequestBody(gson.toJson(params)));
+            builder.post(buildRequestBody(jsonStr));
         } else if (type == HttpMethodType.POST_FILE) {
             builder.post(buildMultipartRequestBody(params));
         } else if (type == HttpMethodType.PUT) {
             builder.put(buildRequestBody(params));
         } else if (type == HttpMethodType.PUT_JSON) {
-            builder.put(buildRequestBody(gson.toJson(params)));
+            builder.put(buildRequestBody(jsonStr));
         } else if (type == HttpMethodType.DELETE) {
             builder.delete(buildRequestBody(params));
         } else if (type == HttpMethodType.DELETE_JSON) {

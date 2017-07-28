@@ -55,6 +55,11 @@ public class ApiClient {
         return params;
     }
 
+    //  注册设备信息
+    public void deviceRegister(Object tag, String jsonStr, OkHttpBaseCallback callback) {
+        OkHttpUtil.getInstance().postJson(API_DOMAIN_NAME + "/osg/app/device", getCommonHead(),jsonStr,callback, tag);
+    }
+
 
     /**
      *
@@ -88,20 +93,21 @@ public class ApiClient {
         OkHttpUtil.getInstance().get(API_DOMAIN_NAME + "/osg/app/user", null, tag, callback);
     }
 
+
     /**
      * 设置用户信息
      * @param tag
-     * @param params
      * @param callback
      */
-    public void requestUserExpostor(Object tag, Map<String, String> params, OkHttpBaseCallback callback) {
-        okHttpUtil.getInstance().put(API_DOMAIN_NAME+"/osg/app/user/expostor/"+ Preferences.getUserId(),getCommonHead(),params,callback,tag);
+    public void requestUserExpostor(Object tag,  Map<String, String> params, OkHttpBaseCallback callback) {
+        okHttpUtil.getInstance().putJson(API_DOMAIN_NAME+"/osg/app/user/expostor/"+ Preferences.getUserId(),getCommonHead(),
+                OkHttpUtil.getGson().toJson(params),callback,tag);
     }
 
 
     public void requestUserExpostorState(Object tag, Map<String, String> params, OkHttpBaseCallback callback){
-        okHttpUtil.getInstance().put(API_DOMAIN_NAME+"/osg/app/user/expostor/"+ Preferences.getUserId()+"/state"
-                ,getCommonHead(),params,callback,tag);
+        okHttpUtil.getInstance().putJson(API_DOMAIN_NAME+"/osg/app/user/expostor/"+ Preferences.getUserId()+"/state"
+                ,getCommonHead(),OkHttpUtil.getGson().toJson(params),callback,tag);
     }
 
 

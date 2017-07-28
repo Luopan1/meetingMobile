@@ -82,6 +82,7 @@
 
         <!--服务开始-->
         <service android:name=".service.HeartService" />
+        <service android:name=".service.WSService" />
         <!--服务结束-->
 
         <!-- TD统计 开始-->
