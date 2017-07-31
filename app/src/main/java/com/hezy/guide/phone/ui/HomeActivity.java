@@ -160,6 +160,7 @@ public class HomeActivity extends BaseDataBindingActivity<HomeActivityBinding>{
 
     private void quit() {
         HeartService.stopService(this);
+        finish();
         System.exit(0);
     }
 

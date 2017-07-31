@@ -8,6 +8,7 @@ import com.hezy.guide.phone.BuildConfig;
 import com.hezy.guide.phone.R;
 import com.hezy.guide.phone.base.BaseDataBindingActivity;
 import com.hezy.guide.phone.databinding.LoginActivityBinding;
+import com.hezy.guide.phone.entities.FinishWX;
 import com.hezy.guide.phone.entities.LoginWechat;
 import com.hezy.guide.phone.entities.User;
 import com.hezy.guide.phone.entities.Wechat;
@@ -16,6 +17,7 @@ import com.hezy.guide.phone.net.ApiClient;
 import com.hezy.guide.phone.net.OkHttpBaseCallback;
 import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.ui.HomeActivity;
+import com.hezy.guide.phone.utils.RxBus;
 import com.hezy.guide.phone.utils.ToastUtils;
 import com.hezy.guide.phone.utils.statistics.ZYAgent;
 import com.tencent.mm.opensdk.modelbase.BaseReq;
@@ -24,6 +26,9 @@ import com.tencent.mm.opensdk.modelmsg.SendAuth;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.IWXAPIEventHandler;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
+
+import rx.Subscription;
+import rx.functions.Action1;
 
 /**
  * Created by wufan on 2017/7/14.
@@ -41,10 +46,20 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
 
     @Override
     protected void initView() {
-        if(Preferences.isLogin())
+        if (Preferences.isLogin())
             HomeActivity.actionStart(mContext);
         reToWx();
         mWxApi.handleIntent(getIntent(), this);
+
+        subscription = RxBus.handleMessage(new Action1() {
+            @Override
+            public void call(Object o) {
+                if (o instanceof FinishWX) {
+                    //会打开两个微信界面
+                    finish();
+                }
+            }
+        });
     }
 
     @Override
@@ -55,13 +70,13 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
     @Override
     protected void onResume() {
         super.onResume();
-        ZYAgent.onPageStart(mContext,"登录");
+        ZYAgent.onPageStart(mContext, "登录");
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        ZYAgent.onPageEnd(mContext,"登录");
+        ZYAgent.onPageEnd(mContext, "登录");
     }
 
     private void reToWx() {
@@ -119,7 +134,7 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
                         Log.i(TAG, "sendResp.state " + sendResp.state);
                         Log.i(TAG, "sendResp.lang " + sendResp.lang);
                         Log.i(TAG, "sendResp.country " + sendResp.country);
-                        requestWechatLogin(sendResp.code,sendResp.state);
+                        requestWechatLogin(sendResp.code, sendResp.state);
                         break;
 //                    case RETURN_MSG_TYPE_SHARE:
 //                        UIUtils.showToast("微信分享成功");
@@ -154,7 +169,7 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
                     return;
                 }
                 LoginWechat loginWechat = entity.getData();
-                Wechat wechat=loginWechat.getWechat();
+                Wechat wechat = loginWechat.getWechat();
                 Preferences.setWeiXinHead(wechat.getHeadimgurl());
                 User user = loginWechat.getUser();
                 if (loginWechat.getUser() == null) {
@@ -173,10 +188,20 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
                     Preferences.setUserPhoto(user.getPhoto());
                     Preferences.setUserSignature(user.getSignature());
                     HomeActivity.actionStart(mContext);
+                    RxBus.sendMessage(new FinishWX());
                 }
 
 
             }
         });
     }
+
+    private Subscription subscription;
+
+    @Override
+    public void onDestroy() {
+        subscription.unsubscribe();
+        super.onDestroy();
+    }
+
 }
