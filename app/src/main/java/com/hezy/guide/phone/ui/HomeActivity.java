@@ -9,6 +9,8 @@ import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.KeyEvent;
+import android.widget.Toast;
 
 import com.hezy.guide.phone.BuildConfig;
 import com.hezy.guide.phone.R;
@@ -18,6 +20,7 @@ import com.hezy.guide.phone.entities.base.BaseBean;
 import com.hezy.guide.phone.net.ApiClient;
 import com.hezy.guide.phone.net.OkHttpBaseCallback;
 import com.hezy.guide.phone.service.HeartService;
+import com.hezy.guide.phone.service.WSService;
 import com.hezy.guide.phone.utils.Installation;
 import com.hezy.guide.phone.utils.LogUtils;
 import com.hezy.guide.phone.utils.UUIDUtils;
@@ -55,6 +58,7 @@ public class HomeActivity extends BaseDataBindingActivity<HomeActivityBinding>{
 //        mBinding.mVerticalViewPager.setOverScrollMode(OVER_SCROLL_NEVER);
         //登录才能进入主页,启动心跳
         HeartService.actionStart(mContext);
+        WSService.actionStart(mContext);
 
 
         mBinding.mVerticalViewPager.setPageTransformer(false, new DefaultTransformer());
@@ -136,6 +140,27 @@ public class HomeActivity extends BaseDataBindingActivity<HomeActivityBinding>{
         }
     };
 
+    private long mExitTime = 0;
+    private long mLastKeyDownTime = 0;
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if ((System.currentTimeMillis() - mExitTime) > 2000) {//
+                // 如果两次按键时间间隔大于2000毫秒，则不退出
+                Toast.makeText(this, "再按一次退出在线导购", Toast.LENGTH_SHORT).show();
+                mExitTime = System.currentTimeMillis();// 更新mExitTime
+            } else {
+                quit(); // 否则退出程序
+            }
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
 
+    }
+
+    private void quit() {
+        HeartService.stopService(this);
+        System.exit(0);
+    }
 
 }

@@ -36,9 +36,23 @@ import static com.hezy.guide.phone.utils.ToastUtils.showToast;
  */
 
 public class WSService extends Service {
+    /** 服务是否已经创建 */
+    public static boolean serviceIsCreate = false;
     private Socket mSocket;
 
-
+    public static void actionStart(Context context) {
+        if (!WSService.serviceIsCreate) {
+            Intent intent = new Intent(context, WSService.class);
+            context.startService(intent);
+        }
+    }
+    public static void stopService(Context context){
+        if (WSService.serviceIsCreate) {
+            Intent intent = new Intent(context, WSService.class);
+            context.stopService(intent);
+            WSService.serviceIsCreate = false;
+        }
+    }
 
     @Nullable
     @Override

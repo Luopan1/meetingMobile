@@ -47,6 +47,13 @@ public class HeartService   extends Service{
             context.startService(heartService);
         }
     }
+    public static void stopService(Context context){
+        if (HeartService.serviceIsCreate) {
+            Intent heartService = new Intent(context, HeartService.class);
+            context.stopService(heartService);
+            HeartService.serviceIsCreate = false;
+        }
+    }
 
     @Nullable
     @Override
