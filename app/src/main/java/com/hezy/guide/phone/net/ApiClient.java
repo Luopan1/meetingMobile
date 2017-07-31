@@ -18,6 +18,7 @@ import java.util.Map;
 public class ApiClient {
 
     private static final String API_DOMAIN_NAME = BuildConfig.API_DOMAIN_NAME;
+    private static final String API_DOMAIN_NAME_YOYOTU = BuildConfig.API_DOMAIN_NAME_YOYOTU;
 
     private static final String URL_API_USER = "/liveapp/user";
 
@@ -53,6 +54,12 @@ public class ApiClient {
                 + "_" + Build.MODEL + ")");
 
         return params;
+    }
+
+    //获取全局配置信息接口
+    public static String getGlobalConfigurationInformation() {
+        String BabyHomeUrl = API_DOMAIN_NAME_YOYOTU + "/dz/app/config";
+        return BabyHomeUrl;
     }
 
     //  注册设备信息
@@ -104,10 +111,20 @@ public class ApiClient {
                 OkHttpUtil.getGson().toJson(params),callback,tag);
     }
 
-
+    /**
+     * 心跳加在线状态
+     * @param tag
+     * @param params
+     * @param callback
+     */
     public void requestUserExpostorState(Object tag, Map<String, String> params, OkHttpBaseCallback callback){
         okHttpUtil.getInstance().putJson(API_DOMAIN_NAME+"/osg/app/user/expostor/"+ Preferences.getUserId()+"/state"
                 ,getCommonHead(),OkHttpUtil.getGson().toJson(params),callback,tag);
+    }
+
+    public void requestQiniuToken(Object tag, OkHttpBaseCallback callback) {
+        //使用唷唷兔地址
+        okHttpUtil.getInstance().get(API_DOMAIN_NAME_YOYOTU+"/dz/resource/uploadtoken/image", tag,callback);
     }
 
 

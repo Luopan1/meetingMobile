@@ -125,6 +125,13 @@
                     android:padding="1dp"
                     tools:src="@color/green" />
 
+                <Button
+                    android:id="@+id/mBtnSavePhoto"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+
+                    />
+
 
             </RelativeLayout>
 

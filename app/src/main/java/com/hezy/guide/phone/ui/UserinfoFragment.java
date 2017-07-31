@@ -13,13 +13,17 @@ import com.hezy.guide.phone.BaseApplication;
 import com.hezy.guide.phone.R;
 import com.hezy.guide.phone.base.BaseDataBindingFragment;
 import com.hezy.guide.phone.databinding.UserinfoFragmentBinding;
+import com.hezy.guide.phone.entities.QiniuToken;
+import com.hezy.guide.phone.entities.base.BaseBean;
 import com.hezy.guide.phone.entities.base.BaseErrorBean;
 import com.hezy.guide.phone.event.UserState;
 import com.hezy.guide.phone.net.ApiClient;
 import com.hezy.guide.phone.net.OkHttpBaseCallback;
 import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.service.HeartService;
+import com.hezy.guide.phone.utils.LogUtils;
 import com.hezy.guide.phone.utils.RxBus;
+import com.hezy.guide.phone.utils.ToastUtils;
 import com.hezy.guide.phone.utils.helper.TakePhotoHelper;
 import com.jph.takephoto.app.TakePhoto;
 import com.jph.takephoto.app.TakePhotoImpl;
@@ -29,11 +33,20 @@ import com.jph.takephoto.model.TResult;
 import com.jph.takephoto.permission.InvokeListener;
 import com.jph.takephoto.permission.PermissionManager;
 import com.jph.takephoto.permission.TakePhotoInvocationHandler;
+import com.qiniu.android.http.ResponseInfo;
+import com.qiniu.android.storage.Configuration;
+import com.qiniu.android.storage.UpCompletionHandler;
+import com.qiniu.android.storage.UpProgressHandler;
+import com.qiniu.android.storage.UploadManager;
+import com.qiniu.android.storage.UploadOptions;
 import com.squareup.picasso.Picasso;
+
+import org.json.JSONObject;
 
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import rx.Subscription;
 import rx.functions.Action1;
@@ -49,6 +62,7 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
     private Subscription subscription;
     private InvokeParam invokeParam;
     private TakePhoto takePhoto;
+    private String imagePath;
 
     public static UserinfoFragment newInstance() {
         UserinfoFragment fragment = new UserinfoFragment();
@@ -157,6 +171,7 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
     protected void initListener() {
         mBinding.mIvPicture.setOnClickListener(this);
         mBinding.views.mTvState.setOnClickListener(this);
+        mBinding.mBtnSavePhoto.setOnClickListener(this);
     }
 
     private void setState(boolean isOnline) {
@@ -204,8 +219,8 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
                                 new ActionSheetDialog.OnSheetItemClickListener() {//
                                     @Override
                                     public void onClick(int which) {
-                                        HeartService.USER_SET_OFFLINE =false;
-                                        if(!HeartService.OffLineFlagStage){
+                                        HeartService.USER_SET_OFFLINE = false;
+                                        if (!HeartService.OffLineFlagStage) {
                                             setState(true);
                                         }
 
@@ -215,11 +230,14 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
                                 new ActionSheetDialog.OnSheetItemClickListener() {//
                                     @Override
                                     public void onClick(int which) {
-                                        HeartService.USER_SET_OFFLINE =true;
+                                        HeartService.USER_SET_OFFLINE = true;
                                         setState(false);
                                     }
                                 }).show();
-
+                break;
+            case R.id.mBtnSavePhoto:
+                uploadImage();
+                break;
 
         }
     }
@@ -257,7 +275,76 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
 
     @Override
     public void takeSuccess(TResult result) {
-        Log.i(TAG, "takeSuccess：" + result.getImage().getCompressPath());
+        Log.i(TAG, "takeSuccess：" + result.getImage().getOriginalPath());
+        imagePath = result.getImage().getOriginalPath();
+        Picasso.with(BaseApplication.getInstance()).load("file:" + imagePath).into(mBinding.mIvPicture);
+        uploadImage();
+    }
+
+    private void uploadImage() {
+        ApiClient.getInstance().requestQiniuToken(this, new OkHttpBaseCallback<BaseBean<QiniuToken>>() {
+
+            @Override
+            public void onSuccess(BaseBean<QiniuToken> result) {
+                String token = result.getData().getToken();
+                if (TextUtils.isEmpty(token)) {
+                    showToast("七牛token获取错误");
+                    return;
+                }
+                Configuration config = new Configuration.Builder().connectTimeout(5).responseTimeout(5).build();
+                UploadManager uploadManager = new UploadManager(config);
+                uploadManager.put(
+                        new File(imagePath),
+                        "osg/user/expostor/photo/" + UUID.randomUUID().toString().replace("-", "") + ".jpg",
+                        token,
+                        new UpCompletionHandler() {
+                            @Override
+                            public void complete(String key, ResponseInfo info, JSONObject response) {
+                                if (info.isNetworkBroken() || info.isServerError()) {
+                                    showToast("上传失败");
+                                    return;
+                                }
+                                if (info.isOK()) {
+                                    relate(key);
+                                } else {
+                                    showToast("上传失败");
+                                }
+                            }
+                        },
+                        new UploadOptions(null, null, true, new UpProgressHandler() {
+                            @Override
+                            public void progress(final String key, final double percent) {
+//                                NumberFormat nf = NumberFormat.getPercentInstance();
+//                                nf.setMinimumFractionDigits(0);
+//                                nf.setRoundingMode(RoundingMode.HALF_UP);
+//                                String rates = nf.format(percent);
+//                                uploadPercentText.setText(rates);
+//                                progressBar.setProgress((int) (percent * 100));
+                            }
+
+                        }, null));
+
+            }
+        });
+    }
+
+
+
+    private void relate(String key) {
+        LogUtils.i(TAG, "key " + key);
+        final String str = key;
+        if ((!TextUtils.isEmpty(str)) && !Preferences.getUserMobile().equals(str)) {
+            Map<String, String> params = new HashMap<>();
+            params.put("photo", Preferences.getImgUrl()+ str); //服务器存储全路径
+            ApiClient.getInstance().requestUserExpostor(this, params, new OkHttpBaseCallback<BaseErrorBean>() {
+                @Override
+                public void onSuccess(BaseErrorBean entity) {
+                    Preferences.setUserPhoto(Preferences.getImgUrl()+ str);
+                    ToastUtils.showToast("保存照片成功");
+                }
+            });
+        }
+
     }
 
     @Override
@@ -270,6 +357,7 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
         Log.i(TAG, getResources().getString(R.string.msg_operation_canceled));
     }
 
+
     @Override
     public PermissionManager.TPermissionType invoke(InvokeParam invokeParam) {
         PermissionManager.TPermissionType type = PermissionManager.checkPermission(TContextWrap.of(this), invokeParam.getMethod());
@@ -278,6 +366,7 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
         }
         return type;
     }
+
 
     @Override
     public void onDestroy() {

@@ -17,12 +17,21 @@ public class TakePhotoHelper {
         takePhoto.onEnableCompress(config, true);
     }
 
-    public static CropOptions getCropOptions() {//是否裁剪
+//    public static CropOptions getCropOptions() {//是否裁剪
+//        int height = 800;
+//        int width = 800;
+//        CropOptions.Builder builder = new CropOptions.Builder();
+//        builder.setAspectX(width).setAspectY(height);
+//        builder.setWithOwnCrop(true);//使用第三方裁剪库
+//        return builder.create();
+//    }
+
+    public static CropOptions getCropOptions() {
         int height = 800;
         int width = 800;
         CropOptions.Builder builder = new CropOptions.Builder();
         builder.setAspectX(width).setAspectY(height);
-        builder.setWithOwnCrop(false);//使用第三方裁剪库
+        builder.setWithOwnCrop(true);
         return builder.create();
     }
 
