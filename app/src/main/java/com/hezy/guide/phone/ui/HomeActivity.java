@@ -9,7 +9,6 @@ import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.widget.Toast;
 
 import com.hezy.guide.phone.BuildConfig;
@@ -33,19 +32,20 @@ import java.util.ArrayList;
 import me.kaelaela.verticalviewpager.transforms.DefaultTransformer;
 
 
-/**主页
+/**
+ * 主页
  * Created by wufan on 2017/7/24.
  */
 
-public class HomeActivity extends BaseDataBindingActivity<HomeActivityBinding>{
+public class HomeActivity extends BaseDataBindingActivity<HomeActivityBinding> {
     private HomePagerAdapter mHomePagerAdapter;
     private ArrayList<Fragment> mFragments;
 
 
-    public static void actionStart(Context  context) {
-         Intent intent = new Intent(context, HomeActivity.class);
-         context.startActivity(intent);
-     }
+    public static void actionStart(Context context) {
+        Intent intent = new Intent(context, HomeActivity.class);
+        context.startActivity(intent);
+    }
 
     @Override
     protected int initContentView() {
@@ -62,7 +62,6 @@ public class HomeActivity extends BaseDataBindingActivity<HomeActivityBinding>{
 
 
         mBinding.mVerticalViewPager.setPageTransformer(false, new DefaultTransformer());
-
 
 
     }
@@ -120,11 +119,11 @@ public class HomeActivity extends BaseDataBindingActivity<HomeActivityBinding>{
                 params.put("androidDeviceId", tm != null ? tm.getDeviceId() : "");
                 params.put("buildSerial", Build.SERIAL);
                 params.put("source", 2);
-                ApiClient.getInstance().deviceRegister(this,params.toString(),registerDeviceCb);
+                ApiClient.getInstance().deviceRegister(this, params.toString(), registerDeviceCb);
                 msg.append("client.deviceRegister call");
             } catch (JSONException e) {
                 e.printStackTrace();
-                msg.append("registerDevice error jsonObject.put e.getMessage() = "+e.getMessage());
+                msg.append("registerDevice error jsonObject.put e.getMessage() = " + e.getMessage());
             }
 
         }
@@ -142,20 +141,32 @@ public class HomeActivity extends BaseDataBindingActivity<HomeActivityBinding>{
 
     private long mExitTime = 0;
     private long mLastKeyDownTime = 0;
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if ((System.currentTimeMillis() - mExitTime) > 2000) {//
-                // 如果两次按键时间间隔大于2000毫秒，则不退出
-                Toast.makeText(this, "再按一次退出在线导购", Toast.LENGTH_SHORT).show();
-                mExitTime = System.currentTimeMillis();// 更新mExitTime
-            } else {
-                quit(); // 否则退出程序
-            }
-            return true;
-        }
-        return super.onKeyDown(keyCode, event);
 
+//    @Override
+//    public boolean onKeyDown(int keyCode, KeyEvent event) {
+//        if (keyCode == KeyEvent.KEYCODE_BACK) {
+//            if ((System.currentTimeMillis() - mExitTime) > 2000) {//
+//                // 如果两次按键时间间隔大于2000毫秒，则不退出
+//                Toast.makeText(this, "再按一次退出在线导购", Toast.LENGTH_SHORT).show();
+//                mExitTime = System.currentTimeMillis();// 更新mExitTime
+//            } else {
+//                quit(); // 否则退出程序
+//            }
+//            return true;
+//        }
+//        return super.onKeyDown(keyCode, event);
+//
+//    }
+
+    @Override
+    public void onBackPressed() {
+        if ((System.currentTimeMillis() - mExitTime) > 2000) {//
+            // 如果两次按键时间间隔大于2000毫秒，则不退出
+            Toast.makeText(this, "再按一次退出在线导购", Toast.LENGTH_SHORT).show();
+            mExitTime = System.currentTimeMillis();// 更新mExitTime
+        } else {
+            quit(); // 否则退出程序
+        }
     }
 
     private void quit() {

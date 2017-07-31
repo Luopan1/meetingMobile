@@ -46,8 +46,11 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
 
     @Override
     protected void initView() {
-        if (Preferences.isLogin())
+        if (Preferences.isLogin()){
             HomeActivity.actionStart(mContext);
+            finish();
+        }
+
         reToWx();
         mWxApi.handleIntent(getIntent(), this);
 
@@ -83,7 +86,7 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
         String app_id = BuildConfig.WEIXIN_APP_ID;
         Log.i(TAG, "Login BuildConfig.WEIXIN_APP_ID " + app_id);
         //AppConst.WEIXIN.APP_ID是指你应用在微信开放平台上的AppID，记得替换。
-        mWxApi = WXAPIFactory.createWXAPI(this, app_id, false);
+        mWxApi = WXAPIFactory.createWXAPI(this.getApplicationContext(), app_id, false);
         // 将该app注册到微信
         mWxApi.registerApp(app_id);
     }
@@ -189,6 +192,7 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
                     Preferences.setUserSignature(user.getSignature());
                     HomeActivity.actionStart(mContext);
                     RxBus.sendMessage(new FinishWX());
+                    finish();
                 }
 
 
@@ -201,6 +205,7 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
     @Override
     public void onDestroy() {
         subscription.unsubscribe();
+        mWxApi.detach();
         super.onDestroy();
     }
 
