@@ -24,7 +24,7 @@ public class BaseApplication extends Application {
     public static final String TAG = "BaseApplication";
     private static BaseApplication instance;
     private Socket mSocket;
-    private static String WS_URL = "http://nettytest.haierzhongyou.com:3000/device";
+    private static String WS_URL = "http://nettytest.haierzhongyou.com:3000/sales";
 
 
     @Override
@@ -54,7 +54,7 @@ public class BaseApplication extends Application {
         // 如果已经在AndroidManifest.xml配置了App ID和渠道ID，调用TCAgent.init(this)即可；或与AndroidManifest.xml中的对应参数保持一致。
         TCAgent.setReportUncaughtExceptions(true);
 
-        getBabyHomeDate();
+        requestGlobalConfig();
     }
 
     public static BaseApplication getInstance() {
@@ -114,7 +114,7 @@ public class BaseApplication extends Application {
         return mSocket;
     }
 
-    private void getBabyHomeDate() {
+    private void requestGlobalConfig() {
         String url = ApiClient.getGlobalConfigurationInformation();
 
         OkHttpUtil.getInstance().get(url, this, new OkHttpBaseCallback<GlobalConfigurationInformation>() {

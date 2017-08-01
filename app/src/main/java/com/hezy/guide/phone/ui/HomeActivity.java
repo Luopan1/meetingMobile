@@ -18,7 +18,6 @@ import com.hezy.guide.phone.databinding.HomeActivityBinding;
 import com.hezy.guide.phone.entities.base.BaseBean;
 import com.hezy.guide.phone.net.ApiClient;
 import com.hezy.guide.phone.net.OkHttpBaseCallback;
-import com.hezy.guide.phone.service.HeartService;
 import com.hezy.guide.phone.service.WSService;
 import com.hezy.guide.phone.utils.Installation;
 import com.hezy.guide.phone.utils.LogUtils;
@@ -57,7 +56,7 @@ public class HomeActivity extends BaseDataBindingActivity<HomeActivityBinding> {
 //        mBinding.mVerticalViewPager.setPageTransformer(true, new VerticalTransformer());
 //        mBinding.mVerticalViewPager.setOverScrollMode(OVER_SCROLL_NEVER);
         //登录才能进入主页,启动心跳
-        HeartService.actionStart(mContext);
+//        HeartService.actionStart(mContext);
         WSService.actionStart(mContext);
 
 
@@ -170,7 +169,8 @@ public class HomeActivity extends BaseDataBindingActivity<HomeActivityBinding> {
     }
 
     private void quit() {
-        HeartService.stopService(this);
+//        HeartService.stopService(this);
+        WSService.stopService(this);
         finish();
         System.exit(0);
     }

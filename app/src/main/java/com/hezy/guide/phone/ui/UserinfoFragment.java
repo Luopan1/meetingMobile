@@ -16,11 +16,12 @@ import com.hezy.guide.phone.databinding.UserinfoFragmentBinding;
 import com.hezy.guide.phone.entities.QiniuToken;
 import com.hezy.guide.phone.entities.base.BaseBean;
 import com.hezy.guide.phone.entities.base.BaseErrorBean;
-import com.hezy.guide.phone.event.UserState;
+import com.hezy.guide.phone.event.SetUserStateEvent;
+import com.hezy.guide.phone.event.UserStateEvent;
 import com.hezy.guide.phone.net.ApiClient;
 import com.hezy.guide.phone.net.OkHttpBaseCallback;
 import com.hezy.guide.phone.persistence.Preferences;
-import com.hezy.guide.phone.service.HeartService;
+import com.hezy.guide.phone.service.WSService;
 import com.hezy.guide.phone.utils.LogUtils;
 import com.hezy.guide.phone.utils.RxBus;
 import com.hezy.guide.phone.utils.ToastUtils;
@@ -178,13 +179,14 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
         }
 
 
-        setState(HeartService.isOnline());
+        setState(WSService.SOCKET_ONLINE);
 
         subscription = RxBus.handleMessage(new Action1() {
             @Override
             public void call(Object o) {
-                if (o instanceof UserState) {
-                    setState(HeartService.isOnline());
+                if (o instanceof UserStateEvent) {
+
+                    setState(WSService.SOCKET_ONLINE);
                 }
             }
         });
@@ -242,10 +244,13 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
                                 new ActionSheetDialog.OnSheetItemClickListener() {//
                                     @Override
                                     public void onClick(int which) {
-                                        HeartService.USER_SET_OFFLINE = false;
-                                        if (!HeartService.OffLineFlagStage) {
-                                            setState(true);
+                                        if (!WSService.SOCKET_ONLINE) {
+                                            //当前状态离线,可切换在线
+                                            Log.i(TAG,"当前状态离线,可切换在线");
+                                            RxBus.sendMessage(new SetUserStateEvent(true));
                                         }
+
+
 
                                     }
                                 })
@@ -253,8 +258,12 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
                                 new ActionSheetDialog.OnSheetItemClickListener() {//
                                     @Override
                                     public void onClick(int which) {
-                                        HeartService.USER_SET_OFFLINE = true;
-                                        setState(false);
+                                        if (WSService.SOCKET_ONLINE) {
+                                            //当前状态在线,可切换离线
+                                            Log.i(TAG,"当前状态在线,可切换离线");
+                                            WSService.SOCKET_ONLINE =false;
+                                            setState(false);
+                                        }
                                     }
                                 }).show();
                 break;

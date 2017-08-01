@@ -8,7 +8,7 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 
 import com.hezy.guide.phone.entities.base.BaseErrorBean;
-import com.hezy.guide.phone.event.UserState;
+import com.hezy.guide.phone.event.UserStateEvent;
 import com.hezy.guide.phone.net.ApiClient;
 import com.hezy.guide.phone.net.OkHttpBaseCallback;
 import com.hezy.guide.phone.net.OkHttpUtil;
@@ -20,9 +20,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**心跳服务
+ * 废弃,在线状态维护完全使用socket,WSService服务
  * Created by wufan on 2017/7/27.
  */
 
+@Deprecated
 public class HeartService   extends Service{
     public final String TAG = "HeartService";
     private Handler handler = new Handler();
@@ -102,7 +104,7 @@ public class HeartService   extends Service{
                 //用户设置为在线,心跳为离线,通知改变为在线
                 LogUtils.i(TAG,"心跳成功,用户设置为在线,旧状态心跳为离线,通知改变为在线");
                 ToastUtils.showToast("心跳成功,用户设置为在线,旧状态心跳为离线,通知改变为在线");
-                RxBus.sendMessage(new UserState());
+                RxBus.sendMessage(new UserStateEvent());
             }
             OffLineFlagStage = false;
         }
@@ -115,7 +117,7 @@ public class HeartService   extends Service{
                 //用户设置为在线,心跳为离线,通知改变为在线
                 LogUtils.i(TAG,"心跳失败,用户设置为在线,旧状态心跳为在线,通知改变为离线");
                 ToastUtils.showToast("心跳失败,用户设置为在线,旧状态心跳为在线,通知改变为离线");
-                RxBus.sendMessage(new UserState());
+                RxBus.sendMessage(new UserStateEvent());
             }
             OffLineFlagStage = true;
         }
