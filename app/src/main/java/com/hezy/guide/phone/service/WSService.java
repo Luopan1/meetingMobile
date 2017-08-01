@@ -14,7 +14,6 @@ import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 
-import com.hezy.guide.phone.BaseApplication;
 import com.hezy.guide.phone.BuildConfig;
 import com.hezy.guide.phone.entities.base.BaseBean;
 import com.hezy.guide.phone.event.SetUserStateEvent;
@@ -30,6 +29,9 @@ import com.hezy.guide.phone.utils.UUIDUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.URISyntaxException;
+
+import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 import rx.Subscription;
@@ -48,6 +50,7 @@ public class WSService extends Service {
      * 服务是否已经创建
      */
     public static boolean serviceIsCreate = false;
+    private static String WS_URL = "http://nettytest.haierzhongyou.com:3000/sales";
     /**
      * 是否已离线
      */
@@ -166,18 +169,25 @@ public class WSService extends Service {
     };
 
     private void connectSocket() {
-        BaseApplication app = (BaseApplication) getApplication();
-        mSocket = app.getSocket();
-        mSocket.connect();
+        Log.i(TAG,"connectSocket");
+        try {
+            mSocket = IO.socket(WS_URL);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+//        BaseApplication app = (BaseApplication) getApplication();
+//        mSocket = app.getSocket();
         mSocket.on(Socket.EVENT_CONNECT, onConnect);
         mSocket.on(Socket.EVENT_DISCONNECT, onDisconnect);
         mSocket.on(Socket.EVENT_CONNECT_ERROR, onConnectError);
         mSocket.on(Socket.EVENT_CONNECT_TIMEOUT, onConnectError);
         mSocket.on("LISTEN_SOCKET_ID", onUserJoined);
+        mSocket.connect();
 
     }
 
     private void disConnectSocket() {
+        Log.i(TAG,"disConnectSocket");
         mSocket.disconnect();
         mSocket.off(Socket.EVENT_CONNECT, onConnect);
         mSocket.off(Socket.EVENT_DISCONNECT, onDisconnect);
