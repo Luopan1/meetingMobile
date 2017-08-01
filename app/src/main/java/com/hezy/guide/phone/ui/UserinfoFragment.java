@@ -83,6 +83,7 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
         mBinding.mEtPhone.setText(Preferences.getUserMobile());
         mBinding.mEtAddress.setText(Preferences.getUserAddress());
         mBinding.mEtSignature.setText(Preferences.getUserSignature());
+        mBinding.mEtAddress.setText(Preferences.getUserAddress());
         if (!TextUtils.isEmpty(Preferences.getUserPhoto())) {
             Picasso.with(BaseApplication.getInstance()).load(Preferences.getUserPhoto()).into(mBinding.mIvPicture);
         }
@@ -128,6 +129,28 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
                 }
             }
         });
+
+        mBinding.mEtAddress.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    //失去焦点提交请求
+                    final String str = mBinding.mEtAddress.getText().toString();
+                    if ((!TextUtils.isEmpty(str)) && !Preferences.getUserAddress().equals(str)) {
+                        Map<String, String> params = new HashMap<>();
+                        params.put("address", str);
+                        ApiClient.getInstance().requestUserExpostor(this, params, new OkHttpBaseCallback<BaseErrorBean>() {
+                            @Override
+                            public void onSuccess(BaseErrorBean entity) {
+                                Preferences.setUserAddress(str);
+                            }
+
+                        });
+                    }
+                }
+            }
+        });
+
 
         mBinding.mEtSignature.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
