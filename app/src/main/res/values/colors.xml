@@ -32,4 +32,11 @@
     <color name="hint_b985e2">#b985e2</color>
     <color name="text_gray_909090">#909090</color>
     <color name="text_yellow_ff9c00">#ff9c00</color>
+
+
+    <!--下载相关颜色-->
+    <color name="yellow_ffe539">#FFE539</color>
+    <color name="gray_babdee">#BABDEE</color>
+    <color name="gray_xxxx">#5f636d</color>
+    <!--下载相关颜色-->
 </resources>

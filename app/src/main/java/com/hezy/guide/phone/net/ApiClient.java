@@ -5,6 +5,10 @@ import android.text.TextUtils;
 
 import com.hezy.guide.phone.BaseApplication;
 import com.hezy.guide.phone.BuildConfig;
+import com.hezy.guide.phone.Constant;
+import com.hezy.guide.phone.entities.RecordTotal;
+import com.hezy.guide.phone.entities.Version;
+import com.hezy.guide.phone.entities.base.BaseBean;
 import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.utils.UUIDUtils;
 import com.tendcloud.tenddata.TCAgent;
@@ -54,6 +58,12 @@ public class ApiClient {
                 + "_" + Build.MODEL + ")");
 
         return params;
+    }
+
+
+    //  软件更新
+    public void versionCheck(Object tag , OkHttpBaseCallback<BaseBean<Version>>callback) {
+        OkHttpUtil.getInstance().get(Constant.VERSION_UPDATE_URL,tag,  callback);
     }
 
     //获取全局配置信息接口
@@ -122,10 +132,25 @@ public class ApiClient {
                 ,getCommonHead(),OkHttpUtil.getGson().toJson(params),callback,tag);
     }
 
+    /**
+     * 获取七牛图片上传token
+     * @param tag
+     * @param callback
+     */
     public void requestQiniuToken(Object tag, OkHttpBaseCallback callback) {
         //使用唷唷兔地址
         okHttpUtil.getInstance().get(API_DOMAIN_NAME_YOYOTU+"/dz/resource/uploadtoken/image", tag,callback);
     }
 
+    /**
+     * 获取导购通话时间
+     * @param tag
+     * @param callback
+     */
+    public void requestRecordTotal(Object tag, OkHttpBaseCallback<BaseBean<RecordTotal>> callback) {
+        //使用唷唷兔地址
+        String userId = Preferences.getUserId();
+        okHttpUtil.getInstance().get(API_DOMAIN_NAME+"GET /osg/app/call/expostor/"+userId+"/record/total", tag,callback);
+    }
 
 }

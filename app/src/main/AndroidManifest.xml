@@ -62,6 +62,8 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".ui.UpdateDownloadActivity" />
+
         <!--主页-->
         <activity
             android:name=".ui.HomeActivity"

@@ -67,6 +67,8 @@ android {
         }
     }
 
+    useLibrary 'org.apache.http.legacy'
+
     dataBinding {
         enabled = true
     }
@@ -138,7 +140,8 @@ dependencies {
 
     compile 'com.squareup.okhttp3:okhttp:3.8.1'
     compile 'com.squareup.okhttp3:logging-interceptor:3.8.1'
-    compile 'com.google.code.gson:gson:2.8.1'
+    //andbase中有
+//    compile 'com.google.code.gson:gson:2.8.1'
 
     //图片加载
     compile 'com.squareup.picasso:picasso:2.5.2'
@@ -170,5 +173,7 @@ dependencies {
     }
     //七牛云存储
     compile 'com.qiniu:qiniu-android-sdk:7.3.+'
+    //fastjson
+    compile 'com.alibaba:fastjson:1.2.32'
 
 }

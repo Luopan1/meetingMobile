@@ -22,4 +22,15 @@
     <!--公共复用-->
     <string name="network_err_toast">网络异常,请检查网络配置</string>
 
+
+    <!--下载相关-->
+    <string name="not_download">未下载</string>
+    <string name="action_download">下载</string>
+    <string name="app_storage_show">下载和运行空间不足，请先清理系统空间！</string>
+    <!--下载相关-->
+
+
+    <string name="sure">确定</string>
+    <string name="cancel">取消</string>
+
 </resources>

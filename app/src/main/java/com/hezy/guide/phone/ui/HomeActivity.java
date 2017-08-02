@@ -15,6 +15,7 @@ import com.hezy.guide.phone.BuildConfig;
 import com.hezy.guide.phone.R;
 import com.hezy.guide.phone.base.BaseDataBindingActivity;
 import com.hezy.guide.phone.databinding.HomeActivityBinding;
+import com.hezy.guide.phone.entities.Version;
 import com.hezy.guide.phone.entities.base.BaseBean;
 import com.hezy.guide.phone.net.ApiClient;
 import com.hezy.guide.phone.net.OkHttpBaseCallback;
@@ -67,6 +68,7 @@ public class HomeActivity extends BaseDataBindingActivity<HomeActivityBinding> {
 
     @Override
     protected void requestData() {
+        versionCheck();
         registerDevice();
     }
 
@@ -78,6 +80,21 @@ public class HomeActivity extends BaseDataBindingActivity<HomeActivityBinding> {
         mFragments.add(GuideLogFragment.newInstance());
         mHomePagerAdapter.setData(mFragments);
         mBinding.mVerticalViewPager.setAdapter(mHomePagerAdapter);
+    }
+
+
+    private void versionCheck(){
+        ApiClient.getInstance().versionCheck(this, new OkHttpBaseCallback<BaseBean<Version>>() {
+            @Override
+            public void onSuccess(BaseBean<Version> entity) {
+                Version version = entity.getData();
+                if (version.getImportance() != 1 && version.getImportance() != 2) {
+                    startActivity(new Intent(mContext, UpdateDownloadActivity.class).putExtra("version", version));
+                }
+
+
+            }
+        });
     }
 
     /**
