@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="w"
+    android:orientation="horizontal">
+
+    <!--线条部分-->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingLeft="30dp">
+
+        <View
+            android:layout_width="3dp"
+            android:layout_height="20dp"
+            android:background="#CBCBCB" />
+
+        <ImageView
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:background="@drawable/time_cycle" />
+
+        <View
+            android:layout_width="3dp"
+            android:layout_height="40dp"
+            android:background="#CBCBCB" />
+    </LinearLayout>
+
+</LinearLayout>
