@@ -211,6 +211,7 @@ public class WSService extends Service {
         mSocket.off(Socket.EVENT_CONNECT_TIMEOUT, onConnectError);
         mSocket.off("user joined", onUserJoined);
         mSocket.off("ON_CALL", onCall);
+
     }
 
     private Emitter.Listener onConnect = new Emitter.Listener() {
@@ -227,11 +228,11 @@ public class WSService extends Service {
                 }
             });
 
-            //
             try {
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put( "salesId", Preferences.getUserId());
                 mSocket.emit( "SALES_ONLINE_WITH_STATUS", jsonObject );
+                LogUtils.i(TAG,"emit SALES_ONLINE_WITH_STATUS salesId "+Preferences.getUserId());
             } catch ( JSONException e ) {
                 e.printStackTrace();
             }
@@ -244,6 +245,7 @@ public class WSService extends Service {
     private Emitter.Listener onDisconnect = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
+            SOCKET_ONLINE = false;
             Log.i("wsserver", "diconnected");
         }
     };
@@ -251,6 +253,7 @@ public class WSService extends Service {
     private Emitter.Listener onConnectError = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
+            SOCKET_ONLINE = false;
             Log.e("wsserver", "Error connecting");
         }
     };
