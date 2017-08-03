@@ -10,6 +10,8 @@ import com.hezy.guide.phone.databinding.OnCallActivityBinding;
 import com.hezy.guide.phone.event.CallEvent;
 import com.hezy.guide.phone.utils.RxBus;
 
+import io.agora.openvcall.ui.MainActivity;
+
 /**
  * Created by wufan on 2017/8/3.
  */
@@ -56,6 +58,9 @@ public class OnCallActivity extends BaseDataBindingActivity<OnCallActivityBindin
         switch (v.getId()) {
             case R.id.mIvAccept:
                 RxBus.sendMessage(new CallEvent(true,tvSocketId));
+                Intent intent = new Intent(mContext, MainActivity.class);
+                intent.putExtra("channelId", channelId);
+                startActivity(intent);
                 break;
             case R.id.mIvReject:
                 RxBus.sendMessage(new CallEvent(false,tvSocketId));
