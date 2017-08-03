@@ -1,5 +1,6 @@
 package com.hezy.guide.phone.ui;
 
+import android.support.v7.widget.LinearLayoutManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -9,10 +10,16 @@ import com.hezy.guide.phone.BaseApplication;
 import com.hezy.guide.phone.R;
 import com.hezy.guide.phone.base.BaseDataBindingFragment;
 import com.hezy.guide.phone.databinding.GuideLogFragmentBinding;
+import com.hezy.guide.phone.entities.RecordData;
+import com.hezy.guide.phone.entities.RecordTotal;
+import com.hezy.guide.phone.entities.base.BaseBean;
 import com.hezy.guide.phone.event.SetUserStateEvent;
 import com.hezy.guide.phone.event.UserStateEvent;
+import com.hezy.guide.phone.net.ApiClient;
+import com.hezy.guide.phone.net.OkHttpBaseCallback;
 import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.service.WSService;
+import com.hezy.guide.phone.ui.adapter.GuideLogAdapter2;
 import com.hezy.guide.phone.utils.RxBus;
 import com.squareup.picasso.Picasso;
 
@@ -26,6 +33,8 @@ import rx.functions.Action1;
 public class GuideLogFragment extends BaseDataBindingFragment<GuideLogFragmentBinding> {
 
     private Subscription subscription;
+    private LinearLayoutManager mLayoutManager;
+    private GuideLogAdapter2 mAdapter;
 
     public static GuideLogFragment newInstance() {
         GuideLogFragment fragment = new GuideLogFragment();
@@ -57,9 +66,47 @@ public class GuideLogFragment extends BaseDataBindingFragment<GuideLogFragmentBi
     }
 
     @Override
+    protected void initAdapter() {
+        mAdapter = new GuideLogAdapter2(mContext);
+
+        //设置布局管理器
+        mLayoutManager = new LinearLayoutManager(mContext);
+        mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        mBinding.mRecyclerView.setLayoutManager(mLayoutManager);
+        mBinding.mRecyclerView.setAdapter(mAdapter);
+
+    }
+
+    @Override
     protected void initListener() {
         mBinding.views.mIvHead.setOnClickListener(this);
         mBinding.views.mTvState.setOnClickListener(this);
+    }
+
+    @Override
+    protected void requestData() {
+        requestRecordTotal();
+        requestRecord();
+    }
+
+    private void requestRecordTotal(){
+        ApiClient.getInstance().requestRecordTotal(this, new OkHttpBaseCallback<BaseBean<RecordTotal>>() {
+            @Override
+            public void onSuccess(BaseBean<RecordTotal> entity) {
+                String time = String.valueOf(entity.getData().getTotal());
+                mBinding.views.mTvTime.setText(time);
+            }
+        });
+    }
+
+    private void requestRecord(){
+        ApiClient.getInstance().requestRecord(this, new OkHttpBaseCallback<BaseBean<RecordData>>() {
+            @Override
+            public void onSuccess(BaseBean<RecordData> entity) {
+                mAdapter.setData(entity.getData().getPageData());
+                mAdapter.notifyDataSetChanged();
+            }
+        });
     }
 
 

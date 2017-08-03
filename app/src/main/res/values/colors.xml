@@ -31,6 +31,7 @@
     <color name="purple_811fcd">#811fcd</color>
     <color name="hint_b985e2">#b985e2</color>
     <color name="text_gray_909090">#909090</color>
+    <color name="bg_gray_909090">#909090</color>
     <color name="text_yellow_ff9c00">#ff9c00</color>
 
 
@@ -39,4 +40,11 @@
     <color name="gray_babdee">#BABDEE</color>
     <color name="gray_xxxx">#5f636d</color>
     <!--下载相关颜色-->
+
+    <color name="line_gray_d8d8d8">#d8d8d8</color>
+    <color name="text_purple_9150c3">#9150c3</color>
+    <color name="text_black_434343">#434343</color>
+    <color name="bg_purple_ad97e7">#ad97e7</color>
+    <color name="bg_gray_e8e8e8">#e8e8e8</color>
+
 </resources>

@@ -82,6 +82,8 @@
         <activity android:name="io.agora.openvcall.ui.MainActivity"
             android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale" />
 
+        <activity android:name=".ui.OnCallActivity"/>
+
         <!--服务开始-->
         <service android:name=".service.HeartService" />
         <service android:name=".service.WSService" />

@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import com.hezy.guide.phone.BaseApplication;
 import com.hezy.guide.phone.BuildConfig;
 import com.hezy.guide.phone.Constant;
+import com.hezy.guide.phone.entities.RecordData;
 import com.hezy.guide.phone.entities.RecordTotal;
 import com.hezy.guide.phone.entities.Version;
 import com.hezy.guide.phone.entities.base.BaseBean;
@@ -150,7 +151,18 @@ public class ApiClient {
     public void requestRecordTotal(Object tag, OkHttpBaseCallback<BaseBean<RecordTotal>> callback) {
         //使用唷唷兔地址
         String userId = Preferences.getUserId();
-        okHttpUtil.getInstance().get(API_DOMAIN_NAME+"GET /osg/app/call/expostor/"+userId+"/record/total", tag,callback);
+        okHttpUtil.getInstance().get(API_DOMAIN_NAME+"/osg/app/call/expostor/"+userId+"/record/total",getCommonHead(),null,callback, tag);
+    }
+
+    /**
+     * 获取导购通话记录
+     * @param tag
+     * @param callback
+     */
+    public void requestRecord(Object tag, OkHttpBaseCallback<BaseBean<RecordData>> callback) {
+        //使用唷唷兔地址
+        String userId = Preferences.getUserId();
+        okHttpUtil.getInstance().get(API_DOMAIN_NAME+"/osg/app/call/expostor/"+userId+"/record",getCommonHead(),null,callback,tag);
     }
 
 }

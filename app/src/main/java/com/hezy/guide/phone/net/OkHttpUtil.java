@@ -165,6 +165,12 @@ public class OkHttpUtil {
         request(request, callback);
     }
 
+
+    public void get(String url, Map<String, String> headers, Map<String, String> params, OkHttpCallback callback,Object tag) {
+        Request request = buildRequest(jointUrl(url, params), headers, null, null, HttpMethodType.GET,tag);
+        request(request, callback);
+    }
+
     public void post(String url, Map<String, String> headers, Map<String, String> params, OkHttpCallback callback) {
         Request request = buildRequest(url, headers, params,null, HttpMethodType.POST);
         request(request, callback);

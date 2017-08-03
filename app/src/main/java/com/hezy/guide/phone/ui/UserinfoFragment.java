@@ -14,6 +14,7 @@ import com.hezy.guide.phone.R;
 import com.hezy.guide.phone.base.BaseDataBindingFragment;
 import com.hezy.guide.phone.databinding.UserinfoFragmentBinding;
 import com.hezy.guide.phone.entities.QiniuToken;
+import com.hezy.guide.phone.entities.RecordTotal;
 import com.hezy.guide.phone.entities.base.BaseBean;
 import com.hezy.guide.phone.entities.base.BaseErrorBean;
 import com.hezy.guide.phone.event.SetUserStateEvent;
@@ -197,6 +198,21 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
         mBinding.mIvPicture.setOnClickListener(this);
         mBinding.views.mTvState.setOnClickListener(this);
         mBinding.mBtnSavePhoto.setOnClickListener(this);
+    }
+
+    @Override
+    protected void requestData() {
+        requestRecordTotal();
+    }
+
+    private void requestRecordTotal(){
+        ApiClient.getInstance().requestRecordTotal(this, new OkHttpBaseCallback<BaseBean<RecordTotal>>() {
+            @Override
+            public void onSuccess(BaseBean<RecordTotal> entity) {
+                String time = String.valueOf(entity.getData().getTotal());
+                mBinding.views.mTvTime.setText(time);
+            }
+        });
     }
 
     private void setState(boolean isOnline) {

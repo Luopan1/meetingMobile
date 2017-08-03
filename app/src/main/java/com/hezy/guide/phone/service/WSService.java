@@ -16,11 +16,14 @@ import android.util.Log;
 
 import com.hezy.guide.phone.BuildConfig;
 import com.hezy.guide.phone.entities.base.BaseBean;
+import com.hezy.guide.phone.event.CallEvent;
 import com.hezy.guide.phone.event.SetUserStateEvent;
 import com.hezy.guide.phone.event.UserStateEvent;
 import com.hezy.guide.phone.net.ApiClient;
 import com.hezy.guide.phone.net.OkHttpBaseCallback;
 import com.hezy.guide.phone.net.OkHttpUtil;
+import com.hezy.guide.phone.persistence.Preferences;
+import com.hezy.guide.phone.ui.OnCallActivity;
 import com.hezy.guide.phone.utils.Installation;
 import com.hezy.guide.phone.utils.LogUtils;
 import com.hezy.guide.phone.utils.RxBus;
@@ -98,6 +101,18 @@ public class WSService extends Service {
                         connectSocket();
                     } else {
                         disConnectSocket();
+                    }
+
+                }else if (o instanceof CallEvent){
+                    CallEvent event = (CallEvent) o;
+                    try {
+                        JSONObject jsonObject = new JSONObject();
+                        jsonObject.put( "tvSocketId", event.getTvSocketId());
+                        jsonObject.put( "reply ", event.isCall() ?  1: 0);
+                        mSocket.emit( "REPLY_TV", jsonObject );
+                        Log.i(TAG,jsonObject.toString());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
 
                 }
@@ -182,6 +197,7 @@ public class WSService extends Service {
         mSocket.on(Socket.EVENT_CONNECT_ERROR, onConnectError);
         mSocket.on(Socket.EVENT_CONNECT_TIMEOUT, onConnectError);
         mSocket.on("LISTEN_SOCKET_ID", onUserJoined);
+        mSocket.off("ON_CALL", onCall);
         mSocket.connect();
 
     }
@@ -194,6 +210,7 @@ public class WSService extends Service {
         mSocket.off(Socket.EVENT_CONNECT_ERROR, onConnectError);
         mSocket.off(Socket.EVENT_CONNECT_TIMEOUT, onConnectError);
         mSocket.off("user joined", onUserJoined);
+        mSocket.off("ON_CALL", onCall);
     }
 
     private Emitter.Listener onConnect = new Emitter.Listener() {
@@ -209,6 +226,17 @@ public class WSService extends Service {
                     RxBus.sendMessage(new UserStateEvent());
                 }
             });
+
+            //
+            try {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put( "salesId", Preferences.getUserId());
+                mSocket.emit( "SALES_ONLINE_WITH_STATUS", jsonObject );
+            } catch ( JSONException e ) {
+                e.printStackTrace();
+            }
+
+
 
         }
     };
@@ -236,10 +264,11 @@ public class WSService extends Service {
             try {
                 socketid = data.getString("socket_id");
                 Log.i("wsserver", "socketid==" + socketid);
+                registerDevice(socketid);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            registerDevice(socketid);
+
 
 //            runOnUiThread(new Runnable() {
 //                @Override
@@ -255,6 +284,29 @@ public class WSService extends Service {
 //                    registerDevice(socketid);
 //                }
 //            });
+        }
+    };
+
+
+    private Emitter.Listener onCall = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+
+            JSONObject data = (JSONObject) args[0];
+
+            try {
+                String tvSocketId = data.getString("tvSocketId");
+                JSONObject caller = data.getJSONObject("caller");
+                String name = caller.getString("name");
+                String address = caller.getString("address");
+                Log.i("wsserver", "onCall tvSocketId==" + tvSocketId);
+                OnCallActivity.actionStart(WSService.this,tvSocketId,address+" "+name);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                Log.e(TAG,"onCall e "+e);
+            }
+
+
         }
     };
 
