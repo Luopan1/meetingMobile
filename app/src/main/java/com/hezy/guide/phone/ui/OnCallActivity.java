@@ -16,21 +16,23 @@ import com.hezy.guide.phone.utils.RxBus;
 
 public class OnCallActivity extends BaseDataBindingActivity<OnCallActivityBinding> {
 
-
+    private String channelId;
     private String tvSocketId;
     private String callInfo;
 
-    public static void actionStart(Context context, String tvSocketId,String callInfo) {
+    public static void actionStart(Context context,String channelId,  String tvSocketId,String callInfo) {
         Intent intent = new Intent(context, OnCallActivity.class);
         //service中调用需要添加flag
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra("questionId", tvSocketId);
+        intent.putExtra("channelId", channelId);
+        intent.putExtra("tvSocketId", tvSocketId);
         intent.putExtra("callInfo", callInfo);
         context.startActivity(intent);
     }
 
     @Override
     protected void initExtraIntent() {
+        channelId = getIntent().getStringExtra("channelId");
         tvSocketId = getIntent().getStringExtra("tvSocketId");
         callInfo = getIntent().getStringExtra("callInfo");
     }
@@ -46,6 +48,7 @@ public class OnCallActivity extends BaseDataBindingActivity<OnCallActivityBindin
     protected void initView() {
         mBinding.mIvAccept.setOnClickListener(this);
         mBinding.mIvReject.setOnClickListener(this);
+        mBinding.mTvCallInfo.setText(callInfo);
     }
 
     @Override
