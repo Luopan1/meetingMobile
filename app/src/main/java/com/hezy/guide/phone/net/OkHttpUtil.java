@@ -80,51 +80,34 @@ public class OkHttpUtil {
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                callbackFailure(request, callback, new BaseException(e.getMessage(), e));
+                callbackFailure(-1, callback, new BaseException(e.getMessage(), e));
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                if (!response.isSuccessful()) {
-                    callbackError(response, callback, new BaseException("服务器异常,请稍后重试"));
-                    return;
-                }
                 if (response.body() != null) {
                     String resString = response.body().string();
-                    if (callback.mType == String.class) {
-                        callbackSuccess(response, resString, callback);
-                    } else {
+                    try {
+                        Object object = gson.fromJson(resString, callback.mType);
+                        callbackSuccess(object, callback);
+                    } catch (JsonSyntaxException e) {
+                        e.printStackTrace();
                         try {
-                            Object object = gson.fromJson(resString, callback.mType);
-                            callbackSuccess(response, object, callback);
-                        } catch (JsonSyntaxException e) {
-                            e.printStackTrace();
-                            try {
-                                RespStatus respStatus = gson.fromJson(resString, RespStatus.class);
-                                callbackError(response, callback, new BaseException(respStatus.getErrmsg(), respStatus.getErrcode()));
-                            } catch (JsonSyntaxException ee) {
-                                ee.printStackTrace();
-                                callbackError(response, callback, new BaseException(ee.getMessage(), ee));
-                            }
-
+                            RespStatus respStatus = gson.fromJson(resString, RespStatus.class);
+                            callbackFailure(response.code(), callback, new BaseException(respStatus.getErrmsg(), respStatus.getErrcode()));
+                        } catch (JsonSyntaxException ee) {
+                            ee.printStackTrace();
+                            callbackFailure(response.code(), callback, new BaseException(ee.getMessage(), ee));
                         }
                     }
                 } else {
-                    callbackError(response, callback, null);
+                    callbackFailure(response.code(), callback, null);
                 }
             }
         });
     }
 
-    public void cancelRequest(Request request){
-        cancelRequest(okHttpClient.newCall(request));
-    }
-
-    private void cancelRequest(Call call){
-        call.cancel();
-    }
-
-    private void callbackSuccess(final Response response, final Object o, final OkHttpCallback callback) {
+    private void callbackSuccess(final Object o, final OkHttpCallback callback) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -134,21 +117,11 @@ public class OkHttpUtil {
         });
     }
 
-    private void callbackError(final Response response, final OkHttpCallback callback, final BaseException e) {
+    private void callbackFailure(final int code, final OkHttpCallback callback, final BaseException e) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                callback.onError(response.code(), e);
-                callback.onFinish();
-            }
-        });
-    }
-
-    private void callbackFailure(final Request request, final OkHttpCallback callback, final BaseException e) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                callback.onFailure(e);
+                callback.onFailure(code, e);
                 callback.onFinish();
             }
         });
@@ -354,18 +327,6 @@ public class OkHttpUtil {
             if (tag.equals(call.request().tag())) {
                 call.cancel();
             }
-        }
-    }
-
-    /**
-     * 取消所有请求请求
-     */
-    public void cancelAll() {
-        for (Call call : okHttpClient.dispatcher().queuedCalls()) {
-            call.cancel();
-        }
-        for (Call call : okHttpClient.dispatcher().runningCalls()) {
-            call.cancel();
         }
     }
 

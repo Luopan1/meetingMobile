@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SurfaceView;
@@ -20,8 +21,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.hezy.guide.phone.R;
+import com.hezy.guide.phone.entities.base.BaseErrorBean;
 import com.hezy.guide.phone.event.CallEvent;
 import com.hezy.guide.phone.event.HandsUpEvent;
+import com.hezy.guide.phone.net.ApiClient;
+import com.hezy.guide.phone.net.OkHttpCallback;
 import com.hezy.guide.phone.utils.RxBus;
 
 import org.slf4j.Logger;
@@ -71,13 +75,15 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
         return false;
     }
 
+    private String channelName;
+
     @Override
     protected void initUIandEvent() {
         event().addEventHandler(this);
 
         Intent i = getIntent();
 
-        String channelName = i.getStringExtra(ConstantApp.ACTION_KEY_CHANNEL_NAME);
+        channelName = i.getStringExtra(ConstantApp.ACTION_KEY_CHANNEL_NAME);
 
         final String encryptionKey = getIntent().getStringExtra(ConstantApp.ACTION_KEY_ENCRYPTION_KEY);
 
@@ -409,9 +415,19 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
                     switchToSmallVideoView(bigBgUid);
                 }
 
-                RxBus.sendMessage(new HandsUpEvent());
+                ApiClient.getInstance().stopCallExpostor(channelName, "9", new OkHttpCallback<BaseErrorBean>() {
+                    @Override
+                    public void onSuccess(BaseErrorBean entity) {
+                        Log.d("stop receive", entity.toString());
+                    }
 
-                finish();
+                    @Override
+                    public void onFinish() {
+                        RxBus.sendMessage(new HandsUpEvent());
+                        finish();
+                    }
+                });
+
             }
         });
     }

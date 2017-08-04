@@ -33,21 +33,9 @@ public abstract class OkHttpBaseCallback<T> extends OkHttpCallback<T> {
 
     }
 
-    /**
-     * 请求失败调用（网络问题）
-     */
     @Override
-    public void onFailure(BaseException e) {
-        onErrorAll(e);
-    }
+    public void onFailure(int errorCode, BaseException exception) {
 
-
-    /**
-     * 请求成功但是有错误的时候调用，例如Gson解析错误等
-     */
-    @Override
-    public void onError(int errorCode, BaseException exception){
-        onErrorAll(exception);
     }
 
     /**

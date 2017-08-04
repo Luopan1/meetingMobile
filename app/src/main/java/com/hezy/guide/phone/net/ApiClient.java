@@ -17,6 +17,8 @@ import com.tendcloud.tenddata.TCAgent;
 import java.util.HashMap;
 import java.util.Map;
 
+import okhttp3.Call;
+
 /**
  * Created by whatisjava on 16/4/12.
  */
@@ -78,6 +80,16 @@ public class ApiClient {
         OkHttpUtil.getInstance().postJson(API_DOMAIN_NAME + "/osg/app/device", getCommonHead(),jsonStr,callback, tag);
     }
 
+    /**
+     * 收到客户退出通知或者主动退出房间时请求
+     *
+     * @param recordId
+     * @param responseCallback
+     * @return
+     */
+    public void stopCallExpostor(String recordId, String state, OkHttpCallback responseCallback){
+        okHttpUtil.put(API_DOMAIN_NAME + "/osg/app/call/record/" + recordId + "?state=" + state, null, null, responseCallback);
+    }
 
     /**
      *

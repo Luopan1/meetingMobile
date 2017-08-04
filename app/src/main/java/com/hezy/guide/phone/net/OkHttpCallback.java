@@ -46,7 +46,9 @@ public abstract class OkHttpCallback<T> {
     /**
      * 请求开始前调用
      */
-    public abstract void onStart();
+    public void onStart(){
+
+    }
 
     /**
      * 请求成功而且没有错误的时候调用
@@ -56,22 +58,19 @@ public abstract class OkHttpCallback<T> {
     public abstract void onSuccess(T entity);
 
     /**
-     * 请求失败调用（网络问题）
-     *
-     * @param exception BaseException
-     */
-    public abstract void onFailure(BaseException exception);
-
-    /**
-     * 请求成功但是有错误的时候调用，例如json解析错误等
+     * 请求失败调用（网络问题）或者请求成功但是有错误的时候调用，例如json解析错误等
      *
      * @param errorCode int
      * @param exception BaseException
      */
-    public abstract void onError(int errorCode, BaseException exception);
+    public void onFailure(int errorCode, BaseException exception){
+
+    }
 
     /**
      * 请求结束后调用（无论是否成功）
      */
-    public abstract void onFinish();
+    public void onFinish(){
+
+    }
 }
