@@ -296,11 +296,12 @@ public class WSService extends Service {
 
             try {
                 String tvSocketId = data.getString("tvSocketId");
+                String channelId = data.getString("channelId");
                 JSONObject caller = data.getJSONObject("caller");
                 String name = caller.getString("name");
                 String address = caller.getString("address");
                 Log.i("wsserver", "onCall tvSocketId==" + tvSocketId);
-                OnCallActivity.actionStart(WSService.this,tvSocketId,address+" "+name);
+                OnCallActivity.actionStart(WSService.this,channelId,tvSocketId,address+" "+name);
             } catch (JSONException e) {
                 e.printStackTrace();
                 Log.e(TAG,"onCall e "+e);
