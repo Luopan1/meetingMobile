@@ -2,6 +2,8 @@ package io.agora.openvcall.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -16,14 +18,28 @@ import com.hezy.guide.phone.R;
 import io.agora.openvcall.model.ConstantApp;
 
 public class MainActivity extends BaseActivity {
+
+    private String channelId;
+
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            forwardToRoom();
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
     }
 
     @Override
     protected void initUIandEvent() {
+        channelId = getIntent().getStringExtra("channelId");
+
         EditText v_channel = (EditText) findViewById(R.id.channel_name);
         v_channel.addTextChangedListener(new TextWatcher() {
             @Override
@@ -43,7 +59,7 @@ public class MainActivity extends BaseActivity {
             }
         });
 
-        v_channel.setText("123456");
+        v_channel.setText(channelId);
 
         Spinner encryptionSpinner = (Spinner) findViewById(R.id.encryption_mode);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
@@ -76,6 +92,8 @@ public class MainActivity extends BaseActivity {
         if (!TextUtils.isEmpty(lastEncryptionKey)) {
             v_encryption_key.setText(lastEncryptionKey);
         }
+
+        handler.sendEmptyMessageDelayed(0, 500);
     }
 
     @Override
@@ -101,6 +119,7 @@ public class MainActivity extends BaseActivity {
         i.putExtra(ConstantApp.ACTION_KEY_ENCRYPTION_MODE, getResources().getStringArray(R.array.encryption_mode_values)[vSettings().mEncryptionModeIndex]);
 
         startActivity(i);
+        finish();
     }
 
 }
