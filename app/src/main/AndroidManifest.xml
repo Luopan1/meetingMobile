@@ -68,7 +68,9 @@
         <!--主页-->
         <activity
             android:name=".ui.HomeActivity"
-            android:theme="@style/NoTitle" >
+            android:theme="@style/NoTitle"
+            android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"
+            android:screenOrientation="portrait">
             <!--<intent-filter>-->
                 <!--<action android:name="android.intent.action.MAIN" />-->
                 <!--<category android:name="android.intent.category.LAUNCHER" />-->
@@ -78,12 +80,15 @@
 
         <activity android:name="io.agora.openvcall.ui.ChatActivity"
             android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"
-            android:screenOrientation="landscape"/>
+            android:screenOrientation="landscape"
+            android:theme="@style/FullscreenTheme"/>
 
         <activity android:name="io.agora.openvcall.ui.MainActivity"
+            android:screenOrientation="portrait"
             android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale" />
 
-        <activity android:name=".ui.OnCallActivity"/>
+        <activity android:name=".ui.OnCallActivity"
+            android:screenOrientation="portrait"/>
 
         <!--服务开始-->
         <service android:name=".service.HeartService" />
