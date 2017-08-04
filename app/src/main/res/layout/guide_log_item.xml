@@ -22,6 +22,7 @@
             android:background="@color/line_gray_d8d8d8"/>
 
         <TextView
+
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="以下是历史记录"
@@ -53,7 +54,9 @@
                 android:layout_width="3dp"
                 android:layout_height="30dp"
                 android:layout_centerHorizontal="true"
-                android:background="#CBCBCB" />
+
+                />
+            <!--android:background="@drawable/guide_log_time_line_color_selector" -->
 
             <View
                 android:id="@+id/mLineBottom"
@@ -64,6 +67,7 @@
                 android:background="#CBCBCB" />
 
             <TextView
+                android:visibility="invisible"
                 android:id="@+id/mTvTimeDot"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
@@ -76,7 +80,7 @@
                 android:background="@drawable/guide_log_time_cycle_history" />
 
             <ImageView
-                android:visibility="invisible"
+                android:visibility="visible"
                 android:id="@+id/mIvDot"
                 android:layout_width="8dp"
                 android:layout_height="8dp"

@@ -75,6 +75,7 @@ public class WSService extends Service {
 
     public static void stopService(Context context) {
         if (WSService.serviceIsCreate) {
+            RxBus.sendMessage(new SetUserStateEvent(false));
             Intent intent = new Intent(context, WSService.class);
             context.stopService(intent);
             WSService.serviceIsCreate = false;
@@ -185,6 +186,10 @@ public class WSService extends Service {
 
     private void connectSocket() {
         Log.i(TAG,"connectSocket");
+        if(SOCKET_ONLINE){
+            Log.i(TAG,"connectSocket SOCKET_ONLINE == true re");
+            return;
+        }
         try {
             mSocket = IO.socket(WS_URL);
         } catch (URISyntaxException e) {
@@ -197,7 +202,7 @@ public class WSService extends Service {
         mSocket.on(Socket.EVENT_CONNECT_ERROR, onConnectError);
         mSocket.on(Socket.EVENT_CONNECT_TIMEOUT, onConnectError);
         mSocket.on("LISTEN_SOCKET_ID", onUserJoined);
-        mSocket.off("ON_CALL", onCall);
+        mSocket.on("ON_CALL", onCall);
         mSocket.connect();
 
     }
@@ -211,6 +216,8 @@ public class WSService extends Service {
         mSocket.off(Socket.EVENT_CONNECT_TIMEOUT, onConnectError);
         mSocket.off("user joined", onUserJoined);
         mSocket.off("ON_CALL", onCall);
+        SOCKET_ONLINE = false;
+        sendUserStateEvent();
 
     }
 
@@ -221,12 +228,7 @@ public class WSService extends Service {
             Log.i("wsserver", "connected==" + args);
             SOCKET_ONLINE = true;
             Log.i(TAG,Thread.currentThread().getName());
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    RxBus.sendMessage(new UserStateEvent());
-                }
-            });
+            sendUserStateEvent();
 
             try {
                 JSONObject jsonObject = new JSONObject();
@@ -242,19 +244,32 @@ public class WSService extends Service {
         }
     };
 
+    private void sendUserStateEvent(){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                RxBus.sendMessage(new UserStateEvent());
+            }
+        });
+    }
+
     private Emitter.Listener onDisconnect = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
+            Log.i("wsserver", "onDisconnect diconnected");
             SOCKET_ONLINE = false;
-            Log.i("wsserver", "diconnected");
+            sendUserStateEvent();
+
         }
     };
 
     private Emitter.Listener onConnectError = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
+            Log.e("wsserver", "onConnectError Error ");
             SOCKET_ONLINE = false;
-            Log.e("wsserver", "Error connecting");
+            sendUserStateEvent();
+
         }
     };
 
@@ -296,7 +311,6 @@ public class WSService extends Service {
         public void call(final Object... args) {
 
             JSONObject data = (JSONObject) args[0];
-
             try {
                 String tvSocketId = data.getString("tvSocketId");
                 String channelId = data.getString("channelId");
