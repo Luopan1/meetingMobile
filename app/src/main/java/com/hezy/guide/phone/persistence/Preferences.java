@@ -275,7 +275,7 @@ public class Preferences {
     }
 
     public static String getUserMobile() {
-        return getPreferences().getString(PREFERENCE_USER_MOBILE, null);
+        return getPreferences().getString(PREFERENCE_USER_MOBILE, "");
     }
 
     public static void setUserMobile(String userMobile) {
