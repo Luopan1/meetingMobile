@@ -19,6 +19,7 @@ import com.hezy.guide.phone.entities.Version;
 import com.hezy.guide.phone.entities.base.BaseBean;
 import com.hezy.guide.phone.net.ApiClient;
 import com.hezy.guide.phone.net.OkHttpBaseCallback;
+import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.service.WSService;
 import com.hezy.guide.phone.utils.Installation;
 import com.hezy.guide.phone.utils.LogUtils;
@@ -80,6 +81,12 @@ public class HomeActivity extends BaseDataBindingActivity<HomeActivityBinding> {
         mFragments.add(GuideLogFragment.newInstance());
         mHomePagerAdapter.setData(mFragments);
         mBinding.mVerticalViewPager.setAdapter(mHomePagerAdapter);
+        LogUtils.i(TAG,"getUserMobile"+Preferences.getUserMobile());
+        if(!TextUtils.isEmpty(Preferences.getUserMobile())){
+            //手机非空,默认进入日志页面
+            LogUtils.i(TAG,"手机非空,默认进入日志页面");
+            mBinding.mVerticalViewPager.setCurrentItem(1);
+        }
     }
 
 

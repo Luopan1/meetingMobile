@@ -260,6 +260,10 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
                                 new ActionSheetDialog.OnSheetItemClickListener() {//
                                     @Override
                                     public void onClick(int which) {
+                                        if(TextUtils.isEmpty(Preferences.getUserMobile())){
+                                            showToast("请先填写电话号码");
+                                            return;
+                                        }
                                         if (!WSService.SOCKET_ONLINE) {
                                             //当前状态离线,可切换在线
                                             Log.i(TAG,"当前状态离线,可切换在线");
