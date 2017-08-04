@@ -277,8 +277,9 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
                                         if (WSService.SOCKET_ONLINE) {
                                             //当前状态在线,可切换离线
                                             Log.i(TAG,"当前状态在线,可切换离线");
-                                            WSService.SOCKET_ONLINE =false;
-                                            setState(false);
+                                            RxBus.sendMessage(new SetUserStateEvent(false));
+//                                            WSService.SOCKET_ONLINE =false;
+//                                            setState(false);
                                         }
                                     }
                                 }).show();

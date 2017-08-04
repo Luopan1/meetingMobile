@@ -2,7 +2,10 @@ package com.hezy.guide.phone.ui;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 
 import com.hezy.guide.phone.R;
 import com.hezy.guide.phone.base.BaseDataBindingActivity;
@@ -40,6 +43,16 @@ public class OnCallActivity extends BaseDataBindingActivity<OnCallActivityBindin
     }
 
     @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        final Window win = getWindow();
+        win.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+                | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
+                | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+    }
+
+    @Override
     protected int initContentView() {
         return R.layout.on_call_activity;
     }
@@ -61,9 +74,11 @@ public class OnCallActivity extends BaseDataBindingActivity<OnCallActivityBindin
                 Intent intent = new Intent(mContext, MainActivity.class);
                 intent.putExtra("channelId", channelId);
                 startActivity(intent);
+                finish();
                 break;
             case R.id.mIvReject:
                 RxBus.sendMessage(new CallEvent(false,tvSocketId));
+                finish();
                 break;
         }
     }
