@@ -20,6 +20,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.hezy.guide.phone.R;
+import com.hezy.guide.phone.event.CallEvent;
+import com.hezy.guide.phone.event.HandsUpEvent;
+import com.hezy.guide.phone.utils.RxBus;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -405,6 +408,10 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
                 } else {
                     switchToSmallVideoView(bigBgUid);
                 }
+
+                RxBus.sendMessage(new HandsUpEvent());
+
+                finish();
             }
         });
     }
