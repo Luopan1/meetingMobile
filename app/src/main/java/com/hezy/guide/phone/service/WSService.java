@@ -317,7 +317,8 @@ public class WSService extends Service {
                 JSONObject caller = data.getJSONObject("caller");
                 String name = caller.getString("name");
                 String address = caller.getString("address");
-                Log.i("wsserver", "onCall tvSocketId==" + tvSocketId);
+                Log.i("wsserver", "onCall tvSocketId ==" + tvSocketId);
+                Log.i("wsserver", "onCall channelId ==" + channelId);
                 OnCallActivity.actionStart(WSService.this,channelId,tvSocketId,address+" "+name);
             } catch (JSONException e) {
                 e.printStackTrace();
