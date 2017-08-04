@@ -81,11 +81,11 @@ public class MainActivity extends BaseActivity {
 
         encryptionSpinner.setSelection(vSettings().mEncryptionModeIndex);
 
-        String lastChannelName = vSettings().mChannelName;
-        if (!TextUtils.isEmpty(lastChannelName)) {
-            v_channel.setText(lastChannelName);
-            v_channel.setSelection(lastChannelName.length());
-        }
+//        String lastChannelName = vSettings().mChannelName;
+//        if (!TextUtils.isEmpty(lastChannelName)) {
+//            v_channel.setText(lastChannelName);
+//            v_channel.setSelection(lastChannelName.length());
+//        }
 
         EditText v_encryption_key = (EditText) findViewById(R.id.encryption_key);
         String lastEncryptionKey = vSettings().mEncryptionKey;
