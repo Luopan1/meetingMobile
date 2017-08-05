@@ -19,7 +19,7 @@ import com.hezy.guide.phone.net.ApiClient;
 import com.hezy.guide.phone.net.OkHttpBaseCallback;
 import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.service.WSService;
-import com.hezy.guide.phone.ui.adapter.GuideLogAdapter2;
+import com.hezy.guide.phone.ui.adapter.GuideLogAdapter;
 import com.hezy.guide.phone.utils.RxBus;
 import com.squareup.picasso.Picasso;
 
@@ -34,7 +34,7 @@ public class GuideLogFragment extends BaseDataBindingFragment<GuideLogFragmentBi
 
     private Subscription subscription;
     private LinearLayoutManager mLayoutManager;
-    private GuideLogAdapter2 mAdapter;
+    private GuideLogAdapter mAdapter;
 
     public static GuideLogFragment newInstance() {
         GuideLogFragment fragment = new GuideLogFragment();
@@ -67,7 +67,7 @@ public class GuideLogFragment extends BaseDataBindingFragment<GuideLogFragmentBi
 
     @Override
     protected void initAdapter() {
-        mAdapter = new GuideLogAdapter2(mContext);
+        mAdapter = new GuideLogAdapter(mContext);
 
         //设置布局管理器
         mLayoutManager = new LinearLayoutManager(mContext);

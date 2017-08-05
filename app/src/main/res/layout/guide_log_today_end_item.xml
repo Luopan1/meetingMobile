@@ -22,6 +22,7 @@
             android:background="@color/bg_purple_ad97e7" />
 
         <View
+            android:visibility="invisible"
             android:layout_below="@id/mLineTop"
             android:layout_width="2dp"
             android:layout_height="30dp"

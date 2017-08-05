@@ -186,10 +186,11 @@ public class WSService extends Service {
 
     private void connectSocket() {
         Log.i(TAG,"connectSocket");
-        if(SOCKET_ONLINE){
+        if(SOCKET_ONLINE || (mSocket!=null && mSocket.connected())){
             Log.i(TAG,"connectSocket SOCKET_ONLINE == true re");
             return;
         }
+
         try {
             mSocket = IO.socket(WS_URL);
         } catch (URISyntaxException e) {

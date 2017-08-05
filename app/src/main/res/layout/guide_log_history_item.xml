@@ -59,7 +59,7 @@
         android:layout_height="wrap_content"
         android:text="选择"
         android:layout_gravity="center_vertical"
-        android:layout_marginLeft="5dp"
+        android:layout_marginLeft="10dp"
         android:textSize="15sp" />
 
 
