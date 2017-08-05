@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.media.AudioManager;
 import android.os.Bundle;
+import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -26,7 +27,9 @@ import com.hezy.guide.phone.event.CallEvent;
 import com.hezy.guide.phone.event.HandsUpEvent;
 import com.hezy.guide.phone.net.ApiClient;
 import com.hezy.guide.phone.net.OkHttpCallback;
+import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.utils.RxBus;
+import com.hezy.guide.phone.utils.UIDUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,7 +78,7 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
         return false;
     }
 
-    private String channelName;
+    private String channelName, callInfo;
 
     @Override
     protected void initUIandEvent() {
@@ -84,10 +87,13 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
         Intent i = getIntent();
 
         channelName = i.getStringExtra(ConstantApp.ACTION_KEY_CHANNEL_NAME);
+        callInfo = i.getStringExtra("callInfo");
 
         final String encryptionKey = getIntent().getStringExtra(ConstantApp.ACTION_KEY_ENCRYPTION_KEY);
 
         final String encryptionMode = getIntent().getStringExtra(ConstantApp.ACTION_KEY_ENCRYPTION_MODE);
+
+        config().mUid = Integer.parseInt(UIDUtil.generatorUID(Preferences.getUserId()));
 
         doConfigEngine(encryptionKey, encryptionMode);
 
@@ -125,7 +131,7 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
         worker().joinChannel(channelName, config().mUid);
 
         TextView textChannelName = (TextView) findViewById(R.id.channel_name);
-        textChannelName.setText(channelName);
+        textChannelName.setText(callInfo);
 
         optional();
 
@@ -415,7 +421,7 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
                     switchToSmallVideoView(bigBgUid);
                 }
 
-                ApiClient.getInstance().stopCallExpostor(channelName, "9", new OkHttpCallback<BaseErrorBean>() {
+                ApiClient.getInstance().startOrStopOrRejectCallExpostor(channelName, "9", new OkHttpCallback<BaseErrorBean>() {
                     @Override
                     public void onSuccess(BaseErrorBean entity) {
                         Log.d("stop receive", entity.toString());

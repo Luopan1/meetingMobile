@@ -19,7 +19,7 @@ import io.agora.openvcall.model.ConstantApp;
 
 public class MainActivity extends BaseActivity {
 
-    private String channelId;
+    private String channelId, callInfo;
 
     private Handler handler = new Handler(){
         @Override
@@ -39,6 +39,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void initUIandEvent() {
         channelId = getIntent().getStringExtra("channelId");
+        callInfo = getIntent().getStringExtra("callInfo");
 
         EditText v_channel = (EditText) findViewById(R.id.channel_name);
         v_channel.addTextChangedListener(new TextWatcher() {
@@ -117,6 +118,7 @@ public class MainActivity extends BaseActivity {
         i.putExtra(ConstantApp.ACTION_KEY_CHANNEL_NAME, channel);
         i.putExtra(ConstantApp.ACTION_KEY_ENCRYPTION_KEY, encryption);
         i.putExtra(ConstantApp.ACTION_KEY_ENCRYPTION_MODE, getResources().getStringArray(R.array.encryption_mode_values)[vSettings().mEncryptionModeIndex]);
+        i.putExtra("callInfo", callInfo);
 
         startActivity(i);
         finish();

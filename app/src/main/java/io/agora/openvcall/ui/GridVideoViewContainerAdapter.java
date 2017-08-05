@@ -35,12 +35,12 @@ public class GridVideoViewContainerAdapter extends VideoViewAdapter {
             int count = uids.size();
             int DividerX = 1;
             int DividerY = 1;
-            if (count == 2) {
-                DividerY = 2;
-            } else if (count >= 3) {
-                DividerX = 2;
-                DividerY = 2;
-            }
+//            if (count == 2) {
+//                DividerY = 2;
+//            } else if (count >= 3) {
+//                DividerX = 2;
+//                DividerY = 2;
+//            }
 
             mItemWidth = outMetrics.widthPixels / DividerX;
             mItemHeight = outMetrics.heightPixels / DividerY;

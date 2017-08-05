@@ -67,15 +67,20 @@ public class OkHttpUtil {
         return okHttpUtil;
     }
 
+    private Call call;
+
     private void request(final Request request, final OkHttpCallback callback) {
 
         callback.onStart();
 
-        Call call = okHttpClient.newCall(request);
+        call = okHttpClient.newCall(request);
+        if (call.isExecuted() || call.isCanceled()){
+            return;
+        }
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                callbackFailure(-1, callback, new BaseException(e.getMessage(), e, -1));
+                callbackFailure(-1, callback, new BaseException(e.getMessage(), e));
             }
 
             @Override
