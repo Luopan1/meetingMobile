@@ -1,5 +1,8 @@
 package io.agora.openvcall.ui;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
@@ -184,6 +187,8 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
 
     public void onEndCallClicked(View view) {
         log.info("onEndCallClicked " + view);
+
+        stopCallRecord();
 
         finish();
     }
@@ -420,20 +425,7 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
                 } else {
                     switchToSmallVideoView(bigBgUid);
                 }
-
-                ApiClient.getInstance().startOrStopOrRejectCallExpostor(channelName, "9", new OkHttpCallback<BaseErrorBean>() {
-                    @Override
-                    public void onSuccess(BaseErrorBean entity) {
-                        Log.d("stop receive", entity.toString());
-                    }
-
-                    @Override
-                    public void onFinish() {
-                        RxBus.sendMessage(new HandsUpEvent());
-                        finish();
-                    }
-                });
-
+                stopCallRecord();
             }
         });
     }
@@ -510,6 +502,42 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
         }
         recycler.setVisibility(View.VISIBLE);
         mSmallVideoViewDock.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onBackPressed() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("确定退出？");
+        builder.setNegativeButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                stopCallRecord();
+            }
+        });
+        builder.setPositiveButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        builder.show();
+        super.onBackPressed();
+    }
+
+    public void stopCallRecord(){
+        ApiClient.getInstance().startOrStopOrRejectCallExpostor(channelName, "9", new OkHttpCallback<BaseErrorBean>() {
+            @Override
+            public void onSuccess(BaseErrorBean entity) {
+                Log.d("stop receive", entity.toString());
+            }
+
+            @Override
+            public void onFinish() {
+                RxBus.sendMessage(new HandsUpEvent());
+                finish();
+            }
+        });
+
     }
 
     public void notifyHeadsetPlugged(final int routing) {
