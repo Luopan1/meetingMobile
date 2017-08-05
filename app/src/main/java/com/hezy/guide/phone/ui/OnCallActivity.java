@@ -112,4 +112,5 @@ public class OnCallActivity extends BaseDataBindingActivity<OnCallActivityBindin
                 break;
         }
     }
+
 }
