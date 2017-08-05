@@ -108,7 +108,7 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
                 }
 
                 UserStatusData user = (UserStatusData) item;
-                int uid = (user.mUid == 0) ? config().mUid : user.mUid;
+                int uid = user.mUid == config().mUid ? config().mUid : user.mUid;
 
                 if (mLayoutType == LAYOUT_TYPE_DEFAULT && mUidsList.size() != 1) {
                     switchToSmallVideoView(uid);
