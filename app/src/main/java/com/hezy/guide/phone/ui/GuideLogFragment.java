@@ -1,6 +1,8 @@
 package com.hezy.guide.phone.ui;
 
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -25,6 +27,7 @@ import com.squareup.picasso.Picasso;
 
 import rx.Subscription;
 import rx.functions.Action1;
+
 
 /**
  * Created by wufan on 2017/7/26.
@@ -75,6 +78,35 @@ public class GuideLogFragment extends BaseDataBindingFragment<GuideLogFragmentBi
         mBinding.mRecyclerView.setLayoutManager(mLayoutManager);
         mBinding.mRecyclerView.setAdapter(mAdapter);
 
+        //刷新与分页加载
+        mBinding.mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                requestRecordTotal();
+                requestRecord();
+            }
+        });
+
+        mBinding.mRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            private int lastVisibleItemPosition;
+
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView,
+                                             int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (newState == RecyclerView.SCROLL_STATE_IDLE
+                        && lastVisibleItemPosition + 1 == mAdapter.getItemCount() && !  mBinding.mSwipeRefreshLayout.isRefreshing()) {
+//                    requestLiveVideoListNext();
+                }
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                lastVisibleItemPosition = mLayoutManager.findLastVisibleItemPosition();
+            }
+        });
+
     }
 
     @Override
@@ -96,6 +128,8 @@ public class GuideLogFragment extends BaseDataBindingFragment<GuideLogFragmentBi
                 String time = String.valueOf(entity.getData().getTotal());
                 mBinding.views.mTvTime.setText(time);
             }
+
+
         });
     }
 
@@ -105,6 +139,13 @@ public class GuideLogFragment extends BaseDataBindingFragment<GuideLogFragmentBi
             public void onSuccess(BaseBean<RecordData> entity) {
                 mAdapter.setData(entity.getData().getPageData());
                 mAdapter.notifyDataSetChanged();
+
+            }
+
+            @Override
+            public void onFinish() {
+                super.onFinish();
+                mBinding.mSwipeRefreshLayout.setRefreshing(false);
             }
         });
     }
