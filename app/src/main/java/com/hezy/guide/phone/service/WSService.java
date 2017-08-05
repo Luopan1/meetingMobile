@@ -17,6 +17,7 @@ import android.util.Log;
 import com.hezy.guide.phone.BuildConfig;
 import com.hezy.guide.phone.entities.base.BaseBean;
 import com.hezy.guide.phone.event.CallEvent;
+import com.hezy.guide.phone.event.HandsUpEvent;
 import com.hezy.guide.phone.event.SetUserStateEvent;
 import com.hezy.guide.phone.event.UserStateEvent;
 import com.hezy.guide.phone.net.ApiClient;
@@ -63,6 +64,7 @@ public class WSService extends Service {
 //     */
 //    public static boolean USER_SET_OFFLINE = false;
     private static Socket mSocket;
+
     private Subscription subscription;
     private Handler mHandler;
 
@@ -120,6 +122,9 @@ public class WSService extends Service {
                         e.printStackTrace();
                     }
 
+                } else if(o instanceof HandsUpEvent){
+                    mSocket.emit("END_CALL",null);
+                    Log.i(TAG," mSocket.emit(\"END_CALL\",null)");
                 }
             }
         });
@@ -350,6 +355,7 @@ public class WSService extends Service {
                 jsonObject.put("socketId", socketId);
                 jsonObject.put("salesId", Preferences.getUserId());
                 mSocket.emit("RE_CHECK_SOCKET_ID", jsonObject);
+                Log.i("wsserver", "emit(RE_CHECK_SOCKET_ID, jsonObject)");
             } catch (JSONException e) {
                 e.printStackTrace();
                 Log.e(TAG, "onListenSalesSocketId e " + e);
@@ -381,9 +387,11 @@ public class WSService extends Service {
         if (isOnline()) {
             disConnectSocket();
         }
+        subscription.unsubscribe();
         mHandler.removeCallbacksAndMessages(null);
         OkHttpUtil.getInstance().cancelTag(this);
         Log.i(TAG, "life onDestroy");
         super.onDestroy();
     }
+
 }

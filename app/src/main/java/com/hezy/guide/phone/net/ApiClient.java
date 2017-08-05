@@ -17,8 +17,6 @@ import com.tendcloud.tenddata.TCAgent;
 import java.util.HashMap;
 import java.util.Map;
 
-import okhttp3.Call;
-
 /**
  * Created by whatisjava on 16/4/12.
  */
@@ -171,10 +169,13 @@ public class ApiClient {
      * @param tag
      * @param callback
      */
-    public void requestRecord(Object tag, OkHttpBaseCallback<BaseBean<RecordData>> callback) {
+    public void requestRecord(Object tag,String pageNo,String pageSize, OkHttpBaseCallback<BaseBean<RecordData>> callback) {
         //使用唷唷兔地址
         String userId = Preferences.getUserId();
-        okHttpUtil.getInstance().get(API_DOMAIN_NAME+"/osg/app/call/expostor/"+userId+"/record",getCommonHead(),null,callback,tag);
+        Map<String,String> params=new HashMap<>();
+        params.put("pageNo",pageNo);
+        params.put("pageSize",pageSize);
+        okHttpUtil.getInstance().get(API_DOMAIN_NAME+"/osg/app/call/expostor/"+userId+"/record",getCommonHead(),params,callback,tag);
     }
 
 }

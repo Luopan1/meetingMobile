@@ -38,6 +38,9 @@ public class GuideLogFragment extends BaseDataBindingFragment<GuideLogFragmentBi
     private Subscription subscription;
     private LinearLayoutManager mLayoutManager;
     private GuideLogAdapter mAdapter;
+    private boolean isRefresh;
+    private int mTotalPage = -1;
+    private int mPageNo = -1;
 
     public static GuideLogFragment newInstance() {
         GuideLogFragment fragment = new GuideLogFragment();
@@ -95,8 +98,14 @@ public class GuideLogFragment extends BaseDataBindingFragment<GuideLogFragmentBi
                                              int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 if (newState == RecyclerView.SCROLL_STATE_IDLE
-                        && lastVisibleItemPosition + 1 == mAdapter.getItemCount() && !  mBinding.mSwipeRefreshLayout.isRefreshing()) {
+                        && !mBinding.mSwipeRefreshLayout.isRefreshing()
+                        && lastVisibleItemPosition + 1 == mAdapter.getItemCount()
+                        && !(mPageNo == mTotalPage)) {
 //                    requestLiveVideoListNext();
+                    if (mPageNo != -1 && mTotalPage != -1 && !(mPageNo == mTotalPage)) {
+                        requestRecord(String.valueOf(mPageNo + 1), "20");
+                    }
+
                 }
             }
 
@@ -128,7 +137,7 @@ public class GuideLogFragment extends BaseDataBindingFragment<GuideLogFragmentBi
         requestRecord();
     }
 
-    private void requestRecordTotal(){
+    private void requestRecordTotal() {
         ApiClient.getInstance().requestRecordTotal(this, new OkHttpBaseCallback<BaseBean<RecordTotal>>() {
             @Override
             public void onSuccess(BaseBean<RecordTotal> entity) {
@@ -140,11 +149,24 @@ public class GuideLogFragment extends BaseDataBindingFragment<GuideLogFragmentBi
         });
     }
 
-    private void requestRecord(){
-        ApiClient.getInstance().requestRecord(this, new OkHttpBaseCallback<BaseBean<RecordData>>() {
+    private void requestRecord() {
+        requestRecord("1", "20");
+        isRefresh = true;
+        mPageNo = 1;
+    }
+
+    private void requestRecord(String pageNo, String pageSize) {
+        ApiClient.getInstance().requestRecord(this, pageNo, pageSize, new OkHttpBaseCallback<BaseBean<RecordData>>() {
             @Override
             public void onSuccess(BaseBean<RecordData> entity) {
-                mAdapter.setData(entity.getData().getPageData());
+                if (isRefresh) {
+                    isRefresh = false;
+                    mAdapter.setData(entity.getData().getPageData());
+                } else {
+                    mAdapter.addData(entity.getData().getPageData());
+                }
+                mPageNo = entity.getData().getPageNo();
+                mTotalPage = entity.getData().getTotalPage();
                 mAdapter.notifyDataSetChanged();
 
             }
@@ -169,7 +191,7 @@ public class GuideLogFragment extends BaseDataBindingFragment<GuideLogFragmentBi
                                 new ActionSheetDialog.OnSheetItemClickListener() {//
                                     @Override
                                     public void onClick(int which) {
-                                        if(TextUtils.isEmpty(Preferences.getUserMobile())){
+                                        if (TextUtils.isEmpty(Preferences.getUserMobile())) {
                                             showToast("请先填写电话号码");
                                             return;
                                         }
@@ -207,5 +229,12 @@ public class GuideLogFragment extends BaseDataBindingFragment<GuideLogFragmentBi
             mBinding.views.mTvState.setText("离线状态");
             mBinding.views.mTvState.setBackgroundResource(R.drawable.userinfo_set_state_offline_bg_shape);
         }
+    }
+
+
+    @Override
+    public void onDestroy() {
+        subscription.unsubscribe();
+        super.onDestroy();
     }
 }

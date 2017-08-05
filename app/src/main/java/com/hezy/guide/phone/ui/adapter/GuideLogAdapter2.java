@@ -14,6 +14,7 @@ import com.hezy.guide.phone.entities.RecordData;
  * Created by wufan on 2017/8/3.
  */
 
+@Deprecated
 public class GuideLogAdapter2 extends BaseRecyclerAdapter<RecordData.PageDataEntity> {
 
 
