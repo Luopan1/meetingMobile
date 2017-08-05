@@ -54,17 +54,21 @@ public class WSService extends Service {
      */
     public static boolean serviceIsCreate = false;
     private static String WS_URL = "http://nettytest.haierzhongyou.com:3000/sales";
-    /**
-     * 是否已离线
-     */
-    public static boolean SOCKET_ONLINE = false;
-    /**
-     * 用户设置离线,废弃
-     */
-    public static boolean USER_SET_OFFLINE = false;
-    private Socket mSocket;
+//    /**
+//     * 是否已离线
+//     */
+//    public static boolean SOCKET_ONLINE = false;
+//    /**
+//     * 用户设置离线,废弃
+//     */
+//    public static boolean USER_SET_OFFLINE = false;
+    private static Socket mSocket;
     private Subscription subscription;
     private Handler mHandler;
+
+    public static boolean isOnline(){
+        return  mSocket != null && mSocket.connected() ;
+    }
 
     public static void actionStart(Context context) {
         if (!WSService.serviceIsCreate) {
@@ -104,14 +108,14 @@ public class WSService extends Service {
                         disConnectSocket();
                     }
 
-                }else if (o instanceof CallEvent){
+                } else if (o instanceof CallEvent) {
                     CallEvent event = (CallEvent) o;
                     try {
                         JSONObject jsonObject = new JSONObject();
-                        jsonObject.put( "tvSocketId", event.getTvSocketId());
-                        jsonObject.put( "reply ", event.isCall() ?  1: 0);
-                        mSocket.emit( "REPLY_TV", jsonObject );
-                        Log.i(TAG,jsonObject.toString());
+                        jsonObject.put("tvSocketId", event.getTvSocketId());
+                        jsonObject.put("reply ", event.isCall() ? 1 : 0);
+                        mSocket.emit("REPLY_TV", jsonObject);
+                        Log.i(TAG, jsonObject.toString());
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -173,6 +177,7 @@ public class WSService extends Service {
 
 
     }
+
     private void runOnUiThread(Runnable task) {
         mHandler.post(task);
     }
@@ -185,9 +190,9 @@ public class WSService extends Service {
     };
 
     private void connectSocket() {
-        Log.i(TAG,"connectSocket");
-        if(SOCKET_ONLINE || (mSocket!=null && mSocket.connected())){
-            Log.i(TAG,"connectSocket SOCKET_ONLINE == true re");
+        Log.i(TAG, "connectSocket");
+        if(isOnline()){
+            Log.i(TAG, "connectSocket SOCKET_ONLINE == true re");
             return;
         }
 
@@ -204,12 +209,14 @@ public class WSService extends Service {
         mSocket.on(Socket.EVENT_CONNECT_TIMEOUT, onConnectError);
         mSocket.on("LISTEN_SOCKET_ID", onUserJoined);
         mSocket.on("ON_CALL", onCall);
+        mSocket.on("LISTEN_SALES_SOCKET_ID", onListenSalesSocketId);
+        mSocket.on("SALES_ONLINE_WITH_STATUS_RETURN", ON_SALES_ONLINE_WITH_STATUS_RETURN);
         mSocket.connect();
 
     }
 
     private void disConnectSocket() {
-        Log.i(TAG,"disConnectSocket");
+        Log.i(TAG, "disConnectSocket");
         mSocket.disconnect();
         mSocket.off(Socket.EVENT_CONNECT, onConnect);
         mSocket.off(Socket.EVENT_DISCONNECT, onDisconnect);
@@ -217,7 +224,9 @@ public class WSService extends Service {
         mSocket.off(Socket.EVENT_CONNECT_TIMEOUT, onConnectError);
         mSocket.off("user joined", onUserJoined);
         mSocket.off("ON_CALL", onCall);
-        SOCKET_ONLINE = false;
+        mSocket.off("LISTEN_SALES_SOCKET_ID", onListenSalesSocketId);
+        mSocket.off("SALES_ONLINE_WITH_STATUS_RETURN", ON_SALES_ONLINE_WITH_STATUS_RETURN);
+//        SOCKET_ONLINE = false;
         sendUserStateEvent();
 
     }
@@ -226,26 +235,25 @@ public class WSService extends Service {
         @Override
         public void call(Object... args) {
 //            JSONObject data = (JSONObject) args;
-            Log.i("wsserver", "connected==" + args);
-            SOCKET_ONLINE = true;
-            Log.i(TAG,Thread.currentThread().getName());
+            Log.i("wsserver", "onConnect ");
+//            SOCKET_ONLINE = true;
+//            Log.i(TAG, Thread.currentThread().getName());
             sendUserStateEvent();
 
             try {
                 JSONObject jsonObject = new JSONObject();
-                jsonObject.put( "salesId", Preferences.getUserId());
-                mSocket.emit( "SALES_ONLINE_WITH_STATUS", jsonObject );
-                LogUtils.i(TAG,"emit SALES_ONLINE_WITH_STATUS salesId "+Preferences.getUserId());
-            } catch ( JSONException e ) {
+                jsonObject.put("salesId", Preferences.getUserId());
+                mSocket.emit("SALES_ONLINE_WITH_STATUS", jsonObject);
+                LogUtils.i(TAG, "emit SALES_ONLINE_WITH_STATUS salesId " + Preferences.getUserId());
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
-
 
 
         }
     };
 
-    private void sendUserStateEvent(){
+    private void sendUserStateEvent() {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -258,7 +266,7 @@ public class WSService extends Service {
         @Override
         public void call(Object... args) {
             Log.i("wsserver", "onDisconnect diconnected");
-            SOCKET_ONLINE = false;
+//            SOCKET_ONLINE = false;
             sendUserStateEvent();
 
         }
@@ -268,7 +276,7 @@ public class WSService extends Service {
         @Override
         public void call(Object... args) {
             Log.e("wsserver", "onConnectError Error ");
-            SOCKET_ONLINE = false;
+//            SOCKET_ONLINE = false;
             sendUserStateEvent();
 
         }
@@ -320,11 +328,48 @@ public class WSService extends Service {
                 String address = caller.getString("address");
                 Log.i("wsserver", "onCall tvSocketId ==" + tvSocketId);
                 Log.i("wsserver", "onCall channelId ==" + channelId);
-                OnCallActivity.actionStart(WSService.this,channelId,tvSocketId,address+" "+name);
+                OnCallActivity.actionStart(WSService.this, channelId, tvSocketId, address + " " + name);
             } catch (JSONException e) {
                 e.printStackTrace();
-                Log.e(TAG,"onCall e "+e);
+                Log.e(TAG, "onCall e " + e);
             }
+
+
+        }
+    };
+
+    private Emitter.Listener onListenSalesSocketId = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+
+            JSONObject data = (JSONObject) args[0];
+            try {
+                String socketId = data.getString("socketId");
+                Log.i("wsserver", "onListenSalesSocketId socketId ==" + socketId);
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("socketId", socketId);
+                jsonObject.put("salesId", Preferences.getUserId());
+                mSocket.emit("RE_CHECK_SOCKET_ID", jsonObject);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                Log.e(TAG, "onListenSalesSocketId e " + e);
+            }
+
+
+        }
+    };
+
+    private Emitter.Listener ON_SALES_ONLINE_WITH_STATUS_RETURN = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            final String msg = (String) args[0];
+            Log.i("wsserver", "ON_SALES_ONLINE_WITH_STATUS_RETURN msg ==" + msg);
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    showToast("ON_SALES_ONLINE_WITH_STATUS_RETURN msg ==" + msg);
+                }
+            });
 
 
         }
@@ -333,12 +378,12 @@ public class WSService extends Service {
 
     @Override
     public void onDestroy() {
-        if(SOCKET_ONLINE){
+        if (isOnline()) {
             disConnectSocket();
         }
         mHandler.removeCallbacksAndMessages(null);
         OkHttpUtil.getInstance().cancelTag(this);
-        Log.i(TAG,"life onDestroy");
+        Log.i(TAG, "life onDestroy");
         super.onDestroy();
     }
 }

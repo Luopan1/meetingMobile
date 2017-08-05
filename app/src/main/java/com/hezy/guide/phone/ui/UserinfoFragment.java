@@ -180,14 +180,13 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
         }
 
 
-        setState(WSService.SOCKET_ONLINE);
+        setState(WSService.isOnline());
 
         subscription = RxBus.handleMessage(new Action1() {
             @Override
             public void call(Object o) {
                 if (o instanceof UserStateEvent) {
-
-                    setState(WSService.SOCKET_ONLINE);
+                    setState(WSService.isOnline());
                 }
             }
         });
@@ -264,7 +263,7 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
                                             showToast("请先填写电话号码");
                                             return;
                                         }
-                                        if (!WSService.SOCKET_ONLINE) {
+                                        if (!WSService.isOnline()) {
                                             //当前状态离线,可切换在线
                                             Log.i(TAG,"当前状态离线,可切换在线");
                                             RxBus.sendMessage(new SetUserStateEvent(true));
@@ -278,7 +277,7 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
                                 new ActionSheetDialog.OnSheetItemClickListener() {//
                                     @Override
                                     public void onClick(int which) {
-                                        if (WSService.SOCKET_ONLINE) {
+                                        if (WSService.isOnline()) {
                                             //当前状态在线,可切换离线
                                             Log.i(TAG,"当前状态在线,可切换离线");
                                             RxBus.sendMessage(new SetUserStateEvent(false));

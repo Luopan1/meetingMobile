@@ -55,14 +55,14 @@ public class GuideLogFragment extends BaseDataBindingFragment<GuideLogFragmentBi
             Picasso.with(BaseApplication.getInstance()).load(Preferences.getWeiXinHead()).into(mBinding.views.mIvHead);
         }
 
-        setState(WSService.SOCKET_ONLINE);
+        setState(WSService.isOnline());
 
         subscription = RxBus.handleMessage(new Action1() {
             @Override
             public void call(Object o) {
                 if (o instanceof UserStateEvent) {
 
-                    setState(WSService.SOCKET_ONLINE);
+                    setState(WSService.isOnline());
                 }
             }
         });
@@ -166,7 +166,7 @@ public class GuideLogFragment extends BaseDataBindingFragment<GuideLogFragmentBi
                                             showToast("请先填写电话号码");
                                             return;
                                         }
-                                        if (!WSService.SOCKET_ONLINE) {
+                                        if (!WSService.isOnline()) {
                                             //当前状态离线,可切换在线
                                             Log.i(TAG, "当前状态离线,可切换在线");
                                             RxBus.sendMessage(new SetUserStateEvent(true));
@@ -179,11 +179,10 @@ public class GuideLogFragment extends BaseDataBindingFragment<GuideLogFragmentBi
                                 new ActionSheetDialog.OnSheetItemClickListener() {//
                                     @Override
                                     public void onClick(int which) {
-                                        if (WSService.SOCKET_ONLINE) {
+                                        if (WSService.isOnline()) {
                                             //当前状态在线,可切换离线
                                             Log.i(TAG, "当前状态在线,可切换离线");
-                                            WSService.SOCKET_ONLINE = false;
-                                            setState(false);
+                                            RxBus.sendMessage(new SetUserStateEvent(false));
                                         }
                                     }
                                 }).show();
