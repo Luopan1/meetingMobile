@@ -73,6 +73,7 @@ public class OnCallActivity extends BaseDataBindingActivity<OnCallActivityBindin
                 RxBus.sendMessage(new CallEvent(true,tvSocketId));
                 Intent intent = new Intent(mContext, MainActivity.class);
                 intent.putExtra("channelId", channelId);
+                intent.putExtra("callInfo", callInfo);
                 startActivity(intent);
                 finish();
                 break;
