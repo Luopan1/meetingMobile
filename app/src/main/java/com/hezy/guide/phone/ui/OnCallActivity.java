@@ -15,12 +15,15 @@ import com.hezy.guide.phone.base.BaseDataBindingActivity;
 import com.hezy.guide.phone.databinding.OnCallActivityBinding;
 import com.hezy.guide.phone.entities.base.BaseErrorBean;
 import com.hezy.guide.phone.event.CallEvent;
-import com.hezy.guide.phone.event.HandsUpEvent;
+import com.hezy.guide.phone.event.TvLeaveChannel;
 import com.hezy.guide.phone.net.ApiClient;
 import com.hezy.guide.phone.net.OkHttpCallback;
 import com.hezy.guide.phone.utils.RxBus;
+import com.hezy.guide.phone.utils.ToastUtils;
 
 import io.agora.openvcall.ui.MainActivity;
+import rx.Subscription;
+import rx.functions.Action1;
 
 /**
  * Created by wufan on 2017/8/3.
@@ -32,7 +35,7 @@ public class OnCallActivity extends BaseDataBindingActivity<OnCallActivityBindin
     private String tvSocketId;
     private String callInfo;
 
-    public static void actionStart(Context context,String channelId,  String tvSocketId,String callInfo) {
+    public static void actionStart(Context context, String channelId, String tvSocketId, String callInfo) {
         Intent intent = new Intent(context, OnCallActivity.class);
         //service中调用需要添加flag
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -57,13 +60,22 @@ public class OnCallActivity extends BaseDataBindingActivity<OnCallActivityBindin
                 | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
                 | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
                 | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+
+        subscription = RxBus.handleMessage(new Action1() {
+            @Override
+            public void call(Object o) {
+                if (o instanceof TvLeaveChannel) {
+                    ToastUtils.showToast("顾客已经挂断");
+                    finish();
+                }
+            }
+        });
     }
 
     @Override
     protected int initContentView() {
         return R.layout.on_call_activity;
     }
-
 
 
     @Override
@@ -81,7 +93,7 @@ public class OnCallActivity extends BaseDataBindingActivity<OnCallActivityBindin
                     @Override
                     public void onSuccess(BaseErrorBean entity) {
                         Log.d("start receive", entity.toString());
-                        RxBus.sendMessage(new CallEvent(true,tvSocketId));
+                        RxBus.sendMessage(new CallEvent(true, tvSocketId));
                         Intent intent = new Intent(mContext, MainActivity.class);
                         intent.putExtra("channelId", channelId);
                         intent.putExtra("callInfo", callInfo);
@@ -100,7 +112,7 @@ public class OnCallActivity extends BaseDataBindingActivity<OnCallActivityBindin
                     @Override
                     public void onSuccess(BaseErrorBean entity) {
                         Log.d("reject receive", entity.toString());
-                        RxBus.sendMessage(new CallEvent(false,tvSocketId));
+                        RxBus.sendMessage(new CallEvent(false, tvSocketId));
                         finish();
                     }
 
@@ -111,6 +123,14 @@ public class OnCallActivity extends BaseDataBindingActivity<OnCallActivityBindin
                 });
                 break;
         }
+    }
+
+    private Subscription subscription;
+
+    @Override
+    public void onDestroy() {
+        subscription.unsubscribe();
+        super.onDestroy();
     }
 
 }

@@ -76,6 +76,7 @@ public class RecordData {
          */
 
         private String callAnswerTime;
+        private int secondInterval;
         private int minuteInterval;
         private String address;
         private String callEndTime;
@@ -155,6 +156,14 @@ public class RecordData {
 
         public void setStatus(int status) {
             this.status = status;
+        }
+
+        public int getSecondInterval() {
+            return secondInterval;
+        }
+
+        public void setSecondInterval(int secondInterval) {
+            this.secondInterval = secondInterval;
         }
     }
 }

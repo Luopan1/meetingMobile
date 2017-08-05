@@ -90,9 +90,17 @@ public class GuideLogAdapter extends BaseRecyclerAdapter<RecordData.PageDataEnti
         }
 
         holder.mTvTimeDot.setText(TimeUtil.getMonth(time));
-        String html = TimeUtil.getMonthDayHM(time) + " 为" + bean.getAddress() + "-" + bean.getName()
-                + "("+"<font color='#b985e2'>"+bean.getMobile()+"</font>"+ ")" + "讲解了"
-                +"<font color='#ff9c00'>"+ bean.getMinuteInterval()+"</font>" + "分钟";
+        String html;
+        if(bean.getMinuteInterval() != 0){
+             html = TimeUtil.getMonthDayHM(time) + " 为" + bean.getAddress() + "-" + bean.getName()
+                    + "("+"<font color='#b985e2'>"+bean.getMobile()+"</font>"+ ")" + "讲解了"
+                    +"<font color='#ff9c00'>"+ bean.getMinuteInterval()+"</font>" + "分钟";
+        }else{
+             html = TimeUtil.getMonthDayHM(time) + " 为" + bean.getAddress() + "-" + bean.getName()
+                    + "("+"<font color='#b985e2'>"+bean.getMobile()+"</font>"+ ")" + "讲解了"
+                    +"<font color='#ff9c00'>"+ bean.getSecondInterval()+"</font>" + "秒";
+        }
+
         holder.mTvContent.setText(Html.fromHtml(html));
 
     }

@@ -19,6 +19,7 @@ import com.hezy.guide.phone.entities.base.BaseBean;
 import com.hezy.guide.phone.event.CallEvent;
 import com.hezy.guide.phone.event.HandsUpEvent;
 import com.hezy.guide.phone.event.SetUserStateEvent;
+import com.hezy.guide.phone.event.TvLeaveChannel;
 import com.hezy.guide.phone.event.UserStateEvent;
 import com.hezy.guide.phone.net.ApiClient;
 import com.hezy.guide.phone.net.OkHttpBaseCallback;
@@ -123,7 +124,7 @@ public class WSService extends Service {
                     }
 
                 } else if(o instanceof HandsUpEvent){
-                    mSocket.emit("END_CALL",null);
+                    mSocket.emit("END_CALL","END_CALL");
                     Log.i(TAG," mSocket.emit(\"END_CALL\",null)");
                 }
             }
@@ -216,6 +217,7 @@ public class WSService extends Service {
         mSocket.on("ON_CALL", onCall);
         mSocket.on("LISTEN_SALES_SOCKET_ID", onListenSalesSocketId);
         mSocket.on("SALES_ONLINE_WITH_STATUS_RETURN", ON_SALES_ONLINE_WITH_STATUS_RETURN);
+        mSocket.on("LISTEN_TV_LEAVE_CHANNEL",ON_LISTEN_TV_LEAVE_CHANNEL);
         mSocket.connect();
 
     }
@@ -231,6 +233,7 @@ public class WSService extends Service {
         mSocket.off("ON_CALL", onCall);
         mSocket.off("LISTEN_SALES_SOCKET_ID", onListenSalesSocketId);
         mSocket.off("SALES_ONLINE_WITH_STATUS_RETURN", ON_SALES_ONLINE_WITH_STATUS_RETURN);
+        mSocket.off("LISTEN_TV_LEAVE_CHANNEL",ON_LISTEN_TV_LEAVE_CHANNEL);
 //        SOCKET_ONLINE = false;
         sendUserStateEvent();
 
@@ -377,6 +380,16 @@ public class WSService extends Service {
                 }
             });
 
+
+        }
+    };
+
+    private Emitter.Listener ON_LISTEN_TV_LEAVE_CHANNEL = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            final String msg = (String) args[0];
+            Log.i("wsserver", "ON_LISTEN_TV_LEAVE_CHANNEL " );
+            RxBus.sendMessage(new TvLeaveChannel());
 
         }
     };
