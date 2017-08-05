@@ -1,80 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:paddingLeft="15dp"
     android:paddingRight="15dp">
 
 
+    <!--线条部分-->
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+    <!--线条部分-->
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <!--线条部分-->
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+        <View
+            android:id="@+id/mLineTop"
+            android:layout_width="2dp"
+            android:layout_height="30dp"
+            android:layout_centerHorizontal="true"
+            android:background="@color/bg_gray_909090" />
 
-            <View
-                android:id="@+id/mLineTop"
-                android:layout_width="3dp"
-                android:layout_height="30dp"
-                android:layout_centerHorizontal="true"
-                android:background="#CBCBCB" />
-
-            <View
-                android:id="@+id/mLineBottom"
-                android:visibility="invisible"
-                android:layout_below="@id/mLineTop"
-                android:layout_width="3dp"
-                android:layout_height="30dp"
-                android:layout_centerHorizontal="true"
-                android:background="#CBCBCB" />
-
-            <TextView
-                android:id="@+id/mTvTimeDot"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:gravity="center"
-                android:layout_centerHorizontal="true"
-                android:layout_centerInParent="true"
-                tools:text="06"
-                android:textSize="14sp"
-                android:textColor="@color/white"
-                android:background="@drawable/guide_log_time_cycle_history" />
-
-            <ImageView
-                android:visibility="invisible"
-                android:id="@+id/mIvDot"
-                android:layout_width="8dp"
-                android:layout_height="8dp"
-                android:gravity="center"
-                android:layout_centerHorizontal="true"
-                android:layout_centerInParent="true"
-                android:background="@drawable/guide_log_time_cycle_history" />
-
-
-        </RelativeLayout>
+        <View
+            android:id="@+id/mLineBottom"
+            android:layout_width="2dp"
+            android:layout_height="match_parent"
+            android:layout_below="@id/mLineTop"
+            android:layout_centerHorizontal="true"
+            android:background="@color/bg_gray_909090"
+            android:visibility="invisible" />
 
         <TextView
-            android:id="@+id/mTvContent"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="选择"
-            android:textColor="@color/text_black_434343"
-            android:layout_gravity="center_vertical"
-            android:layout_marginLeft="10dp"
-            android:textSize="15sp" />
+            android:id="@+id/mTvTimeDot"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/guide_log_time_cycle_history"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="13sp"
+            tools:text="06" />
 
-    </LinearLayout>
+        <ImageView
+            android:id="@+id/mIvDot"
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="26dp"
+            android:background="@drawable/guide_log_time_cycle_history"
+            android:visibility="visible"
+            tools:background="@color/black" />
 
 
+    </RelativeLayout>
 
+    <TextView
+        android:id="@+id/mTvContent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="20dp"
+        android:text="选择选择选择选择选择选择选择选择选择选择选择选择选择选择选择选择选择选择选择选择"
+        android:textSize="15sp" />
 
 
 </LinearLayout>
