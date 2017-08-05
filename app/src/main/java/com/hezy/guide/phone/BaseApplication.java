@@ -9,7 +9,6 @@ import com.hezy.guide.phone.net.ApiClient;
 import com.hezy.guide.phone.net.OkHttpBaseCallback;
 import com.hezy.guide.phone.net.OkHttpUtil;
 import com.hezy.guide.phone.persistence.Preferences;
-import com.squareup.leakcanary.LeakCanary;
 import com.tencent.bugly.crashreport.CrashReport;
 import com.tendcloud.tenddata.TCAgent;
 
@@ -35,12 +34,12 @@ public class BaseApplication extends Application {
         //内存泄露检测工具,开发中最好开启
         if (BuildConfig.DEBUG) {
             Log.i(TAG, "debug下开启LeakCanary");
-            if (LeakCanary.isInAnalyzerProcess(this)) {
-                // This process is dedicated to LeakCanary for heap analysis.
-                // You should not init your app in this process.
-                return;
-            }
-            LeakCanary.install(this);
+//            if (LeakCanary.isInAnalyzerProcess(this)) {
+//                // This process is dedicated to LeakCanary for heap analysis.
+//                // You should not init your app in this process.
+//                return;
+//            }
+//            LeakCanary.install(this);
         }
 
         //初始化bugly 4390f8350d
