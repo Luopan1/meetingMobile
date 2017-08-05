@@ -116,7 +116,7 @@ public class WSService extends Service {
                     try {
                         JSONObject jsonObject = new JSONObject();
                         jsonObject.put("tvSocketId", event.getTvSocketId());
-                        jsonObject.put("reply ", event.isCall() ? 1 : 0);
+                        jsonObject.put("reply", event.isCall() ? 1 : 0);
                         mSocket.emit("REPLY_TV", jsonObject);
                         Log.i(TAG, jsonObject.toString());
                     } catch (JSONException e) {
