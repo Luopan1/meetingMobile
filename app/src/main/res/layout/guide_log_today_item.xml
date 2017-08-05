@@ -11,7 +11,7 @@
     <!--线条部分-->
     <RelativeLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical">
 
         <View
@@ -22,9 +22,10 @@
             android:background="@color/bg_purple_ad97e7" />
 
         <View
+            android:id="@+id/mLineBottom"
             android:layout_below="@id/mLineTop"
             android:layout_width="2dp"
-            android:layout_height="30dp"
+            android:layout_height="match_parent"
             android:layout_centerHorizontal="true"
             android:background="@color/bg_purple_ad97e7" />
 
@@ -32,23 +33,23 @@
             android:id="@+id/mTvTimeDot"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:gravity="center"
             android:layout_centerHorizontal="true"
-            android:layout_centerInParent="true"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
             tools:text="06"
-            android:textSize="14sp"
+            android:textSize="13sp"
             android:textColor="@color/white"
             android:background="@drawable/guide_log_time_cycle_today" />
 
         <ImageView
-            android:visibility="invisible"
+            android:visibility="visible"
             android:id="@+id/mIvDot"
             android:layout_width="8dp"
             android:layout_height="8dp"
-            android:gravity="center"
+            android:layout_marginTop="26dp"
             android:layout_centerHorizontal="true"
-            android:layout_centerInParent="true"
-            android:background="@drawable/guide_log_time_cycle_history" />
+            tools:background="@color/black" />
+        android:background="@drawable/guide_log_time_cycle_today" />
 
 
     </RelativeLayout>
@@ -57,9 +58,9 @@
         android:id="@+id/mTvContent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="选择"
-        android:layout_gravity="center_vertical"
-        android:layout_marginLeft="5dp"
+        android:layout_marginTop="20dp"
+        android:text="选择选择选择选择选择选择选择选择选择选择选择选择选择选择选择选择选择选择选择选择"
+        android:layout_marginLeft="10dp"
         android:textSize="15sp" />
 
 
