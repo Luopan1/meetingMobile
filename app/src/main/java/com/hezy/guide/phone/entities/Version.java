@@ -19,7 +19,7 @@ public class Version implements Parcelable, Entity {
 
     private int minVersionCode;
 
-    private int importance; // 1:最新版，不用更新 2：小改动，可以不更新 3：建议更新
+    private int importance ; // 1:最新版，不用更新 2：小改动，可以不更新 3：建议更新
 
     private String pkgname;
 

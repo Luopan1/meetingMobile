@@ -389,7 +389,13 @@ public class WSService extends Service {
         public void call(final Object... args) {
             final String msg = (String) args[0];
             Log.i("wsserver", "ON_LISTEN_TV_LEAVE_CHANNEL " );
-            RxBus.sendMessage(new TvLeaveChannel());
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    RxBus.sendMessage(new TvLeaveChannel());
+                }
+            });
+
 
         }
     };

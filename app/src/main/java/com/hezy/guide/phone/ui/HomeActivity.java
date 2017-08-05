@@ -95,6 +95,9 @@ public class HomeActivity extends BaseDataBindingActivity<HomeActivityBinding> {
             @Override
             public void onSuccess(BaseBean<Version> entity) {
                 Version version = entity.getData();
+                if(version ==null || version.getImportance() ==0){
+                    return;
+                }
                 if (version.getImportance() != 1 && version.getImportance() != 2) {
                     startActivity(new Intent(mContext, UpdateDownloadActivity.class).putExtra("version", version));
                 }

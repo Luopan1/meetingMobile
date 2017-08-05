@@ -93,14 +93,20 @@ public class GuideLogAdapter extends BaseRecyclerAdapter<RecordData.PageDataEnti
 
         holder.mTvTimeDot.setText(TimeUtil.getMonth(time));
         String html;
+        String statusStr = "";
+        if(bean.getStatus() == 2 ){
+            statusStr = " 拒绝接听";
+        }else if(bean.getStatus() == 8){
+            statusStr = " 用户挂断呼叫";
+        }
         if(bean.getMinuteInterval() != 0){
              html = TimeUtil.getMonthDayHM(time) + " 为" + bean.getAddress() + "-" + bean.getName()
                     + "("+"<font color='#b985e2'>"+bean.getMobile()+"</font>"+ ")" + "讲解了"
-                    +"<font color='#ff9c00'>"+ bean.getMinuteInterval()+"</font>" + "分钟";
+                    +"<font color='#ff9c00'>"+ bean.getMinuteInterval()+"</font>" + "分钟"+statusStr;
         }else{
              html = TimeUtil.getMonthDayHM(time) + " 为" + bean.getAddress() + "-" + bean.getName()
                     + "("+"<font color='#b985e2'>"+bean.getMobile()+"</font>"+ ")" + "讲解了"
-                    +"<font color='#ff9c00'>"+ bean.getSecondInterval()+"</font>" + "秒";
+                    +"<font color='#ff9c00'>"+ bean.getSecondInterval()+"</font>" + "秒"+statusStr;
         }
 
         holder.mTvContent.setText(Html.fromHtml(html));

@@ -30,6 +30,7 @@ import rx.functions.Action1;
  */
 
 public class OnCallActivity extends BaseDataBindingActivity<OnCallActivityBinding> {
+    public static final String TAG = "OnCallActivity";
 
     private String channelId;
     private String tvSocketId;
@@ -66,7 +67,18 @@ public class OnCallActivity extends BaseDataBindingActivity<OnCallActivityBindin
             public void call(Object o) {
                 if (o instanceof TvLeaveChannel) {
                     ToastUtils.showToast("顾客已经挂断");
-                    finish();
+                    ApiClient.getInstance().startOrStopOrRejectCallExpostor(channelId, "8", new OkHttpCallback<BaseErrorBean>() {
+                        @Override
+                        public void onSuccess(BaseErrorBean entity) {
+                            Log.d(TAG, entity.toString());
+                            finish();
+                        }
+
+                        @Override
+                        public void onFailure(int errorCode, BaseException exception) {
+                            Toast.makeText(getApplication(), "" + exception.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
             }
         });
