@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="horizontal"
     android:paddingLeft="15dp"
-    android:paddingRight="15dp"
-    >
+    android:paddingRight="15dp">
     <!--线条部分-->
     <RelativeLayout
         android:layout_width="wrap_content"
@@ -21,13 +20,13 @@
             android:background="@color/bg_purple_ad97e7" />
 
         <View
-            android:visibility="invisible"
             android:id="@+id/mLineBottom"
-            android:layout_below="@id/mLineTop"
             android:layout_width="2dp"
             android:layout_height="match_parent"
+            android:layout_below="@id/mLineTop"
             android:layout_centerHorizontal="true"
-            android:background="@color/bg_purple_ad97e7" />
+            android:background="@color/bg_purple_ad97e7"
+            android:visibility="invisible" />
 
         <TextView
             android:id="@+id/mTvTimeDot"
@@ -35,21 +34,21 @@
             android:layout_height="20dp"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="20dp"
+            android:background="@drawable/guide_log_time_cycle_today"
             android:gravity="center"
-            tools:text="06"
-            android:textSize="13sp"
             android:textColor="@color/white"
-            android:background="@drawable/guide_log_time_cycle_today" />
+            android:textSize="13sp"
+            tools:text="06" />
 
         <ImageView
-            android:visibility="visible"
             android:id="@+id/mIvDot"
             android:layout_width="8dp"
             android:layout_height="8dp"
-            android:layout_marginTop="26dp"
             android:layout_centerHorizontal="true"
+            android:layout_marginTop="26dp"
+            android:background="@drawable/guide_log_time_cycle_today"
+            android:visibility="visible"
             tools:background="@color/black" />
-        android:background="@drawable/guide_log_time_cycle_today" />
 
 
     </RelativeLayout>
@@ -58,12 +57,10 @@
         android:id="@+id/mTvContent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
         android:layout_marginTop="20dp"
         android:text="选择选择选择选择选择选择选择选择选择选择选择选择选择选择选择选择选择选择选择选择"
-        android:layout_marginLeft="10dp"
         android:textSize="15sp" />
-
-
 
 
 </LinearLayout>
