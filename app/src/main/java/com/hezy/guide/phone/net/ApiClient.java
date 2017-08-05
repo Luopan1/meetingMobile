@@ -87,7 +87,7 @@ public class ApiClient {
      * @param responseCallback
      * @return
      */
-    public void stopCallExpostor(String recordId, String state, OkHttpCallback responseCallback){
+    public void startOrStopOrRejectCallExpostor(String recordId, String state, OkHttpCallback responseCallback){
         okHttpUtil.put(API_DOMAIN_NAME + "/osg/app/call/record/" + recordId + "?state=" + state, getCommonHead(), null, responseCallback);
     }
 

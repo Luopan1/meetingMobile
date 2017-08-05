@@ -421,7 +421,7 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
                     switchToSmallVideoView(bigBgUid);
                 }
 
-                ApiClient.getInstance().stopCallExpostor(channelName, "9", new OkHttpCallback<BaseErrorBean>() {
+                ApiClient.getInstance().startOrStopOrRejectCallExpostor(channelName, "9", new OkHttpCallback<BaseErrorBean>() {
                     @Override
                     public void onSuccess(BaseErrorBean entity) {
                         Log.d("stop receive", entity.toString());

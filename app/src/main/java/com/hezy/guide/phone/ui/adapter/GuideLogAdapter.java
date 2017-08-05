@@ -39,7 +39,7 @@ public class GuideLogAdapter extends BaseRecyclerAdapter<RecordData.PageDataEnti
         if (TimeUtil.isToday(time)) {
             if (position == 0) {
                 return ITEM_TYPE.TODAY_TOP.ordinal();
-            } else if (!TimeUtil.isToday(mData.get(position + 1).getCallStartTime())) {
+            } else if (!TimeUtil.isToday(mData.get(position).getCallStartTime())) {
                 return ITEM_TYPE.TODAY_END.ordinal();
             } else {
                 return ITEM_TYPE.TODAY.ordinal();
