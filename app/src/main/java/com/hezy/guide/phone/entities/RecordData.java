@@ -1,5 +1,7 @@
 package com.hezy.guide.phone.entities;
 
+import android.text.TextUtils;
+
 import java.util.List;
 
 /**
@@ -165,5 +167,14 @@ public class RecordData {
         public void setSecondInterval(int secondInterval) {
             this.secondInterval = secondInterval;
         }
+
+        public  String getOrderTime(){
+            if(!TextUtils.isEmpty(callAnswerTime)){
+                return callAnswerTime;
+            }else{
+                return callStartTime;
+            }
+        }
+
     }
 }

@@ -35,18 +35,20 @@ public class GuideLogAdapter extends BaseRecyclerAdapter<RecordData.PageDataEnti
     @Override
     public int getItemViewType(int position) {
         RecordData.PageDataEntity bean = mData.get(position);
-        String time = bean.getCallAnswerTime();
+        String time = bean.getOrderTime();
+     
         if (TimeUtil.isToday(time)) {
             if (position == 0) {
                 return ITEM_TYPE.TODAY_TOP.ordinal();
-            } else if (position == getItemCount()-1 || !TimeUtil.isToday(mData.get(position + 1).getCallAnswerTime())) {
+            } else if (position == getItemCount()-1 || !TimeUtil.isToday(mData.get(position + 1).getOrderTime())) {
+
                 return ITEM_TYPE.TODAY_END.ordinal();
             } else {
                 return ITEM_TYPE.TODAY.ordinal();
             }
 
         } else {
-            if (position == 0 || TimeUtil.isToday(mData.get(position - 1).getCallAnswerTime())) {
+            if (position == 0 || TimeUtil.isToday(mData.get(position - 1).getOrderTime())) {
                 //第一个,或者上一个是今天
                 return ITEM_TYPE.HISTORY_TOP.ordinal();
             } else if (position == getItemCount() - 1) {
@@ -79,9 +81,9 @@ public class GuideLogAdapter extends BaseRecyclerAdapter<RecordData.PageDataEnti
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
         RecordData.PageDataEntity bean = mData.get(position);
-        String time = bean.getCallAnswerTime();
+        String time = bean.getOrderTime();
         ViewHolder holder = (ViewHolder) viewHolder;
-        if(position != 0 && TimeUtil.isDayEqual(time,mData.get(position-1).getCallAnswerTime())){
+        if(position != 0 && TimeUtil.isDayEqual(time,mData.get(position-1).getOrderTime())){
             holder.mTvTimeDot.setVisibility(View.INVISIBLE);
             holder.mIvDot.setVisibility(View.VISIBLE);
         }else{
