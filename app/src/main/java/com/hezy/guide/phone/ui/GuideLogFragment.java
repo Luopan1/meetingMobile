@@ -117,6 +117,13 @@ public class GuideLogFragment extends BaseDataBindingFragment<GuideLogFragmentBi
 
     @Override
     protected void requestData() {
+//        requestRecordTotal();
+//        requestRecord();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         requestRecordTotal();
         requestRecord();
     }

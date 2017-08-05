@@ -201,6 +201,12 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
 
     @Override
     protected void requestData() {
+//        requestRecordTotal();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         requestRecordTotal();
     }
 
