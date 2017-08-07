@@ -9,6 +9,10 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.hezy.guide.phone.entities.base.BaseErrorBean;
+import com.hezy.guide.phone.net.ApiClient;
+import com.hezy.guide.phone.net.OkHttpCallback;
+
 /**
  * Created by whatisjava on 17-8-7.
  */
@@ -18,6 +22,11 @@ public class PhoneReceiver extends BroadcastReceiver {
     private static boolean incomingFlag = false;
 
     private Context mContext;
+    private String recordId;
+
+    public PhoneReceiver(String recordId){
+        this.recordId = recordId;
+    }
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -48,6 +57,7 @@ public class PhoneReceiver extends BroadcastReceiver {
                     if (incomingFlag) {
                         Log.i("PhoneReceiver", "CALL IN ACCEPT :" + incomingNumber);
                         Toast.makeText(mContext, "通话被其他应用打断", Toast.LENGTH_SHORT).show();
+                        ApiClient.getInstance().startOrStopOrRejectCallExpostor(recordId, "7", new ExpostorCallback());
                     }
                     break;
                 //电话挂机
@@ -60,4 +70,13 @@ public class PhoneReceiver extends BroadcastReceiver {
             }
         }
     };
+
+     class ExpostorCallback extends OkHttpCallback<BaseErrorBean> {
+
+         @Override
+         public void onSuccess(BaseErrorBean entity) {
+            Log.d("stop when calling", entity.toString());
+         }
+
+     }
 }

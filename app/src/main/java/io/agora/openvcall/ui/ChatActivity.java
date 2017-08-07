@@ -71,11 +71,6 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
-        phoneReceiver = new PhoneReceiver();
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction("android.intent.action.PHONE_STATE");
-        intentFilter.addAction("android.intent.action.NEW_OUTGOING_CALL");
-        registerReceiver(phoneReceiver, intentFilter);
     }
 
     @Override
@@ -100,6 +95,13 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
 
         channelName = i.getStringExtra(ConstantApp.ACTION_KEY_CHANNEL_NAME);
         callInfo = i.getStringExtra("callInfo");
+
+
+        phoneReceiver = new PhoneReceiver(channelName);
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("android.intent.action.PHONE_STATE");
+        intentFilter.addAction("android.intent.action.NEW_OUTGOING_CALL");
+        registerReceiver(phoneReceiver, intentFilter);
 
         final String encryptionKey = getIntent().getStringExtra(ConstantApp.ACTION_KEY_ENCRYPTION_KEY);
 
