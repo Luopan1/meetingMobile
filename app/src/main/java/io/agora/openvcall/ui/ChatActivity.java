@@ -126,14 +126,11 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
 //                int uid = user.mUid == config().mUid ? user.mUid : config().mUid;
                 int uid = user.mUid == config().mUid ? remoteUid : config().mUid;
                 switchToSmallVideoView(uid);
-//                Toast.makeText(ChatActivity.this, "switchToSmallVideoView " + uid, Toast.LENGTH_SHORT).show();
 
 //                if (mLayoutType == LAYOUT_TYPE_DEFAULT && mUidsList.size() != 1) {
 //                    switchToSmallVideoView(uid);
-//                    Toast.makeText(ChatActivity.this, "switchToSmallVideoView", Toast.LENGTH_SHORT).show();
 //                } else {
 //                    switchToDefaultVideoView();
-//                    Toast.makeText(ChatActivity.this, "switchToDefaultVideoView", Toast.LENGTH_SHORT).show();
 //                }
             }
         });
