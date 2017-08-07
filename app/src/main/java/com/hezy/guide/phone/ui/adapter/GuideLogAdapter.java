@@ -36,11 +36,11 @@ public class GuideLogAdapter extends BaseRecyclerAdapter<RecordData.PageDataEnti
     public int getItemViewType(int position) {
         RecordData.PageDataEntity bean = mData.get(position);
         String time = bean.getOrderTime();
-     
+
         if (TimeUtil.isToday(time)) {
             if (position == 0) {
                 return ITEM_TYPE.TODAY_TOP.ordinal();
-            } else if (position == getItemCount()-1 || !TimeUtil.isToday(mData.get(position + 1).getOrderTime())) {
+            } else if (position == getItemCount() - 1 || !TimeUtil.isToday(mData.get(position + 1).getOrderTime())) {
 
                 return ITEM_TYPE.TODAY_END.ordinal();
             } else {
@@ -71,7 +71,7 @@ public class GuideLogAdapter extends BaseRecyclerAdapter<RecordData.PageDataEnti
             return new ViewHolder(mInflater.inflate(R.layout.guide_log_today_item, parent, false));
         } else if (viewType == ITEM_TYPE.HISTORY_TOP.ordinal()) {
             return new ViewHolder(mInflater.inflate(R.layout.guide_log_history_top_item, parent, false));
-        }  else if (viewType == ITEM_TYPE.HISTORY_END.ordinal()) {
+        } else if (viewType == ITEM_TYPE.HISTORY_END.ordinal()) {
             return new ViewHolder(mInflater.inflate(R.layout.guide_log_history_end_item, parent, false));
         } else {
             return new ViewHolder(mInflater.inflate(R.layout.guide_log_history_item, parent, false));
@@ -83,31 +83,34 @@ public class GuideLogAdapter extends BaseRecyclerAdapter<RecordData.PageDataEnti
         RecordData.PageDataEntity bean = mData.get(position);
         String time = bean.getOrderTime();
         ViewHolder holder = (ViewHolder) viewHolder;
-        if(position != 0 && TimeUtil.isDayEqual(time,mData.get(position-1).getOrderTime())){
+        if (position != 0 && TimeUtil.isDayEqual(time, mData.get(position - 1).getOrderTime())) {
             holder.mTvTimeDot.setVisibility(View.INVISIBLE);
             holder.mIvDot.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             holder.mTvTimeDot.setVisibility(View.VISIBLE);
             holder.mIvDot.setVisibility(View.INVISIBLE);
         }
 
         holder.mTvTimeDot.setText(TimeUtil.getMonth(time));
         String html;
-        String statusStr = "";
-        if(bean.getStatus() == 2 ){
-            statusStr = " 拒绝接听";
-        }else if(bean.getStatus() == 8){
-            statusStr = " 用户挂断呼叫";
+        if (bean.getStatus() == 2) {
+            html = "<font color='#ff6482'>" + TimeUtil.getMonthDayHM(time)
+                    + " 您拒绝接听" + bean.getAddress() + "-" + bean.getName()
+                    + "(" + "<font color='#b985e2'>" + bean.getMobile() + "</font>" + ")" + "的通话" + "</font>";
+        } else if (bean.getStatus() == 8) {
+            html ="<font color='#ff6482'>" + TimeUtil.getMonthDayHM(time)
+                    + " " + bean.getAddress() + "-" + bean.getName()
+                    + "(" + "<font color='#b985e2'>" + bean.getMobile() + "</font>" + ")" + "挂断了呼叫" + "</font>";
+        } else if (bean.getMinuteInterval() != 0) {
+            html = TimeUtil.getMonthDayHM(time) + " 为" + bean.getAddress() + "-" + bean.getName()
+                    + "(" + "<font color='#b985e2'>" + bean.getMobile() + "</font>" + ")" + "讲解了"
+                    + "<font color='#ff9c00'>" + bean.getMinuteInterval() + "</font>" + "分钟";
+        } else {
+            html = TimeUtil.getMonthDayHM(time) + " 为" + bean.getAddress() + "-" + bean.getName()
+                    + "(" + "<font color='#b985e2'>" + bean.getMobile() + "</font>" + ")" + "讲解了"
+                    + "<font color='#ff9c00'>" + bean.getSecondInterval() + "</font>" + "秒";
         }
-        if(bean.getMinuteInterval() != 0){
-             html = TimeUtil.getMonthDayHM(time) + " 为" + bean.getAddress() + "-" + bean.getName()
-                    + "("+"<font color='#b985e2'>"+bean.getMobile()+"</font>"+ ")" + "讲解了"
-                    +"<font color='#ff9c00'>"+ bean.getMinuteInterval()+"</font>" + "分钟"+statusStr;
-        }else{
-             html = TimeUtil.getMonthDayHM(time) + " 为" + bean.getAddress() + "-" + bean.getName()
-                    + "("+"<font color='#b985e2'>"+bean.getMobile()+"</font>"+ ")" + "讲解了"
-                    +"<font color='#ff9c00'>"+ bean.getSecondInterval()+"</font>" + "秒"+statusStr;
-        }
+
 
         holder.mTvContent.setText(Html.fromHtml(html));
 
