@@ -15,6 +15,7 @@ import com.hezy.guide.phone.databinding.GuideLogFragmentBinding;
 import com.hezy.guide.phone.entities.RecordData;
 import com.hezy.guide.phone.entities.RecordTotal;
 import com.hezy.guide.phone.entities.base.BaseBean;
+import com.hezy.guide.phone.event.PagerSetUserinfo;
 import com.hezy.guide.phone.event.SetUserStateEvent;
 import com.hezy.guide.phone.event.UserStateEvent;
 import com.hezy.guide.phone.net.ApiClient;
@@ -215,6 +216,9 @@ public class GuideLogFragment extends BaseDataBindingFragment<GuideLogFragmentBi
                                         }
                                     }
                                 }).show();
+                break;
+            case R.id.mIvHead:
+                RxBus.sendMessage(new PagerSetUserinfo());
                 break;
 
 

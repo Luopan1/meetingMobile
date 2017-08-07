@@ -17,12 +17,15 @@ import com.hezy.guide.phone.base.BaseDataBindingActivity;
 import com.hezy.guide.phone.databinding.HomeActivityBinding;
 import com.hezy.guide.phone.entities.Version;
 import com.hezy.guide.phone.entities.base.BaseBean;
+import com.hezy.guide.phone.event.PagerSetGuideLog;
+import com.hezy.guide.phone.event.PagerSetUserinfo;
 import com.hezy.guide.phone.net.ApiClient;
 import com.hezy.guide.phone.net.OkHttpBaseCallback;
 import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.service.WSService;
 import com.hezy.guide.phone.utils.Installation;
 import com.hezy.guide.phone.utils.LogUtils;
+import com.hezy.guide.phone.utils.RxBus;
 import com.hezy.guide.phone.utils.UUIDUtils;
 
 import org.json.JSONException;
@@ -31,6 +34,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import me.kaelaela.verticalviewpager.transforms.DefaultTransformer;
+import rx.Subscription;
+import rx.functions.Action1;
 
 
 /**
@@ -64,6 +69,17 @@ public class HomeActivity extends BaseDataBindingActivity<HomeActivityBinding> {
 
         mBinding.mVerticalViewPager.setPageTransformer(false, new DefaultTransformer());
 
+        subscription = RxBus.handleMessage(new Action1() {
+            @Override
+            public void call(Object o) {
+                if (o instanceof PagerSetUserinfo) {
+                    mBinding.mVerticalViewPager.setCurrentItem(0);
+                } else if (o instanceof PagerSetGuideLog) {
+                    mBinding.mVerticalViewPager.setCurrentItem(1);
+                }
+            }
+        });
+
 
     }
 
@@ -81,21 +97,21 @@ public class HomeActivity extends BaseDataBindingActivity<HomeActivityBinding> {
         mFragments.add(GuideLogFragment.newInstance());
         mHomePagerAdapter.setData(mFragments);
         mBinding.mVerticalViewPager.setAdapter(mHomePagerAdapter);
-        LogUtils.i(TAG,"getUserMobile"+Preferences.getUserMobile());
-        if(!TextUtils.isEmpty(Preferences.getUserMobile())){
+        LogUtils.i(TAG, "getUserMobile" + Preferences.getUserMobile());
+        if (!TextUtils.isEmpty(Preferences.getUserMobile())) {
             //手机非空,默认进入日志页面
-            LogUtils.i(TAG,"手机非空,默认进入日志页面");
+            LogUtils.i(TAG, "手机非空,默认进入日志页面");
             mBinding.mVerticalViewPager.setCurrentItem(1);
         }
     }
 
 
-    private void versionCheck(){
+    private void versionCheck() {
         ApiClient.getInstance().versionCheck(this, new OkHttpBaseCallback<BaseBean<Version>>() {
             @Override
             public void onSuccess(BaseBean<Version> entity) {
                 Version version = entity.getData();
-                if(version ==null || version.getImportance() ==0){
+                if (version == null || version.getImportance() == 0) {
                     return;
                 }
                 if (version.getImportance() != 1 && version.getImportance() != 2) {
@@ -202,4 +218,11 @@ public class HomeActivity extends BaseDataBindingActivity<HomeActivityBinding> {
         System.exit(0);
     }
 
+    private Subscription subscription;
+
+    @Override
+    public void onDestroy() {
+        subscription.unsubscribe();
+        super.onDestroy();
+    }
 }

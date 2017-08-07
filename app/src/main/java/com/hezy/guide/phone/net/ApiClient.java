@@ -2,6 +2,7 @@ package com.hezy.guide.phone.net;
 
 import android.os.Build;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.hezy.guide.phone.BaseApplication;
 import com.hezy.guide.phone.BuildConfig;
@@ -10,12 +11,18 @@ import com.hezy.guide.phone.entities.RecordData;
 import com.hezy.guide.phone.entities.RecordTotal;
 import com.hezy.guide.phone.entities.Version;
 import com.hezy.guide.phone.entities.base.BaseBean;
+import com.hezy.guide.phone.entities.base.BaseErrorBean;
 import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.utils.UUIDUtils;
 import com.tendcloud.tenddata.TCAgent;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
 
 /**
  * Created by whatisjava on 16/4/12.
@@ -176,6 +183,23 @@ public class ApiClient {
         params.put("pageNo",pageNo);
         params.put("pageSize",pageSize);
         okHttpUtil.getInstance().get(API_DOMAIN_NAME+"/osg/app/call/expostor/"+userId+"/record",getCommonHead(),params,callback,tag);
+    }
+
+    /**
+     * 获得手机验证码
+     * @param tag
+     * @param mobile
+     */
+    public void requestVerifyCode(Object tag, String mobile, OkHttpBaseCallback<BaseErrorBean> callback){
+               try {
+                   JSONObject jsonObject = new JSONObject();
+                   jsonObject.put("mobile", mobile);
+                   okHttpUtil.getInstance().postJson(API_DOMAIN_NAME+"/osg/app/user/verifyCode",getCommonHead(),jsonObject.toString(),callback,tag);
+               } catch (JSONException e) {
+                   e.printStackTrace();
+                   Log.e(TAG,e.getMessage());
+               }
+
     }
 
 }
