@@ -1,14 +1,12 @@
 package io.agora.openvcall.ui;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.media.AudioManager;
 import android.os.Bundle;
-import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,7 +15,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SurfaceView;
 import android.view.View;
-import android.view.ViewParent;
 import android.view.ViewStub;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -26,7 +23,6 @@ import android.widget.TextView;
 
 import com.hezy.guide.phone.R;
 import com.hezy.guide.phone.entities.base.BaseErrorBean;
-import com.hezy.guide.phone.event.CallEvent;
 import com.hezy.guide.phone.event.HandsUpEvent;
 import com.hezy.guide.phone.net.ApiClient;
 import com.hezy.guide.phone.net.OkHttpCallback;
@@ -111,7 +107,8 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
                 }
 
                 UserStatusData user = (UserStatusData) item;
-                int uid = user.mUid == config().mUid ? config().mUid : user.mUid;
+
+                int uid = user.mUid == config().mUid ? user.mUid : config().mUid;
 
                 if (mLayoutType == LAYOUT_TYPE_DEFAULT && mUidsList.size() != 1) {
                     switchToSmallVideoView(uid);
