@@ -7,7 +7,13 @@ import android.content.Intent;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.util.Log;
-import android.widget.Toast;
+
+import com.hezy.guide.phone.entities.base.BaseErrorBean;
+import com.hezy.guide.phone.event.HangOnEvent;
+import com.hezy.guide.phone.event.HangUpEvent;
+import com.hezy.guide.phone.net.ApiClient;
+import com.hezy.guide.phone.net.OkHttpCallback;
+import com.hezy.guide.phone.utils.RxBus;
 
 /**
  * Created by whatisjava on 17-8-7.
@@ -18,6 +24,15 @@ public class PhoneReceiver extends BroadcastReceiver {
     private static boolean incomingFlag = false;
 
     private Context mContext;
+    private String recordId;
+
+    public PhoneReceiver(){
+
+    }
+    public PhoneReceiver(String recordId){
+        this();
+        this.recordId = recordId;
+    }
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -47,17 +62,27 @@ public class PhoneReceiver extends BroadcastReceiver {
                 case TelephonyManager.CALL_STATE_OFFHOOK:
                     if (incomingFlag) {
                         Log.i("PhoneReceiver", "CALL IN ACCEPT :" + incomingNumber);
-                        Toast.makeText(mContext, "通话被其他应用打断", Toast.LENGTH_SHORT).show();
+                        ApiClient.getInstance().startOrStopOrRejectCallExpostor(recordId, "7", new ExpostorCallback());
+                        RxBus.sendMessage(new HangOnEvent());
                     }
                     break;
                 //电话挂机
                 case TelephonyManager.CALL_STATE_IDLE:
                     if (incomingFlag) {
                         Log.i("PhoneReceiver", "CALL IDLE");
-
+                        RxBus.sendMessage(new HangUpEvent());
                     }
                     break;
             }
         }
     };
+
+     class ExpostorCallback extends OkHttpCallback<BaseErrorBean> {
+
+         @Override
+         public void onSuccess(BaseErrorBean entity) {
+            Log.d("stop when calling", entity.toString());
+         }
+
+     }
 }

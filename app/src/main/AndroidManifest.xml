@@ -84,7 +84,8 @@
             android:theme="@style/FullscreenTheme"/>
 
         <activity android:name="io.agora.openvcall.ui.MainActivity"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
+            android:theme="@style/FullscreenTheme"
             android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale" />
 
         <activity android:name=".ui.OnCallActivity"

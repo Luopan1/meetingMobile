@@ -21,11 +21,10 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.hezy.guide.phone.R;
 import com.hezy.guide.phone.entities.base.BaseErrorBean;
-import com.hezy.guide.phone.event.HandsUpEvent;
+import com.hezy.guide.phone.event.HangUpEvent;
 import com.hezy.guide.phone.net.ApiClient;
 import com.hezy.guide.phone.net.OkHttpCallback;
 import com.hezy.guide.phone.persistence.Preferences;
@@ -71,11 +70,6 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
-        phoneReceiver = new PhoneReceiver();
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction("android.intent.action.PHONE_STATE");
-        intentFilter.addAction("android.intent.action.NEW_OUTGOING_CALL");
-        registerReceiver(phoneReceiver, intentFilter);
     }
 
     @Override
@@ -101,6 +95,13 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
         channelName = i.getStringExtra(ConstantApp.ACTION_KEY_CHANNEL_NAME);
         callInfo = i.getStringExtra("callInfo");
 
+
+        phoneReceiver = new PhoneReceiver(channelName);
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("android.intent.action.PHONE_STATE");
+        intentFilter.addAction("android.intent.action.NEW_OUTGOING_CALL");
+        registerReceiver(phoneReceiver, intentFilter);
+
         final String encryptionKey = getIntent().getStringExtra(ConstantApp.ACTION_KEY_ENCRYPTION_KEY);
 
         final String encryptionMode = getIntent().getStringExtra(ConstantApp.ACTION_KEY_ENCRYPTION_MODE);
@@ -124,14 +125,11 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
 //                int uid = user.mUid == config().mUid ? user.mUid : config().mUid;
                 int uid = user.mUid == config().mUid ? remoteUid : config().mUid;
                 switchToSmallVideoView(uid);
-//                Toast.makeText(ChatActivity.this, "switchToSmallVideoView " + uid, Toast.LENGTH_SHORT).show();
 
 //                if (mLayoutType == LAYOUT_TYPE_DEFAULT && mUidsList.size() != 1) {
 //                    switchToSmallVideoView(uid);
-//                    Toast.makeText(ChatActivity.this, "switchToSmallVideoView", Toast.LENGTH_SHORT).show();
 //                } else {
 //                    switchToDefaultVideoView();
-//                    Toast.makeText(ChatActivity.this, "switchToDefaultVideoView", Toast.LENGTH_SHORT).show();
 //                }
             }
         });
@@ -550,7 +548,7 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
 
             @Override
             public void onFinish() {
-                RxBus.sendMessage(new HandsUpEvent());
+                RxBus.sendMessage(new HangUpEvent());
                 finish();
             }
         });

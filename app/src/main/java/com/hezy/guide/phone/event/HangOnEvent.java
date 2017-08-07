@@ -4,5 +4,5 @@ package com.hezy.guide.phone.event;
  * Created by wufan on 2017/7/27.
  */
 
-public class HandsUpEvent {
+public class HangOnEvent {
 }

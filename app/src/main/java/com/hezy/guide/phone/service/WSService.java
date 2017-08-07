@@ -17,7 +17,7 @@ import android.util.Log;
 import com.hezy.guide.phone.BuildConfig;
 import com.hezy.guide.phone.entities.base.BaseBean;
 import com.hezy.guide.phone.event.CallEvent;
-import com.hezy.guide.phone.event.HandsUpEvent;
+import com.hezy.guide.phone.event.HangUpEvent;
 import com.hezy.guide.phone.event.SetUserStateEvent;
 import com.hezy.guide.phone.event.TvLeaveChannel;
 import com.hezy.guide.phone.event.UserStateEvent;
@@ -123,7 +123,7 @@ public class WSService extends Service {
                         e.printStackTrace();
                     }
 
-                } else if(o instanceof HandsUpEvent){
+                } else if(o instanceof HangUpEvent){
                     mSocket.emit("END_CALL","END_CALL");
                     Log.i(TAG," mSocket.emit(\"END_CALL\",null)");
                 }
