@@ -20,6 +20,7 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.hezy.guide.phone.R;
 import com.hezy.guide.phone.entities.base.BaseErrorBean;
@@ -79,6 +80,8 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
 
     private String channelName, callInfo;
 
+    private int remoteUid;
+
     @Override
     protected void initUIandEvent() {
         event().addEventHandler(this);
@@ -108,13 +111,18 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
 
                 UserStatusData user = (UserStatusData) item;
 
-                int uid = user.mUid == config().mUid ? user.mUid : config().mUid;
+//                int uid = user.mUid == config().mUid ? user.mUid : config().mUid;
+                int uid = user.mUid == config().mUid ? remoteUid : config().mUid;
+                switchToSmallVideoView(uid);
+//                Toast.makeText(ChatActivity.this, "switchToSmallVideoView " + uid, Toast.LENGTH_SHORT).show();
 
-                if (mLayoutType == LAYOUT_TYPE_DEFAULT && mUidsList.size() != 1) {
-                    switchToSmallVideoView(uid);
-                } else {
-                    switchToDefaultVideoView();
-                }
+//                if (mLayoutType == LAYOUT_TYPE_DEFAULT && mUidsList.size() != 1) {
+//                    switchToSmallVideoView(uid);
+//                    Toast.makeText(ChatActivity.this, "switchToSmallVideoView", Toast.LENGTH_SHORT).show();
+//                } else {
+//                    switchToDefaultVideoView();
+//                    Toast.makeText(ChatActivity.this, "switchToDefaultVideoView", Toast.LENGTH_SHORT).show();
+//                }
             }
         });
 
@@ -232,6 +240,8 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
                 surfaceV.setZOrderMediaOverlay(!useDefaultLayout);
 
                 rtcEngine().setupRemoteVideo(new VideoCanvas(surfaceV, VideoCanvas.RENDER_MODE_HIDDEN, uid));
+
+                remoteUid = uid;
 
                 if (useDefaultLayout) {
                     log.debug("doRenderRemoteUi LAYOUT_TYPE_DEFAULT " + (uid & 0xFFFFFFFFL));
