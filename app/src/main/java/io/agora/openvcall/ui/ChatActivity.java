@@ -3,6 +3,7 @@ package io.agora.openvcall.ui;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.media.AudioManager;
@@ -28,6 +29,7 @@ import com.hezy.guide.phone.event.HandsUpEvent;
 import com.hezy.guide.phone.net.ApiClient;
 import com.hezy.guide.phone.net.OkHttpCallback;
 import com.hezy.guide.phone.persistence.Preferences;
+import com.hezy.guide.phone.receiver.PhoneReceiver;
 import com.hezy.guide.phone.utils.RxBus;
 import com.hezy.guide.phone.utils.UIDUtil;
 
@@ -62,10 +64,18 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
 
     private volatile int mAudioRouting = -1; // Default
 
+    private PhoneReceiver phoneReceiver;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+
+        phoneReceiver = new PhoneReceiver();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("android.intent.action.PHONE_STATE");
+        intentFilter.addAction("android.intent.action.NEW_OUTGOING_CALL");
+        registerReceiver(phoneReceiver, intentFilter);
     }
 
     @Override

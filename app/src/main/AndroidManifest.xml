@@ -90,6 +90,15 @@
         <activity android:name=".ui.OnCallActivity"
             android:screenOrientation="portrait"/>
 
+        <receiver android:name=".receiver.PhoneReceiver" >
+            <intent-filter>
+                <!-- 获取来电广播 -->
+                <action android:name="android.intent.action.PHONE_STATE" />
+                <!-- 获取去电广播 -->
+                <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
+            </intent-filter>
+        </receiver>
+
         <!--服务开始-->
         <service android:name=".service.HeartService" />
         <service android:name=".service.WSService" />
