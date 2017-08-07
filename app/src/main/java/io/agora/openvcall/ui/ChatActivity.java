@@ -21,11 +21,10 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.hezy.guide.phone.R;
 import com.hezy.guide.phone.entities.base.BaseErrorBean;
-import com.hezy.guide.phone.event.HandsUpEvent;
+import com.hezy.guide.phone.event.HangUpEvent;
 import com.hezy.guide.phone.net.ApiClient;
 import com.hezy.guide.phone.net.OkHttpCallback;
 import com.hezy.guide.phone.persistence.Preferences;
@@ -549,7 +548,7 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
 
             @Override
             public void onFinish() {
-                RxBus.sendMessage(new HandsUpEvent());
+                RxBus.sendMessage(new HangUpEvent());
                 finish();
             }
         });

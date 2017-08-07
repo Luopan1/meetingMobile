@@ -7,10 +7,10 @@ import android.content.Intent;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.hezy.guide.phone.entities.base.BaseErrorBean;
-import com.hezy.guide.phone.event.HandsOnEvent;
+import com.hezy.guide.phone.event.HangOnEvent;
+import com.hezy.guide.phone.event.HangUpEvent;
 import com.hezy.guide.phone.net.ApiClient;
 import com.hezy.guide.phone.net.OkHttpCallback;
 import com.hezy.guide.phone.utils.RxBus;
@@ -63,14 +63,14 @@ public class PhoneReceiver extends BroadcastReceiver {
                     if (incomingFlag) {
                         Log.i("PhoneReceiver", "CALL IN ACCEPT :" + incomingNumber);
                         ApiClient.getInstance().startOrStopOrRejectCallExpostor(recordId, "7", new ExpostorCallback());
-                        RxBus.sendMessage(new HandsOnEvent());
+                        RxBus.sendMessage(new HangOnEvent());
                     }
                     break;
                 //电话挂机
                 case TelephonyManager.CALL_STATE_IDLE:
                     if (incomingFlag) {
                         Log.i("PhoneReceiver", "CALL IDLE");
-
+                        RxBus.sendMessage(new HangUpEvent());
                     }
                     break;
             }
