@@ -1,7 +1,6 @@
 package com.hezy.guide.phone.service;
 
 import android.app.Notification;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -35,7 +34,6 @@ import com.hezy.guide.phone.utils.Installation;
 import com.hezy.guide.phone.utils.LogUtils;
 import com.hezy.guide.phone.utils.RxBus;
 import com.hezy.guide.phone.utils.UUIDUtils;
-import com.squareup.haha.perflib.Main;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -109,7 +107,7 @@ public class WSService extends Service {
     public void onCreate() {
         //默认离线,用户手动切换在线
 //        connectSocket();
-        setStartForeground();
+//        setStartForeground();
         mHandler = new Handler(Looper.getMainLooper());
         subscription = RxBus.handleMessage(new Action1() {
             @Override
@@ -159,24 +157,23 @@ public class WSService extends Service {
 
 
     private void setStartForeground() {
-//        Notification notification = new Notification(R.mipmap.icon_launcher, getText(R.string.app_name)+"正在运行",
-//                System.currentTimeMillis());
-        Intent intent = new Intent(Intent.ACTION_MAIN);
-        intent.addCategory(Intent.CATEGORY_LAUNCHER);
-        intent.setClass(this, Main.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+        Notification notification = new Notification(R.mipmap.icon_launcher, getText(R.string.app_name)+"正在运行",
+                System.currentTimeMillis());
+//        Intent intent = new Intent(Intent.ACTION_MAIN);
+//        intent.addCategory(Intent.CATEGORY_LAUNCHER);
+//        intent.setClass(this, Main.class);
+//        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+//
+//        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
 
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
 
-
-        Notification notification = new Notification.Builder(this)
-                .setAutoCancel(true)
-                .setContentTitle("应用正常运行")
-                .setContentText("这个通知是为了标识应用是否正常运行中")
-                .setContentIntent(pendingIntent)
-                .setSmallIcon(R.mipmap.icon_launcher)
-                .setWhen(System.currentTimeMillis())
-                .build();
+//        Notification notification = new Notification.Builder(this)
+//                .setAutoCancel(true)
+//                .setContentTitle("应用正常运行")
+//                .setContentText("这个通知是为了标识应用是否正常运行中")
+//                .setSmallIcon(R.mipmap.icon_launcher)
+//                .setWhen(System.currentTimeMillis())
+//                .build();
         startForeground(1, notification);
     }
 
