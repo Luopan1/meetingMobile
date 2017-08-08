@@ -34,6 +34,7 @@ import com.jph.takephoto.app.TakePhotoImpl;
 import com.jph.takephoto.model.InvokeParam;
 import com.jph.takephoto.model.TContextWrap;
 import com.jph.takephoto.model.TResult;
+import com.jph.takephoto.model.TakePhotoOptions;
 import com.jph.takephoto.permission.InvokeListener;
 import com.jph.takephoto.permission.PermissionManager;
 import com.jph.takephoto.permission.TakePhotoInvocationHandler;
@@ -270,6 +271,7 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
     protected void normalOnClick(View v) {
         switch (v.getId()) {
             case R.id.mIvPicture:
+                configTakePhotoOption(takePhoto);
                 File file = new File(Environment.getExternalStorageDirectory(), "/temp/" + System.currentTimeMillis() + ".jpg");
                 if (!file.getParentFile().exists())
                     file.getParentFile().mkdirs();
@@ -363,6 +365,12 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
                 break;
 
         }
+    }
+
+    private void configTakePhotoOption(TakePhoto takePhoto){
+        TakePhotoOptions.Builder builder=new TakePhotoOptions.Builder();
+        builder.setCorrectImage(true);
+        takePhoto.setTakePhotoOptions(builder.create());
     }
 
 
