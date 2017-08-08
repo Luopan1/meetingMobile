@@ -9,8 +9,8 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 
 import com.hezy.guide.phone.entities.base.BaseErrorBean;
+import com.hezy.guide.phone.event.HangDownEvent;
 import com.hezy.guide.phone.event.HangOnEvent;
-import com.hezy.guide.phone.event.HangUpEvent;
 import com.hezy.guide.phone.net.ApiClient;
 import com.hezy.guide.phone.net.OkHttpCallback;
 import com.hezy.guide.phone.utils.RxBus;
@@ -70,7 +70,7 @@ public class PhoneReceiver extends BroadcastReceiver {
                 case TelephonyManager.CALL_STATE_IDLE:
                     if (incomingFlag) {
                         Log.i("PhoneReceiver", "CALL IDLE");
-                        RxBus.sendMessage(new HangUpEvent());
+                        RxBus.sendMessage(new HangDownEvent());
                     }
                     break;
             }
