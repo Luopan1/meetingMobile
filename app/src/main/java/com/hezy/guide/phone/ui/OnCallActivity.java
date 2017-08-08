@@ -2,11 +2,14 @@ package com.hezy.guide.phone.ui;
 
 import android.content.Context;
 import android.content.Intent;
+import android.media.MediaPlayer;
+import android.media.RingtoneManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.AnimationUtils;
 import android.widget.Toast;
 
 import com.hezy.guide.phone.BaseException;
@@ -35,6 +38,8 @@ public class OnCallActivity extends BaseDataBindingActivity<OnCallActivityBindin
     private String channelId;
     private String tvSocketId;
     private String callInfo;
+
+    private MediaPlayer mp;
 
     public static void actionStart(Context context, String channelId, String tvSocketId, String callInfo) {
         Intent intent = new Intent(context, OnCallActivity.class);
@@ -82,6 +87,17 @@ public class OnCallActivity extends BaseDataBindingActivity<OnCallActivityBindin
                 }
             }
         });
+
+        mp = new MediaPlayer();
+        try {
+            mp.setDataSource(this, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE));
+            mp.prepare();
+            mp.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        mBinding.mWaterWave.startAnimation(AnimationUtils.loadAnimation(this, R.anim.water_wave));
     }
 
     @Override
@@ -101,6 +117,9 @@ public class OnCallActivity extends BaseDataBindingActivity<OnCallActivityBindin
     public void normalOnClick(View v) {
         switch (v.getId()) {
             case R.id.mIvAccept:
+                mp.stop();
+                mp.release();
+                mp = null;
                 ApiClient.getInstance().startOrStopOrRejectCallExpostor(channelId, "1", new OkHttpCallback<BaseErrorBean>() {
                     @Override
                     public void onSuccess(BaseErrorBean entity) {
@@ -120,6 +139,9 @@ public class OnCallActivity extends BaseDataBindingActivity<OnCallActivityBindin
                 });
                 break;
             case R.id.mIvReject:
+                mp.stop();
+                mp.release();
+                mp = null;
                 ApiClient.getInstance().startOrStopOrRejectCallExpostor(channelId, "2", new OkHttpCallback<BaseErrorBean>() {
                     @Override
                     public void onSuccess(BaseErrorBean entity) {
@@ -138,6 +160,11 @@ public class OnCallActivity extends BaseDataBindingActivity<OnCallActivityBindin
     }
 
     private Subscription subscription;
+
+    @Override
+    public void onBackPressed() {
+
+    }
 
     @Override
     public void onDestroy() {
