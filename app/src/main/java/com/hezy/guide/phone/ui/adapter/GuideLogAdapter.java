@@ -91,7 +91,12 @@ public class GuideLogAdapter extends BaseRecyclerAdapter<RecordData.PageDataEnti
             holder.mIvDot.setVisibility(View.INVISIBLE);
         }
 
-        holder.mTvTimeDot.setText(TimeUtil.getMonth(time));
+        if(TimeUtil.isToday(time)){
+            holder.mTvTimeDot.setText("今");
+        }else{
+            holder.mTvTimeDot.setText(TimeUtil.getDay(time));
+        }
+
         String html;
         if (bean.getStatus() == 2) {
             html = "<font color='#ff6482'>" + TimeUtil.getMonthDayHM(time)

@@ -3,6 +3,7 @@ package com.hezy.guide.phone.ui;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Log;
@@ -17,6 +18,7 @@ import com.hezy.guide.phone.entities.QiniuToken;
 import com.hezy.guide.phone.entities.RecordTotal;
 import com.hezy.guide.phone.entities.base.BaseBean;
 import com.hezy.guide.phone.entities.base.BaseErrorBean;
+import com.hezy.guide.phone.event.PagerSetGuideLog;
 import com.hezy.guide.phone.event.SetUserStateEvent;
 import com.hezy.guide.phone.event.UserStateEvent;
 import com.hezy.guide.phone.net.ApiClient;
@@ -54,6 +56,7 @@ import rx.Subscription;
 import rx.functions.Action1;
 
 
+
 /**
  * 用户信息fragment
  * Created by wufan on 2017/7/24.
@@ -65,6 +68,7 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
     private InvokeParam invokeParam;
     private TakePhoto takePhoto;
     private String imagePath;
+    private CountDownTimer countDownTimer;
 
     public static UserinfoFragment newInstance() {
         UserinfoFragment fragment = new UserinfoFragment();
@@ -86,6 +90,20 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
         mBinding.mEtAddress.setText(Preferences.getUserAddress());
         mBinding.mEtSignature.setText(Preferences.getUserSignature());
         mBinding.mEtAddress.setText(Preferences.getUserAddress());
+
+        countDownTimer = new CountDownTimer(60 * 1000, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                mBinding.mTvObtainCaptcha.setText(millisUntilFinished / 1000 + "S 后重新获取 ");
+            }
+
+            @Override
+            public void onFinish() {
+                mBinding.mTvObtainCaptcha.setEnabled(true);
+                mBinding.mTvObtainCaptcha.setText("获取验证码");
+            }
+        };
+
         if (!TextUtils.isEmpty(Preferences.getUserPhoto())) {
             Picasso.with(BaseApplication.getInstance()).load(Preferences.getUserPhoto()).into(mBinding.mIvPicture);
         }
@@ -95,7 +113,7 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
                     //失去焦点提交请求
-                    final String str = mBinding.mEtName.getText().toString();
+                    final String str = mBinding.mEtName.getText().toString().trim();
                     if ((!TextUtils.isEmpty(str)) && !Preferences.getUserName().equals(str)) {
                         Map<String, String> params = new HashMap<>();
                         params.put("name", str);
@@ -114,16 +132,32 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
         mBinding.mEtPhone.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    //获取焦点显示获取验证啊
+                    mBinding.mLayoutCaptcha.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
+
+        mBinding.mEtCaptchaNum.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
                     //失去焦点提交请求
-                    final String str = mBinding.mEtPhone.getText().toString();
-                    if ((!TextUtils.isEmpty(str)) && !Preferences.getUserMobile().equals(str)) {
+                    final String str = mBinding.mEtPhone.getText().toString().trim().trim();
+                    final String verifyCode = mBinding.mTvObtainCaptcha.getText().toString().trim();
+
+                    if ((!TextUtils.isEmpty(str)) && !Preferences.getUserMobile().equals(str) && !TextUtils.isEmpty(verifyCode)) {
                         Map<String, String> params = new HashMap<>();
                         params.put("mobile", str);
+                        params.put("verifyCode", str);
                         ApiClient.getInstance().requestUserExpostor(this, params, new OkHttpBaseCallback<BaseErrorBean>() {
                             @Override
                             public void onSuccess(BaseErrorBean entity) {
+                                showToast("设置手机号成功");
                                 Preferences.setUserMobile(str);
+                                mBinding.mLayoutCaptcha.setVisibility(View.GONE);
                             }
 
                         });
@@ -137,7 +171,7 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
                     //失去焦点提交请求
-                    final String str = mBinding.mEtAddress.getText().toString();
+                    final String str = mBinding.mEtAddress.getText().toString().trim();
                     if ((!TextUtils.isEmpty(str)) && !Preferences.getUserAddress().equals(str)) {
                         Map<String, String> params = new HashMap<>();
                         params.put("address", str);
@@ -159,7 +193,7 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
                     //失去焦点提交请求
-                    final String str = mBinding.mEtSignature.getText().toString();
+                    final String str = mBinding.mEtSignature.getText().toString().trim();
                     if ((!TextUtils.isEmpty(str)) && !Preferences.getUserSignature().equals(str)) {
                         Map<String, String> params = new HashMap<>();
                         params.put("signature", str);
@@ -197,6 +231,8 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
         mBinding.mIvPicture.setOnClickListener(this);
         mBinding.views.mTvState.setOnClickListener(this);
         mBinding.mBtnSavePhoto.setOnClickListener(this);
+        mBinding.views.mIvHead.setOnClickListener(this);
+        mBinding.mTvObtainCaptcha.setOnClickListener(this);
     }
 
     @Override
@@ -210,7 +246,7 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
         requestRecordTotal();
     }
 
-    private void requestRecordTotal(){
+    private void requestRecordTotal() {
         ApiClient.getInstance().requestRecordTotal(this, new OkHttpBaseCallback<BaseBean<RecordTotal>>() {
             @Override
             public void onSuccess(BaseBean<RecordTotal> entity) {
@@ -265,16 +301,15 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
                                 new ActionSheetDialog.OnSheetItemClickListener() {//
                                     @Override
                                     public void onClick(int which) {
-                                        if(TextUtils.isEmpty(Preferences.getUserMobile())){
+                                        if (TextUtils.isEmpty(Preferences.getUserMobile())) {
                                             showToast("请先填写电话号码");
                                             return;
                                         }
                                         if (!WSService.isOnline()) {
                                             //当前状态离线,可切换在线
-                                            Log.i(TAG,"当前状态离线,可切换在线");
+                                            Log.i(TAG, "当前状态离线,可切换在线");
                                             RxBus.sendMessage(new SetUserStateEvent(true));
                                         }
-
 
 
                                     }
@@ -285,7 +320,7 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
                                     public void onClick(int which) {
                                         if (WSService.isOnline()) {
                                             //当前状态在线,可切换离线
-                                            Log.i(TAG,"当前状态在线,可切换离线");
+                                            Log.i(TAG, "当前状态在线,可切换离线");
                                             RxBus.sendMessage(new SetUserStateEvent(false));
 //                                            WSService.SOCKET_ONLINE =false;
 //                                            setState(false);
@@ -295,6 +330,36 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
                 break;
             case R.id.mBtnSavePhoto:
                 uploadImage();
+                break;
+            case R.id.mIvHead:
+                RxBus.sendMessage(new PagerSetGuideLog());
+                break;
+            case R.id.mTvObtainCaptcha:
+                final String str = mBinding.mEtPhone.getText().toString().trim();
+                if(TextUtils.isEmpty(str)){
+                    showToast("当前手机号为空");
+                    return;
+                }
+                if(str.equals(Preferences.getUserMobile())){
+                    showToast("当前手机号已设置成功");
+                    return;
+                }
+                mBinding.mTvObtainCaptcha.setEnabled(false);
+                countDownTimer.start();
+                ApiClient.getInstance().requestVerifyCode(this, str, new OkHttpBaseCallback<BaseErrorBean>() {
+                    @Override
+                    public void onSuccess(BaseErrorBean entity) {
+
+                    }
+
+                    @Override
+                    public void onErrorAll(Exception e) {
+                        super.onErrorAll(e);
+                        countDownTimer.cancel();
+                        mBinding.mTvObtainCaptcha.setEnabled(true);
+                        mBinding.mTvObtainCaptcha.setText("获取验证码");
+                    }
+                });
                 break;
 
         }
@@ -387,17 +452,16 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
     }
 
 
-
     private void relate(String key) {
         LogUtils.i(TAG, "key " + key);
         final String str = key;
         if ((!TextUtils.isEmpty(str)) && !Preferences.getUserMobile().equals(str)) {
             Map<String, String> params = new HashMap<>();
-            params.put("photo", Preferences.getImgUrl()+ str); //服务器存储全路径
+            params.put("photo", Preferences.getImgUrl() + str); //服务器存储全路径
             ApiClient.getInstance().requestUserExpostor(this, params, new OkHttpBaseCallback<BaseErrorBean>() {
                 @Override
                 public void onSuccess(BaseErrorBean entity) {
-                    Preferences.setUserPhoto(Preferences.getImgUrl()+ str);
+                    Preferences.setUserPhoto(Preferences.getImgUrl() + str);
                     ToastUtils.showToast("保存照片成功");
                 }
             });
