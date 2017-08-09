@@ -308,6 +308,10 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
                                             showToast("请先填写电话号码");
                                             return;
                                         }
+                                        if (TextUtils.isEmpty(Preferences.getUserPhoto())) {
+                                            showToast("请先上传照片");
+                                            return;
+                                        }
                                         if (!WSService.isOnline()) {
                                             //当前状态离线,可切换在线
                                             Log.i(TAG, "当前状态离线,可切换在线");

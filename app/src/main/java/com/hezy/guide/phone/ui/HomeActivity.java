@@ -150,8 +150,8 @@ public class HomeActivity extends BaseDataBindingActivity<HomeActivityBinding> {
         mHomePagerAdapter.setData(mFragments);
         mBinding.mVerticalViewPager.setAdapter(mHomePagerAdapter);
         LogUtils.i(TAG, "getUserMobile" + Preferences.getUserMobile());
-        if (!TextUtils.isEmpty(Preferences.getUserMobile())) {
-            //手机非空,默认进入日志页面
+        if (!TextUtils.isEmpty(Preferences.getUserMobile()) && !TextUtils.isEmpty(Preferences.getUserPhoto())) {
+            //手机非空,照片非空,默认进入日志页面
             LogUtils.i(TAG, "手机非空,默认进入日志页面");
             mBinding.mVerticalViewPager.setCurrentItem(1);
         }
