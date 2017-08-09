@@ -1,8 +1,10 @@
 package com.hezy.guide.phone.ui;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.telephony.TelephonyManager;
@@ -25,8 +27,10 @@ import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.service.WSService;
 import com.hezy.guide.phone.utils.Installation;
 import com.hezy.guide.phone.utils.LogUtils;
+import com.hezy.guide.phone.utils.Login.LoginHelper;
 import com.hezy.guide.phone.utils.RxBus;
 import com.hezy.guide.phone.utils.UUIDUtils;
+import com.hezy.guide.phone.wxapi.WXEntryActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -46,6 +50,9 @@ import rx.functions.Action1;
 public class HomeActivity extends BaseDataBindingActivity<HomeActivityBinding> {
     private HomePagerAdapter mHomePagerAdapter;
     private ArrayList<Fragment> mFragments;
+    private int mIntentType;
+    private boolean isNewActivity;
+    private Dialog dialog;
 
 
     public static void actionStart(Context context) {
@@ -54,9 +61,54 @@ public class HomeActivity extends BaseDataBindingActivity<HomeActivityBinding> {
     }
 
     @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        if(savedInstanceState != null){
+            isNewActivity=true;
+        }
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
     protected int initContentView() {
         return R.layout.home_activity;
     }
+
+
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+//        setIntent(intent);//must store the new intent unless getIntent() will return the old one
+        //如果没销毁,注销只调用onNewIntent,需要在这里处理注销逻辑
+        processExtraData(intent);
+
+
+    }
+
+
+    private void processExtraData(Intent intent) {
+        mIntentType = intent.getIntExtra(LoginHelper.LOGIN_TYPE, 0);
+        LogUtils.d(TAG,"mIntentType "+mIntentType);
+        if (mIntentType == LoginHelper.LOGIN_TYPE_EXIT) {
+            //退出应用
+            LogUtils.d(TAG,"退出应用");
+            quit();
+        }else if(mIntentType == LoginHelper.LOGIN_TYPE_LOGOUT){
+            //退出登录
+            LogUtils.d(TAG,"退出登录");
+//            showLogoutForceDialog();
+//            if(!isNewActivity){
+//                //非新activity,需要修改登录UI
+//                Log.i(TAG, "发送LogoutEvent");
+////                RxBus.sendMessage(new LogoutEvent());
+//            }
+            WXEntryActivity.actionStart(mContext);
+            finish();
+        }
+        //复位标志
+        mIntentType = 0;
+    }
+
+
+
 
     @Override
     protected void initView() {

@@ -7,11 +7,12 @@ package com.hezy.guide.phone.net;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
 import com.hezy.guide.phone.BaseException;
-import com.hezy.guide.phone.entities.RespStatus;
+import com.hezy.guide.phone.entities.base.BaseErrorBean;
+import com.hezy.guide.phone.utils.Login.LoginHelper;
 
 import java.io.IOException;
 import java.util.Map;
@@ -26,6 +27,8 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+
+import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
 
 public class OkHttpUtil {
 
@@ -85,23 +88,46 @@ public class OkHttpUtil {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
+                if (response.code() == 502) {
+                    BaseException exception = new BaseException("服务器502,请稍后重试");
+                    callbackFailure(response.code(), callback, exception);
+                    return;
+                }
                 if (response.body() != null) {
                     String resString = response.body().string();
-                    try {
-                        Object object = gson.fromJson(resString, callback.mType);
-                        callbackSuccess(object, callback);
-                    } catch (JsonSyntaxException e) {
-                        e.printStackTrace();
+                    if (resString != null) {
                         try {
-                            RespStatus respStatus = gson.fromJson(resString, RespStatus.class);
-                            callbackFailure(response.code(), callback, new BaseException(respStatus.getErrmsg(), respStatus.getErrcode()));
-                        } catch (JsonSyntaxException ee) {
-                            ee.printStackTrace();
-                            callbackFailure(response.code(), callback, new BaseException(ee.getMessage(), ee));
+                            BaseErrorBean baseErrorBean = gson.fromJson(resString, BaseErrorBean.class);
+                            if (baseErrorBean.isSuccess()) {
+                                Object object = gson.fromJson(resString, callback.mType);
+                                callbackSuccess(object, callback);
+                            }else if (baseErrorBean.isTokenError()) {
+                                Log.i(TAG, "baseErrorBean.isTokenError() LoginHelper.logout()");
+                                //心跳回触发这个,其他风格的请求回调可以不处理
+                                LoginHelper.logout();
+                            }else {
+                                callbackFailure(response.code(),callback, new BaseException(baseErrorBean.getErrmsg()));
+                            }
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+//                            try {
+//                                RespStatus respStatus = gson.fromJson(resString, RespStatus.class);
+//                                callbackFailure(response.code(), callback, new BaseException(respStatus.getErrmsg(), respStatus.getErrcode()));
+//                            } catch (JsonSyntaxException ee) {
+//                                ee.printStackTrace();
+//                                callbackFailure(response.code(), callback, new BaseException(ee.getMessage(), ee));
+//                            }
+                            callbackFailure(response.code(), callback,new BaseException(e.getMessage()));
                         }
+                    }else{
+                        BaseException exception = new BaseException("服务器resString==null,请稍后重试");
+                        callbackFailure(response.code(), callback, exception);
                     }
+
                 } else {
-                    callbackFailure(response.code(), callback, null);
+                    BaseException exception = new BaseException("服务器bady==null,请稍后重试");
+                    callbackFailure(response.code(), callback,exception);
                 }
             }
         });

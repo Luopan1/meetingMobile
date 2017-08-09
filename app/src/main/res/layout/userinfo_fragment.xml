@@ -227,7 +227,7 @@
                     android:layout_marginLeft="5dp"
                     android:background="@mipmap/img_input_big"
                     android:gravity="center_vertical"
-                    android:hint="输入30字以内的个性签名输入30字以内的个性签名输入30字以内的个性签名输入30字以内的个性签名"
+                    android:hint="输入30字以内的个性签名"
                     android:maxLength="30"
                     android:paddingLeft="25dp"
                     android:paddingRight="25dp"

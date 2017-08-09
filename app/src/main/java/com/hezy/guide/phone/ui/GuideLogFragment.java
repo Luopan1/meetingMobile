@@ -142,6 +142,10 @@ public class GuideLogFragment extends BaseDataBindingFragment<GuideLogFragmentBi
         ApiClient.getInstance().requestRecordTotal(this, new OkHttpBaseCallback<BaseBean<RecordTotal>>() {
             @Override
             public void onSuccess(BaseBean<RecordTotal> entity) {
+                if(entity == null || entity.getData() == null ){
+                    showToast("数据为空");
+                    return;
+                }
                 String time = String.valueOf(entity.getData().getTotal());
                 mBinding.views.mTvTime.setText(time);
             }

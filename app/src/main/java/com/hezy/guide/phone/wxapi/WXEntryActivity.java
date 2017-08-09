@@ -1,5 +1,7 @@
 package com.hezy.guide.phone.wxapi;
 
+import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -48,6 +50,11 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
     protected int initContentView() {
         return R.layout.login_activity;
     }
+
+    public static void actionStart(Context context) {
+         Intent intent = new Intent(context, WXEntryActivity.class);
+         context.startActivity(intent);
+     }
 
     @Override
     protected void initView() {
