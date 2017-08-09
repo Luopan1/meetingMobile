@@ -83,6 +83,15 @@ public class OnCallActivity extends BaseDataBindingActivity<OnCallActivityBindin
                         public void onFailure(int errorCode, BaseException exception) {
                             Toast.makeText(getApplication(), "" + exception.getMessage(), Toast.LENGTH_SHORT).show();
                         }
+
+                        @Override
+                        public void onFinish() {
+                            if (mp != null) {
+                                mp.stop();
+                                mp.release();
+                                mp = null;
+                            }
+                        }
                     });
                 }
             }
