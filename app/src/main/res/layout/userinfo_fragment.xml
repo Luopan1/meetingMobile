@@ -77,13 +77,13 @@
 
             <LinearLayout
                 android:id="@+id/mLayoutCaptcha"
-                android:visibility="gone"
                 android:layout_width="match_parent"
-                tools:visibility="visible"
                 android:layout_height="45dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="5dp"
                 android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:visibility="gone"
+                tools:visibility="visible">
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -109,11 +109,11 @@
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="2"
+                        android:background="@null"
                         android:inputType="number"
                         android:maxLength="6"
                         android:singleLine="true"
                         android:textColor="@android:color/white"
-                        android:background="@null"
                         android:textSize="16sp"
                         tools:text="123456" />
 
@@ -196,10 +196,19 @@
 
             </RelativeLayout>
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="5dp"
+                android:text="照片会影响被打电话的频率哦"
+                android:textColor="@color/hint_b985e2"
+                android:textSize="13sp" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="90dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="5dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
@@ -215,7 +224,7 @@
                     android:layout_marginLeft="5dp"
                     android:background="@mipmap/img_input_big"
                     android:gravity="center_vertical"
-                    android:hint="输入30字以内的个性签名输入30字以内的个性签名输入30字以内的个性签名输入30字以内的个性签名"
+                    android:hint="输入30字以内的个性签名"
                     android:maxLength="30"
                     android:paddingLeft="25dp"
                     android:paddingRight="25dp"

@@ -1,5 +1,6 @@
 package com.hezy.guide.phone.service;
 
+import android.app.Notification;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -15,6 +16,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 
 import com.hezy.guide.phone.BuildConfig;
+import com.hezy.guide.phone.R;
 import com.hezy.guide.phone.entities.base.BaseBean;
 import com.hezy.guide.phone.event.CallEvent;
 import com.hezy.guide.phone.event.HangDownEvent;
@@ -62,7 +64,7 @@ public class WSService extends Service {
      */
     public static boolean IS_ON_PHONE = false;
     private static String WS_URL = "http://nettytest.haierzhongyou.com:3000/sales";
-//    /**
+    //    /**
 //     * 是否已离线
 //     */
 //    public static boolean SOCKET_ONLINE = false;
@@ -75,8 +77,8 @@ public class WSService extends Service {
     private Subscription subscription;
     private Handler mHandler;
 
-    public static boolean isOnline(){
-        return  mSocket != null && mSocket.connected() ;
+    public static boolean isOnline() {
+        return mSocket != null && mSocket.connected();
     }
 
     public static void actionStart(Context context) {
@@ -105,6 +107,7 @@ public class WSService extends Service {
     public void onCreate() {
         //默认离线,用户手动切换在线
 //        connectSocket();
+//        setStartForeground();
         mHandler = new Handler(Looper.getMainLooper());
         subscription = RxBus.handleMessage(new Action1() {
             @Override
@@ -129,20 +132,20 @@ public class WSService extends Service {
                         e.printStackTrace();
                     }
 
-                } else if(o instanceof HangUpEvent){
-                    mSocket.emit("END_CALL","END_CALL");
-                    Log.i(TAG," mSocket.emit(\"END_CALL\",null)");
-                }else if(o instanceof HangOnEvent){
-                    Log.i(TAG," HangOnEvent 接听电话转离线");
-                    if(isOnline()){
+                } else if (o instanceof HangUpEvent) {
+                    mSocket.emit("END_CALL", "END_CALL");
+                    Log.i(TAG, " mSocket.emit(\"END_CALL\",null)");
+                } else if (o instanceof HangOnEvent) {
+                    Log.i(TAG, " HangOnEvent 接听电话转离线");
+                    if (isOnline()) {
                         IS_ON_PHONE = true;
-                        Log.i(TAG," HangOnEvent 接听电话转离线 isOnline() true");
+                        Log.i(TAG, " HangOnEvent 接听电话转离线 isOnline() true");
                         disConnectSocket();
                     }
-                }else if(o instanceof HangDownEvent){
-                    Log.i(TAG," HangDownEvent 挂断电话转在线");
-                    if(IS_ON_PHONE){
-                        Log.i(TAG," HangDownEvent 挂断电话转在线 IS_ON_PHONE true");
+                } else if (o instanceof HangDownEvent) {
+                    Log.i(TAG, " HangDownEvent 挂断电话转在线");
+                    if (IS_ON_PHONE) {
+                        Log.i(TAG, " HangDownEvent 挂断电话转在线 IS_ON_PHONE true");
                         IS_ON_PHONE = false;
                         connectSocket();
                     }
@@ -151,6 +154,29 @@ public class WSService extends Service {
             }
         });
     }
+
+
+    private void setStartForeground() {
+        Notification notification = new Notification(R.mipmap.icon_launcher, getText(R.string.app_name)+"正在运行",
+                System.currentTimeMillis());
+//        Intent intent = new Intent(Intent.ACTION_MAIN);
+//        intent.addCategory(Intent.CATEGORY_LAUNCHER);
+//        intent.setClass(this, Main.class);
+//        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+//
+//        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+
+
+//        Notification notification = new Notification.Builder(this)
+//                .setAutoCancel(true)
+//                .setContentTitle("应用正常运行")
+//                .setContentText("这个通知是为了标识应用是否正常运行中")
+//                .setSmallIcon(R.mipmap.icon_launcher)
+//                .setWhen(System.currentTimeMillis())
+//                .build();
+        startForeground(1, notification);
+    }
+
 
     /**
      * 上传设备信息
@@ -218,7 +244,7 @@ public class WSService extends Service {
 
     private void connectSocket() {
         Log.i(TAG, "connectSocket");
-        if(isOnline()){
+        if (isOnline()) {
             Log.i(TAG, "connectSocket SOCKET_ONLINE == true re");
             return;
         }
@@ -238,14 +264,14 @@ public class WSService extends Service {
         mSocket.on("ON_CALL", onCall);
         mSocket.on("LISTEN_SALES_SOCKET_ID", onListenSalesSocketId);
         mSocket.on("SALES_ONLINE_WITH_STATUS_RETURN", ON_SALES_ONLINE_WITH_STATUS_RETURN);
-        mSocket.on("LISTEN_TV_LEAVE_CHANNEL",ON_LISTEN_TV_LEAVE_CHANNEL);
+        mSocket.on("LISTEN_TV_LEAVE_CHANNEL", ON_LISTEN_TV_LEAVE_CHANNEL);
         mSocket.connect();
 
     }
 
     private void disConnectSocket() {
         Log.i(TAG, "disConnectSocket");
-        if(mSocket ==null){
+        if (mSocket == null) {
             Log.i(TAG, "disConnectSocket mSocket==null return");
             return;
         }
@@ -258,7 +284,7 @@ public class WSService extends Service {
         mSocket.off("ON_CALL", onCall);
         mSocket.off("LISTEN_SALES_SOCKET_ID", onListenSalesSocketId);
         mSocket.off("SALES_ONLINE_WITH_STATUS_RETURN", ON_SALES_ONLINE_WITH_STATUS_RETURN);
-        mSocket.off("LISTEN_TV_LEAVE_CHANNEL",ON_LISTEN_TV_LEAVE_CHANNEL);
+        mSocket.off("LISTEN_TV_LEAVE_CHANNEL", ON_LISTEN_TV_LEAVE_CHANNEL);
 //        SOCKET_ONLINE = false;
         sendUserStateEvent();
 
@@ -401,7 +427,7 @@ public class WSService extends Service {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    showToast("ON_SALES_ONLINE_WITH_STATUS_RETURN msg ==" + msg);
+//                    showToast("ON_SALES_ONLINE_WITH_STATUS_RETURN msg ==" + msg);
                 }
             });
 
@@ -413,7 +439,7 @@ public class WSService extends Service {
         @Override
         public void call(final Object... args) {
             final String msg = (String) args[0];
-            Log.i("wsserver", "ON_LISTEN_TV_LEAVE_CHANNEL " );
+            Log.i("wsserver", "ON_LISTEN_TV_LEAVE_CHANNEL ");
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -435,6 +461,7 @@ public class WSService extends Service {
         mHandler.removeCallbacksAndMessages(null);
         OkHttpUtil.getInstance().cancelTag(this);
         Log.i(TAG, "life onDestroy");
+//        stopForeground(true);// 停止前台服务--参数：表示是否移除之前的通知
         super.onDestroy();
     }
 

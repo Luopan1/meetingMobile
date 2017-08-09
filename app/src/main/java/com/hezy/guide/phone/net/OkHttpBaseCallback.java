@@ -3,7 +3,6 @@ package com.hezy.guide.phone.net;
 import android.util.Log;
 
 import com.hezy.guide.phone.BaseException;
-import com.hezy.guide.phone.entities.exception.BaseErrorBeanException;
 import com.hezy.guide.phone.utils.ToastUtils;
 
 /**
@@ -35,7 +34,7 @@ public abstract class OkHttpBaseCallback<T> extends OkHttpCallback<T> {
 
     @Override
     public void onFailure(int errorCode, BaseException exception) {
-
+        onErrorAll(exception);
     }
 
     /**
@@ -46,13 +45,14 @@ public abstract class OkHttpBaseCallback<T> extends OkHttpCallback<T> {
         if (e.getMessage() != null) {
             Log.e(TAG, "网络异常,请检查网络配置" + mType.toString() + e.getMessage());
             //错误一概提示网络异常
-            if (e instanceof BaseErrorBeanException) {
-                //提示服务器的错误信息
-                ToastUtils.showToast(e.getMessage());
-            } else {
-                ToastUtils.showToast("网络异常,请检查网络配置");
-                Log.e(TAG, "网络异常,请检查网络配置 toast" + mType.toString() + e.getMessage());
-            }
+            ToastUtils.showToast(e.getMessage());
+//            if (e instanceof BaseErrorBeanException) {
+//                //提示服务器的错误信息
+//                ToastUtils.showToast(e.getMessage());
+//            } else {
+//                ToastUtils.showToast("网络异常,请检查网络配置");
+//                Log.e(TAG, "网络异常,请检查网络配置 toast" + mType.toString() + e.getMessage());
+//            }
         } else {
             Log.e(TAG, "e.getMessage()==null" + mType.toString());
         }

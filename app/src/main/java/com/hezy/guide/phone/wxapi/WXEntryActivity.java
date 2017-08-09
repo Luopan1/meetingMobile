@@ -1,5 +1,7 @@
 package com.hezy.guide.phone.wxapi;
 
+import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -35,14 +37,24 @@ import rx.functions.Action1;
  */
 
 public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBinding> implements IWXAPIEventHandler {
+    public static final String TAG = "WXEntryActivity";
     private IWXAPI mWxApi;
     private static final int RETURN_MSG_TYPE_LOGIN = 1;
     private static final int RETURN_MSG_TYPE_SHARE = 2;
+    /**
+     * 微信登录中点击返回
+     */
+    private boolean isWxLoging;
 
     @Override
     protected int initContentView() {
         return R.layout.login_activity;
     }
+
+    public static void actionStart(Context context) {
+         Intent intent = new Intent(context, WXEntryActivity.class);
+         context.startActivity(intent);
+     }
 
     @Override
     protected void initView() {
@@ -96,10 +108,16 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
             ToastUtils.showToast("您还未安装微信客户端");
             return;
         }
+        if(isWxLoging){
+            Log.i(TAG,"isWxLoging == true return");
+            return;
+        }
         final SendAuth.Req req = new SendAuth.Req();
         req.scope = "snsapi_userinfo";
         req.state = "GuideMobile_wx_login";
         mWxApi.sendReq(req);
+        isWxLoging = true;
+        Log.i(TAG,"wxLogin() isWxLoging = true ");
     }
 
     @Override
@@ -147,12 +165,18 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
                 break;
             case BaseResp.ErrCode.ERR_AUTH_DENIED:
                 result = "用户拒绝授权";
+                isWxLoging=false;
+                Log.i(TAG,"用户拒绝授权 isWxLoging = false ");
                 break;
             case BaseResp.ErrCode.ERR_USER_CANCEL:
                 result = "用户取消";
+                isWxLoging=false;
+                Log.i(TAG,"用户取消 isWxLoging = false ");
                 break;
             default:
                 result = "失败";
+                isWxLoging=false;
+                Log.i(TAG,"失败 isWxLoging = false ");
                 break;
         }
         if (result != null) {
@@ -167,7 +191,7 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
             @Override
             public void onSuccess(BaseBean<LoginWechat> entity) {
                 if (entity.getData() == null) {
-                    Log.i(TAG, "entity.getData() == null");
+                    Log.i(WXEntryActivity.TAG, "entity.getData() == null");
                     showToast("没有数据");
                     return;
                 }
@@ -177,11 +201,11 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
                 User user = loginWechat.getUser();
                 if (loginWechat.getUser() == null) {
                     //没有获取到用户
-                    Log.i(TAG, "没有用户数据");
+                    Log.i(WXEntryActivity.TAG, "没有用户数据");
                     showToast("没有用户数据");
                 } else {
                     //保存用户,进入主页
-                    Log.i(TAG, "用户登录成功");
+                    Log.i(WXEntryActivity.TAG, "用户登录成功");
                     showToast("用户登录成功");
                     Preferences.setToken(user.getToken());
                     Preferences.setUserId(user.getId());
@@ -196,6 +220,12 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
                 }
 
 
+            }
+
+            @Override
+            public void onFinish() {
+                isWxLoging=false;
+                Log.i(WXEntryActivity.TAG,"requestWechatLogin onFinish()  isWxLoging = false ");
             }
         });
     }

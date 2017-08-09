@@ -34,6 +34,7 @@ import com.jph.takephoto.app.TakePhotoImpl;
 import com.jph.takephoto.model.InvokeParam;
 import com.jph.takephoto.model.TContextWrap;
 import com.jph.takephoto.model.TResult;
+import com.jph.takephoto.model.TakePhotoOptions;
 import com.jph.takephoto.permission.InvokeListener;
 import com.jph.takephoto.permission.PermissionManager;
 import com.jph.takephoto.permission.TakePhotoInvocationHandler;
@@ -146,18 +147,19 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
                 if (!hasFocus) {
                     //失去焦点提交请求
                     final String str = mBinding.mEtPhone.getText().toString().trim().trim();
-                    final String verifyCode = mBinding.mTvObtainCaptcha.getText().toString().trim();
+                    final String verifyCode = mBinding.mEtCaptchaNum.getText().toString().trim();
 
                     if ((!TextUtils.isEmpty(str)) && !Preferences.getUserMobile().equals(str) && !TextUtils.isEmpty(verifyCode)) {
                         Map<String, String> params = new HashMap<>();
                         params.put("mobile", str);
-                        params.put("verifyCode", str);
+                        params.put("verifyCode", verifyCode);
                         ApiClient.getInstance().requestUserExpostor(this, params, new OkHttpBaseCallback<BaseErrorBean>() {
                             @Override
                             public void onSuccess(BaseErrorBean entity) {
                                 showToast("设置手机号成功");
                                 Preferences.setUserMobile(str);
                                 mBinding.mLayoutCaptcha.setVisibility(View.GONE);
+                                mBinding.mEtCaptchaNum.setText("");
                             }
 
                         });
@@ -270,6 +272,7 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
     protected void normalOnClick(View v) {
         switch (v.getId()) {
             case R.id.mIvPicture:
+                configTakePhotoOption(takePhoto);
                 File file = new File(Environment.getExternalStorageDirectory(), "/temp/" + System.currentTimeMillis() + ".jpg");
                 if (!file.getParentFile().exists())
                     file.getParentFile().mkdirs();
@@ -303,6 +306,10 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
                                     public void onClick(int which) {
                                         if (TextUtils.isEmpty(Preferences.getUserMobile())) {
                                             showToast("请先填写电话号码");
+                                            return;
+                                        }
+                                        if (TextUtils.isEmpty(Preferences.getUserPhoto())) {
+                                            showToast("请先上传照片");
                                             return;
                                         }
                                         if (!WSService.isOnline()) {
@@ -363,6 +370,12 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
                 break;
 
         }
+    }
+
+    private void configTakePhotoOption(TakePhoto takePhoto){
+        TakePhotoOptions.Builder builder=new TakePhotoOptions.Builder();
+        builder.setCorrectImage(true);
+        takePhoto.setTakePhotoOptions(builder.create());
     }
 
 

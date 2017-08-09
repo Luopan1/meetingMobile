@@ -123,6 +123,7 @@ public class GuideLogFragment extends BaseDataBindingFragment<GuideLogFragmentBi
     protected void initListener() {
         mBinding.views.mIvHead.setOnClickListener(this);
         mBinding.views.mTvState.setOnClickListener(this);
+        mBinding.mLayoutNoData.setOnClickListener(this);
     }
 
     @Override
@@ -142,6 +143,10 @@ public class GuideLogFragment extends BaseDataBindingFragment<GuideLogFragmentBi
         ApiClient.getInstance().requestRecordTotal(this, new OkHttpBaseCallback<BaseBean<RecordTotal>>() {
             @Override
             public void onSuccess(BaseBean<RecordTotal> entity) {
+                if(entity == null || entity.getData() == null ){
+                    showToast("数据为空");
+                    return;
+                }
                 String time = String.valueOf(entity.getData().getTotal());
                 mBinding.views.mTvTime.setText(time);
             }
@@ -160,6 +165,13 @@ public class GuideLogFragment extends BaseDataBindingFragment<GuideLogFragmentBi
         ApiClient.getInstance().requestRecord(this, pageNo, pageSize, new OkHttpBaseCallback<BaseBean<RecordData>>() {
             @Override
             public void onSuccess(BaseBean<RecordData> entity) {
+                if(entity.getData().getTotalCount() == 0){
+                    mBinding.mLayoutNoData.setVisibility(View.VISIBLE);
+                    mBinding.mSwipeRefreshLayout.setVisibility(View.GONE);
+                }else{
+                    mBinding.mLayoutNoData.setVisibility(View.GONE);
+                    mBinding.mSwipeRefreshLayout.setVisibility(View.VISIBLE);
+                }
                 if (isRefresh) {
                     isRefresh = false;
                     mAdapter.setData(entity.getData().getPageData());
@@ -219,6 +231,9 @@ public class GuideLogFragment extends BaseDataBindingFragment<GuideLogFragmentBi
                 break;
             case R.id.mIvHead:
                 RxBus.sendMessage(new PagerSetUserinfo());
+                break;
+            case R.id.mLayoutNoData:
+                requestRecord();
                 break;
 
 
