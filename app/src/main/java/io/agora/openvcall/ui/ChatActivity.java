@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewStub;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -69,6 +70,12 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+        final Window win = getWindow();
+        win.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+                | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
+                | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+
 
     }
 
