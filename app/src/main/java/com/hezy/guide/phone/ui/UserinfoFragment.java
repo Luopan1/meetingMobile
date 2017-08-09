@@ -147,18 +147,19 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
                 if (!hasFocus) {
                     //失去焦点提交请求
                     final String str = mBinding.mEtPhone.getText().toString().trim().trim();
-                    final String verifyCode = mBinding.mTvObtainCaptcha.getText().toString().trim();
+                    final String verifyCode = mBinding.mEtCaptchaNum.getText().toString().trim();
 
                     if ((!TextUtils.isEmpty(str)) && !Preferences.getUserMobile().equals(str) && !TextUtils.isEmpty(verifyCode)) {
                         Map<String, String> params = new HashMap<>();
                         params.put("mobile", str);
-                        params.put("verifyCode", str);
+                        params.put("verifyCode", verifyCode);
                         ApiClient.getInstance().requestUserExpostor(this, params, new OkHttpBaseCallback<BaseErrorBean>() {
                             @Override
                             public void onSuccess(BaseErrorBean entity) {
                                 showToast("设置手机号成功");
                                 Preferences.setUserMobile(str);
                                 mBinding.mLayoutCaptcha.setVisibility(View.GONE);
+                                mBinding.mEtCaptchaNum.setText("");
                             }
 
                         });
