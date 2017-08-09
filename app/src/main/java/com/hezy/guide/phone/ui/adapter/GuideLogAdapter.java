@@ -109,7 +109,8 @@ public class GuideLogAdapter extends BaseRecyclerAdapter<RecordData.PageDataEnti
         } else if (bean.getMinuteInterval() != 0) {
             html = TimeUtil.getMonthDayHM(time) + " 为" + bean.getAddress() + "-" + bean.getName()
                     + "(" + "<font color='#b985e2'>" + bean.getMobile() + "</font>" + ")" + "讲解了"
-                    + "<font color='#ff9c00'>" + bean.getMinuteInterval() + "</font>" + "分钟";
+                    + "<font color='#ff9c00'>" + bean.getMinuteInterval() + "</font>" + "分钟"
+                    + "<font color='#ff9c00'>" + bean.getSecondInterval() + "</font>" + "秒";
         } else {
             html = TimeUtil.getMonthDayHM(time) + " 为" + bean.getAddress() + "-" + bean.getName()
                     + "(" + "<font color='#b985e2'>" + bean.getMobile() + "</font>" + ")" + "讲解了"
