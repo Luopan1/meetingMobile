@@ -194,7 +194,19 @@
                     />
 
 
+
+
+
             </RelativeLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:text="照片会影响被打电话的频率哦"
+                android:textColor="@color/hint_b985e2"
+                android:textSize="13sp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
