@@ -250,6 +250,7 @@ public class WSService extends Service {
         }
 
         try {
+            LogUtils.i(TAG,WS_URL);
             mSocket = IO.socket(WS_URL);
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
