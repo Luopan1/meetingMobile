@@ -63,7 +63,7 @@ public class WSService extends Service {
      * 是否接电话中
      */
     public static boolean IS_ON_PHONE = false;
-    private static String WS_URL = "http://nettytest.haierzhongyou.com:3000/sales";
+    private static String WS_URL = BuildConfig.WS_DOMAIN_NAME;
     //    /**
 //     * 是否已离线
 //     */

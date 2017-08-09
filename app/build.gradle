@@ -86,6 +86,7 @@ android {
             buildConfigField "boolean", "IS_HEART_LOG", "false"  //显示心跳的http日志
             buildConfigField 'String', 'API_DOMAIN_NAME', '"http://osg.apitest.haierzhongyou.com"'
             buildConfigField 'String', 'API_DOMAIN_NAME_YOYOTU', '"http://apitest.haierzhongyou.com"' //唷唷兔地址
+            buildConfigField 'String', 'WS_DOMAIN_NAME', '"http://nettytest.haierzhongyou.com:3000/sales"'
             buildConfigField 'String', 'WEIXIN_APP_ID', '"wxcd220f151738cab5"' //微信id
             buildConfigField 'String', 'BUGLY_APPID', '"d2b5a75181"' //bugly
             manifestPlaceholders = [TD_APP_ID    : "02A562AEDBE243D7A64901F852E1A530",
@@ -101,6 +102,7 @@ android {
             buildConfigField "boolean", "IS_DEBUG_TOAST", "false"  //显示LOG的TOAST
             buildConfigField 'String', 'API_DOMAIN_NAME', '"http://osg.api.haierzhongyou.com"'
             buildConfigField 'String', 'API_DOMAIN_NAME_YOYOTU', '"http://api.haierzhongyou.com"' //唷唷兔地址
+            buildConfigField 'String', 'WS_DOMAIN_NAME', '"http://netty.haierzhongyou.com:3000/sales"'
             buildConfigField 'String', 'WEIXIN_APP_ID', '"wxcd220f151738cab5"' //微信id
             buildConfigField 'String', 'BUGLY_APPID', '"1ee416d265"' //bugly
             manifestPlaceholders = [TD_APP_ID    : "80F452C9B1E8427AB65DB774F7FF081F",
