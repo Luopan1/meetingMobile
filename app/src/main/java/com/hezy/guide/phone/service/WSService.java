@@ -461,7 +461,7 @@ public class WSService extends Service {
         mHandler.removeCallbacksAndMessages(null);
         OkHttpUtil.getInstance().cancelTag(this);
         Log.i(TAG, "life onDestroy");
-        stopForeground(true);// 停止前台服务--参数：表示是否移除之前的通知
+//        stopForeground(true);// 停止前台服务--参数：表示是否移除之前的通知
         super.onDestroy();
     }
 
