@@ -45,6 +45,7 @@ import com.qiniu.android.storage.UpProgressHandler;
 import com.qiniu.android.storage.UploadManager;
 import com.qiniu.android.storage.UploadOptions;
 import com.squareup.picasso.Picasso;
+import com.zaaach.citypicker.CityPickerActivity;
 
 import org.json.JSONObject;
 
@@ -56,6 +57,7 @@ import java.util.UUID;
 import rx.Subscription;
 import rx.functions.Action1;
 
+import static android.app.Activity.RESULT_OK;
 
 
 /**
@@ -90,7 +92,8 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
         mBinding.mEtPhone.setText(Preferences.getUserMobile());
         mBinding.mEtAddress.setText(Preferences.getUserAddress());
         mBinding.mEtSignature.setText(Preferences.getUserSignature());
-        mBinding.mEtAddress.setText(Preferences.getUserAddress());
+//        mBinding.mEtAddress.setText(Preferences.getUserAddress());
+        mBinding.mTvAddress.setText(Preferences.getUserAddress());
 
         countDownTimer = new CountDownTimer(60 * 1000, 1000) {
             @Override
@@ -235,6 +238,7 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
         mBinding.mBtnSavePhoto.setOnClickListener(this);
         mBinding.views.mIvHead.setOnClickListener(this);
         mBinding.mTvObtainCaptcha.setOnClickListener(this);
+        mBinding.mTvAddress.setOnClickListener(this);
     }
 
     @Override
@@ -368,9 +372,16 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
                     }
                 });
                 break;
+            case R.id.mTvAddress:
+                //地址定位
+                Intent intent = new Intent(mContext, CityPickerActivity.class);
+                startActivityForResult(intent, CityPickerActivity.REQUEST_CODE_PICK_CITY);
+                break;
 
         }
     }
+
+
 
     private void configTakePhotoOption(TakePhoto takePhoto){
         TakePhotoOptions.Builder builder=new TakePhotoOptions.Builder();
@@ -395,6 +406,24 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         getTakePhoto().onActivityResult(requestCode, resultCode, data);
         super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == CityPickerActivity.REQUEST_CODE_PICK_CITY) {
+            if (resultCode == RESULT_OK) {
+                String result = data.getStringExtra(CityPickerActivity.KEY_PICKED_CITY);
+                mBinding.mTvAddress.setText(result);
+                final String str = result;
+                if ((!TextUtils.isEmpty(str)) && !Preferences.getUserAddress().equals(str)) {
+                    Map<String, String> params = new HashMap<>();
+                    params.put("address", str);
+                    ApiClient.getInstance().requestUserExpostor(this, params, new OkHttpBaseCallback<BaseErrorBean>() {
+                        @Override
+                        public void onSuccess(BaseErrorBean entity) {
+                            Preferences.setUserAddress(str);
+                        }
+
+                    });
+                }
+            }
+        }
     }
 
     /**
