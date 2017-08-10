@@ -9,6 +9,7 @@ import com.hezy.guide.phone.BuildConfig;
 import com.hezy.guide.phone.Constant;
 import com.hezy.guide.phone.entities.RecordData;
 import com.hezy.guide.phone.entities.RecordTotal;
+import com.hezy.guide.phone.entities.UserData;
 import com.hezy.guide.phone.entities.Version;
 import com.hezy.guide.phone.entities.base.BaseBean;
 import com.hezy.guide.phone.entities.base.BaseErrorBean;
@@ -124,8 +125,8 @@ public class ApiClient {
      * @param tag
      * @param callback
      */
-    public void requestUser(Object tag, OkHttpBaseCallback callback){
-        OkHttpUtil.getInstance().get(API_DOMAIN_NAME + "/osg/app/user", null, tag, callback);
+    public void requestUser(Object tag, OkHttpBaseCallback<BaseBean<UserData>> callback){
+        OkHttpUtil.getInstance().get(API_DOMAIN_NAME + "/osg/app/user", getCommonHead(),null , callback,tag);
     }
 
 

@@ -17,10 +17,14 @@ import com.hezy.guide.phone.BuildConfig;
 import com.hezy.guide.phone.R;
 import com.hezy.guide.phone.base.BaseDataBindingActivity;
 import com.hezy.guide.phone.databinding.HomeActivityBinding;
+import com.hezy.guide.phone.entities.User;
+import com.hezy.guide.phone.entities.UserData;
 import com.hezy.guide.phone.entities.Version;
+import com.hezy.guide.phone.entities.Wechat;
 import com.hezy.guide.phone.entities.base.BaseBean;
 import com.hezy.guide.phone.event.PagerSetGuideLog;
 import com.hezy.guide.phone.event.PagerSetUserinfo;
+import com.hezy.guide.phone.event.UserUpdateEvent;
 import com.hezy.guide.phone.net.ApiClient;
 import com.hezy.guide.phone.net.OkHttpBaseCallback;
 import com.hezy.guide.phone.persistence.Preferences;
@@ -139,6 +143,17 @@ public class HomeActivity extends BaseDataBindingActivity<HomeActivityBinding> {
     protected void requestData() {
         versionCheck();
         registerDevice();
+        requestUser();
+    }
+
+    private void initCurrentItem(){
+        if (!TextUtils.isEmpty(Preferences.getUserName()) && !TextUtils.isEmpty(Preferences.getUserMobile())
+                && !TextUtils.isEmpty(Preferences.getUserPhoto())
+                && !TextUtils.isEmpty(Preferences.getUserAddress())) {
+            //手机非空,照片非空,默认进入日志页面
+            LogUtils.i(TAG, "手机非空,默认进入日志页面");
+            mBinding.mVerticalViewPager.setCurrentItem(1);
+        }
     }
 
     @Override
@@ -150,11 +165,7 @@ public class HomeActivity extends BaseDataBindingActivity<HomeActivityBinding> {
         mHomePagerAdapter.setData(mFragments);
         mBinding.mVerticalViewPager.setAdapter(mHomePagerAdapter);
         LogUtils.i(TAG, "getUserMobile" + Preferences.getUserMobile());
-        if (!TextUtils.isEmpty(Preferences.getUserMobile()) && !TextUtils.isEmpty(Preferences.getUserPhoto())) {
-            //手机非空,照片非空,默认进入日志页面
-            LogUtils.i(TAG, "手机非空,默认进入日志页面");
-            mBinding.mVerticalViewPager.setCurrentItem(1);
-        }
+        initCurrentItem();
     }
 
 
@@ -232,6 +243,27 @@ public class HomeActivity extends BaseDataBindingActivity<HomeActivityBinding> {
             Log.d(TAG, "registerDevice 成功===");
         }
     };
+
+    private void requestUser(){
+        ApiClient.getInstance().requestUser(this, new OkHttpBaseCallback<BaseBean<UserData>>() {
+            @Override
+            public void onSuccess(BaseBean<UserData> entity) {
+                if(entity == null || entity.getData() == null || entity.getData().getUser()==null){
+                    showToast("数据为空");
+                    return;
+                }
+                User user = entity.getData().getUser();
+                Wechat wechat = entity.getData().getWechat();
+                LoginHelper.savaUser(user);
+                initCurrentItem();
+                if(wechat!=null){
+                    LoginHelper.savaWeChat(wechat);
+                }
+                RxBus.sendMessage(new UserUpdateEvent());
+
+            }
+        });
+    }
 
     private long mExitTime = 0;
     private long mLastKeyDownTime = 0;

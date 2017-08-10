@@ -445,7 +445,8 @@ public class Preferences {
     }
 
     public static boolean isLogin() {
-        return (!TextUtils.isEmpty(getUserId())) && (!TextUtils.isEmpty(getToken()));
+//        return (!TextUtils.isEmpty(getUserId())) && (!TextUtils.isEmpty(getToken()));
+        return (!TextUtils.isEmpty(getToken()));
     }
 
     public static boolean hasClass() {

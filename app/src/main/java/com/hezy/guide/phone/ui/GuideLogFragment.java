@@ -18,6 +18,7 @@ import com.hezy.guide.phone.entities.base.BaseBean;
 import com.hezy.guide.phone.event.PagerSetUserinfo;
 import com.hezy.guide.phone.event.SetUserStateEvent;
 import com.hezy.guide.phone.event.UserStateEvent;
+import com.hezy.guide.phone.event.UserUpdateEvent;
 import com.hezy.guide.phone.net.ApiClient;
 import com.hezy.guide.phone.net.OkHttpBaseCallback;
 import com.hezy.guide.phone.persistence.Preferences;
@@ -53,23 +54,26 @@ public class GuideLogFragment extends BaseDataBindingFragment<GuideLogFragmentBi
         return R.layout.guide_log_fragment;
     }
 
-    @Override
-    protected void initView() {
+    private void setUserUI(){
         if (!TextUtils.isEmpty(Preferences.getWeiXinHead())) {
             Picasso.with(BaseApplication.getInstance()).load(Preferences.getWeiXinHead()).into(mBinding.views.mIvHead);
         }
+    }
 
-        setState(WSService.isOnline());
-
+    @Override
+    protected void initView() {
         subscription = RxBus.handleMessage(new Action1() {
             @Override
             public void call(Object o) {
                 if (o instanceof UserStateEvent) {
-
                     setState(WSService.isOnline());
+                }else if(o instanceof UserUpdateEvent){
+                    setUserUI();
                 }
             }
         });
+        setState(WSService.isOnline());
+        setUserUI();
     }
 
     @Override

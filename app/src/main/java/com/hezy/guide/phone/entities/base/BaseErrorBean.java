@@ -13,14 +13,17 @@ import com.hezy.guide.phone.utils.ToastUtils;
 public class BaseErrorBean {
     private int errcode;
     private String errmsg;
+    //{"errcode": 40003, "errmsg": "拒绝访问"}
     public static final  int ERRCODE_TOKEN_ERROR = 40003;
+    //{"errcode": 40001, "errmsg": "无访问权限"}
+    public static final  int ERRCODE_TOKEN_ERROR_40003 = 40003;
 
     public boolean isSuccess() {
         return errcode == 0;
     }
 
     public boolean isTokenError() {
-        return errcode == ERRCODE_TOKEN_ERROR;
+        return errcode == ERRCODE_TOKEN_ERROR || errcode == ERRCODE_TOKEN_ERROR_40003;
     }
 
     public static boolean isTokenError(int errcode) {

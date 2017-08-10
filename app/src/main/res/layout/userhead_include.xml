@@ -40,7 +40,7 @@
             android:layout_width="100dp"
             android:layout_height="25dp"
             android:layout_marginTop="5dp"
-            android:background="@drawable/userinfo_set_state_online_bg_shape"
+            android:background="@drawable/userinfo_set_state_offline_bg_shape"
             android:gravity="center"
             android:text="在线状态"
             android:textColor="@color/white"

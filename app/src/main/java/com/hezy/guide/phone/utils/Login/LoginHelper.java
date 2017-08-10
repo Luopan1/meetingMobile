@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.hezy.guide.phone.BaseApplication;
+import com.hezy.guide.phone.entities.User;
+import com.hezy.guide.phone.entities.Wechat;
 import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.service.WSService;
 import com.hezy.guide.phone.ui.HomeActivity;
@@ -87,6 +89,20 @@ public class LoginHelper {
         Preferences.clear();
 //        HeartService.stopService(context);
         WSService.stopService(context);
+    }
+
+    public static void savaUser(User user){
+        Preferences.setToken(user.getToken());
+        Preferences.setUserId(user.getId());
+        Preferences.setUserName(user.getName());
+        Preferences.setUserMobile(user.getMobile());
+        Preferences.setUserAddress(user.getAddress());
+        Preferences.setUserPhoto(user.getPhoto());
+        Preferences.setUserSignature(user.getSignature());
+    }
+
+    public static void savaWeChat(Wechat wechat){
+        Preferences.setWeiXinHead(wechat.getHeadimgurl());
     }
 
 }

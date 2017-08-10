@@ -19,6 +19,8 @@ import com.hezy.guide.phone.net.ApiClient;
 import com.hezy.guide.phone.net.OkHttpBaseCallback;
 import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.ui.HomeActivity;
+import com.hezy.guide.phone.utils.LogUtils;
+import com.hezy.guide.phone.utils.Login.LoginHelper;
 import com.hezy.guide.phone.utils.RxBus;
 import com.hezy.guide.phone.utils.ToastUtils;
 import com.hezy.guide.phone.utils.statistics.ZYAgent;
@@ -46,6 +48,8 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
      */
     private boolean isWxLoging;
 
+    private static boolean isFirst=true;
+
     @Override
     protected int initContentView() {
         return R.layout.login_activity;
@@ -58,6 +62,13 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
 
     @Override
     protected void initView() {
+
+        if(BuildConfig.IS_LOGIN && isFirst){
+            LogUtils.i(TAG,"直接登录 BuildConfig.LOGIN_TOKEN "+BuildConfig.LOGIN_TOKEN);
+            Preferences.setToken(BuildConfig.LOGIN_TOKEN);
+        }
+        isFirst = false;
+
         if (Preferences.isLogin()){
             HomeActivity.actionStart(mContext);
             finish();
@@ -207,13 +218,7 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
                     //保存用户,进入主页
                     Log.i(WXEntryActivity.TAG, "用户登录成功");
                     showToast("用户登录成功");
-                    Preferences.setToken(user.getToken());
-                    Preferences.setUserId(user.getId());
-                    Preferences.setUserName(user.getName());
-                    Preferences.setUserMobile(user.getMobile());
-                    Preferences.setUserAddress(user.getAddress());
-                    Preferences.setUserPhoto(user.getPhoto());
-                    Preferences.setUserSignature(user.getSignature());
+                    LoginHelper.savaUser(user);
                     HomeActivity.actionStart(mContext);
                     RxBus.sendMessage(new FinishWX());
                     finish();

@@ -142,7 +142,7 @@ public class TimeUtil {
             e.printStackTrace();
             Log.e(TAG,"diffDays "+e.getMessage());
         }
-        LogUtils.d(TAG,"time "+time+" days "+days);
+//        LogUtils.d(TAG,"time "+time+" days "+days);
         return days;
     }
 

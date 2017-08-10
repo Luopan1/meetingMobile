@@ -21,6 +21,7 @@ import com.hezy.guide.phone.entities.base.BaseErrorBean;
 import com.hezy.guide.phone.event.PagerSetGuideLog;
 import com.hezy.guide.phone.event.SetUserStateEvent;
 import com.hezy.guide.phone.event.UserStateEvent;
+import com.hezy.guide.phone.event.UserUpdateEvent;
 import com.hezy.guide.phone.net.ApiClient;
 import com.hezy.guide.phone.net.OkHttpBaseCallback;
 import com.hezy.guide.phone.persistence.Preferences;
@@ -84,16 +85,37 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
         return R.layout.userinfo_fragment;
     }
 
-    @Override
-    protected void initView() {
-
-
+    private void setUserUI() {
         mBinding.mEtName.setText(Preferences.getUserName());
         mBinding.mEtPhone.setText(Preferences.getUserMobile());
         mBinding.mEtAddress.setText(Preferences.getUserAddress());
         mBinding.mEtSignature.setText(Preferences.getUserSignature());
 //        mBinding.mEtAddress.setText(Preferences.getUserAddress());
         mBinding.mTvAddress.setText(Preferences.getUserAddress());
+        if (!TextUtils.isEmpty(Preferences.getUserPhoto())) {
+            Picasso.with(BaseApplication.getInstance()).load(Preferences.getUserPhoto()).into(mBinding.mIvPicture);
+        }
+        if (!TextUtils.isEmpty(Preferences.getWeiXinHead())) {
+            Picasso.with(BaseApplication.getInstance()).load(Preferences.getWeiXinHead()).into(mBinding.views.mIvHead);
+        }
+    }
+
+    @Override
+    protected void initView() {
+        subscription = RxBus.handleMessage(new Action1() {
+            @Override
+            public void call(Object o) {
+                if (o instanceof UserStateEvent) {
+                    setState(WSService.isOnline());
+                } else if (o instanceof UserUpdateEvent) {
+                    setUserUI();
+                }
+            }
+        });
+        setUserUI();
+        setState(WSService.isOnline());
+
+
 
         countDownTimer = new CountDownTimer(60 * 1000, 1000) {
             @Override
@@ -108,9 +130,7 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
             }
         };
 
-        if (!TextUtils.isEmpty(Preferences.getUserPhoto())) {
-            Picasso.with(BaseApplication.getInstance()).load(Preferences.getUserPhoto()).into(mBinding.mIvPicture);
-        }
+
 
         mBinding.mEtName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -214,21 +234,9 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
             }
         });
 
-        if (!TextUtils.isEmpty(Preferences.getWeiXinHead())) {
-            Picasso.with(BaseApplication.getInstance()).load(Preferences.getWeiXinHead()).into(mBinding.views.mIvHead);
-        }
 
 
-        setState(WSService.isOnline());
 
-        subscription = RxBus.handleMessage(new Action1() {
-            @Override
-            public void call(Object o) {
-                if (o instanceof UserStateEvent) {
-                    setState(WSService.isOnline());
-                }
-            }
-        });
     }
 
     @Override
@@ -309,7 +317,7 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
                                     @Override
                                     public void onClick(int which) {
                                         if (TextUtils.isEmpty(Preferences.getUserMobile()) || TextUtils.isEmpty(Preferences.getUserPhoto())
-                                                || TextUtils.isEmpty(Preferences.getUserName()) || TextUtils.isEmpty(Preferences.getUserAddress()) ) {
+                                                || TextUtils.isEmpty(Preferences.getUserName()) || TextUtils.isEmpty(Preferences.getUserAddress())) {
                                             showToast("请先填写姓名,电话,地址,照片");
                                             return;
                                         }
@@ -344,11 +352,11 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
                 break;
             case R.id.mTvObtainCaptcha:
                 final String str = mBinding.mEtPhone.getText().toString().trim();
-                if(TextUtils.isEmpty(str) ){
+                if (TextUtils.isEmpty(str)) {
                     showToast("当前手机号为空");
                     return;
                 }
-                if(str.equals(Preferences.getUserMobile())){
+                if (str.equals(Preferences.getUserMobile())) {
                     showToast("当前手机号已设置成功");
                     return;
                 }
@@ -379,9 +387,8 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
     }
 
 
-
-    private void configTakePhotoOption(TakePhoto takePhoto){
-        TakePhotoOptions.Builder builder=new TakePhotoOptions.Builder();
+    private void configTakePhotoOption(TakePhoto takePhoto) {
+        TakePhotoOptions.Builder builder = new TakePhotoOptions.Builder();
         builder.setCorrectImage(true);
         takePhoto.setTakePhotoOptions(builder.create());
     }
