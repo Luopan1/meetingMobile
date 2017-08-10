@@ -204,8 +204,10 @@ public class GuideLogFragment extends BaseDataBindingFragment<GuideLogFragmentBi
                                 new ActionSheetDialog.OnSheetItemClickListener() {//
                                     @Override
                                     public void onClick(int which) {
-                                        if (TextUtils.isEmpty(Preferences.getUserMobile())) {
-                                            showToast("请先填写电话号码");
+                                        if (TextUtils.isEmpty(Preferences.getUserMobile()) || TextUtils.isEmpty(Preferences.getUserPhoto())
+                                                || TextUtils.isEmpty(Preferences.getUserName()) || TextUtils.isEmpty(Preferences.getUserAddress()) ) {
+                                            showToast("请先填写姓名,电话,地址,照片");
+                                            RxBus.sendMessage(new PagerSetUserinfo());
                                             return;
                                         }
                                         if (!WSService.isOnline()) {

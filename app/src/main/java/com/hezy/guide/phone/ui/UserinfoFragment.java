@@ -308,12 +308,9 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
                                 new ActionSheetDialog.OnSheetItemClickListener() {//
                                     @Override
                                     public void onClick(int which) {
-                                        if (TextUtils.isEmpty(Preferences.getUserMobile())) {
-                                            showToast("请先填写电话号码");
-                                            return;
-                                        }
-                                        if (TextUtils.isEmpty(Preferences.getUserPhoto())) {
-                                            showToast("请先上传照片");
+                                        if (TextUtils.isEmpty(Preferences.getUserMobile()) || TextUtils.isEmpty(Preferences.getUserPhoto())
+                                                || TextUtils.isEmpty(Preferences.getUserName()) || TextUtils.isEmpty(Preferences.getUserAddress()) ) {
+                                            showToast("请先填写姓名,电话,地址,照片");
                                             return;
                                         }
                                         if (!WSService.isOnline()) {
@@ -347,7 +344,7 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
                 break;
             case R.id.mTvObtainCaptcha:
                 final String str = mBinding.mEtPhone.getText().toString().trim();
-                if(TextUtils.isEmpty(str)){
+                if(TextUtils.isEmpty(str) ){
                     showToast("当前手机号为空");
                     return;
                 }
