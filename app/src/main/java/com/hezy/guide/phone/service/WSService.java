@@ -24,6 +24,7 @@ import com.hezy.guide.phone.event.HangOnEvent;
 import com.hezy.guide.phone.event.HangUpEvent;
 import com.hezy.guide.phone.event.SetUserStateEvent;
 import com.hezy.guide.phone.event.TvLeaveChannel;
+import com.hezy.guide.phone.event.TvTimeoutHangUp;
 import com.hezy.guide.phone.event.UserStateEvent;
 import com.hezy.guide.phone.net.ApiClient;
 import com.hezy.guide.phone.net.OkHttpBaseCallback;
@@ -266,6 +267,7 @@ public class WSService extends Service {
         mSocket.on("LISTEN_SALES_SOCKET_ID", onListenSalesSocketId);
         mSocket.on("SALES_ONLINE_WITH_STATUS_RETURN", ON_SALES_ONLINE_WITH_STATUS_RETURN);
         mSocket.on("LISTEN_TV_LEAVE_CHANNEL", ON_LISTEN_TV_LEAVE_CHANNEL);
+        mSocket.on("TIMEOUT_WITHOUT_REPLY", ON_TIMEOUT_WITHOUT_REPLY);
         mSocket.connect();
 
     }
@@ -439,7 +441,6 @@ public class WSService extends Service {
     private Emitter.Listener ON_LISTEN_TV_LEAVE_CHANNEL = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
-            final String msg = (String) args[0];
             Log.i("wsserver", "ON_LISTEN_TV_LEAVE_CHANNEL ");
             runOnUiThread(new Runnable() {
                 @Override
@@ -448,6 +449,19 @@ public class WSService extends Service {
                 }
             });
 
+        }
+    };
+
+    private Emitter.Listener ON_TIMEOUT_WITHOUT_REPLY = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            Log.i("wsserver", "ON_TIMEOUT_WITHOUT_REPLY ");
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    RxBus.sendMessage(new TvTimeoutHangUp());
+                }
+            });
 
         }
     };

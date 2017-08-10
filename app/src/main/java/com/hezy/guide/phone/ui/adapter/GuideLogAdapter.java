@@ -91,9 +91,9 @@ public class GuideLogAdapter extends BaseRecyclerAdapter<RecordData.PageDataEnti
             holder.mIvDot.setVisibility(View.INVISIBLE);
         }
 
-        if(TimeUtil.isToday(time)){
+        if (TimeUtil.isToday(time)) {
             holder.mTvTimeDot.setText("今");
-        }else{
+        } else {
             holder.mTvTimeDot.setText(TimeUtil.getDay(time));
         }
 
@@ -102,8 +102,12 @@ public class GuideLogAdapter extends BaseRecyclerAdapter<RecordData.PageDataEnti
             html = "<font color='#ff6482'>" + TimeUtil.getMonthDayHM(time)
                     + " 您拒绝接听" + bean.getAddress() + "-" + bean.getName()
                     + "(" + "<font color='#b985e2'>" + bean.getMobile() + "</font>" + ")" + "的通话" + "</font>";
+        } else if (bean.getStatus() == 0) {
+            html = "<font color='#ff6482'>" + TimeUtil.getMonthDayHM(time)
+                    + " 您未接听" + bean.getAddress() + "-" + bean.getName()
+                    + "(" + "<font color='#b985e2'>" + bean.getMobile() + "</font>" + ")" + "的通话" + "</font>";
         } else if (bean.getStatus() == 8) {
-            html ="<font color='#ff6482'>" + TimeUtil.getMonthDayHM(time)
+            html = "<font color='#ff6482'>" + TimeUtil.getMonthDayHM(time)
                     + " " + bean.getAddress() + "-" + bean.getName()
                     + "(" + "<font color='#b985e2'>" + bean.getMobile() + "</font>" + ")" + "挂断了呼叫" + "</font>";
         } else if (bean.getMinuteInterval() != 0) {

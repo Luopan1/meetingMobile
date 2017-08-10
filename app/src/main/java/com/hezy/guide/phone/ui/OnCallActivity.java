@@ -19,6 +19,7 @@ import com.hezy.guide.phone.databinding.OnCallActivityBinding;
 import com.hezy.guide.phone.entities.base.BaseErrorBean;
 import com.hezy.guide.phone.event.CallEvent;
 import com.hezy.guide.phone.event.TvLeaveChannel;
+import com.hezy.guide.phone.event.TvTimeoutHangUp;
 import com.hezy.guide.phone.net.ApiClient;
 import com.hezy.guide.phone.net.OkHttpCallback;
 import com.hezy.guide.phone.utils.RxBus;
@@ -86,13 +87,14 @@ public class OnCallActivity extends BaseDataBindingActivity<OnCallActivityBindin
 
                         @Override
                         public void onFinish() {
-                            if (mp != null) {
-                                mp.stop();
-                                mp.release();
-                                mp = null;
-                            }
+                            releaseMP();
                         }
                     });
+                }else if(o instanceof TvTimeoutHangUp){
+                    subscription.unsubscribe();
+                    ToastUtils.showToast("未接听呼叫");
+                    releaseMP();
+                    finish();
                 }
             }
         });
@@ -173,6 +175,14 @@ public class OnCallActivity extends BaseDataBindingActivity<OnCallActivityBindin
     @Override
     public void onBackPressed() {
 
+    }
+
+    private void releaseMP(){
+        if (mp != null) {
+            mp.stop();
+            mp.release();
+            mp = null;
+        }
     }
 
     @Override
