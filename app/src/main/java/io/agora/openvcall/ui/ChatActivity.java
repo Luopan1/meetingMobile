@@ -32,6 +32,7 @@ import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.receiver.PhoneReceiver;
 import com.hezy.guide.phone.utils.RxBus;
 import com.hezy.guide.phone.utils.UIDUtil;
+import com.tendcloud.tenddata.TCAgent;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,6 +71,9 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+
+        TCAgent.onPageStart(this, "进入手机端导购直播界面");
+
         final Window win = getWindow();
         win.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
                 | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
@@ -132,6 +136,8 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
 //                int uid = user.mUid == config().mUid ? user.mUid : config().mUid;
                 int uid = user.mUid == config().mUid ? remoteUid : config().mUid;
                 switchToSmallVideoView(uid);
+
+                TCAgent.onEvent(ChatActivity.this, "切换大小窗口");
 
 //                if (mLayoutType == LAYOUT_TYPE_DEFAULT && mUidsList.size() != 1) {
 //                    switchToSmallVideoView(uid);
@@ -551,6 +557,7 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
             @Override
             public void onSuccess(BaseErrorBean entity) {
                 Log.d("stop receive", entity.toString());
+                TCAgent.onEvent(ChatActivity.this, "停止直播更新callrecord状态为9成功");
             }
 
             @Override
@@ -577,5 +584,13 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
         } else {
             iv.clearColorFilter();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        TCAgent.onPageEnd(this, "退出手机端导购直播界面");
+
     }
 }
