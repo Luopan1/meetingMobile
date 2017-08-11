@@ -72,7 +72,7 @@ public class GuideLogFragment extends BaseDataBindingFragment<GuideLogFragmentBi
                 }
             }
         });
-        setState(WSService.isOnline());
+
         setUserUI();
     }
 
@@ -139,8 +139,10 @@ public class GuideLogFragment extends BaseDataBindingFragment<GuideLogFragmentBi
     @Override
     public void onResume() {
         super.onResume();
+        setState(WSService.isOnline());
         requestRecordTotal();
         requestRecord();
+
     }
 
     private void requestRecordTotal() {
