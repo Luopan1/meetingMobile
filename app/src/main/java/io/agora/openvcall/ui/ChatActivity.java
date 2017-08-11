@@ -1,12 +1,14 @@
 package io.agora.openvcall.ui;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.media.AudioManager;
+import android.media.RingtoneManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -30,6 +32,7 @@ import com.hezy.guide.phone.net.ApiClient;
 import com.hezy.guide.phone.net.OkHttpCallback;
 import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.receiver.PhoneReceiver;
+import com.hezy.guide.phone.ui.OnCallActivity;
 import com.hezy.guide.phone.utils.RxBus;
 import com.hezy.guide.phone.utils.UIDUtil;
 import com.tendcloud.tenddata.TCAgent;
@@ -50,6 +53,8 @@ import io.agora.rtc.video.VideoCanvas;
 
 public class ChatActivity extends BaseActivity implements AGEventHandler {
 
+    private final String TAG = ChatActivity.class.getSimpleName();
+
     private final static Logger log = LoggerFactory.getLogger(ChatActivity.class);
 
     private GridVideoViewContainer mGridVideoViewContainer;
@@ -67,6 +72,8 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
 
     private PhoneReceiver phoneReceiver;
 
+    private AudioManager mAudioManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,7 +88,34 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
                 | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
 
 
+        mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        mAudioManager.requestAudioFocus(onAudioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
+
     }
+
+    private AudioManager.OnAudioFocusChangeListener onAudioFocusChangeListener = new AudioManager.OnAudioFocusChangeListener() {
+        @Override
+        public void onAudioFocusChange(int focusChange) {
+            switch (focusChange) {
+                case AudioManager.AUDIOFOCUS_GAIN:
+                    Log.d(TAG, "AUDIOFOCUS_GAIN [" + this.hashCode() + "]");
+
+                    break;
+                case AudioManager.AUDIOFOCUS_LOSS:
+
+                    Log.d(TAG, "AUDIOFOCUS_LOSS [" + this.hashCode() + "]");
+                    break;
+                case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
+
+                    Log.d(TAG, "AUDIOFOCUS_LOSS_TRANSIENT [" + this.hashCode() + "]");
+                    break;
+                case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
+
+                    Log.d(TAG, "AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK [" + this.hashCode() + "]");
+                    break;
+            }
+        }
+    };
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
