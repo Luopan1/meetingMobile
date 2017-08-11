@@ -73,6 +73,7 @@ public class OnCallActivity extends BaseDataBindingActivity<OnCallActivityBindin
             public void call(Object o) {
                 if (o instanceof TvLeaveChannel) {
                     ToastUtils.showToast("顾客已经挂断");
+                    releaseMP();
                     ApiClient.getInstance().startOrStopOrRejectCallExpostor(channelId, "8", new OkHttpCallback<BaseErrorBean>() {
                         @Override
                         public void onSuccess(BaseErrorBean entity) {
@@ -128,9 +129,7 @@ public class OnCallActivity extends BaseDataBindingActivity<OnCallActivityBindin
     public void normalOnClick(View v) {
         switch (v.getId()) {
             case R.id.mIvAccept:
-                mp.stop();
-                mp.release();
-                mp = null;
+                releaseMP();
                 ApiClient.getInstance().startOrStopOrRejectCallExpostor(channelId, "1", new OkHttpCallback<BaseErrorBean>() {
                     @Override
                     public void onSuccess(BaseErrorBean entity) {
@@ -150,9 +149,7 @@ public class OnCallActivity extends BaseDataBindingActivity<OnCallActivityBindin
                 });
                 break;
             case R.id.mIvReject:
-                mp.stop();
-                mp.release();
-                mp = null;
+                releaseMP();
                 ApiClient.getInstance().startOrStopOrRejectCallExpostor(channelId, "2", new OkHttpCallback<BaseErrorBean>() {
                     @Override
                     public void onSuccess(BaseErrorBean entity) {
@@ -174,7 +171,7 @@ public class OnCallActivity extends BaseDataBindingActivity<OnCallActivityBindin
 
     @Override
     public void onBackPressed() {
-
+        releaseMP();
     }
 
     private void releaseMP(){
@@ -188,6 +185,7 @@ public class OnCallActivity extends BaseDataBindingActivity<OnCallActivityBindin
     @Override
     public void onDestroy() {
         subscription.unsubscribe();
+        releaseMP();
         super.onDestroy();
     }
 
