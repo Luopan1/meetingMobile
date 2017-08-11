@@ -3,6 +3,7 @@ package com.hezy.guide.phone.ui;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
+import android.media.MediaDrm;
 import android.media.MediaPlayer;
 import android.media.RingtoneManager;
 import android.os.Bundle;
@@ -60,6 +61,8 @@ public class OnCallActivity extends BaseDataBindingActivity<OnCallActivityBindin
         callInfo = getIntent().getStringExtra("callInfo");
     }
 
+    private AudioManager mAudioManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,7 +104,7 @@ public class OnCallActivity extends BaseDataBindingActivity<OnCallActivityBindin
             }
         });
 
-        AudioManager mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         mAudioManager.requestAudioFocus(onAudioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
 
         mp = new MediaPlayer();
@@ -182,6 +185,7 @@ public class OnCallActivity extends BaseDataBindingActivity<OnCallActivityBindin
     @Override
     public void onDestroy() {
         subscription.unsubscribe();
+        mAudioManager.abandonAudioFocus(onAudioFocusChangeListener);
         releaseMP();
         super.onDestroy();
     }
