@@ -115,7 +115,7 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
             }
         });
         setUserUI();
-        setState(WSService.isOnline());
+
 
 
 
@@ -273,6 +273,7 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
     @Override
     public void onResume() {
         super.onResume();
+        setState(WSService.isOnline());
         requestRecordTotal();
     }
 
