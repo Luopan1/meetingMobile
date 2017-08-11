@@ -624,6 +624,8 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
     protected void onDestroy() {
         super.onDestroy();
 
+        mAudioManager.abandonAudioFocus(onAudioFocusChangeListener);
+
         TCAgent.onPageEnd(this, "退出手机端导购直播界面");
 
     }
