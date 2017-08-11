@@ -83,7 +83,7 @@
                     android:drawablePadding="@dimen/my_px_10"
                     android:drawableTop="@drawable/home_tab_me_selector"
                     android:paddingTop="@dimen/my_px_14"
-                    android:text="日志" />
+                    android:text="我的" />
 
 
             </RadioGroup>
