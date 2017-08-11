@@ -192,6 +192,7 @@ public class OnCallActivity extends BaseDataBindingActivity<OnCallActivityBindin
         public void onAudioFocusChange(int focusChange) {
             switch (focusChange) {
                 case AudioManager.AUDIOFOCUS_GAIN:
+                    Log.d(TAG, "AUDIOFOCUS_GAIN [" + this.hashCode() + "]");
                     try {
                         mp.setDataSource(OnCallActivity.this, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE));
                         mp.prepare();
@@ -199,7 +200,6 @@ public class OnCallActivity extends BaseDataBindingActivity<OnCallActivityBindin
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-
                     break;
                 case AudioManager.AUDIOFOCUS_LOSS:
 
@@ -210,6 +210,8 @@ public class OnCallActivity extends BaseDataBindingActivity<OnCallActivityBindin
                     Log.d(TAG, "AUDIOFOCUS_LOSS_TRANSIENT [" + this.hashCode() + "]");
                     break;
                 case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
+
+                    Log.d(TAG, "AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK [" + this.hashCode() + "]");
                     break;
             }
         }
