@@ -36,13 +36,15 @@
                     android:layout_marginLeft="5dp"
                     android:background="@mipmap/img_input_small"
                     android:gravity="center_vertical"
-                    android:maxLength="14"
                     android:paddingLeft="25dp"
                     android:paddingRight="25dp"
                     android:singleLine="true"
                     android:textColor="@android:color/white"
                     android:textSize="16sp"
-                    tools:text="唐搭讪唐搭讪唐搭讪唐搭讪唐搭讪" />
+                    android:textColorHint="@color/hint_b985e2"
+                    android:hint="2-8个汉字或者4-16个英文"
+                     />
+                <!--tools:text="唐搭讪唐搭讪唐搭"-->
 
             </LinearLayout>
 
@@ -240,14 +242,16 @@
                     android:layout_height="match_parent"
                     android:layout_marginLeft="5dp"
                     android:background="@mipmap/img_input_big"
-                    android:gravity="center_vertical"
                     android:hint="输入30字以内的个性签名"
-                    android:maxLength="30"
                     android:paddingLeft="25dp"
                     android:paddingRight="25dp"
                     android:textColor="@android:color/white"
                     android:textColorHint="@color/hint_b985e2"
+                    android:gravity="top"
+                    android:paddingTop="20dp"
+
                     android:textSize="14sp" />
+                <!--    tools:text="123451111111111111111111111111111111"-->
 
             </LinearLayout>
 

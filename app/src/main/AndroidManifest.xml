@@ -70,7 +70,8 @@
             android:name=".ui.HomeActivity"
             android:theme="@style/NoTitle"
             android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan">
             <!--<intent-filter>-->
                 <!--<action android:name="android.intent.action.MAIN" />-->
                 <!--<category android:name="android.intent.category.LAUNCHER" />-->

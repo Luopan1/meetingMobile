@@ -11,6 +11,7 @@ import android.view.View;
 
 import com.adorkable.iosdialog.ActionSheetDialog;
 import com.hezy.guide.phone.BaseApplication;
+import com.hezy.guide.phone.Constant;
 import com.hezy.guide.phone.R;
 import com.hezy.guide.phone.base.BaseDataBindingFragment;
 import com.hezy.guide.phone.databinding.UserinfoFragmentBinding;
@@ -28,6 +29,7 @@ import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.service.WSService;
 import com.hezy.guide.phone.utils.LogUtils;
 import com.hezy.guide.phone.utils.RxBus;
+import com.hezy.guide.phone.utils.StringCheckUtil;
 import com.hezy.guide.phone.utils.ToastUtils;
 import com.hezy.guide.phone.utils.helper.TakePhotoHelper;
 import com.jph.takephoto.app.TakePhoto;
@@ -138,12 +140,19 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
                 if (!hasFocus) {
                     //失去焦点提交请求
                     final String str = mBinding.mEtName.getText().toString().trim();
+                    long len = StringCheckUtil.calculateLength(str);
+                    if(len< Constant.NICKNAME_MIN  || len >Constant.NICKNAME_MAX){
+                        showToast("姓名为2-8个汉字或者4-16个英文,请重新输入");
+                        return;
+                    }
+
                     if ((!TextUtils.isEmpty(str)) && !Preferences.getUserName().equals(str)) {
                         Map<String, String> params = new HashMap<>();
                         params.put("name", str);
                         ApiClient.getInstance().requestUserExpostor(this, params, new OkHttpBaseCallback<BaseErrorBean>() {
                             @Override
                             public void onSuccess(BaseErrorBean entity) {
+                                showToast("设置姓名成功");
                                 Preferences.setUserName(str);
                             }
 
@@ -191,26 +200,27 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
             }
         });
 
-        mBinding.mEtAddress.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus) {
-                    //失去焦点提交请求
-                    final String str = mBinding.mEtAddress.getText().toString().trim();
-                    if ((!TextUtils.isEmpty(str)) && !Preferences.getUserAddress().equals(str)) {
-                        Map<String, String> params = new HashMap<>();
-                        params.put("address", str);
-                        ApiClient.getInstance().requestUserExpostor(this, params, new OkHttpBaseCallback<BaseErrorBean>() {
-                            @Override
-                            public void onSuccess(BaseErrorBean entity) {
-                                Preferences.setUserAddress(str);
-                            }
-
-                        });
-                    }
-                }
-            }
-        });
+//        mBinding.mEtAddress.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+//            @Override
+//            public void onFocusChange(View v, boolean hasFocus) {
+//                if (!hasFocus) {
+//                    //失去焦点提交请求
+//                    final String str = mBinding.mEtAddress.getText().toString().trim();
+//                    if ((!TextUtils.isEmpty(str)) && !Preferences.getUserAddress().equals(str)) {
+//                        Map<String, String> params = new HashMap<>();
+//                        params.put("address", str);
+//                        ApiClient.getInstance().requestUserExpostor(this, params, new OkHttpBaseCallback<BaseErrorBean>() {
+//                            @Override
+//                            public void onSuccess(BaseErrorBean entity) {
+//                                showToast("设置地址成功");
+//                                Preferences.setUserAddress(str);
+//                            }
+//
+//                        });
+//                    }
+//                }
+//            }
+//        });
 
 
         mBinding.mEtSignature.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -219,12 +229,18 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
                 if (!hasFocus) {
                     //失去焦点提交请求
                     final String str = mBinding.mEtSignature.getText().toString().trim();
+                    long len = StringCheckUtil.calculateLength(str);
+                    if(len >Constant.SIGNATURE_MAX){
+                        showToast("签名小于30字,请重新输入");
+                        return;
+                    }
                     if ((!TextUtils.isEmpty(str)) && !Preferences.getUserSignature().equals(str)) {
                         Map<String, String> params = new HashMap<>();
                         params.put("signature", str);
                         ApiClient.getInstance().requestUserExpostor(this, params, new OkHttpBaseCallback<BaseErrorBean>() {
                             @Override
                             public void onSuccess(BaseErrorBean entity) {
+                                showToast("设置签名成功");
                                 Preferences.setUserSignature(str);
                             }
 
@@ -379,6 +395,9 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
                 break;
             case R.id.mTvAddress:
                 //地址定位
+                mBinding.mTvAddress.setFocusable(true);
+                mBinding.mTvAddress.setFocusableInTouchMode(true);
+                mBinding.mTvAddress.requestFocus();
                 Intent intent = new Intent(mContext, CityPickerActivity.class);
                 startActivityForResult(intent, CityPickerActivity.REQUEST_CODE_PICK_CITY);
                 break;
@@ -421,6 +440,7 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
                     ApiClient.getInstance().requestUserExpostor(this, params, new OkHttpBaseCallback<BaseErrorBean>() {
                         @Override
                         public void onSuccess(BaseErrorBean entity) {
+                            showToast("设置地址成功");
                             Preferences.setUserAddress(str);
                         }
 
