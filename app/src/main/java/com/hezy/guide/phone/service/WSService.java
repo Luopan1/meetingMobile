@@ -84,6 +84,7 @@ public class WSService extends Service {
 
     public static void actionStart(Context context) {
         if (!WSService.serviceIsCreate) {
+            Log.i(TAG,"!WSService.serviceIsCreate actionStart");
             Intent intent = new Intent(context, WSService.class);
             context.startService(intent);
         }
@@ -91,6 +92,7 @@ public class WSService extends Service {
 
     public static void stopService(Context context) {
         if (WSService.serviceIsCreate) {
+            Log.i(TAG,"WSService.serviceIsCreate stopService");
             RxBus.sendMessage(new SetUserStateEvent(false));
             Intent intent = new Intent(context, WSService.class);
             context.stopService(intent);
@@ -104,11 +106,14 @@ public class WSService extends Service {
         return null;
     }
 
+
+
     @Override
     public void onCreate() {
+        serviceIsCreate = true;
         //默认离线,用户手动切换在线
 //        connectSocket();
-//        setStartForeground();
+        setStartForeground();
         mHandler = new Handler(Looper.getMainLooper());
         subscription = RxBus.handleMessage(new Action1() {
             @Override
@@ -156,26 +161,32 @@ public class WSService extends Service {
         });
     }
 
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        setStartForeground();
+        return super.onStartCommand(intent, flags, startId);
+    }
 
     private void setStartForeground() {
-        Notification notification = new Notification(R.mipmap.icon_launcher, getText(R.string.app_name)+"正在运行",
-                System.currentTimeMillis());
+//        Notification notification = new Notification(R.mipmap.icon_launcher, getText(R.string.app_name)+"正在运行",
+//                System.currentTimeMillis());
 //        Intent intent = new Intent(Intent.ACTION_MAIN);
 //        intent.addCategory(Intent.CATEGORY_LAUNCHER);
-//        intent.setClass(this, Main.class);
 //        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
 //
 //        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
 
 
-//        Notification notification = new Notification.Builder(this)
-//                .setAutoCancel(true)
-//                .setContentTitle("应用正常运行")
-//                .setContentText("这个通知是为了标识应用是否正常运行中")
-//                .setSmallIcon(R.mipmap.icon_launcher)
-//                .setWhen(System.currentTimeMillis())
-//                .build();
+        Notification notification = new Notification.Builder(this)
+                .setAutoCancel(true)
+                .setContentTitle("应用正常运行")
+                .setContentText("这个通知是为了标识应用是否正常运行中")
+                .setSmallIcon(R.mipmap.icon_launcher)
+                .setWhen(System.currentTimeMillis())
+                .build();
+//           .setContentIntent(pendingIntent)
         startForeground(1, notification);
+
     }
 
 
@@ -472,14 +483,14 @@ public class WSService extends Service {
 
     @Override
     public void onDestroy() {
+        Log.i(TAG, "life onDestroy");
+        stopForeground(true);// 停止前台服务--参数：表示是否移除之前的通知
         if (isOnline()) {
             disConnectSocket();
         }
         subscription.unsubscribe();
         mHandler.removeCallbacksAndMessages(null);
         OkHttpUtil.getInstance().cancelTag(this);
-        Log.i(TAG, "life onDestroy");
-//        stopForeground(true);// 停止前台服务--参数：表示是否移除之前的通知
         super.onDestroy();
     }
 
