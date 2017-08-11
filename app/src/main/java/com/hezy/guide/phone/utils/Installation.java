@@ -57,6 +57,7 @@ public class Installation {
                     }
 
                 } catch (Exception e) {
+                    LogUtils.e(TAG,e.getMessage());
                     throw new RuntimeException(e);
                 }
 
@@ -67,7 +68,9 @@ public class Installation {
                         writeInstallationFile(installation);
                     sID = readInstallationFile(installation);
                 } catch (Exception e) {
+                    LogUtils.e(TAG,e.getMessage());
                     throw new RuntimeException(e);
+
                 }
             }
 
