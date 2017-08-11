@@ -105,13 +105,6 @@ public class OnCallActivity extends BaseDataBindingActivity<OnCallActivityBindin
         mAudioManager.requestAudioFocus(onAudioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
 
         mp = new MediaPlayer();
-        try {
-            mp.setDataSource(this, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE));
-            mp.prepare();
-            mp.start();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
         mBinding.mWaterWave.startAnimation(AnimationUtils.loadAnimation(this, R.anim.water_wave));
     }
@@ -194,11 +187,18 @@ public class OnCallActivity extends BaseDataBindingActivity<OnCallActivityBindin
     }
 
 
-    public static AudioManager.OnAudioFocusChangeListener onAudioFocusChangeListener = new AudioManager.OnAudioFocusChangeListener() {
+    private AudioManager.OnAudioFocusChangeListener onAudioFocusChangeListener = new AudioManager.OnAudioFocusChangeListener() {
         @Override
         public void onAudioFocusChange(int focusChange) {
             switch (focusChange) {
                 case AudioManager.AUDIOFOCUS_GAIN:
+                    try {
+                        mp.setDataSource(OnCallActivity.this, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE));
+                        mp.prepare();
+                        mp.start();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
 
                     break;
                 case AudioManager.AUDIOFOCUS_LOSS:
