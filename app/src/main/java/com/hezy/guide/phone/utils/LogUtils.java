@@ -1,5 +1,6 @@
 package com.hezy.guide.phone.utils;
 
+import android.os.Looper;
 import android.util.Log;
 
 import com.hezy.guide.phone.BuildConfig;
@@ -59,10 +60,10 @@ public class LogUtils {
     public static void e(String tag, String message) {
         Log.e(tag, message);
 //			待解决子线程toast问题
-        if (IS_DEBUG_TOAST) {
+        BuglyLog.e(tag,message);
+        if (IS_DEBUG_TOAST && Thread.currentThread() == Looper.getMainLooper().getThread()) {
             ToastUtils.showToast("Log.e " + tag + " " + message);
         }
-        BuglyLog.e(tag,message);
 
     }
 
