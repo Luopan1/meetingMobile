@@ -171,7 +171,7 @@ public class OnCallActivity extends BaseDataBindingActivity<OnCallActivityBindin
 
     @Override
     public void onBackPressed() {
-        releaseMP();
+        //返回键禁用
     }
 
     private void releaseMP(){
