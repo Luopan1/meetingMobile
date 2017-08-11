@@ -3,9 +3,96 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <me.kaelaela.verticalviewpager.VerticalViewPager
-        android:id="@+id/mVerticalViewPager"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:clipChildren="false"
+        tools:context="com.hezy.guide.phone.ui.HomeActivity">
+
+        <RelativeLayout
+            android:id="@+id/mLayoutTitle"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/my_px_160"
+            android:background="@color/purple_811fcd">
+
+            <TextView
+                android:id="@+id/mTvTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="讲解员日志"
+                android:textColor="@color/white"
+                android:textSize="@dimen/my_sp_48" />
+        </RelativeLayout>
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/mVerticalViewPager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/mLayoutTitle" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/my_px_160"
+            android:layout_alignParentBottom="true"
+            android:background="@color/purple_811fcd"
+            android:orientation="horizontal">
+            <!-- android:background="@color/purple_811fcd"-->
+
+
+            <TextView
+                android:id="@+id/mTvState"
+                android:layout_width="@dimen/my_px_250"
+                android:layout_height="@dimen/my_px_250"
+                android:layout_gravity="bottom"
+                android:background="@drawable/home_state_bg_shape"
+                android:drawableTop="@mipmap/ic_offline"
+                android:gravity="center"
+                android:paddingTop="@dimen/my_px_20"
+                android:text="在线"
+                android:textColor="@color/text_gray_c784fb"
+                android:textSize="15sp" />
+
+
+            <RadioGroup
+                android:id="@+id/mRgHome"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:orientation="horizontal">
+
+
+                <RadioButton
+                    android:id="@+id/mRbLog"
+                    style="@style/HomeTab"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:checked="true"
+                    android:drawablePadding="@dimen/my_px_10"
+                    android:drawableTop="@drawable/home_tab_log_selector"
+                    android:paddingTop="@dimen/my_px_14"
+                    android:text="日志" />
+
+                <RadioButton
+                    android:id="@+id/mRbMe"
+                    style="@style/HomeTab"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:drawablePadding="@dimen/my_px_10"
+                    android:drawableTop="@drawable/home_tab_me_selector"
+                    android:paddingTop="@dimen/my_px_14"
+                    android:text="日志" />
+
+
+            </RadioGroup>
+
+
+        </LinearLayout>
+
+
+    </RelativeLayout>
+
 
 </layout>

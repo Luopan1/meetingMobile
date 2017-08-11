@@ -67,4 +67,16 @@
         <item name="android:windowNoTitle">true</item>
     </style>
 
+
+    <style name="HomeTab">
+        <item name="android:textColor">@drawable/home_tab_text_selector</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:button">@null</item>
+        <item name="android:textSize">@dimen/my_sp_36</item>
+    </style>
+
+
+
+
 </resources>

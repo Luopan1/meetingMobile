@@ -6,13 +6,18 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.annotation.IdRes;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.View;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.adorkable.iosdialog.ActionSheetDialog;
 import com.hezy.guide.phone.BuildConfig;
 import com.hezy.guide.phone.R;
 import com.hezy.guide.phone.base.BaseDataBindingActivity;
@@ -24,6 +29,8 @@ import com.hezy.guide.phone.entities.Wechat;
 import com.hezy.guide.phone.entities.base.BaseBean;
 import com.hezy.guide.phone.event.PagerSetGuideLog;
 import com.hezy.guide.phone.event.PagerSetUserinfo;
+import com.hezy.guide.phone.event.SetUserStateEvent;
+import com.hezy.guide.phone.event.UserStateEvent;
 import com.hezy.guide.phone.event.UserUpdateEvent;
 import com.hezy.guide.phone.net.ApiClient;
 import com.hezy.guide.phone.net.OkHttpBaseCallback;
@@ -41,9 +48,10 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import me.kaelaela.verticalviewpager.transforms.DefaultTransformer;
 import rx.Subscription;
 import rx.functions.Action1;
+
+import static com.hezy.guide.phone.R.id.mTvState;
 
 
 /**
@@ -66,8 +74,8 @@ public class HomeActivity extends BaseDataBindingActivity<HomeActivityBinding> {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        if(savedInstanceState != null){
-            isNewActivity=true;
+        if (savedInstanceState != null) {
+            isNewActivity = true;
         }
         super.onCreate(savedInstanceState);
     }
@@ -90,14 +98,14 @@ public class HomeActivity extends BaseDataBindingActivity<HomeActivityBinding> {
 
     private void processExtraData(Intent intent) {
         mIntentType = intent.getIntExtra(LoginHelper.LOGIN_TYPE, 0);
-        LogUtils.d(TAG,"mIntentType "+mIntentType);
+        LogUtils.d(TAG, "mIntentType " + mIntentType);
         if (mIntentType == LoginHelper.LOGIN_TYPE_EXIT) {
             //退出应用
-            LogUtils.d(TAG,"退出应用");
+            LogUtils.d(TAG, "退出应用");
             quit();
-        }else if(mIntentType == LoginHelper.LOGIN_TYPE_LOGOUT){
+        } else if (mIntentType == LoginHelper.LOGIN_TYPE_LOGOUT) {
             //退出登录
-            LogUtils.d(TAG,"退出登录");
+            LogUtils.d(TAG, "退出登录");
 //            showLogoutForceDialog();
 //            if(!isNewActivity){
 //                //非新activity,需要修改登录UI
@@ -112,18 +120,21 @@ public class HomeActivity extends BaseDataBindingActivity<HomeActivityBinding> {
     }
 
 
-
-
     @Override
     protected void initView() {
-//        mBinding.mVerticalViewPager.setPageTransformer(true, new VerticalTransformer());
-//        mBinding.mVerticalViewPager.setOverScrollMode(OVER_SCROLL_NEVER);
         //登录才能进入主页,启动心跳
 //        HeartService.actionStart(mContext);
         WSService.actionStart(mContext);
 
+        subscription = RxBus.handleMessage(new Action1() {
+            @Override
+            public void call(Object o) {
+                if (o instanceof UserStateEvent) {
+                    setState(WSService.isOnline());
+                }
+            }
+        });
 
-        mBinding.mVerticalViewPager.setPageTransformer(false, new DefaultTransformer());
 
         subscription = RxBus.handleMessage(new Action1() {
             @Override
@@ -137,6 +148,50 @@ public class HomeActivity extends BaseDataBindingActivity<HomeActivityBinding> {
         });
 
 
+        mBinding.mRgHome.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
+                switch (checkedId) {
+                    case R.id.mRbLog:
+                        mBinding.mVerticalViewPager.setCurrentItem(0);
+                        break;
+                    case R.id.mRbMe:
+                        mBinding.mVerticalViewPager.setCurrentItem(1);
+                        break;
+                }
+            }
+        });
+
+
+        mBinding.mVerticalViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                switch (position) {
+                    case 0:
+                        mBinding.mRbLog.setChecked(true);
+                        break;
+                    case 1:
+                        mBinding.mRbMe.setChecked(true);
+                        break;
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+
+    }
+
+    @Override
+    protected void initListener() {
+        mBinding.mTvState.setOnClickListener(this);
     }
 
     @Override
@@ -146,7 +201,7 @@ public class HomeActivity extends BaseDataBindingActivity<HomeActivityBinding> {
         requestUser();
     }
 
-    private void initCurrentItem(){
+    private void initCurrentItem() {
         if (!TextUtils.isEmpty(Preferences.getUserName()) && !TextUtils.isEmpty(Preferences.getUserMobile())
                 && !TextUtils.isEmpty(Preferences.getUserPhoto())
                 && !TextUtils.isEmpty(Preferences.getUserAddress())) {
@@ -160,12 +215,68 @@ public class HomeActivity extends BaseDataBindingActivity<HomeActivityBinding> {
     protected void initAdapter() {
         mHomePagerAdapter = new HomePagerAdapter(getSupportFragmentManager());
         mFragments = new ArrayList<>();
-        mFragments.add(UserinfoFragment.newInstance());
         mFragments.add(GuideLogFragment.newInstance());
+        mFragments.add(UserinfoFragment.newInstance());
         mHomePagerAdapter.setData(mFragments);
         mBinding.mVerticalViewPager.setAdapter(mHomePagerAdapter);
         LogUtils.i(TAG, "getUserMobile" + Preferences.getUserMobile());
         initCurrentItem();
+    }
+
+
+    @Override
+    protected void checkNetWorkOnClick(View v) {
+        switch (v.getId()) {
+            case mTvState:
+                new ActionSheetDialog(mContext).builder()//
+                        .setCancelable(false)//
+                        .setCanceledOnTouchOutside(false)//
+                        .addSheetItem("在线", ActionSheetDialog.SheetItemColor.Blue,//
+                                new ActionSheetDialog.OnSheetItemClickListener() {//
+                                    @Override
+                                    public void onClick(int which) {
+                                        if (TextUtils.isEmpty(Preferences.getUserMobile()) || TextUtils.isEmpty(Preferences.getUserPhoto())
+                                                || TextUtils.isEmpty(Preferences.getUserName()) || TextUtils.isEmpty(Preferences.getUserAddress())) {
+                                            showToast("请先填写姓名,电话,地址,照片");
+                                            return;
+                                        }
+                                        if (!WSService.isOnline()) {
+                                            //当前状态离线,可切换在线
+                                            Log.i(TAG, "当前状态离线,可切换在线");
+                                            RxBus.sendMessage(new SetUserStateEvent(true));
+                                        }
+
+
+                                    }
+                                })
+                        .addSheetItem("离线", ActionSheetDialog.SheetItemColor.Blue,//
+                                new ActionSheetDialog.OnSheetItemClickListener() {//
+                                    @Override
+                                    public void onClick(int which) {
+                                        if (WSService.isOnline()) {
+                                            //当前状态在线,可切换离线
+                                            Log.i(TAG, "当前状态在线,可切换离线");
+                                            RxBus.sendMessage(new SetUserStateEvent(false));
+//                                            WSService.SOCKET_ONLINE =false;
+//                                            setState(false);
+                                        }
+                                    }
+                                }).show();
+                break;
+
+        }
+    }
+
+    private void setState(boolean isOnline) {
+        if (isOnline) {
+            mBinding.mTvState.setText("在线");
+            mBinding.mTvState.setCompoundDrawablesWithIntrinsicBounds(0,R.mipmap.ic_online,0,0);
+            mBinding.mTvState.setTextColor(getResources().getColor(R.color.text_yellow_fff000));
+        } else {
+            mBinding.mTvState.setText("离线");
+            mBinding.mTvState.setCompoundDrawablesWithIntrinsicBounds(0,R.mipmap.ic_offline,0,0);
+            mBinding.mTvState.setTextColor(getResources().getColor(R.color.text_gray_c784fb));
+        }
     }
 
 
@@ -244,11 +355,11 @@ public class HomeActivity extends BaseDataBindingActivity<HomeActivityBinding> {
         }
     };
 
-    private void requestUser(){
+    private void requestUser() {
         ApiClient.getInstance().requestUser(this, new OkHttpBaseCallback<BaseBean<UserData>>() {
             @Override
             public void onSuccess(BaseBean<UserData> entity) {
-                if(entity == null || entity.getData() == null || entity.getData().getUser()==null){
+                if (entity == null || entity.getData() == null || entity.getData().getUser() == null) {
                     showToast("数据为空");
                     return;
                 }
@@ -256,7 +367,7 @@ public class HomeActivity extends BaseDataBindingActivity<HomeActivityBinding> {
                 Wechat wechat = entity.getData().getWechat();
                 LoginHelper.savaUser(user);
                 initCurrentItem();
-                if(wechat!=null){
+                if (wechat != null) {
                     LoginHelper.savaWeChat(wechat);
                 }
                 RxBus.sendMessage(new UserUpdateEvent());
