@@ -207,7 +207,6 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
                 if (o instanceof HangOnEvent) {
                     hangonScription.unsubscribe();
                     ApiClient.getInstance().startOrStopOrRejectCallExpostor(channelName, "7", new ExpostorCallback());
-
                 }
             }
         });
@@ -649,6 +648,8 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+
+        hangonScription.unsubscribe();
 
         mAudioManager.abandonAudioFocus(onAudioFocusChangeListener);
 

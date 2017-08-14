@@ -21,7 +21,7 @@ import com.hezy.guide.phone.utils.RxBus;
 
 public class PhoneReceiver extends BroadcastReceiver {
 
-    private static boolean incomingFlag = false;
+    private boolean incomingFlag = false;
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -58,6 +58,7 @@ public class PhoneReceiver extends BroadcastReceiver {
                     if (incomingFlag) {
                         Log.i("PhoneReceiver", "CALL IDLE");
                         RxBus.sendMessage(new HangDownEvent());
+                        incomingFlag = false;
                     }
                     break;
             }
