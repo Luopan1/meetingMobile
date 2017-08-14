@@ -444,6 +444,7 @@ public class WSService extends Service {
         public void call(final Object... args) {
             if(!(args[0] instanceof String)){
                 LogUtils.e("wsserver", "ON_SALES_ONLINE_WITH_STATUS_RETURN !(args[0] instanceof String");
+                return;
             }
             final String msg = (String) args[0];
             Log.i("wsserver", "ON_SALES_ONLINE_WITH_STATUS_RETURN msg ==" + msg);
