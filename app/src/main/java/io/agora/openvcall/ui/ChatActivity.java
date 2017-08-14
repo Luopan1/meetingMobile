@@ -24,6 +24,7 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.hezy.guide.phone.R;
 import com.hezy.guide.phone.entities.base.BaseErrorBean;
@@ -217,6 +218,7 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
         @Override
         public void onSuccess(BaseErrorBean entity) {
             Log.d("stop when calling", entity.toString());
+            Toast.makeText(ChatActivity.this, "通话被其他应用打断", Toast.LENGTH_SHORT).show();
         }
 
         @Override
