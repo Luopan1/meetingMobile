@@ -436,18 +436,22 @@ public class WSService extends Service {
     private Emitter.Listener ON_SALES_ONLINE_WITH_STATUS_RETURN = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
-            if(!(args[0] instanceof String)){
-                LogUtils.e("wsserver", "ON_SALES_ONLINE_WITH_STATUS_RETURN !(args[0] instanceof String");
-            }
-            final String msg = (String) args[0];
-            Log.i("wsserver", "ON_SALES_ONLINE_WITH_STATUS_RETURN msg ==" + msg);
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-//                    showToast("ON_SALES_ONLINE_WITH_STATUS_RETURN msg ==" + msg);
-                }
-            });
 
+            JSONObject data = (JSONObject) args[0];
+            Log.i("wsserver", "ON_SALES_ONLINE_WITH_STATUS_RETURN data ==" + data);
+            try {
+                String msg = data.getString("message");
+                Log.i("wsserver", "ON_SALES_ONLINE_WITH_STATUS_RETURN msg ==" + msg);
+            }catch (JSONException e){
+                e.printStackTrace();
+                Log.e(TAG, "ON_SALES_ONLINE_WITH_STATUS_RETURN e " + e);
+            }
+//            runOnUiThread(new Runnable() {
+//                @Override
+//                public void run() {
+////                    showToast("ON_SALES_ONLINE_WITH_STATUS_RETURN msg ==" + msg);
+//                }
+//            });
 
         }
     };
