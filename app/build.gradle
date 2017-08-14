@@ -176,7 +176,7 @@ dependencies {
     compile 'io.reactivex:rxjava:1.2.0'
     compile 'io.reactivex:rxandroid:1.2.1'
     //socket.io
-    compile('io.socket:socket.io-client:0.8.3') {
+    compile ('io.socket:socket.io-client:1.0.0') {
         exclude group: 'org.json', module: 'json'
     }
     //七牛云存储
