@@ -1,12 +1,15 @@
 package io.agora.openvcall.ui;
 
+import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -21,6 +24,8 @@ import io.agora.openvcall.model.ConstantApp;
 
 public class MainActivity extends BaseActivity {
 
+    private static final String TAG = MainActivity.class.getSimpleName();
+
     private String channelId, callInfo;
 
     private Handler handler = new Handler(){
@@ -30,6 +35,8 @@ public class MainActivity extends BaseActivity {
             forwardToRoom();
         }
     };
+
+    private AudioManager mAudioManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +48,34 @@ public class MainActivity extends BaseActivity {
                 | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
                 | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
 
+        mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        mAudioManager.requestAudioFocus(onAudioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
+
     }
+
+    private AudioManager.OnAudioFocusChangeListener onAudioFocusChangeListener = new AudioManager.OnAudioFocusChangeListener() {
+        @Override
+        public void onAudioFocusChange(int focusChange) {
+            switch (focusChange) {
+                case AudioManager.AUDIOFOCUS_GAIN:
+                    Log.d(TAG, "AUDIOFOCUS_GAIN [" + this.hashCode() + "]");
+
+                    break;
+                case AudioManager.AUDIOFOCUS_LOSS:
+
+                    Log.d(TAG, "AUDIOFOCUS_LOSS [" + this.hashCode() + "]");
+                    break;
+                case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
+
+                    Log.d(TAG, "AUDIOFOCUS_LOSS_TRANSIENT [" + this.hashCode() + "]");
+                    break;
+                case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
+
+                    Log.d(TAG, "AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK [" + this.hashCode() + "]");
+                    break;
+            }
+        }
+    };
 
     @Override
     protected void initUIandEvent() {
@@ -131,4 +165,11 @@ public class MainActivity extends BaseActivity {
         finish();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        mAudioManager.abandonAudioFocus(onAudioFocusChangeListener);
+
+    }
 }
