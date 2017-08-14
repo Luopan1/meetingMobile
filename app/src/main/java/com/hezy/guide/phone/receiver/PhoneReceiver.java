@@ -41,7 +41,7 @@ public class PhoneReceiver extends BroadcastReceiver {
         public void onCallStateChanged(int state, String incomingNumber) {
             super.onCallStateChanged(state, incomingNumber);
             switch (state) {
-                //电话等待接听
+                //电话响铃
                 case TelephonyManager.CALL_STATE_RINGING:
                     incomingFlag = true;
                     Log.i("PhoneReceiver", "CALL IN RINGING :" + incomingNumber);

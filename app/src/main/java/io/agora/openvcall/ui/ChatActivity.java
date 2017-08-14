@@ -651,6 +651,8 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
 
         hangonScription.unsubscribe();
 
+        unregisterReceiver(phoneReceiver);
+
         mAudioManager.abandonAudioFocus(onAudioFocusChangeListener);
 
         TCAgent.onPageEnd(this, "退出手机端导购直播界面");
