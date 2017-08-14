@@ -22,8 +22,7 @@
                 android:paddingLeft="@dimen/my_px_40"
                 android:paddingRight="@dimen/my_px_40"
                 android:paddingBottom="15dp"
-
-                android:scrollbars="vertical"
+                android:scrollbars="none"
                 android:visibility="visible" />
 
 
