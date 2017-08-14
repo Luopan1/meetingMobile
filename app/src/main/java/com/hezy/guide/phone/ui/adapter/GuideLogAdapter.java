@@ -2,15 +2,21 @@ package com.hezy.guide.phone.ui.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.text.Html;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.hezy.guide.phone.R;
 import com.hezy.guide.phone.base.listadapter.BaseRecyclerAdapter;
 import com.hezy.guide.phone.entities.RecordData;
 import com.hezy.guide.phone.utils.TimeUtil;
+import com.hezy.guide.phone.utils.helper.ImageHelper;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by wufan on 2017/8/3.
@@ -63,19 +69,22 @@ public class GuideLogAdapter extends BaseRecyclerAdapter<RecordData.PageDataEnti
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        if (viewType == ITEM_TYPE.TODAY_TOP.ordinal()) {
-            return new ViewHolder(mInflater.inflate(R.layout.guide_log_today_top_item, parent, false));
-        } else if (viewType == ITEM_TYPE.TODAY_END.ordinal()) {
-            return new ViewHolder(mInflater.inflate(R.layout.guide_log_today_end_item, parent, false));
-        } else if (viewType == ITEM_TYPE.TODAY.ordinal()) {
-            return new ViewHolder(mInflater.inflate(R.layout.guide_log_today_item, parent, false));
-        } else if (viewType == ITEM_TYPE.HISTORY_TOP.ordinal()) {
-            return new ViewHolder(mInflater.inflate(R.layout.guide_log_history_top_item, parent, false));
-        } else if (viewType == ITEM_TYPE.HISTORY_END.ordinal()) {
-            return new ViewHolder(mInflater.inflate(R.layout.guide_log_history_end_item, parent, false));
-        } else {
-            return new ViewHolder(mInflater.inflate(R.layout.guide_log_history_item, parent, false));
-        }
+//        if (viewType == ITEM_TYPE.TODAY_TOP.ordinal()) {
+//            return new ViewHolder(mInflater.inflate(R.layout.guide_log_new_item, parent, false));
+//        } else if (viewType == ITEM_TYPE.TODAY_END.ordinal()) {
+//            return new ViewHolder(mInflater.inflate(R.layout.guide_log_new_item, parent, false));
+//        } else if (viewType == ITEM_TYPE.TODAY.ordinal()) {
+//            return new ViewHolder(mInflater.inflate(R.layout.guide_log_new_item, parent, false));
+//        } else if (viewType == ITEM_TYPE.HISTORY_TOP.ordinal()) {
+//            return new ViewHolder(mInflater.inflate(R.layout.guide_log_new_item, parent, false));
+//        } else if (viewType == ITEM_TYPE.HISTORY_END.ordinal()) {
+//            return new ViewHolder(mInflater.inflate(R.layout.guide_log_new_item, parent, false));
+//        } else {
+//            return new ViewHolder(mInflater.inflate(R.layout.guide_log_new_item, parent, false));
+//        }
+
+        return new ViewHolder(mInflater.inflate(R.layout.guide_log_new_item, parent, false));
+
     }
 
     @Override
@@ -83,65 +92,76 @@ public class GuideLogAdapter extends BaseRecyclerAdapter<RecordData.PageDataEnti
         RecordData.PageDataEntity bean = mData.get(position);
         String time = bean.getOrderTime();
         ViewHolder holder = (ViewHolder) viewHolder;
-        if (position != 0 && TimeUtil.isDayEqual(time, mData.get(position - 1).getOrderTime())) {
-            holder.mTvTimeDot.setVisibility(View.INVISIBLE);
-            holder.mIvDot.setVisibility(View.VISIBLE);
+
+        if (getItemViewType(position) == ITEM_TYPE.HISTORY_TOP.ordinal()) {
+            //显示历史记录
+            holder.mTvHistory.setVisibility(View.VISIBLE);
         } else {
-            holder.mTvTimeDot.setVisibility(View.VISIBLE);
-            holder.mIvDot.setVisibility(View.INVISIBLE);
+            holder.mTvHistory.setVisibility(View.GONE);
         }
+
+        ImageHelper.loadImageDpId(bean.getHead(), R.dimen.my_px_120, R.dimen.my_px_120, holder.mIvHead);
+        holder.mTvName.setText(bean.getAddress() + " " + bean.getName());
+
 
         if (TimeUtil.isToday(time)) {
-            holder.mTvTimeDot.setText("今");
+            holder.mTvTime.setText("今天" + " " + TimeUtil.getHM(time));
         } else {
-            holder.mTvTimeDot.setText(TimeUtil.getDay(time));
+            holder.mTvTime.setText(TimeUtil.getMonthDayHM(time));
         }
 
-        String html;
-        if (bean.getStatus() == 2) {
-            html = "<font color='#ff6482'>" + TimeUtil.getMonthDayHM(time)
-                    + " 您拒绝接听" + bean.getAddress() + "-" + bean.getName()
-                    + "(" + "<font color='#b985e2'>" + bean.getMobile() + "</font>" + ")" + "的通话" + "</font>";
-        } else if (bean.getStatus() == 0) {
-            html = "<font color='#ff6482'>" + TimeUtil.getMonthDayHM(time)
-                    + " 您未接听" + bean.getAddress() + "-" + bean.getName()
-                    + "(" + "<font color='#b985e2'>" + bean.getMobile() + "</font>" + ")" + "的通话" + "</font>";
-        } else if (bean.getStatus() == 8) {
-            html = "<font color='#ff6482'>" + TimeUtil.getMonthDayHM(time)
-                    + " " + bean.getAddress() + "-" + bean.getName()
-                    + "(" + "<font color='#b985e2'>" + bean.getMobile() + "</font>" + ")" + "挂断了呼叫" + "</font>";
-        } else if (bean.getMinuteInterval() != 0) {
-            html = TimeUtil.getMonthDayHM(time) + " 为" + bean.getAddress() + "-" + bean.getName()
-                    + "(" + "<font color='#b985e2'>" + bean.getMobile() + "</font>" + ")" + "讲解了"
-                    + "<font color='#ff9c00'>" + bean.getMinuteInterval() + "</font>" + "分钟"
-                    + "<font color='#ff9c00'>" + bean.getSecondInterval() + "</font>" + "秒";
+        //status (integer, optional): 状态， 0：未应答（30s未接听），1：接听，2：拒绝, 8：对方挂断 9：通话结束挂断 ,
+        if (bean.getStatus() == 0 || bean.getStatus() == 8) {
+            //0：未应答（30s未接听）
+            holder.mTvCallDuration.setText("未接听");
+            holder.mTvCallDuration.setTextColor(mContext.getResources().getColor(R.color.text_red_ff6482));
+            holder.mTvCallDuration.setCompoundDrawablesWithIntrinsicBounds(R.mipmap.ic_uncall, 0, 0, 0);
+        } else if (bean.getStatus() == 2) {
+            //2：拒绝
+            holder.mTvCallDuration.setText("已拒绝");
+            holder.mTvCallDuration.setTextColor(mContext.getResources().getColor(R.color.text_red_ff6482));
+            holder.mTvCallDuration.setCompoundDrawablesWithIntrinsicBounds(R.mipmap.ic_uncall, 0, 0, 0);
+
         } else {
-            html = TimeUtil.getMonthDayHM(time) + " 为" + bean.getAddress() + "-" + bean.getName()
-                    + "(" + "<font color='#b985e2'>" + bean.getMobile() + "</font>" + ")" + "讲解了"
-                    + "<font color='#ff9c00'>" + bean.getSecondInterval() + "</font>" + "秒";
+            //1：接听 9：通话结束挂断 ,
+            holder.mTvCallDuration.setText(" "+String.format("%02d", bean.getMinuteInterval()) + ":" + String.format("%02d", bean.getSecondInterval()));
+            holder.mTvCallDuration.setTextColor(mContext.getResources().getColor(R.color.text_black_434343));
+            holder.mTvCallDuration.setCompoundDrawablesWithIntrinsicBounds(R.mipmap.ic_call, 0, 0, 0);
         }
-
-
-        holder.mTvContent.setText(Html.fromHtml(html));
-
     }
 
 
-    private static class ViewHolder extends RecyclerView.ViewHolder {
-        View mLineTop;
-        View mLineBottom;
-        TextView mTvTimeDot;
-        View mIvDot;
-        TextView mTvContent;
+    static class ViewHolder extends RecyclerView.ViewHolder {
+        @BindView(R.id.mTvHistory)
+        TextView mTvHistory;
+        @BindView(R.id.mIvHead)
+        CircleImageView mIvHead;
+        @BindView(R.id.mTvName)
+        TextView mTvName;
+        @BindView(R.id.mTvTime)
+        TextView mTvTime;
+        @BindView(R.id.mTvNoReview)
+        TextView mTvNoReview;
+        @BindView(R.id.mIvStar1)
+        ImageView mIvStar1;
+        @BindView(R.id.mIvStar2)
+        ImageView mIvStar2;
+        @BindView(R.id.mIvStar3)
+        ImageView mIvStar3;
+        @BindView(R.id.mIvStar4)
+        ImageView mIvStar4;
+        @BindView(R.id.mIvStar5)
+        ImageView mIvStar5;
+        @BindView(R.id.mLayoutStar)
+        LinearLayout mLayoutStar;
+        @BindView(R.id.mTvCallDuration)
+        TextView mTvCallDuration;
 
         public ViewHolder(View view) {
             super(view);
-            mLineTop = view.findViewById(R.id.mLineTop);
-            mLineBottom = view.findViewById(R.id.mLineBottom);
-            mTvTimeDot = (TextView) view.findViewById(R.id.mTvTimeDot);
-            mIvDot = view.findViewById(R.id.mIvDot);
-            mTvContent = (TextView) view.findViewById(R.id.mTvContent);
+            ButterKnife.bind(this, view);
         }
+
     }
 
 

@@ -19,6 +19,8 @@
                 android:layout_height="match_parent"
                 android:background="@color/bg_gray_e8e8e8"
                 android:cacheColorHint="@null"
+                android:paddingLeft="@dimen/my_px_40"
+                android:paddingRight="@dimen/my_px_40"
                 android:paddingBottom="15dp"
 
                 android:scrollbars="vertical"

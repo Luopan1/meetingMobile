@@ -220,7 +220,7 @@ public class HomeActivity extends BaseDataBindingActivity<HomeActivityBinding> {
         mHomePagerAdapter.setData(mFragments);
         mBinding.mVerticalViewPager.setAdapter(mHomePagerAdapter);
         LogUtils.i(TAG, "getUserMobile" + Preferences.getUserMobile());
-        initCurrentItem();
+//        initCurrentItem();
     }
 
 

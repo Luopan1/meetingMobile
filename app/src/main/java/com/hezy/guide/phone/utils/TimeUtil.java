@@ -219,6 +219,19 @@ public class TimeUtil {
         return str;
     }
 
+    public static String getHM(String time){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
+        SimpleDateFormat sdf2 = new SimpleDateFormat("HH:mm", Locale.getDefault());
+        String str="";
+        try {
+            Date date = sdf.parse(time);
+            str = sdf2.format(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return str;
+    }
+
     /**
      * 是否同一天
      * @param time1

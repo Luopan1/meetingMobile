@@ -1,6 +1,7 @@
 package com.hezy.guide.phone.ui;
 
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -14,8 +15,6 @@ import com.hezy.guide.phone.entities.base.BaseBean;
 import com.hezy.guide.phone.net.ApiClient;
 import com.hezy.guide.phone.net.OkHttpBaseCallback;
 import com.hezy.guide.phone.ui.adapter.GuideLogAdapter;
-
-import rx.Subscription;
 
 
 /**
@@ -55,6 +54,7 @@ public class GuideLogFragment extends BaseDataBindingFragment<GuideLogFragmentBi
         mLayoutManager = new LinearLayoutManager(mContext);
         mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mBinding.mRecyclerView.setLayoutManager(mLayoutManager);
+        mBinding.mRecyclerView.addItemDecoration(new DividerItemDecoration(mContext,DividerItemDecoration.VERTICAL));
         mBinding.mRecyclerView.setAdapter(mAdapter);
 
         //刷新与分页加载
