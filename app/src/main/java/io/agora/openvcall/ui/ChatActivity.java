@@ -27,6 +27,7 @@ import android.widget.TextView;
 
 import com.hezy.guide.phone.R;
 import com.hezy.guide.phone.entities.base.BaseErrorBean;
+import com.hezy.guide.phone.event.HangOnEvent;
 import com.hezy.guide.phone.event.HangUpEvent;
 import com.hezy.guide.phone.net.ApiClient;
 import com.hezy.guide.phone.net.OkHttpCallback;
@@ -50,6 +51,8 @@ import io.agora.propeller.VideoInfoData;
 import io.agora.rtc.IRtcEngineEventHandler;
 import io.agora.rtc.RtcEngine;
 import io.agora.rtc.video.VideoCanvas;
+import rx.Subscription;
+import rx.functions.Action1;
 
 public class ChatActivity extends BaseActivity implements AGEventHandler {
 
@@ -130,7 +133,7 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
     private String channelName, callInfo;
 
     private int remoteUid;
-
+    private Subscription hangonScription;
     @Override
     protected void initUIandEvent() {
         event().addEventHandler(this);
@@ -141,7 +144,7 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
         callInfo = i.getStringExtra("callInfo");
 
 
-        phoneReceiver = new PhoneReceiver(channelName);
+        phoneReceiver = new PhoneReceiver();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("android.intent.action.PHONE_STATE");
         intentFilter.addAction("android.intent.action.NEW_OUTGOING_CALL");
@@ -198,6 +201,28 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
 
         optional();
 
+        hangonScription = RxBus.handleMessage(new Action1() {
+            @Override
+            public void call(Object o) {
+                if (o instanceof HangOnEvent) {
+                    hangonScription.unsubscribe();
+                    ApiClient.getInstance().startOrStopOrRejectCallExpostor(channelName, "7", new ExpostorCallback());
+                }
+            }
+        });
+    }
+
+    class ExpostorCallback extends OkHttpCallback<BaseErrorBean> {
+
+        @Override
+        public void onSuccess(BaseErrorBean entity) {
+            Log.d("stop when calling", entity.toString());
+        }
+
+        @Override
+        public void onFinish() {
+            finish();
+        }
     }
 
     private void optional() {
@@ -623,6 +648,10 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+
+        hangonScription.unsubscribe();
+
+        unregisterReceiver(phoneReceiver);
 
         mAudioManager.abandonAudioFocus(onAudioFocusChangeListener);
 

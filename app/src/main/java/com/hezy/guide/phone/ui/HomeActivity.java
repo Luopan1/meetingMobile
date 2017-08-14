@@ -3,6 +3,7 @@ package com.hezy.guide.phone.ui;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -35,6 +36,7 @@ import com.hezy.guide.phone.event.UserUpdateEvent;
 import com.hezy.guide.phone.net.ApiClient;
 import com.hezy.guide.phone.net.OkHttpBaseCallback;
 import com.hezy.guide.phone.persistence.Preferences;
+import com.hezy.guide.phone.receiver.PhoneReceiver;
 import com.hezy.guide.phone.service.WSService;
 import com.hezy.guide.phone.utils.Installation;
 import com.hezy.guide.phone.utils.LogUtils;
@@ -66,6 +68,7 @@ public class HomeActivity extends BaseDataBindingActivity<HomeActivityBinding> {
     private boolean isNewActivity;
     private Dialog dialog;
 
+    private PhoneReceiver phoneReceiver;
 
     public static void actionStart(Context context) {
         Intent intent = new Intent(context, HomeActivity.class);
@@ -78,6 +81,13 @@ public class HomeActivity extends BaseDataBindingActivity<HomeActivityBinding> {
             isNewActivity = true;
         }
         super.onCreate(savedInstanceState);
+
+        phoneReceiver = new PhoneReceiver();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("android.intent.action.PHONE_STATE");
+        intentFilter.addAction("android.intent.action.NEW_OUTGOING_CALL");
+        registerReceiver(phoneReceiver, intentFilter);
+
     }
 
     @Override
@@ -418,6 +428,7 @@ public class HomeActivity extends BaseDataBindingActivity<HomeActivityBinding> {
     @Override
     public void onDestroy() {
         subscription.unsubscribe();
+        unregisterReceiver(phoneReceiver);
         super.onDestroy();
     }
 }

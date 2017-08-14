@@ -21,22 +21,10 @@ import com.hezy.guide.phone.utils.RxBus;
 
 public class PhoneReceiver extends BroadcastReceiver {
 
-    private static boolean incomingFlag = false;
-
-    private Context mContext;
-    private String recordId;
-
-    public PhoneReceiver(){
-
-    }
-    public PhoneReceiver(String recordId){
-        this();
-        this.recordId = recordId;
-    }
+    private boolean incomingFlag = false;
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        this.mContext = context;
         //拨打电话
         if (intent.getAction().equals(Intent.ACTION_NEW_OUTGOING_CALL)) {
             incomingFlag = false;
@@ -48,12 +36,12 @@ public class PhoneReceiver extends BroadcastReceiver {
         }
     }
 
-    final PhoneStateListener listener=new PhoneStateListener(){
+    final PhoneStateListener listener = new PhoneStateListener() {
         @Override
         public void onCallStateChanged(int state, String incomingNumber) {
             super.onCallStateChanged(state, incomingNumber);
-            switch(state){
-                //电话等待接听
+            switch (state) {
+                //电话响铃
                 case TelephonyManager.CALL_STATE_RINGING:
                     incomingFlag = true;
                     Log.i("PhoneReceiver", "CALL IN RINGING :" + incomingNumber);
@@ -62,7 +50,6 @@ public class PhoneReceiver extends BroadcastReceiver {
                 case TelephonyManager.CALL_STATE_OFFHOOK:
                     if (incomingFlag) {
                         Log.i("PhoneReceiver", "CALL IN ACCEPT :" + incomingNumber);
-                        ApiClient.getInstance().startOrStopOrRejectCallExpostor(recordId, "7", new ExpostorCallback());
                         RxBus.sendMessage(new HangOnEvent());
                     }
                     break;
@@ -71,18 +58,11 @@ public class PhoneReceiver extends BroadcastReceiver {
                     if (incomingFlag) {
                         Log.i("PhoneReceiver", "CALL IDLE");
                         RxBus.sendMessage(new HangDownEvent());
+                        incomingFlag = false;
                     }
                     break;
             }
         }
     };
 
-     class ExpostorCallback extends OkHttpCallback<BaseErrorBean> {
-
-         @Override
-         public void onSuccess(BaseErrorBean entity) {
-            Log.d("stop when calling", entity.toString());
-         }
-
-     }
 }
