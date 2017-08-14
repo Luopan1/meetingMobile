@@ -29,9 +29,11 @@
             android:id="@+id/mVerticalViewPager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_above="@+id/mLayoutTab"
             android:layout_below="@+id/mLayoutTitle" />
 
         <LinearLayout
+            android:id="@+id/mLayoutTab"
             android:layout_width="match_parent"
             android:layout_height="@dimen/my_px_160"
             android:layout_alignParentBottom="true"

@@ -3,7 +3,6 @@ package com.hezy.guide.phone.ui;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -79,6 +78,7 @@ public class HomeActivity extends BaseDataBindingActivity<HomeActivityBinding> {
             isNewActivity = true;
         }
         super.onCreate(savedInstanceState);
+
     }
 
     @Override
@@ -220,7 +220,7 @@ public class HomeActivity extends BaseDataBindingActivity<HomeActivityBinding> {
         mHomePagerAdapter.setData(mFragments);
         mBinding.mVerticalViewPager.setAdapter(mHomePagerAdapter);
         LogUtils.i(TAG, "getUserMobile" + Preferences.getUserMobile());
-        initCurrentItem();
+//        initCurrentItem();
     }
 
 

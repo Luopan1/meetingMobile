@@ -42,6 +42,7 @@
     <!--下载相关颜色-->
 
     <color name="line_gray_d8d8d8">#d8d8d8</color>
+    <color name="text_gray_d8d8d8">#d8d8d8</color>
     <color name="text_purple_9150c3">#9150c3</color>
     <color name="text_black_434343">#434343</color>
     <color name="bg_purple_ad97e7">#ad97e7</color>
@@ -50,6 +51,10 @@
 
     <color name="text_gray_c784fb">#c784fb</color>
     <color name="text_yellow_fff000">#fff000</color>
+
+
+    <color name="text_red_ff6482">#ff6482</color>
+
 
 
 

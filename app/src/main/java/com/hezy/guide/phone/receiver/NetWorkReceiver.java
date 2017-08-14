@@ -7,7 +7,13 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
 
+import com.hezy.guide.phone.event.HangDownEvent;
+import com.hezy.guide.phone.event.HangOnEvent;
+import com.hezy.guide.phone.utils.RxBus;
+
 public class NetWorkReceiver extends BroadcastReceiver {
+
+    private static final String TAG = NetWorkReceiver.class.getSimpleName();
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -15,11 +21,11 @@ public class NetWorkReceiver extends BroadcastReceiver {
             ConnectivityManager manager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo info = manager.getActiveNetworkInfo();
             if (info != null && info.isAvailable()) {
-
-                Log.v("newtwork===", "从网络不可用状态到可用状态");
+                RxBus.sendMessage(new HangDownEvent());
+                Log.d(TAG, "网络从不可用状态到可用状态");
             } else {
-
-                Log.v("newtwork===", "从网络可用状态到不可用状态");
+                RxBus.sendMessage(new HangOnEvent());
+                Log.d(TAG, "网络从可用状态到不可用状态");
             }
         }
     }

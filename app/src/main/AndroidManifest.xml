@@ -95,6 +95,16 @@
             android:launchMode="singleInstance"
             android:screenOrientation="portrait"/>
 
+        <receiver
+            android:name=".receiver.NetWorkReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+
+        </receiver>
+
         <receiver android:name=".receiver.PhoneReceiver" >
             <intent-filter>
                 <!-- 获取来电广播 -->

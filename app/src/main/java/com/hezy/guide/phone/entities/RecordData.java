@@ -86,7 +86,9 @@ public class RecordData {
         private String name;
         private String mobile;
         private String id;
+        //status (integer, optional): 状态， 0：未应答（30s未接听），1：接听，2：拒绝, 8：对方挂断 9：通话结束挂断 ,
         private int status;
+        private String head;
 
         public String getCallAnswerTime() {
             return callAnswerTime;
@@ -166,6 +168,14 @@ public class RecordData {
 
         public void setSecondInterval(int secondInterval) {
             this.secondInterval = secondInterval;
+        }
+
+        public String getHead() {
+            return head;
+        }
+
+        public void setHead(String head) {
+            this.head = head;
         }
 
         public  String getOrderTime(){

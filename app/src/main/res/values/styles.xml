@@ -6,7 +6,10 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+
+
     </style>
+    <!--<item name="android:listDivider">@drawable/divider_bg</item>-->
 
     <style name="FullscreenTheme" parent="AppTheme">
         <item name="windowNoTitle">true</item>

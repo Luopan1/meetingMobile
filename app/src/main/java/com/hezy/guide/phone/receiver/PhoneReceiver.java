@@ -8,11 +8,8 @@ import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
-import com.hezy.guide.phone.entities.base.BaseErrorBean;
 import com.hezy.guide.phone.event.HangDownEvent;
 import com.hezy.guide.phone.event.HangOnEvent;
-import com.hezy.guide.phone.net.ApiClient;
-import com.hezy.guide.phone.net.OkHttpCallback;
 import com.hezy.guide.phone.utils.RxBus;
 
 /**
