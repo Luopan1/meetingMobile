@@ -67,8 +67,6 @@ public class HomeActivity extends BaseDataBindingActivity<HomeActivityBinding> {
     private boolean isNewActivity;
     private Dialog dialog;
 
-    private PhoneReceiver phoneReceiver;
-
     public static void actionStart(Context context) {
         Intent intent = new Intent(context, HomeActivity.class);
         context.startActivity(intent);
@@ -80,12 +78,6 @@ public class HomeActivity extends BaseDataBindingActivity<HomeActivityBinding> {
             isNewActivity = true;
         }
         super.onCreate(savedInstanceState);
-
-//        phoneReceiver = new PhoneReceiver();
-//        IntentFilter intentFilter = new IntentFilter();
-//        intentFilter.addAction("android.intent.action.PHONE_STATE");
-//        intentFilter.addAction("android.intent.action.NEW_OUTGOING_CALL");
-//        registerReceiver(phoneReceiver, intentFilter);
 
     }
 
@@ -103,7 +95,6 @@ public class HomeActivity extends BaseDataBindingActivity<HomeActivityBinding> {
 
 
     }
-
 
     private void processExtraData(Intent intent) {
         mIntentType = intent.getIntExtra(LoginHelper.LOGIN_TYPE, 0);
@@ -427,7 +418,6 @@ public class HomeActivity extends BaseDataBindingActivity<HomeActivityBinding> {
     @Override
     public void onDestroy() {
         subscription.unsubscribe();
-//        unregisterReceiver(phoneReceiver);
         super.onDestroy();
     }
 }
