@@ -3,7 +3,6 @@ package com.hezy.guide.phone.ui;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -82,11 +81,11 @@ public class HomeActivity extends BaseDataBindingActivity<HomeActivityBinding> {
         }
         super.onCreate(savedInstanceState);
 
-        phoneReceiver = new PhoneReceiver();
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction("android.intent.action.PHONE_STATE");
-        intentFilter.addAction("android.intent.action.NEW_OUTGOING_CALL");
-        registerReceiver(phoneReceiver, intentFilter);
+//        phoneReceiver = new PhoneReceiver();
+//        IntentFilter intentFilter = new IntentFilter();
+//        intentFilter.addAction("android.intent.action.PHONE_STATE");
+//        intentFilter.addAction("android.intent.action.NEW_OUTGOING_CALL");
+//        registerReceiver(phoneReceiver, intentFilter);
 
     }
 
@@ -428,7 +427,7 @@ public class HomeActivity extends BaseDataBindingActivity<HomeActivityBinding> {
     @Override
     public void onDestroy() {
         subscription.unsubscribe();
-        unregisterReceiver(phoneReceiver);
+//        unregisterReceiver(phoneReceiver);
         super.onDestroy();
     }
 }
