@@ -100,38 +100,34 @@ public class Installation {
         out.close();
     }
 
-    public static String getCPUSerial() {
+    public static String getCPUSerial(){
         String str = "", strCPU = "", cpuAddress = "0000000000000000";
-        try {
-            // 读取CPU信息
-            Process pp = Runtime. getRuntime().exec("cat /proc/cpuinfo");
+        try{
+
+            Process pp = Runtime.getRuntime().exec("cat /proc/cpuinfo");
             InputStreamReader ir = new InputStreamReader(pp.getInputStream());
             LineNumberReader input = new LineNumberReader(ir);
-            // 查找CPU序列号
-            for ( int i = 1; i < 100; i++) {
+            //查找CPU序列号
+            for(int i = 1; i<100; i++){
                 str = input.readLine();
-                if (str != null) {
-                    // 查找到序列号所在行
-                    if (str.indexOf( "Serial") > -1) {
-                        // 提取序列号
-                        strCPU = str.substring(str.indexOf(":" ) + 1, str.length());
-                        // 去空格
+                if(str != null){
+                    if(str.indexOf("Serial") > -1){
+                        strCPU = str.substring(str.indexOf(":")+1, str.length());
                         cpuAddress = strCPU.trim();
-                        Log.d("cpu", "" + cpuAddress);
+                        Log.d("cpu address", cpuAddress);
                         break;
                     }
                 } else {
-                    // 文件结尾
-                     Log.d("cpu", "not find" + cpuAddress);
+                    Log.d("cpu address", cpuAddress);
                     break;
                 }
             }
-        } catch (IOException ex) {
-            // 赋予默认值
-            ex.printStackTrace();
+
+        }catch (IOException e){
+
+            e.printStackTrace();
         }
         return cpuAddress;
     }
-
 
 }
