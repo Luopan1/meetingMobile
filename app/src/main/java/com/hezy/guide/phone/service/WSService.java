@@ -108,6 +108,7 @@ public class WSService extends Service {
 
     @Override
     public void onCreate() {
+        Log.i(TAG,"onCreate");
         serviceIsCreate = true;
         mSocket = BaseApplication.getInstance().getSocket();
         //默认离线,用户手动切换在线
@@ -149,7 +150,7 @@ public class WSService extends Service {
 //                    } else {
 //                        Log.i(TAG, " HangOnEvent 接听电话转离线 isOnline() false");
 //                    }
-                    disConnectSocket();
+//                    disConnectSocket();
                 } else if (o instanceof HangDownEvent) {
                     Log.i(TAG, " HangDownEvent 挂断电话转在线");
 //                    if (IS_ON_PHONE) {
@@ -159,7 +160,7 @@ public class WSService extends Service {
 //                    } else {
 //                        Log.i(TAG, " HangDownEvent 挂断电话转在线 IS_ON_PHONE false");
 //                    }
-                    connectSocket();
+//                    connectSocket();
                 }
 
             }
@@ -311,7 +312,7 @@ public class WSService extends Service {
         @Override
         public void call(Object... args) {
 //            JSONObject data = (JSONObject) args;
-            Log.i("wsserver", "onConnect ");
+            Log.i("wsserver", "Listener onConnect ");
 //            SOCKET_ONLINE = true;
 //            Log.i(TAG, Thread.currentThread().getName());
             sendUserStateEvent();
@@ -341,7 +342,7 @@ public class WSService extends Service {
     private Emitter.Listener onDisconnect = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
-            Log.i("wsserver", "onDisconnect diconnected");
+            Log.i("wsserver", "Listener onDisconnect diconnected");
 //            SOCKET_ONLINE = false;
             sendUserStateEvent();
 
@@ -351,7 +352,7 @@ public class WSService extends Service {
     private Emitter.Listener onConnectError = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
-            Log.e("wsserver", "onConnectError Error ");
+            Log.e("wsserver", "Listener onConnectError Error ");
 //            SOCKET_ONLINE = false;
             sendUserStateEvent();
 
@@ -366,7 +367,7 @@ public class WSService extends Service {
             String socketid = "";
             try {
                 socketid = data.getString("socket_id");
-                Log.i("wsserver", "socketid==" + socketid);
+                Log.i("wsserver", "Listener onUserJoined  socketid==" + socketid);
                 registerDevice(socketid);
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -402,8 +403,8 @@ public class WSService extends Service {
                 JSONObject caller = data.getJSONObject("caller");
                 String name = caller.getString("name");
                 String address = caller.getString("address");
-                Log.i("wsserver", "onCall tvSocketId ==" + tvSocketId);
-                Log.i("wsserver", "onCall channelId ==" + channelId);
+                Log.i("wsserver", "Listener onCall tvSocketId ==" + tvSocketId);
+                Log.i("wsserver", "Listener onCall channelId ==" + channelId);
                 OnCallActivity.actionStart(WSService.this, channelId, tvSocketId, address + " " + name);
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -421,12 +422,13 @@ public class WSService extends Service {
             JSONObject data = (JSONObject) args[0];
             try {
                 String socketId = data.getString("socketId");
-                Log.i("wsserver", "onListenSalesSocketId socketId ==" + socketId);
+                Log.i("wsserver", "Listener onListenSalesSocketId socketId == " + socketId);
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("socketId", socketId);
                 jsonObject.put("salesId", Preferences.getUserId());
                 mSocket.emit("RE_CHECK_SOCKET_ID", jsonObject);
                 Log.i("wsserver", "emit(RE_CHECK_SOCKET_ID, jsonObject)");
+                registerDevice(socketId);
             } catch (JSONException e) {
                 e.printStackTrace();
                 Log.e(TAG, "onListenSalesSocketId e " + e);
@@ -440,13 +442,13 @@ public class WSService extends Service {
         @Override
         public void call(final Object... args) {
             JSONObject data = (JSONObject) args[0];
-            Log.i("wsserver", "ON_SALES_ONLINE_WITH_STATUS_RETURN data ==" + data);
+            Log.i("wsserver", "Listener ON_SALES_ONLINE_WITH_STATUS_RETURN data ==" + data);
             try {
                 String msg = data.getString("message");
-                Log.i("wsserver", "ON_SALES_ONLINE_WITH_STATUS_RETURN msg ==" + msg);
+//                Log.i("wsserver", "Listener ON_SALES_ONLINE_WITH_STATUS_RETURN msg ==" + msg);
             }catch (JSONException e){
                 e.printStackTrace();
-                Log.e(TAG, "ON_SALES_ONLINE_WITH_STATUS_RETURN e " + e);
+                Log.e(TAG, "Listener ON_SALES_ONLINE_WITH_STATUS_RETURN e " + e);
             }
 //            runOnUiThread(new Runnable() {
 //                @Override
@@ -461,7 +463,7 @@ public class WSService extends Service {
     private Emitter.Listener ON_LISTEN_TV_LEAVE_CHANNEL = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
-            Log.i("wsserver", "ON_LISTEN_TV_LEAVE_CHANNEL ");
+            Log.i("wsserver", "Listener ON_LISTEN_TV_LEAVE_CHANNEL ");
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -475,7 +477,7 @@ public class WSService extends Service {
     private Emitter.Listener ON_TIMEOUT_WITHOUT_REPLY = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
-            Log.i("wsserver", "ON_TIMEOUT_WITHOUT_REPLY ");
+            Log.i("wsserver", "Listener ON_TIMEOUT_WITHOUT_REPLY ");
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -489,7 +491,7 @@ public class WSService extends Service {
 
     @Override
     public void onDestroy() {
-        Log.i(TAG, "life onDestroy");
+        Log.i(TAG, "onDestroy");
         stopForeground(true);// 停止前台服务--参数：表示是否移除之前的通知
 //        if (isOnline()) {
 //            disConnectSocket();
