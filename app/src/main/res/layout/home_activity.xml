@@ -51,7 +51,7 @@
                 android:drawableTop="@mipmap/ic_offline"
                 android:gravity="center"
                 android:paddingTop="@dimen/my_px_20"
-                android:text="在线"
+                android:text="离线"
                 android:textColor="@color/text_gray_c784fb"
                 android:textSize="15sp" />
 

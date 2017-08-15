@@ -69,6 +69,7 @@
         <activity
             android:name=".ui.HomeActivity"
             android:theme="@style/NoTitle"
+            android:alwaysRetainTaskState="true"
             android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan">
@@ -92,7 +93,7 @@
             android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale" />
 
         <activity android:name=".ui.OnCallActivity"
-            android:launchMode="singleInstance"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"/>
 
         <receiver
