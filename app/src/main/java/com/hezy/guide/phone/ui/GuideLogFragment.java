@@ -103,11 +103,11 @@ public class GuideLogFragment extends BaseDataBindingFragment<GuideLogFragmentBi
 //        requestRecord();
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        requestRecord();
 
+    @Override
+    public void onMyVisible() {
+        super.onMyVisible();
+        requestRecord();
     }
 
     private void requestRecordTotal() {

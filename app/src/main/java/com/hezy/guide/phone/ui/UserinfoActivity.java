@@ -1,5 +1,6 @@
 package com.hezy.guide.phone.ui;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -13,15 +14,14 @@ import com.adorkable.iosdialog.ActionSheetDialog;
 import com.hezy.guide.phone.BaseApplication;
 import com.hezy.guide.phone.Constant;
 import com.hezy.guide.phone.R;
-import com.hezy.guide.phone.base.BaseDataBindingFragment;
-import com.hezy.guide.phone.databinding.UserinfoFragmentBinding;
+import com.hezy.guide.phone.base.BaseDataBindingActivity;
+import com.hezy.guide.phone.databinding.UserinfoActivityBinding;
 import com.hezy.guide.phone.entities.QiniuToken;
 import com.hezy.guide.phone.entities.RecordTotal;
 import com.hezy.guide.phone.entities.base.BaseBean;
 import com.hezy.guide.phone.entities.base.BaseErrorBean;
 import com.hezy.guide.phone.event.PagerSetGuideLog;
 import com.hezy.guide.phone.event.SetUserStateEvent;
-import com.hezy.guide.phone.event.UserStateEvent;
 import com.hezy.guide.phone.event.UserUpdateEvent;
 import com.hezy.guide.phone.net.ApiClient;
 import com.hezy.guide.phone.net.OkHttpBaseCallback;
@@ -60,15 +60,13 @@ import java.util.UUID;
 import rx.Subscription;
 import rx.functions.Action1;
 
-import static android.app.Activity.RESULT_OK;
-
 
 /**
  * 用户信息fragment
  * Created by wufan on 2017/7/24.
  */
 
-public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBinding> implements TakePhoto.TakeResultListener, InvokeListener {
+public class UserinfoActivity extends BaseDataBindingActivity<UserinfoActivityBinding> implements TakePhoto.TakeResultListener, InvokeListener {
 
     private Subscription subscription;
     private InvokeParam invokeParam;
@@ -76,15 +74,14 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
     private String imagePath;
     private CountDownTimer countDownTimer;
 
-    public static UserinfoFragment newInstance() {
-        UserinfoFragment fragment = new UserinfoFragment();
-        return fragment;
+   public static void actionStart(Context context) {
+        Intent intent = new Intent(context, UserinfoActivity.class);
+        context.startActivity(intent);
     }
-
 
     @Override
     protected int initContentView() {
-        return R.layout.userinfo_fragment;
+        return R.layout.userinfo_activity;
     }
 
     private void setUserUI() {
@@ -97,9 +94,7 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
         if (!TextUtils.isEmpty(Preferences.getUserPhoto())) {
             Picasso.with(BaseApplication.getInstance()).load(Preferences.getUserPhoto()).into(mBinding.mIvPicture);
         }
-        if (!TextUtils.isEmpty(Preferences.getWeiXinHead())) {
-            Picasso.with(BaseApplication.getInstance()).load(Preferences.getWeiXinHead()).into(mBinding.views.mIvHead);
-        }
+
     }
 
     @Override
@@ -107,9 +102,7 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
         subscription = RxBus.handleMessage(new Action1() {
             @Override
             public void call(Object o) {
-                if (o instanceof UserStateEvent) {
-                    setState(WSService.isOnline());
-                } else if (o instanceof UserUpdateEvent) {
+                 if (o instanceof UserUpdateEvent) {
                     setUserUI();
                 }
             }
@@ -258,9 +251,7 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
     @Override
     protected void initListener() {
         mBinding.mIvPicture.setOnClickListener(this);
-        mBinding.views.mTvState.setOnClickListener(this);
         mBinding.mBtnSavePhoto.setOnClickListener(this);
-        mBinding.views.mIvHead.setOnClickListener(this);
         mBinding.mTvObtainCaptcha.setOnClickListener(this);
         mBinding.mTvAddress.setOnClickListener(this);
     }
@@ -273,7 +264,6 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
     @Override
     public void onResume() {
         super.onResume();
-        setState(WSService.isOnline());
         requestRecordTotal();
     }
 
@@ -282,20 +272,11 @@ public class UserinfoFragment extends BaseDataBindingFragment<UserinfoFragmentBi
             @Override
             public void onSuccess(BaseBean<RecordTotal> entity) {
                 String time = String.valueOf(entity.getData().getTotal());
-                mBinding.views.mTvTime.setText(time);
             }
         });
     }
 
-    private void setState(boolean isOnline) {
-        if (isOnline) {
-            mBinding.views.mTvState.setText("在线状态");
-            mBinding.views.mTvState.setBackgroundResource(R.drawable.userinfo_set_state_online_bg_shape);
-        } else {
-            mBinding.views.mTvState.setText("离线状态");
-            mBinding.views.mTvState.setBackgroundResource(R.drawable.userinfo_set_state_offline_bg_shape);
-        }
-    }
+
 
     @Override
     protected void normalOnClick(View v) {

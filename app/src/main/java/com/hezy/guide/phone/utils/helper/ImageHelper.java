@@ -7,8 +7,12 @@ import android.util.Log;
 import android.widget.ImageView;
 
 import com.hezy.guide.phone.BaseApplication;
+import com.hezy.guide.phone.R;
 import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.utils.DensityUtil;
+import com.hezy.guide.phone.utils.HalfType;
+import com.hezy.guide.phone.utils.LogUtils;
+import com.hezy.guide.phone.utils.RoundCornerTransform;
 import com.squareup.picasso.Picasso;
 
 /**
@@ -92,6 +96,48 @@ public class ImageHelper {
     }
 
     /**
+     *圆角矩形
+     * @param url
+     * @param w_id
+     * @param h_id
+     * @param imageView
+     */
+    public static void loadImageDpIdRound(String url, @DimenRes int w_id, @DimenRes int h_id, ImageView imageView) {
+        if (!ImageHelper.isContextEmpty() && !ImageHelper.isEmpty(url)) {
+            int w_dp = (int) getContext().getResources().getDimension(w_id);
+            int h_dp = (int) getContext().getResources().getDimension(h_id);
+            int w_px = DensityUtil.dip2px(getContext(), w_dp);
+            int h_px = DensityUtil.dip2px(getContext(), h_dp);
+            url = ImageHelper.getUrlJoinAndThumAndCrop(url, w_dp, h_dp);
+            int round_dp = (int) getContext().getResources().getDimension(R.dimen.my_px_20);
+            int round_px = DensityUtil.dip2px(getContext(), round_dp);
+            LogUtils.i(TAG,"loadImageDpIdRound "+url);
+            Picasso.with(getContext()).load(url).transform(new RoundCornerTransform(round_px, 0, HalfType.ALL)).into(imageView);
+        }
+    }
+
+    /**
+     *圆角矩形并且blur
+     * @param url
+     * @param w_id
+     * @param h_id
+     * @param imageView
+     */
+    public static void loadImageDpIdBlur(String url, @DimenRes int w_id, @DimenRes int h_id, ImageView imageView) {
+        if (!ImageHelper.isContextEmpty() && !ImageHelper.isEmpty(url)) {
+            int w_dp = (int) getContext().getResources().getDimension(w_id);
+            int h_dp = (int) getContext().getResources().getDimension(h_id);
+            int w_px = DensityUtil.dip2px(getContext(), w_dp);
+            int h_px = DensityUtil.dip2px(getContext(), h_dp);
+            url = ImageHelper.getUrlJoinAndThumAndCropAndBlur(url, w_dp, h_dp);
+            LogUtils.i(TAG,"loadImageDpIdBlur  "+w_dp+" "+h_dp+" "+w_px+" "+h_px);
+            LogUtils.i(TAG,"loadImageDpIdBlur "+url);
+            Picasso.with(getContext()).load(url).into(imageView);
+        }
+    }
+
+
+    /**
      * 获得拼接host和缩放thum的url
      *
      * @param url
@@ -130,5 +176,19 @@ public class ImageHelper {
             url = url + "?imageMogr2/auto-orient/thumbnail/!" + w + "x" + h + "r" + "/gravity/Center/crop/" + w + "x" + h + "/interlace/" + 1;
             return url;
         }
+    }
+
+    public static String getThumAndCropAndBlur(String url, int w, int h) {
+        if (w < 0 || w > 1920 || h < 0 || h > 1080) {
+            return url;
+        } else {
+            url = url + "?imageMogr2/auto-orient/thumbnail/!" + w + "x" + h + "r" + "/gravity/Center/crop/" + w + "x" + h + "/blur/" + 50 + "x" + 20 + "/interlace/" + 1;
+            return url;
+        }
+    }
+
+    public static String getUrlJoinAndThumAndCropAndBlur(String url, int w, int h) {
+        url = getUrlJoin(url);
+        return getThumAndCropAndBlur(url, w, h);
     }
 }

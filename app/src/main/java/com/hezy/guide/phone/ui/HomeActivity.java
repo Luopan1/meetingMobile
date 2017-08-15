@@ -27,15 +27,12 @@ import com.hezy.guide.phone.entities.UserData;
 import com.hezy.guide.phone.entities.Version;
 import com.hezy.guide.phone.entities.Wechat;
 import com.hezy.guide.phone.entities.base.BaseBean;
-import com.hezy.guide.phone.event.PagerSetGuideLog;
-import com.hezy.guide.phone.event.PagerSetUserinfo;
 import com.hezy.guide.phone.event.SetUserStateEvent;
 import com.hezy.guide.phone.event.UserStateEvent;
 import com.hezy.guide.phone.event.UserUpdateEvent;
 import com.hezy.guide.phone.net.ApiClient;
 import com.hezy.guide.phone.net.OkHttpBaseCallback;
 import com.hezy.guide.phone.persistence.Preferences;
-import com.hezy.guide.phone.receiver.PhoneReceiver;
 import com.hezy.guide.phone.service.WSService;
 import com.hezy.guide.phone.utils.Installation;
 import com.hezy.guide.phone.utils.LogUtils;
@@ -136,16 +133,16 @@ public class HomeActivity extends BaseDataBindingActivity<HomeActivityBinding> {
         });
 
 
-        subscription = RxBus.handleMessage(new Action1() {
-            @Override
-            public void call(Object o) {
-                if (o instanceof PagerSetUserinfo) {
-                    mBinding.mVerticalViewPager.setCurrentItem(0);
-                } else if (o instanceof PagerSetGuideLog) {
-                    mBinding.mVerticalViewPager.setCurrentItem(1);
-                }
-            }
-        });
+//        subscription = RxBus.handleMessage(new Action1() {
+//            @Override
+//            public void call(Object o) {
+//                if (o instanceof PagerSetUserinfo) {
+//                    mBinding.mVerticalViewPager.setCurrentItem(0);
+//                } else if (o instanceof PagerSetGuideLog) {
+//                    mBinding.mVerticalViewPager.setCurrentItem(1);
+//                }
+//            }
+//        });
 
 
         mBinding.mRgHome.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -174,9 +171,11 @@ public class HomeActivity extends BaseDataBindingActivity<HomeActivityBinding> {
                 switch (position) {
                     case 0:
                         mBinding.mRbLog.setChecked(true);
+                        mBinding.mLayoutTitle.setVisibility(View.VISIBLE);
                         break;
                     case 1:
                         mBinding.mRbMe.setChecked(true);
+                        mBinding.mLayoutTitle.setVisibility(View.GONE);
                         break;
                 }
             }
@@ -201,22 +200,22 @@ public class HomeActivity extends BaseDataBindingActivity<HomeActivityBinding> {
         requestUser();
     }
 
-    private void initCurrentItem() {
-        if (!TextUtils.isEmpty(Preferences.getUserName()) && !TextUtils.isEmpty(Preferences.getUserMobile())
-                && !TextUtils.isEmpty(Preferences.getUserPhoto())
-                && !TextUtils.isEmpty(Preferences.getUserAddress())) {
-            //手机非空,照片非空,默认进入日志页面
-            LogUtils.i(TAG, "手机非空,默认进入日志页面");
-            mBinding.mVerticalViewPager.setCurrentItem(1);
-        }
-    }
+//    private void initCurrentItem() {
+//        if (!TextUtils.isEmpty(Preferences.getUserName()) && !TextUtils.isEmpty(Preferences.getUserMobile())
+//                && !TextUtils.isEmpty(Preferences.getUserPhoto())
+//                && !TextUtils.isEmpty(Preferences.getUserAddress())) {
+//            //手机非空,照片非空,默认进入日志页面
+//            LogUtils.i(TAG, "手机非空,默认进入日志页面");
+//            mBinding.mVerticalViewPager.setCurrentItem(1);
+//        }
+//    }
 
     @Override
     protected void initAdapter() {
         mHomePagerAdapter = new HomePagerAdapter(getSupportFragmentManager());
         mFragments = new ArrayList<>();
         mFragments.add(GuideLogFragment.newInstance());
-        mFragments.add(UserinfoFragment.newInstance());
+        mFragments.add(MeFragment.newInstance());
         mHomePagerAdapter.setData(mFragments);
         mBinding.mVerticalViewPager.setAdapter(mHomePagerAdapter);
         LogUtils.i(TAG, "getUserMobile" + Preferences.getUserMobile());
@@ -366,7 +365,7 @@ public class HomeActivity extends BaseDataBindingActivity<HomeActivityBinding> {
                 User user = entity.getData().getUser();
                 Wechat wechat = entity.getData().getWechat();
                 LoginHelper.savaUser(user);
-                initCurrentItem();
+//                initCurrentItem();
                 if (wechat != null) {
                     LoginHelper.savaWeChat(wechat);
                 }
