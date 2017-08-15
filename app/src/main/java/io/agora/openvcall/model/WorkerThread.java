@@ -229,12 +229,16 @@ public class WorkerThread extends Thread {
             if (TextUtils.isEmpty(appId)) {
                 throw new RuntimeException("NEED TO use your App ID, get your own ID at https://dashboard.io.io.agora.io/");
             }
-            mRtcEngine = RtcEngine.create(mContext, appId, mEngineEventHandler.mRtcEventHandler);
-            mRtcEngine.setChannelProfile(Constants.CHANNEL_PROFILE_COMMUNICATION);
-            mRtcEngine.enableVideo();
-            mRtcEngine.enableAudioVolumeIndication(200, 3); // 200 ms
-            mRtcEngine.setLogFile(Environment.getExternalStorageDirectory()
-                    + File.separator + mContext.getPackageName() + "/log/io.io.agora-rtc.log");
+            try {
+                mRtcEngine = RtcEngine.create(mContext, appId, mEngineEventHandler.mRtcEventHandler);
+                mRtcEngine.setChannelProfile(Constants.CHANNEL_PROFILE_COMMUNICATION);
+                mRtcEngine.enableVideo();
+                mRtcEngine.enableAudioVolumeIndication(200, 3); // 200 ms
+                mRtcEngine.setLogFile(Environment.getExternalStorageDirectory()
+                        + File.separator + mContext.getPackageName() + "/log/io.io.agora-rtc.log");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return mRtcEngine;
     }
