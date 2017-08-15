@@ -104,7 +104,7 @@ public class Installation {
         String str = "", strCPU = "", cpuAddress = "0000000000000000";
         try {
             // 读取CPU信息
-            Process pp = Runtime. getRuntime().exec("cat/proc/cpuinfo");
+            Process pp = Runtime. getRuntime().exec("cat /proc/cpuinfo");
             InputStreamReader ir = new InputStreamReader(pp.getInputStream());
             LineNumberReader input = new LineNumberReader(ir);
             // 查找CPU序列号
@@ -117,10 +117,12 @@ public class Installation {
                         strCPU = str.substring(str.indexOf(":" ) + 1, str.length());
                         // 去空格
                         cpuAddress = strCPU.trim();
+                        Log.d("cpu", "" + cpuAddress);
                         break;
                     }
                 } else {
                     // 文件结尾
+                     Log.d("cpu", "not find" + cpuAddress);
                     break;
                 }
             }

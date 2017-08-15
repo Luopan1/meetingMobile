@@ -130,9 +130,9 @@ public  class MyHttpLoggingInterceptor implements Interceptor {
 
         Request request = chain.request();
 
-        if (level == Level.NONE || (!BuildConfig.IS_HEART_LOG && request.url().toString().contains(ApiClient.HEART_URL))) {
-            return chain.proceed(request);
-        }
+//        if (level == Level.NONE || (!BuildConfig.IS_HEART_LOG && request.url().toString().contains(ApiClient.HEART_URL))) {
+//            return chain.proceed(request);
+//        }
 
         boolean logBody = level == Level.BODY;
         boolean logHeaders = logBody || level == Level.HEADERS;
