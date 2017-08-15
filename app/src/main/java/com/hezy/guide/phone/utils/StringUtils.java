@@ -2,6 +2,7 @@ package com.hezy.guide.phone.utils;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.text.NumberFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -304,5 +305,21 @@ public class StringUtils {
 			}
 		}
 		return new String(source);
+	}
+
+	/**
+	 * 获取百分比
+	 *
+	 * @param p1
+	 * @param p2
+	 * @return
+	 */
+	public static String percent(double p1, double p2) {
+		String str;
+		double p3 = p1 / p2;
+		NumberFormat nf = NumberFormat.getPercentInstance();
+		nf.setMinimumFractionDigits(2);
+		str = nf.format(p3);
+		return str;
 	}
 }

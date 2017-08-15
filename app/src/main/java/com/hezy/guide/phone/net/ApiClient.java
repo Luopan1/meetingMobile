@@ -7,6 +7,7 @@ import android.util.Log;
 import com.hezy.guide.phone.BaseApplication;
 import com.hezy.guide.phone.BuildConfig;
 import com.hezy.guide.phone.Constant;
+import com.hezy.guide.phone.entities.RankInfo;
 import com.hezy.guide.phone.entities.RecordData;
 import com.hezy.guide.phone.entities.RecordTotal;
 import com.hezy.guide.phone.entities.UserData;
@@ -202,5 +203,19 @@ public class ApiClient {
                }
 
     }
+
+
+    /**
+     * 获取导购员评分
+     * @param tag
+     * @param callback
+     */
+    public void requestRankInfo(Object tag, OkHttpBaseCallback<BaseBean<RankInfo>> callback) {
+        //使用唷唷兔地址
+        String userId = Preferences.getUserId();
+        okHttpUtil.getInstance().get(API_DOMAIN_NAME+"/osg/app/call/rankInfo/"+userId,getCommonHead(),null,callback, tag);
+    }
+
+
 
 }

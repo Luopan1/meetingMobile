@@ -116,26 +116,25 @@ public class GuideLogAdapter extends BaseRecyclerAdapter<RecordData.PageDataEnti
         }else{
             holder.mTvNoReview.setVisibility(View.GONE);
             holder.mLayoutStar.setVisibility(View.VISIBLE);
-            holder.mIvStar1.setVisibility(View.VISIBLE);
             if(bean.getRatingStar()>1){
-                holder.mIvStar2.setVisibility(View.VISIBLE);
+                holder.mIvStar2.setImageResource(R.mipmap.ic_star_good_record);
             }else{
-                holder.mIvStar2.setVisibility(View.GONE);
+                holder.mIvStar2.setImageResource(R.mipmap.ic_star_ungood_record);
             }
             if(bean.getRatingStar()>2){
-                holder.mIvStar3.setVisibility(View.VISIBLE);
+                holder.mIvStar3.setImageResource(R.mipmap.ic_star_good_record);
             }else{
-                holder.mIvStar3.setVisibility(View.GONE);
+                holder.mIvStar3.setImageResource(R.mipmap.ic_star_ungood_record);
             }
             if(bean.getRatingStar()>3){
-                holder.mIvStar4.setVisibility(View.VISIBLE);
+                holder.mIvStar4.setImageResource(R.mipmap.ic_star_good_record);
             }else{
-                holder.mIvStar4.setVisibility(View.GONE);
+                holder.mIvStar4.setImageResource(R.mipmap.ic_star_ungood_record);
             }
             if(bean.getRatingStar()>4){
-                holder.mIvStar5.setVisibility(View.VISIBLE);
+                holder.mIvStar5.setImageResource(R.mipmap.ic_star_good_record);
             }else{
-                holder.mIvStar5.setVisibility(View.GONE);
+                holder.mIvStar5.setImageResource(R.mipmap.ic_star_ungood_record);
             }
         }
 
