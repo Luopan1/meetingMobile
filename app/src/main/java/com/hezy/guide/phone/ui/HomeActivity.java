@@ -171,11 +171,9 @@ public class HomeActivity extends BaseDataBindingActivity<HomeActivityBinding> {
                 switch (position) {
                     case 0:
                         mBinding.mRbLog.setChecked(true);
-                        mBinding.mLayoutTitle.setVisibility(View.VISIBLE);
                         break;
                     case 1:
                         mBinding.mRbMe.setChecked(true);
-                        mBinding.mLayoutTitle.setVisibility(View.GONE);
                         break;
                 }
             }
