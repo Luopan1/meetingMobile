@@ -15,6 +15,7 @@ import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 
+import com.hezy.guide.phone.BaseApplication;
 import com.hezy.guide.phone.BuildConfig;
 import com.hezy.guide.phone.R;
 import com.hezy.guide.phone.entities.base.BaseBean;
@@ -39,9 +40,6 @@ import com.hezy.guide.phone.utils.UUIDUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.net.URISyntaxException;
-
-import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 import rx.Subscription;
@@ -111,6 +109,7 @@ public class WSService extends Service {
     @Override
     public void onCreate() {
         serviceIsCreate = true;
+        mSocket = BaseApplication.getInstance().getSocket();
         //默认离线,用户手动切换在线
 //        connectSocket();
         setStartForeground();
@@ -266,15 +265,13 @@ public class WSService extends Service {
             Log.i(TAG, "connectSocket SOCKET_ONLINE == true re");
             return;
         }
-
-        try {
-            LogUtils.i(TAG,WS_URL);
-            mSocket = IO.socket(WS_URL);
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        }
-//        BaseApplication app = (BaseApplication) getApplication();
-//        mSocket = app.getSocket();
+        LogUtils.i(TAG,WS_URL);
+//        try {
+//            LogUtils.i(TAG,WS_URL);
+//            mSocket = IO.socket(WS_URL);
+//        } catch (URISyntaxException e) {
+//            throw new RuntimeException(e);
+//        }
         mSocket.on(Socket.EVENT_CONNECT, onConnect);
         mSocket.on(Socket.EVENT_DISCONNECT, onDisconnect);
         mSocket.on(Socket.EVENT_CONNECT_ERROR, onConnectError);
@@ -494,9 +491,11 @@ public class WSService extends Service {
     public void onDestroy() {
         Log.i(TAG, "life onDestroy");
         stopForeground(true);// 停止前台服务--参数：表示是否移除之前的通知
-        if (isOnline()) {
-            disConnectSocket();
-        }
+//        if (isOnline()) {
+//            disConnectSocket();
+//        }
+        //网络不稳定非在线也要删除监听
+        disConnectSocket();
         subscription.unsubscribe();
         mHandler.removeCallbacksAndMessages(null);
         OkHttpUtil.getInstance().cancelTag(this);

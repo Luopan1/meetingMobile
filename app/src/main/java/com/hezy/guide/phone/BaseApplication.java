@@ -23,14 +23,19 @@ public class BaseApplication extends Application {
     public static final String TAG = "BaseApplication";
     private static BaseApplication instance;
     private Socket mSocket;
-    private static String WS_URL = "http://nettytest.haierzhongyou.com:3000/sales";
-
+    {
+        try {
+            mSocket = IO.socket(BuildConfig.WS_DOMAIN_NAME);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @Override
     public void onCreate() {
         super.onCreate();
         instance = this;
-        initSocket();
+//        initSocket();
         //内存泄露检测工具,开发中最好开启
         if (BuildConfig.DEBUG) {
             Log.i(TAG, "debug下开启LeakCanary");
@@ -101,13 +106,13 @@ public class BaseApplication extends Application {
 
     public static final CurrentUserSettings mVideoSettings = new CurrentUserSettings();
 
-    private void initSocket() {
-        try {
-            mSocket = IO.socket(WS_URL);
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        }
-    }
+//    private void initSocket() {
+//        try {
+//            mSocket = IO.socket(WS_URL);
+//        } catch (URISyntaxException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
 
     public Socket getSocket() {
         return mSocket;
