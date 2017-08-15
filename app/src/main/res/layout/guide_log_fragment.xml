@@ -7,6 +7,24 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
+
+        <RelativeLayout
+            android:id="@+id/mLayoutTitle"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/my_px_160"
+            android:background="@color/purple_811fcd">
+
+            <TextView
+                android:id="@+id/mTvTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="讲解员日志"
+                android:textColor="@color/white"
+                android:textSize="@dimen/my_sp_48" />
+        </RelativeLayout>
+
+
         <android.support.v4.widget.SwipeRefreshLayout
             android:id="@+id/mSwipeRefreshLayout"
             android:layout_width="match_parent"
