@@ -100,7 +100,7 @@ public class GuideLogAdapter extends BaseRecyclerAdapter<RecordData.PageDataEnti
             holder.mTvHistory.setVisibility(View.GONE);
         }
 
-        ImageHelper.loadImageDpId(bean.getHead(), R.dimen.my_px_120, R.dimen.my_px_120, holder.mIvHead);
+        ImageHelper.loadImageDpId(bean.getPhoto(), R.dimen.my_px_120, R.dimen.my_px_120, holder.mIvHead);
         holder.mTvName.setText(bean.getAddress() + " " + bean.getName());
 
 
@@ -110,23 +110,55 @@ public class GuideLogAdapter extends BaseRecyclerAdapter<RecordData.PageDataEnti
             holder.mTvTime.setText(TimeUtil.getMonthDayHM(time));
         }
 
+        if(bean.getRatingStar() == 0){
+            holder.mTvNoReview.setVisibility(View.VISIBLE);
+            holder.mLayoutStar.setVisibility(View.GONE);
+        }else{
+            holder.mTvNoReview.setVisibility(View.GONE);
+            holder.mLayoutStar.setVisibility(View.VISIBLE);
+            holder.mIvStar1.setVisibility(View.VISIBLE);
+            if(bean.getRatingStar()>1){
+                holder.mIvStar2.setVisibility(View.VISIBLE);
+            }else{
+                holder.mIvStar2.setVisibility(View.GONE);
+            }
+            if(bean.getRatingStar()>2){
+                holder.mIvStar3.setVisibility(View.VISIBLE);
+            }else{
+                holder.mIvStar3.setVisibility(View.GONE);
+            }
+            if(bean.getRatingStar()>3){
+                holder.mIvStar4.setVisibility(View.VISIBLE);
+            }else{
+                holder.mIvStar4.setVisibility(View.GONE);
+            }
+            if(bean.getRatingStar()>4){
+                holder.mIvStar5.setVisibility(View.VISIBLE);
+            }else{
+                holder.mIvStar5.setVisibility(View.GONE);
+            }
+        }
+
         //status (integer, optional): 状态， 0：未应答（30s未接听），1：接听，2：拒绝, 8：对方挂断 9：通话结束挂断 ,
         if (bean.getStatus() == 0 || bean.getStatus() == 8) {
             //0：未应答（30s未接听）
             holder.mTvCallDuration.setText("未接听");
             holder.mTvCallDuration.setTextColor(mContext.getResources().getColor(R.color.text_red_ff6482));
             holder.mTvCallDuration.setCompoundDrawablesWithIntrinsicBounds(R.mipmap.ic_uncall, 0, 0, 0);
+            holder.mTvCallDuration.getPaint().setFakeBoldText(false);
         } else if (bean.getStatus() == 2) {
             //2：拒绝
             holder.mTvCallDuration.setText("已拒绝");
             holder.mTvCallDuration.setTextColor(mContext.getResources().getColor(R.color.text_red_ff6482));
             holder.mTvCallDuration.setCompoundDrawablesWithIntrinsicBounds(R.mipmap.ic_uncall, 0, 0, 0);
+            holder.mTvCallDuration.getPaint().setFakeBoldText(false);
 
         } else {
             //1：接听 9：通话结束挂断 ,
             holder.mTvCallDuration.setText(" "+String.format("%02d", bean.getMinuteInterval()) + ":" + String.format("%02d", bean.getSecondInterval()));
             holder.mTvCallDuration.setTextColor(mContext.getResources().getColor(R.color.text_black_434343));
             holder.mTvCallDuration.setCompoundDrawablesWithIntrinsicBounds(R.mipmap.ic_call, 0, 0, 0);
+            holder.mTvCallDuration.getPaint().setFakeBoldText(true);
         }
     }
 

@@ -88,7 +88,8 @@ public class RecordData {
         private String id;
         //status (integer, optional): 状态， 0：未应答（30s未接听），1：接听，2：拒绝, 8：对方挂断 9：通话结束挂断 ,
         private int status;
-        private String head;
+        private String photo;
+        private int ratingStar;
 
         public String getCallAnswerTime() {
             return callAnswerTime;
@@ -170,12 +171,20 @@ public class RecordData {
             this.secondInterval = secondInterval;
         }
 
-        public String getHead() {
-            return head;
+        public String getPhoto() {
+            return photo;
         }
 
-        public void setHead(String head) {
-            this.head = head;
+        public void setPhoto(String photo) {
+            this.photo = photo;
+        }
+
+        public int getRatingStar() {
+            return ratingStar;
+        }
+
+        public void setRatingStar(int ratingStar) {
+            this.ratingStar = ratingStar;
         }
 
         public  String getOrderTime(){

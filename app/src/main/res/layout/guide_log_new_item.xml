@@ -136,15 +136,17 @@
 
         <TextView
             android:id="@+id/mTvCallDuration"
-            android:layout_width="@dimen/my_px_200"
+            android:layout_width="@dimen/my_px_230"
             android:layout_height="wrap_content"
             android:drawableLeft="@mipmap/ic_call"
             android:drawablePadding="@dimen/my_px_15"
             android:textColor="@color/text_black_434343"
-            android:textStyle=""
+            android:singleLine="true"
+            android:textStyle="bold"
             android:textSize="@dimen/my_sp_48"
             android:gravity="right"
-            tools:text="00:32" />
+            tools:text="000:32" />
+        <!--tools:text="000:32"-->
 
 
 
