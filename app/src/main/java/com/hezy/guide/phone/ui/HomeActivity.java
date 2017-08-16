@@ -34,6 +34,7 @@ import com.hezy.guide.phone.net.ApiClient;
 import com.hezy.guide.phone.net.OkHttpBaseCallback;
 import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.service.WSService;
+import com.hezy.guide.phone.utils.DeviceUtil;
 import com.hezy.guide.phone.utils.Installation;
 import com.hezy.guide.phone.utils.LogUtils;
 import com.hezy.guide.phone.utils.Login.LoginHelper;
@@ -316,23 +317,27 @@ public class HomeActivity extends BaseDataBindingActivity<HomeActivityBinding> {
         } else {
 
             try {
-                JSONObject params = new JSONObject();
-                params.put("uuid", uuid);
-                params.put("androidId", TextUtils.isEmpty(Settings.System.getString(getContentResolver(), Settings.Secure.ANDROID_ID)) ? "" : Settings.System.getString(getContentResolver(), Settings.Secure.ANDROID_ID));
-                params.put("manufacturer", Build.MANUFACTURER);
-                params.put("name", Build.BRAND);
-                params.put("model", Build.MODEL);
-                params.put("sdkVersion", Build.VERSION.SDK_INT);
-                params.put("screenDensity", "width:" + width + ",height:" + height + ",density:" + density + ",densityDpi:" + densityDpi);
-                params.put("display", Build.DISPLAY);
-                params.put("finger", Build.FINGERPRINT);
-                params.put("appVersion", BuildConfig.FLAVOR + "_" + BuildConfig.VERSION_NAME + "_" + BuildConfig.VERSION_CODE);
-                params.put("cpuSerial", Installation.getCPUSerial());
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("uuid", uuid);
+                jsonObject.put("androidId", TextUtils.isEmpty(Settings.System.getString(getContentResolver(), Settings.Secure.ANDROID_ID)) ? "" : Settings.System.getString(getContentResolver(), Settings.Secure.ANDROID_ID));
+                jsonObject.put("manufacturer", Build.MANUFACTURER);
+                jsonObject.put("name", Build.BRAND);
+                jsonObject.put("model", Build.MODEL);
+                jsonObject.put("sdkVersion", Build.VERSION.SDK_INT);
+                jsonObject.put("screenDensity", "width:" + width + ",height:" + height + ",density:" + density + ",densityDpi:" + densityDpi);
+                jsonObject.put("display", Build.DISPLAY);
+                jsonObject.put("finger", Build.FINGERPRINT);
+                jsonObject.put("appVersion", BuildConfig.FLAVOR + "_" + BuildConfig.VERSION_NAME + "_" + BuildConfig.VERSION_CODE);
+                jsonObject.put("cpuSerial", Installation.getCPUSerial());
                 TelephonyManager tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-                params.put("androidDeviceId", tm != null ? tm.getDeviceId() : "");
-                params.put("buildSerial", Build.SERIAL);
-                params.put("source", 2);
-                ApiClient.getInstance().deviceRegister(this, params.toString(), registerDeviceCb);
+                jsonObject.put("androidDeviceId", tm != null ? tm.getDeviceId() : "");
+                jsonObject.put("buildSerial", Build.SERIAL);
+                jsonObject.put("source", 2);
+                jsonObject.put("internalSpace", DeviceUtil.getDeviceTotalMemory(this));
+                jsonObject.put("internalFreeSpace", DeviceUtil.getDeviceAvailMemory(this));
+                jsonObject.put("sdSpace", DeviceUtil.getDeviceTotalInternalStorage());
+                jsonObject.put("sdFreeSpace", DeviceUtil.getDeviceAvailInternalStorage());
+                ApiClient.getInstance().deviceRegister(this, jsonObject.toString(), registerDeviceCb);
                 msg.append("client.deviceRegister call");
             } catch (JSONException e) {
                 e.printStackTrace();
