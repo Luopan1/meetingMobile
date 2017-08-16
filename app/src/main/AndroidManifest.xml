@@ -99,6 +99,9 @@
         <activity android:name=".ui.UserinfoActivity"
             android:screenOrientation="portrait"/>
 
+        <activity android:name=".ui.ReplyReviewActivity"
+            android:screenOrientation="portrait"/>
+
         <receiver
             android:name=".receiver.NetWorkReceiver"
             android:enabled="true"

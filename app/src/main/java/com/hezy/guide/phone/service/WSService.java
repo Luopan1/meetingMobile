@@ -142,7 +142,7 @@ public class WSService extends Service {
                     mSocket.emit("END_CALL", "END_CALL");
                     Log.i(TAG, " mSocket.emit(\"END_CALL\",null)");
                 } else if (o instanceof HangOnEvent) {
-                    Log.i(TAG, " HangOnEvent 接听电话转离线");
+//                    Log.i(TAG, " HangOnEvent 接听电话转离线");
 //                    if (isOnline()) {
 //                        IS_ON_PHONE = true;
 //                        Log.i(TAG, " HangOnEvent 接听电话转离线 isOnline() true");
@@ -152,7 +152,7 @@ public class WSService extends Service {
 //                    }
 //                    disConnectSocket();
                 } else if (o instanceof HangDownEvent) {
-                    Log.i(TAG, " HangDownEvent 挂断电话转在线");
+//                    Log.i(TAG, " HangDownEvent 挂断电话转在线");
 //                    if (IS_ON_PHONE) {
 //                        Log.i(TAG, " HangDownEvent 挂断电话转在线 IS_ON_PHONE true");
 //                        IS_ON_PHONE = false;

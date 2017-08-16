@@ -14,11 +14,11 @@ import com.hezy.guide.phone.base.listadapter.BaseRecyclerAdapter;
 import com.hezy.guide.phone.entities.RankInfo;
 import com.hezy.guide.phone.entities.RecordData;
 import com.hezy.guide.phone.persistence.Preferences;
+import com.hezy.guide.phone.ui.ReplyReviewActivity;
 import com.hezy.guide.phone.ui.UserinfoActivity;
 import com.hezy.guide.phone.utils.LogUtils;
 import com.hezy.guide.phone.utils.StringUtils;
 import com.hezy.guide.phone.utils.TimeUtil;
-import com.hezy.guide.phone.utils.ToastUtils;
 import com.hezy.guide.phone.utils.helper.ImageHelper;
 
 import java.util.ArrayList;
@@ -166,6 +166,7 @@ public class ReviewAdapter extends BaseRecyclerAdapter<RecordData.PageDataEntity
                     holder.mTvReply.setVisibility(View.VISIBLE);
                 } else {
                     holder.mTvMeReplyContent.setVisibility(View.VISIBLE);
+                    holder.mTvMeReplyContent.setText(bean.getRatingContent());
                     holder.mTvReply.setVisibility(View.GONE);
                 }
             }
@@ -260,7 +261,8 @@ public class ReviewAdapter extends BaseRecyclerAdapter<RecordData.PageDataEntity
                 break;
             case R.id.mTvReply:
                 RecordData.PageDataEntity bean=(RecordData.PageDataEntity) v.getTag(R.id.tag_bean);
-                ToastUtils.showToast("点击");
+//                ToastUtils.showToast("点击");
+                ReplyReviewActivity.actionStart(mContext,bean);
                 break;
             default:
                 break;

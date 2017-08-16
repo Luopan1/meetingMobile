@@ -22,4 +22,7 @@ public class Constant {
 
     //签名限制
     public final static int SIGNATURE_MAX = 30;
+
+    //回复限制
+    public final static int REPLY_REVIEW_MAX = 1000;
 }
