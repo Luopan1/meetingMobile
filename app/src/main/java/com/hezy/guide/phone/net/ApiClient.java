@@ -178,10 +178,13 @@ public class ApiClient {
      * @param tag
      * @param callback
      */
-    public void requestRecord(Object tag,String pageNo,String pageSize, OkHttpBaseCallback<BaseBean<RecordData>> callback) {
+    public void requestRecord(Object tag,String starFilter,String pageNo,String pageSize, OkHttpBaseCallback<BaseBean<RecordData>> callback) {
         //使用唷唷兔地址
         String userId = Preferences.getUserId();
         Map<String,String> params=new HashMap<>();
+        if(!TextUtils.isEmpty(starFilter)){
+            params.put("starFilter","1");
+        }
         params.put("pageNo",pageNo);
         params.put("pageSize",pageSize);
         okHttpUtil.getInstance().get(API_DOMAIN_NAME+"/osg/app/call/expostor/"+userId+"/record",getCommonHead(),params,callback,tag);

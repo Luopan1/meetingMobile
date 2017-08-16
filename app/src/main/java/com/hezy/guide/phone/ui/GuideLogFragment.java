@@ -133,7 +133,7 @@ public class GuideLogFragment extends BaseDataBindingFragment<GuideLogFragmentBi
     }
 
     private void requestRecord(String pageNo, String pageSize) {
-        ApiClient.getInstance().requestRecord(this, pageNo, pageSize, new OkHttpBaseCallback<BaseBean<RecordData>>() {
+        ApiClient.getInstance().requestRecord(this,null, pageNo, pageSize, new OkHttpBaseCallback<BaseBean<RecordData>>() {
             @Override
             public void onSuccess(BaseBean<RecordData> entity) {
                 if (entity.getData().getTotalCount() == 0) {
