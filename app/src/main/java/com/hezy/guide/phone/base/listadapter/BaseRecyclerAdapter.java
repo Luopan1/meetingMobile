@@ -14,6 +14,7 @@ import java.util.List;
  */
 
 public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter {
+    public String TAG = getClass().getSimpleName();
     public LayoutInflater mInflater;
     protected Context mContext;
     public List<T> mData = new ArrayList<>();

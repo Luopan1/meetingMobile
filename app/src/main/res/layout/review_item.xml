@@ -4,11 +4,14 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="@dimen/my_px_40">
+    >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/my_px_40"
+        android:layout_marginLeft="@dimen/my_px_40"
+        android:layout_marginRight="@dimen/my_px_40"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
@@ -140,6 +143,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/my_px_40"
+        android:layout_marginLeft="@dimen/my_px_40"
+        android:layout_marginRight="@dimen/my_px_40"
         tools:text="讲得特别好讲得特别好讲得特别好讲得特别好讲得特别好讲得特别好讲得特别好讲得特别好讲得特别好讲得特别好讲得特别好讲得特别好"
         android:textColor="@color/text_black_434343"
         android:textSize="@dimen/my_sp_42" />
@@ -149,6 +154,8 @@
         android:id="@+id/mTvMeReplyContent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/my_px_40"
+        android:layout_marginRight="@dimen/my_px_40"
         android:padding="@dimen/my_px_20"
         android:layout_marginTop="@dimen/my_px_40"
         android:background="@color/bg_gray_e8e8e8"
@@ -161,12 +168,19 @@
         android:layout_width="@dimen/my_px_240"
         android:layout_height="@dimen/my_px_100"
         android:layout_marginTop="@dimen/my_px_40"
+        android:layout_marginLeft="@dimen/my_px_40"
+        android:layout_marginRight="@dimen/my_px_40"
         android:layout_gravity="right"
         android:text="回复店员"
         android:gravity="center"
         android:background="@drawable/review_red_round_bg_shape"
         android:textColor="@color/white"
         android:textSize="15sp" />
+
+    <View android:layout_width="match_parent"
+        android:layout_height="@dimen/my_px_40"
+        android:layout_marginTop="@dimen/my_px_40"
+        android:background="@color/bg_gray_e8e8e8"/>
 
 
 
