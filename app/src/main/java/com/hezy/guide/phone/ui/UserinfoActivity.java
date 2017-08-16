@@ -20,13 +20,10 @@ import com.hezy.guide.phone.entities.QiniuToken;
 import com.hezy.guide.phone.entities.RecordTotal;
 import com.hezy.guide.phone.entities.base.BaseBean;
 import com.hezy.guide.phone.entities.base.BaseErrorBean;
-import com.hezy.guide.phone.event.PagerSetGuideLog;
-import com.hezy.guide.phone.event.SetUserStateEvent;
 import com.hezy.guide.phone.event.UserUpdateEvent;
 import com.hezy.guide.phone.net.ApiClient;
 import com.hezy.guide.phone.net.OkHttpBaseCallback;
 import com.hezy.guide.phone.persistence.Preferences;
-import com.hezy.guide.phone.service.WSService;
 import com.hezy.guide.phone.utils.LogUtils;
 import com.hezy.guide.phone.utils.RxBus;
 import com.hezy.guide.phone.utils.StringCheckUtil;
@@ -74,7 +71,7 @@ public class UserinfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
     private String imagePath;
     private CountDownTimer countDownTimer;
 
-   public static void actionStart(Context context) {
+    public static void actionStart(Context context) {
         Intent intent = new Intent(context, UserinfoActivity.class);
         context.startActivity(intent);
     }
@@ -102,14 +99,12 @@ public class UserinfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
         subscription = RxBus.handleMessage(new Action1() {
             @Override
             public void call(Object o) {
-                 if (o instanceof UserUpdateEvent) {
+                if (o instanceof UserUpdateEvent) {
                     setUserUI();
                 }
             }
         });
         setUserUI();
-
-
 
 
         countDownTimer = new CountDownTimer(60 * 1000, 1000) {
@@ -126,7 +121,6 @@ public class UserinfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
         };
 
 
-
         mBinding.mEtName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -134,7 +128,7 @@ public class UserinfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
                     //失去焦点提交请求
                     final String str = mBinding.mEtName.getText().toString().trim();
                     long len = StringCheckUtil.calculateLength(str);
-                    if(len< Constant.NICKNAME_MIN  || len >Constant.NICKNAME_MAX){
+                    if (len < Constant.NICKNAME_MIN || len > Constant.NICKNAME_MAX) {
                         showToast("姓名为2-8个汉字或者4-16个英文,请重新输入");
                         return;
                     }
@@ -223,7 +217,7 @@ public class UserinfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
                     //失去焦点提交请求
                     final String str = mBinding.mEtSignature.getText().toString().trim();
                     long len = StringCheckUtil.calculateLength(str);
-                    if(len >Constant.SIGNATURE_MAX){
+                    if (len > Constant.SIGNATURE_MAX) {
                         showToast("签名小于30字,请重新输入");
                         return;
                     }
@@ -244,8 +238,6 @@ public class UserinfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
         });
 
 
-
-
     }
 
     @Override
@@ -254,6 +246,8 @@ public class UserinfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
         mBinding.mBtnSavePhoto.setOnClickListener(this);
         mBinding.mTvObtainCaptcha.setOnClickListener(this);
         mBinding.mTvAddress.setOnClickListener(this);
+        mBinding.mIvLeft.setOnClickListener(this);
+        mBinding.mTvRight.setOnClickListener(this);
     }
 
     @Override
@@ -277,10 +271,15 @@ public class UserinfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
     }
 
 
-
     @Override
     protected void normalOnClick(View v) {
         switch (v.getId()) {
+            case R.id.mIvLeft:
+                finish();
+                break;
+            case R.id.mTvRight:
+                finish();
+                break;
             case R.id.mIvPicture:
                 configTakePhotoOption(takePhoto);
                 File file = new File(Environment.getExternalStorageDirectory(), "/temp/" + System.currentTimeMillis() + ".jpg");
@@ -306,47 +305,8 @@ public class UserinfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
                                     }
                                 }).show();
                 break;
-            case R.id.mTvState:
-                new ActionSheetDialog(mContext).builder()//
-                        .setCancelable(false)//
-                        .setCanceledOnTouchOutside(false)//
-                        .addSheetItem("在线", ActionSheetDialog.SheetItemColor.Blue,//
-                                new ActionSheetDialog.OnSheetItemClickListener() {//
-                                    @Override
-                                    public void onClick(int which) {
-                                        if (TextUtils.isEmpty(Preferences.getUserMobile()) || TextUtils.isEmpty(Preferences.getUserPhoto())
-                                                || TextUtils.isEmpty(Preferences.getUserName()) || TextUtils.isEmpty(Preferences.getUserAddress())) {
-                                            showToast("请先填写姓名,电话,地址,照片");
-                                            return;
-                                        }
-                                        if (!WSService.isOnline()) {
-                                            //当前状态离线,可切换在线
-                                            Log.i(TAG, "当前状态离线,可切换在线");
-                                            RxBus.sendMessage(new SetUserStateEvent(true));
-                                        }
-
-
-                                    }
-                                })
-                        .addSheetItem("离线", ActionSheetDialog.SheetItemColor.Blue,//
-                                new ActionSheetDialog.OnSheetItemClickListener() {//
-                                    @Override
-                                    public void onClick(int which) {
-                                        if (WSService.isOnline()) {
-                                            //当前状态在线,可切换离线
-                                            Log.i(TAG, "当前状态在线,可切换离线");
-                                            RxBus.sendMessage(new SetUserStateEvent(false));
-//                                            WSService.SOCKET_ONLINE =false;
-//                                            setState(false);
-                                        }
-                                    }
-                                }).show();
-                break;
             case R.id.mBtnSavePhoto:
                 uploadImage();
-                break;
-            case R.id.mIvHead:
-                RxBus.sendMessage(new PagerSetGuideLog());
                 break;
             case R.id.mTvObtainCaptcha:
                 final String str = mBinding.mEtPhone.getText().toString().trim();
@@ -536,6 +496,7 @@ public class UserinfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
         }
         return type;
     }
+
 
 
     @Override

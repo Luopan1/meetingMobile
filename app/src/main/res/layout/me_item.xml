@@ -111,7 +111,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/mTvReviewCount"
             android:layout_marginLeft="@dimen/my_px_40"
-            android:layout_marginTop="@dimen/my_px_70"
+            android:layout_marginTop="@dimen/my_px_40"
             android:layout_toRightOf="@+id/mIvHead"
             android:text="唐大山"
             android:textColor="@color/text_yellow_fff000"

@@ -72,7 +72,7 @@
                     android:background="@drawable/review_grey_round_bg_shape"
                     android:layout_marginLeft="@dimen/my_px_20"
                     android:drawableLeft="@mipmap/ic_call_time"
-                    android:drawablePadding="@dimen/my_px_8"
+                    android:drawablePadding="@dimen/my_px_5"
                     android:textColor="@color/text_gray_909090"
                     android:singleLine="true"
                     android:textSize="@dimen/my_sp_30"
@@ -179,7 +179,7 @@
 
     <View android:layout_width="match_parent"
         android:layout_height="@dimen/my_px_40"
-        android:layout_marginTop="@dimen/my_px_40"
+        android:layout_marginTop="@dimen/my_px_30"
         android:background="@color/bg_gray_e8e8e8"/>
 
 
