@@ -154,6 +154,11 @@ public class OnCallActivity extends BaseDataBindingActivity<OnCallActivityBindin
                     @Override
                     public void onSuccess(BaseErrorBean entity) {
                         Log.d("reject receive", entity.toString());
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                         RxBus.sendMessage(new CallEvent(false, tvSocketId));
                         finish();
                     }
