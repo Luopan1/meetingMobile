@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:padding="@dimen/my_px_40">
 
     <LinearLayout
@@ -136,7 +136,7 @@
 
 
     <TextView
-        android:id="@+id/mTvReview"
+        android:id="@+id/mTvReviewContent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/my_px_40"
@@ -146,7 +146,7 @@
 
     <TextView
         android:visibility="gone"
-        android:id="@+id/mTvReplyContent"
+        android:id="@+id/mTvMeReplyContent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="@dimen/my_px_20"
