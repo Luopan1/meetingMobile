@@ -100,14 +100,15 @@ public class GuideLogFragment extends BaseDataBindingFragment<GuideLogFragmentBi
 
     @Override
     protected void requestData() {
-//        requestRecord();
+        requestRecord();
     }
 
 
     @Override
     public void onMyVisible() {
         super.onMyVisible();
-        requestRecord();
+//        requestRecord();
+        //能下滑刷新没必要
     }
 
     private void requestRecordTotal() {

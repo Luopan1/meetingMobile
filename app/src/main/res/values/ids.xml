@@ -3,4 +3,8 @@
     <item name="small_video_view_dock" type="id" />
     <item name="full_screen_container" type="id" />
     <item name="customized_function_id" type="id" />
+
+    <!-- =================================  setTag Key============================================ -->
+    <item name="tag_bean" type="id"></item>
+    <item name="tag_position" type="id"></item>
 </resources>

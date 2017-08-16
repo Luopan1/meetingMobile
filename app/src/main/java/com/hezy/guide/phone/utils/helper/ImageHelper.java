@@ -88,9 +88,9 @@ public class ImageHelper {
         if (!ImageHelper.isContextEmpty() && !ImageHelper.isEmpty(url)) {
             int w_dp = (int) getContext().getResources().getDimension(w_id);
             int h_dp = (int) getContext().getResources().getDimension(h_id);
-            int w_px = DensityUtil.dip2px(getContext(), w_dp);
-            int h_px = DensityUtil.dip2px(getContext(), h_dp);
-            url = ImageHelper.getUrlJoinAndThumAndCrop(url, w_px, h_px);
+//            int w_px = DensityUtil.dip2px(getContext(), w_dp);
+//            int h_px = DensityUtil.dip2px(getContext(), h_dp);
+            url = ImageHelper.getUrlJoinAndThumAndCrop(url, w_dp, h_dp);
             Picasso.with(getContext()).load(url).into(imageView);
         }
     }
@@ -106,8 +106,8 @@ public class ImageHelper {
         if (!ImageHelper.isContextEmpty() && !ImageHelper.isEmpty(url)) {
             int w_dp = (int) getContext().getResources().getDimension(w_id);
             int h_dp = (int) getContext().getResources().getDimension(h_id);
-            int w_px = DensityUtil.dip2px(getContext(), w_dp);
-            int h_px = DensityUtil.dip2px(getContext(), h_dp);
+//            int w_px = DensityUtil.dip2px(getContext(), w_dp);
+//            int h_px = DensityUtil.dip2px(getContext(), h_dp);
             url = ImageHelper.getUrlJoinAndThumAndCrop(url, w_dp, h_dp);
             int round_dp = (int) getContext().getResources().getDimension(R.dimen.my_px_20);
             int round_px = DensityUtil.dip2px(getContext(), round_dp);

@@ -206,6 +206,19 @@ public class TimeUtil {
         return str;
     }
 
+    public static String getyyyyMMddHHmm(String time){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
+        String str="";
+        try {
+            Date date = sdf.parse(time);
+            str = sdf.format(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return str;
+    }
+
+
     public static String getMonthDayHM(String time){
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
         SimpleDateFormat sdf2 = new SimpleDateFormat("MM-dd HH:mm", Locale.getDefault());
