@@ -59,6 +59,7 @@ public class BaseApplication extends Application {
         TCAgent.setReportUncaughtExceptions(true);
 
         requestGlobalConfig();
+        ApiClient.getInstance().requestUser();
     }
 
     public static BaseApplication getInstance() {
@@ -134,4 +135,6 @@ public class BaseApplication extends Application {
 
         });
     }
+
+
 }

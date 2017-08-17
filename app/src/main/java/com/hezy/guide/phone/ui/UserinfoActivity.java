@@ -76,6 +76,20 @@ public class UserinfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
         context.startActivity(intent);
     }
 
+    public static void actionStart(Context context, boolean isFirst) {
+        Intent intent = new Intent(context, UserinfoActivity.class);
+        intent.putExtra("isFirst", isFirst);
+        context.startActivity(intent);
+    }
+
+    private boolean isFirst;
+
+
+    @Override
+    protected void initExtraIntent() {
+        isFirst = getIntent().getBooleanExtra("isFirst", false);
+    }
+
     @Override
     protected int initContentView() {
         return R.layout.userinfo_activity;
@@ -104,6 +118,10 @@ public class UserinfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
                 }
             }
         });
+        if (Preferences.isUserinfoEmpty()) {
+            //第一次设置为空,返回键隐藏
+            mBinding.mIvLeft.setVisibility(View.GONE);
+        }
         setUserUI();
 
 
@@ -278,6 +296,13 @@ public class UserinfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
                 finish();
                 break;
             case R.id.mTvRight:
+                if (Preferences.isUserinfoEmpty()) {
+                    showToast("请先填写姓名,电话,地址,照片");
+                    return;
+                }
+                if(isFirst){
+                    HomeActivity.actionStart(mContext);
+                }
                 finish();
                 break;
             case R.id.mIvPicture:
@@ -496,7 +521,6 @@ public class UserinfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
         }
         return type;
     }
-
 
 
     @Override

@@ -614,6 +614,15 @@ public class Preferences {
         }
     }
 
+    /**
+     * 没有设置完用户信息
+     * @return
+     */
+    public static boolean isUserinfoEmpty(){
+        return (TextUtils.isEmpty(Preferences.getUserMobile()) || TextUtils.isEmpty(Preferences.getUserPhoto())
+                || TextUtils.isEmpty(Preferences.getUserName()) || TextUtils.isEmpty(Preferences.getUserAddress()));
+    }
+
 
 
 }

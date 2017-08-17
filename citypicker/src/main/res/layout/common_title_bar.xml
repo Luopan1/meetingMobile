@@ -8,8 +8,8 @@
         android:background="@color/common_bg"-->
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:background="#FF32465A"
+        android:layout_height="53dp"
+        android:background="#811fce"
      >
  <!--       android:src="@mipmap/ic_back"-->
         <ImageView

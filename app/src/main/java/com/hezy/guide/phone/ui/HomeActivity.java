@@ -22,14 +22,10 @@ import com.hezy.guide.phone.BuildConfig;
 import com.hezy.guide.phone.R;
 import com.hezy.guide.phone.base.BaseDataBindingActivity;
 import com.hezy.guide.phone.databinding.HomeActivityBinding;
-import com.hezy.guide.phone.entities.User;
-import com.hezy.guide.phone.entities.UserData;
 import com.hezy.guide.phone.entities.Version;
-import com.hezy.guide.phone.entities.Wechat;
 import com.hezy.guide.phone.entities.base.BaseBean;
 import com.hezy.guide.phone.event.SetUserStateEvent;
 import com.hezy.guide.phone.event.UserStateEvent;
-import com.hezy.guide.phone.event.UserUpdateEvent;
 import com.hezy.guide.phone.net.ApiClient;
 import com.hezy.guide.phone.net.OkHttpBaseCallback;
 import com.hezy.guide.phone.persistence.Preferences;
@@ -202,7 +198,7 @@ public class HomeActivity extends BaseDataBindingActivity<HomeActivityBinding> {
     protected void requestData() {
         versionCheck();
         registerDevice();
-        requestUser();
+//        requestUser();
     }
 
 //    private void initCurrentItem() {
@@ -232,6 +228,11 @@ public class HomeActivity extends BaseDataBindingActivity<HomeActivityBinding> {
     protected void checkNetWorkOnClick(View v) {
         switch (v.getId()) {
             case mTvState:
+                if (Preferences.isUserinfoEmpty()) {
+                    showToast("请先填写姓名,电话,地址,照片");
+                    UserinfoActivity.actionStart(this);
+                    return;
+                }
                 new ActionSheetDialog(mContext).builder()//
                         .setCancelable(false)//
                         .setCanceledOnTouchOutside(false)//
@@ -239,11 +240,7 @@ public class HomeActivity extends BaseDataBindingActivity<HomeActivityBinding> {
                                 new ActionSheetDialog.OnSheetItemClickListener() {//
                                     @Override
                                     public void onClick(int which) {
-                                        if (TextUtils.isEmpty(Preferences.getUserMobile()) || TextUtils.isEmpty(Preferences.getUserPhoto())
-                                                || TextUtils.isEmpty(Preferences.getUserName()) || TextUtils.isEmpty(Preferences.getUserAddress())) {
-                                            showToast("请先填写姓名,电话,地址,照片");
-                                            return;
-                                        }
+
                                         if (!WSService.isOnline()) {
                                             //当前状态离线,可切换在线
                                             Log.i(TAG, "当前状态离线,可切换在线");
@@ -363,26 +360,7 @@ public class HomeActivity extends BaseDataBindingActivity<HomeActivityBinding> {
         }
     };
 
-    private void requestUser() {
-        ApiClient.getInstance().requestUser(this, new OkHttpBaseCallback<BaseBean<UserData>>() {
-            @Override
-            public void onSuccess(BaseBean<UserData> entity) {
-                if (entity == null || entity.getData() == null || entity.getData().getUser() == null) {
-                    showToast("数据为空");
-                    return;
-                }
-                User user = entity.getData().getUser();
-                Wechat wechat = entity.getData().getWechat();
-                LoginHelper.savaUser(user);
-//                initCurrentItem();
-                if (wechat != null) {
-                    LoginHelper.savaWeChat(wechat);
-                }
-                RxBus.sendMessage(new UserUpdateEvent());
 
-            }
-        });
-    }
 
     private long mExitTime = 0;
     private long mLastKeyDownTime = 0;

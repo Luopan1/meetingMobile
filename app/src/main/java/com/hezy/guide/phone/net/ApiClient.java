@@ -10,11 +10,16 @@ import com.hezy.guide.phone.Constant;
 import com.hezy.guide.phone.entities.RankInfo;
 import com.hezy.guide.phone.entities.RecordData;
 import com.hezy.guide.phone.entities.RecordTotal;
+import com.hezy.guide.phone.entities.User;
 import com.hezy.guide.phone.entities.UserData;
 import com.hezy.guide.phone.entities.Version;
+import com.hezy.guide.phone.entities.Wechat;
 import com.hezy.guide.phone.entities.base.BaseBean;
 import com.hezy.guide.phone.entities.base.BaseErrorBean;
+import com.hezy.guide.phone.event.UserUpdateEvent;
 import com.hezy.guide.phone.persistence.Preferences;
+import com.hezy.guide.phone.utils.Login.LoginHelper;
+import com.hezy.guide.phone.utils.RxBus;
 import com.hezy.guide.phone.utils.UUIDUtils;
 import com.tendcloud.tenddata.TCAgent;
 
@@ -25,6 +30,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
+import static com.hezy.guide.phone.utils.ToastUtils.showToast;
 
 /**
  * Created by whatisjava on 16/4/12.
@@ -128,6 +134,30 @@ public class ApiClient {
      */
     public void requestUser(Object tag, OkHttpBaseCallback<BaseBean<UserData>> callback){
         OkHttpUtil.getInstance().get(API_DOMAIN_NAME + "/osg/app/user", getCommonHead(),null , callback,tag);
+    }
+
+    public void requestUser() {
+        if(!Preferences.isLogin()){
+            return;
+        }
+        ApiClient.getInstance().requestUser(this, new OkHttpBaseCallback<BaseBean<UserData>>() {
+            @Override
+            public void onSuccess(BaseBean<UserData> entity) {
+                if (entity == null || entity.getData() == null || entity.getData().getUser() == null) {
+                    showToast("数据为空");
+                    return;
+                }
+                User user = entity.getData().getUser();
+                Wechat wechat = entity.getData().getWechat();
+                LoginHelper.savaUser(user);
+//                initCurrentItem();
+                if (wechat != null) {
+                    LoginHelper.savaWeChat(wechat);
+                }
+                RxBus.sendMessage(new UserUpdateEvent());
+
+            }
+        });
     }
 
 

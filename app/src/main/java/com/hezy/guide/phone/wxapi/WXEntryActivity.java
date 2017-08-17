@@ -19,6 +19,7 @@ import com.hezy.guide.phone.net.ApiClient;
 import com.hezy.guide.phone.net.OkHttpBaseCallback;
 import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.ui.HomeActivity;
+import com.hezy.guide.phone.ui.UserinfoActivity;
 import com.hezy.guide.phone.utils.LogUtils;
 import com.hezy.guide.phone.utils.Login.LoginHelper;
 import com.hezy.guide.phone.utils.RxBus;
@@ -70,8 +71,14 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
         isFirst = false;
 
         if (Preferences.isLogin()){
+            if (Preferences.isUserinfoEmpty()) {
+                showToast("请先填写姓名,电话,地址,照片");
+                UserinfoActivity.actionStart(this,true);
+                return;
+            }
             HomeActivity.actionStart(mContext);
             finish();
+            return;
         }
 
         reToWx();
@@ -239,8 +246,12 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
 
     @Override
     public void onDestroy() {
-        subscription.unsubscribe();
-        mWxApi.detach();
+        if(subscription!=null){
+            subscription.unsubscribe();
+        }
+        if(mWxApi!=null){
+            mWxApi.detach();
+        }
         super.onDestroy();
     }
 

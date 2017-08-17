@@ -141,7 +141,7 @@ public class ReplyReviewActivity extends BaseDataBindingActivity<ReplyReviewActi
             // 注意这里只能每次都对整个EditText的内容求长度，不能对删除的单个字符求长度
             // 因为是中英文混合，单个字符而言，calculateLength函数都会返回1
             LogUtils.d(TAG,"StringCheckUtil"+ StringCheckUtil.calculateLength(s.toString()) );
-            while (StringCheckUtil.calculateLength(s.toString()) > Constant.SIGNATURE_MAX) { // 当输入字符个数超过限制的大小时，进行截断操作
+            while (StringCheckUtil.calculateLength(s.toString()) > Constant.REPLY_REVIEW_MAX) { // 当输入字符个数超过限制的大小时，进行截断操作
                 s.delete(editStart - 1, editEnd);
                 editStart--;
                 editEnd--;

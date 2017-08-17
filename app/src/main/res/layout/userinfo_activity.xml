@@ -16,13 +16,14 @@
             android:layout_height="@dimen/my_px_160"
             android:background="@color/purple_811fcd">
 
-            <com.hezy.guide.phone.view.PressedImageView
+            <ImageView
                 android:id="@+id/mIvLeft"
+                style="@style/Widget.AppCompat.ActionButton"
                 android:layout_width="@dimen/my_px_200"
                 android:layout_height="match_parent"
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
-                android:src="@mipmap/back_arrow"
+                android:src="@drawable/select_back_btn"
                 android:scaleType="center"
                 android:gravity="center"
                 android:text="保存"
