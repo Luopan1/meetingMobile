@@ -13,10 +13,12 @@ import com.hezy.guide.phone.R;
 import com.hezy.guide.phone.base.listadapter.BaseRecyclerAdapter;
 import com.hezy.guide.phone.entities.RankInfo;
 import com.hezy.guide.phone.entities.RecordData;
+import com.hezy.guide.phone.event.ReplyReviewEvent;
 import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.ui.ReplyReviewActivity;
 import com.hezy.guide.phone.ui.UserinfoActivity;
 import com.hezy.guide.phone.utils.LogUtils;
+import com.hezy.guide.phone.utils.RxBus;
 import com.hezy.guide.phone.utils.StringUtils;
 import com.hezy.guide.phone.utils.TimeUtil;
 import com.hezy.guide.phone.utils.helper.ImageHelper;
@@ -26,6 +28,8 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
+import rx.Subscription;
+import rx.functions.Action1;
 
 
 /**
@@ -34,6 +38,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ReviewAdapter extends BaseRecyclerAdapter<RecordData.PageDataEntity> implements View.OnClickListener {
     RankInfo mRankInfo;
+    private RecordData.PageDataEntity bean;
 
     public enum ITEM_TYPE {
         ME,
@@ -43,9 +48,32 @@ public class ReviewAdapter extends BaseRecyclerAdapter<RecordData.PageDataEntity
 
     public ReviewAdapter(Context context) {
         super(context);
+        subscription = RxBus.handleMessage(new Action1() {
+            @Override
+            public void call(Object o) {
+                if (o instanceof ReplyReviewEvent) {
+                    ReplyReviewEvent event = (ReplyReviewEvent) o;
+                    RecordData.PageDataEntity changeBean = event.getBean();
+                    if(changeBean.getId().equals(bean.getId()) ){
+                        bean.setReplyRating(changeBean.getReplyRating());
+                        notifyDataSetChanged();
+                    }
+
+                }
+            }
+        });
     }
 
-    public void setRankInfo(RankInfo rankInfo){
+
+    private Subscription subscription;
+
+    @Override
+    public void onDestroy() {
+        subscription.unsubscribe();
+        super.onDestroy();
+    }
+
+    public void setRankInfo(RankInfo rankInfo) {
         mRankInfo = rankInfo;
     }
 
@@ -88,7 +116,7 @@ public class ReviewAdapter extends BaseRecyclerAdapter<RecordData.PageDataEntity
             ImageHelper.loadImageDpIdBlur(Preferences.getUserPhoto(), R.dimen.my_px_1080, R.dimen.my_px_530, meHolder.mIvBack);
             meHolder.mTvName.setText(Preferences.getUserName());
             meHolder.mTvAddress.setText(Preferences.getUserAddress());
-            if(mRankInfo!=null){
+            if (mRankInfo != null) {
                 meHolder.mTvStar.setText(mRankInfo.getStar());
                 //TODO 分数规则半颗星.
                 float star = Float.parseFloat(mRankInfo.getStar());
@@ -166,7 +194,7 @@ public class ReviewAdapter extends BaseRecyclerAdapter<RecordData.PageDataEntity
                     holder.mTvReply.setVisibility(View.VISIBLE);
                 } else {
                     holder.mTvMeReplyContent.setVisibility(View.VISIBLE);
-                    holder.mTvMeReplyContent.setText(bean.getRatingContent());
+                    holder.mTvMeReplyContent.setText(bean.getReplyRating());
                     holder.mTvReply.setVisibility(View.GONE);
                 }
             }
@@ -260,9 +288,9 @@ public class ReviewAdapter extends BaseRecyclerAdapter<RecordData.PageDataEntity
                 UserinfoActivity.actionStart(mContext);
                 break;
             case R.id.mTvReply:
-                RecordData.PageDataEntity bean=(RecordData.PageDataEntity) v.getTag(R.id.tag_bean);
+                bean = (RecordData.PageDataEntity) v.getTag(R.id.tag_bean);
 //                ToastUtils.showToast("点击");
-                ReplyReviewActivity.actionStart(mContext,bean);
+                ReplyReviewActivity.actionStart(mContext, bean);
                 break;
             default:
                 break;

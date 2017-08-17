@@ -32,6 +32,10 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter {
 
     }
 
+    public void onDestroy(){
+
+    }
+
 
     public interface OnItemClickListener {
         void onItemClick(View view, int position);

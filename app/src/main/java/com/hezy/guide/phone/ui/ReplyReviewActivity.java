@@ -12,9 +12,11 @@ import com.hezy.guide.phone.base.BaseDataBindingActivity;
 import com.hezy.guide.phone.databinding.ReplyReviewActivityBinding;
 import com.hezy.guide.phone.entities.RecordData;
 import com.hezy.guide.phone.entities.base.BaseErrorBean;
+import com.hezy.guide.phone.event.ReplyReviewEvent;
 import com.hezy.guide.phone.net.ApiClient;
 import com.hezy.guide.phone.net.OkHttpBaseCallback;
 import com.hezy.guide.phone.utils.LogUtils;
+import com.hezy.guide.phone.utils.RxBus;
 import com.hezy.guide.phone.utils.StringCheckUtil;
 import com.hezy.guide.phone.utils.TimeUtil;
 import com.hezy.guide.phone.utils.helper.ImageHelper;
@@ -177,11 +179,13 @@ public class ReplyReviewActivity extends BaseDataBindingActivity<ReplyReviewActi
 
 
     private void requestReplayComment(){
-        String replayContent = mBinding.mEtReplyContent.getText().toString().trim();
+        final String replayContent = mBinding.mEtReplyContent.getText().toString().trim();
         ApiClient.getInstance().requestReplayComment(this, bean.getId(), replayContent, new OkHttpBaseCallback<BaseErrorBean>() {
             @Override
             public void onSuccess(BaseErrorBean entity) {
                 showToast("回复成功");
+                bean.setReplyRating(replayContent);
+                RxBus.sendMessage(new ReplyReviewEvent(bean));
                 finish();
             }
         });
