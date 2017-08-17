@@ -6,7 +6,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 
@@ -266,6 +268,9 @@ public class UserinfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
         mBinding.mTvAddress.setOnClickListener(this);
         mBinding.mIvLeft.setOnClickListener(this);
         mBinding.mTvRight.setOnClickListener(this);
+
+        mBinding.mEtName.addTextChangedListener(mTextWatcher);
+
     }
 
     @Override
@@ -370,6 +375,59 @@ public class UserinfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
                 break;
 
         }
+    }
+
+
+    private TextWatcher mTextWatcher =new TextWatcher() {
+        private int editStart;
+        private int editEnd;
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            editStart = mBinding.mEtName.getSelectionStart();
+            editEnd = mBinding.mEtName.getSelectionEnd();
+
+            // 先去掉监听器，否则会出现栈溢出
+            mBinding.mEtName.removeTextChangedListener(mTextWatcher);
+
+            // 注意这里只能每次都对整个EditText的内容求长度，不能对删除的单个字符求长度
+            // 因为是中英文混合，单个字符而言，calculateLength函数都会返回1
+            LogUtils.d(TAG,"StringCheckUtil"+ StringCheckUtil.calculateLength(s.toString()) );
+            while (StringCheckUtil.calculateLength(s.toString()) > Constant.NICKNAME_MAX) { // 当输入字符个数超过限制的大小时，进行截断操作
+                s.delete(editStart - 1, editEnd);
+                editStart--;
+                editEnd--;
+                LogUtils.d(TAG,"while"+s.toString());
+                LogUtils.d(TAG,"while"+StringCheckUtil.calculateLength(s.toString()));
+            }
+            // mEtNickname.setText(s);将这行代码注释掉就不会出现后面所说的输入法在数字界面自动跳转回主界面的问题了，多谢@ainiyidiandian的提醒
+            mBinding.mEtName.setSelection(editStart);
+
+            // 恢复监听器
+            mBinding.mEtName.addTextChangedListener(mTextWatcher);
+
+
+
+
+        }
+    };
+
+  
+
+    /**
+     * 获取用户输入的分享内容字数
+     *
+     * @return
+     */
+    private long getInputCount() {
+        return StringCheckUtil.calculateLength(mBinding.mEtName.getText().toString());
     }
 
 

@@ -16,7 +16,6 @@ public class Constant {
 //            + "com.hezy.family"+"/android/GA/latest?versionCode=" + BuildConfig.VERSION_CODE;
 
 
-    //昵称限制最大15个汉字,最小2个汉字或者4个英文
     public final static int NICKNAME_MAX = 8;
     public final static int NICKNAME_MIN = 2;
 
