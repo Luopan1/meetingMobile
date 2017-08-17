@@ -111,7 +111,7 @@ android {
             buildConfigField 'String', 'API_DOMAIN_NAME', '"http://osg.api.haierzhongyou.com"'
             buildConfigField 'String', 'API_DOMAIN_NAME_YOYOTU', '"http://api.haierzhongyou.com"' //唷唷兔地址
             buildConfigField 'String', 'WS_DOMAIN_NAME', '"http://ws.haierzhongyou.com/sales"'
-            buildConfigField 'String', 'WEIXIN_APP_ID', '"wxcd220f151738cab5"' //微信id
+            buildConfigField 'String', 'WEIXIN_APP_ID', '"wxfb5b05dd7686698b"' //微信id
             buildConfigField 'String', 'BUGLY_APPID', '"1ee416d265"' //bugly
             manifestPlaceholders = [TD_APP_ID    : "80F452C9B1E8427AB65DB774F7FF081F",
                                     TD_CHANNEL_ID: "default"]

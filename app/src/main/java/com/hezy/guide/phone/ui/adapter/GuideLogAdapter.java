@@ -160,7 +160,6 @@ public class GuideLogAdapter extends BaseRecyclerAdapter<RecordData.PageDataEnti
             holder.mTvCallDuration.setTextColor(mContext.getResources().getColor(R.color.text_black_434343));
             holder.mTvCallDuration.setCompoundDrawablesWithIntrinsicBounds(R.mipmap.ic_call, 0, 0, 0);
             holder.mTvCallDuration.getPaint().setFakeBoldText(true);
-            holder.mTvNoReview.setVisibility(View.VISIBLE);
         }
     }
 
