@@ -14,6 +14,7 @@ import com.hezy.guide.phone.base.listadapter.BaseRecyclerAdapter;
 import com.hezy.guide.phone.entities.RankInfo;
 import com.hezy.guide.phone.entities.RecordData;
 import com.hezy.guide.phone.event.ReplyReviewEvent;
+import com.hezy.guide.phone.event.UserUpdateEvent;
 import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.ui.ReplyReviewActivity;
 import com.hezy.guide.phone.ui.UserinfoActivity;
@@ -56,6 +57,8 @@ public class ReviewAdapter extends BaseRecyclerAdapter<RecordData.PageDataEntity
                     RecordData.PageDataEntity changeBean = event.getBean();
                     if(changeBean.getId().equals(bean.getId()) ){
                         bean.setReplyRating(changeBean.getReplyRating());
+                        notifyDataSetChanged();
+                    }else if(o instanceof UserUpdateEvent){
                         notifyDataSetChanged();
                     }
 

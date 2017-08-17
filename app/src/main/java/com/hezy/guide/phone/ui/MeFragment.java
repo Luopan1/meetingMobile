@@ -45,6 +45,8 @@ public class MeFragment extends BaseDataBindingFragment<MeFragmentBinding> {
     @Override
     protected void initView() {
 
+
+
     }
 
     @Override
@@ -149,10 +151,10 @@ public class MeFragment extends BaseDataBindingFragment<MeFragmentBinding> {
             @Override
             public void onSuccess(BaseBean<RecordData> entity) {
                 if (entity.getData().getTotalCount() == 0) {
-                    mBinding.mLayoutNoData.setVisibility(View.VISIBLE);
+//                    mBinding.mLayoutNoData.setVisibility(View.VISIBLE);
                     mBinding.mRecyclerView.setVisibility(View.GONE);
                 } else {
-                    mBinding.mLayoutNoData.setVisibility(View.GONE);
+//                    mBinding.mLayoutNoData.setVisibility(View.GONE);
                     mBinding.mRecyclerView.setVisibility(View.VISIBLE);
                 }
                 if (isRefresh) {

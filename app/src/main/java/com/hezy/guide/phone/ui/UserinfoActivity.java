@@ -371,10 +371,12 @@ public class UserinfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
     protected void normalOnClick(View v) {
         switch (v.getId()) {
             case R.id.mIvLeft:
+                RxBus.sendMessage(new UserUpdateEvent());
                 finish();
                 break;
             case R.id.mTvRight:
                 save();
+                RxBus.sendMessage(new UserUpdateEvent());
                 break;
             case R.id.mIvPicture:
                 configTakePhotoOption(takePhoto);
