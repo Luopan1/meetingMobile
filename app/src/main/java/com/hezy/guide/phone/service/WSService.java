@@ -279,6 +279,7 @@ public class WSService extends Service {
         mSocket.on("SALES_ONLINE_WITH_STATUS_RETURN", ON_SALES_ONLINE_WITH_STATUS_RETURN);
         mSocket.on("LISTEN_TV_LEAVE_CHANNEL", ON_LISTEN_TV_LEAVE_CHANNEL);
         mSocket.on("TIMEOUT_WITHOUT_REPLY", ON_TIMEOUT_WITHOUT_REPLY);
+        mSocket.on("OLD_DISCONNECT", ON_OLD_DISCONNECT);
         mSocket.connect();
 
     }
@@ -299,6 +300,7 @@ public class WSService extends Service {
         mSocket.off("LISTEN_SALES_SOCKET_ID", onListenSalesSocketId);
         mSocket.off("SALES_ONLINE_WITH_STATUS_RETURN", ON_SALES_ONLINE_WITH_STATUS_RETURN);
         mSocket.off("LISTEN_TV_LEAVE_CHANNEL", ON_LISTEN_TV_LEAVE_CHANNEL);
+        mSocket.off("OLD_DISCONNECT", ON_OLD_DISCONNECT);
 //        SOCKET_ONLINE = false;
         sendUserStateEvent();
 
@@ -480,6 +482,18 @@ public class WSService extends Service {
                     RxBus.sendMessage(new TvTimeoutHangUp());
                 }
             });
+
+        }
+    };
+
+
+    private Emitter.Listener ON_OLD_DISCONNECT = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            Log.i("wsserver", "Listener ON_OLD_DISCONNECT");
+            String str = (String) args[0];
+            Log.i(TAG,str);
+
 
         }
     };

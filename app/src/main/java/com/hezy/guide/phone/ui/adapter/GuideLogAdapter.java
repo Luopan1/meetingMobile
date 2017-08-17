@@ -139,13 +139,20 @@ public class GuideLogAdapter extends BaseRecyclerAdapter<RecordData.PageDataEnti
         }
 
         //status (integer, optional): 状态， 0：未应答（30s未接听），1：接听，2：拒绝, 8：对方挂断 9：通话结束挂断 ,
-        if (bean.getStatus() == 0 || bean.getStatus() == 8) {
+        if (bean.getStatus() == 0) {
             //0：未应答（30s未接听）
             holder.mTvCallDuration.setText("未接听");
             holder.mTvCallDuration.setTextColor(mContext.getResources().getColor(R.color.text_red_ff6482));
             holder.mTvCallDuration.setCompoundDrawablesWithIntrinsicBounds(R.mipmap.ic_uncall, 0, 0, 0);
             holder.mTvCallDuration.getPaint().setFakeBoldText(false);
-        } else if (bean.getStatus() == 2) {
+        } else if (bean.getStatus() == 8) {
+            // 8：对方挂断
+            holder.mTvCallDuration.setText("未接通");
+            holder.mTvCallDuration.setTextColor(mContext.getResources().getColor(R.color.text_red_ff6482));
+            holder.mTvCallDuration.setCompoundDrawablesWithIntrinsicBounds(R.mipmap.ic_uncall, 0, 0, 0);
+            holder.mTvCallDuration.getPaint().setFakeBoldText(false);
+
+        }  else if (bean.getStatus() == 2) {
             //2：拒绝
             holder.mTvCallDuration.setText("已拒绝");
             holder.mTvCallDuration.setTextColor(mContext.getResources().getColor(R.color.text_red_ff6482));
