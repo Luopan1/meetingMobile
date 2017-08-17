@@ -141,8 +141,12 @@ public class ReviewAdapter extends BaseRecyclerAdapter<RecordData.PageDataEntity
                 }
 
 
-                String percentStr = StringUtils.percent(mRankInfo.getRatingFrequency(), mRankInfo.getServiceFrequency());
-                meHolder.mTvReviewRate.setText("评价率 " + percentStr);
+                if(mRankInfo.getRatingFrequency() ==0 || mRankInfo.getServiceFrequency()==0){
+                    meHolder.mTvReviewRate.setText("评价率 -" );
+                }else{
+                    String percentStr = StringUtils.percent(mRankInfo.getRatingFrequency(), mRankInfo.getServiceFrequency());
+                    meHolder.mTvReviewRate.setText("评价率 " + percentStr);
+                }
                 meHolder.mTvReviewCount.setText("连线" + mRankInfo.getServiceFrequency() + "次 评价" + mRankInfo.getRatingFrequency() + "次");
 
             }
