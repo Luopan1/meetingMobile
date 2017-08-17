@@ -240,10 +240,8 @@ public class WSService extends Service {
                 msg.append("registerDevice error jsonObject.put e.getMessage() = " + e.getMessage());
             }
 
-
         }
 //        client.errorlog(mContext, 2, msg.toString(), respStatusCallback);
-
 
     }
 

@@ -221,4 +221,18 @@ public class ApiClient {
 
 
 
+
+    public void requestReplayComment(Object tag, String callRecordId,String replyRating,OkHttpBaseCallback<BaseErrorBean> callback){
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("callRecordId", callRecordId);
+            jsonObject.put("replyRating", replyRating);
+            okHttpUtil.getInstance().postJson(API_DOMAIN_NAME+"/osg/app/call/replyComment",getCommonHead(),jsonObject.toString(),callback,tag);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e(TAG,e.getMessage());
+        }
+
+    }
+
 }
