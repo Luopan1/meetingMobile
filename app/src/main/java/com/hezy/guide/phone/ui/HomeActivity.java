@@ -193,6 +193,12 @@ public class HomeActivity extends BaseDataBindingActivity<HomeActivityBinding> {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        setState(WSService.isOnline());
+    }
+
+    @Override
     protected void requestData() {
         versionCheck();
         registerDevice();

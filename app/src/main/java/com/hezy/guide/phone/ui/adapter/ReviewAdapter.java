@@ -185,17 +185,24 @@ public class ReviewAdapter extends BaseRecyclerAdapter<RecordData.PageDataEntity
                 holder.mTvReviewContent.setText("还未发表文字评价!");
                 holder.mTvReviewContent.setTextColor(mContext.getResources().getColor(R.color.text_gray_909090));
                 holder.mTvMeReplyContent.setVisibility(View.GONE);
+                holder.mIvMeReplyContentArrows.setVisibility(View.GONE);
                 holder.mTvReply.setVisibility(View.GONE);
+                holder.mIvReplyArray.setVisibility(View.GONE);
             } else {
                 holder.mTvReviewContent.setText(bean.getRatingContent());
                 holder.mTvReviewContent.setTextColor(mContext.getResources().getColor(R.color.text_black_434343));
                 if (TextUtils.isEmpty(bean.getReplyRating())) {
                     holder.mTvMeReplyContent.setVisibility(View.GONE);
+                    holder.mIvMeReplyContentArrows.setVisibility(View.GONE);
                     holder.mTvReply.setVisibility(View.VISIBLE);
+                    holder.mIvReplyArray.setVisibility(View.VISIBLE);
+
                 } else {
                     holder.mTvMeReplyContent.setVisibility(View.VISIBLE);
+                    holder.mIvMeReplyContentArrows.setVisibility(View.VISIBLE);
                     holder.mTvMeReplyContent.setText(bean.getReplyRating());
                     holder.mTvReply.setVisibility(View.GONE);
+                    holder.mIvReplyArray.setVisibility(View.GONE);
                 }
             }
 
@@ -230,8 +237,12 @@ public class ReviewAdapter extends BaseRecyclerAdapter<RecordData.PageDataEntity
         LinearLayout mLayoutStar;
         @BindView(R.id.mTvReviewContent)
         TextView mTvReviewContent;
+        @BindView(R.id.mIvMeReplyContentArrows)
+        ImageView mIvMeReplyContentArrows;
         @BindView(R.id.mTvMeReplyContent)
         TextView mTvMeReplyContent;
+        @BindView(R.id.mIvReplyArray)
+        ImageView mIvReplyArray;
         @BindView(R.id.mTvReply)
         TextView mTvReply;
 
