@@ -243,10 +243,11 @@
                     android:id="@+id/mIvPicture"
                     android:layout_width="120dp"
                     android:layout_height="120dp"
-                    android:layout_centerHorizontal="true"
                     android:background="@color/white"
                     android:padding="1dp"
-                    tools:src="@color/green" />
+                    tools:src="@color/green"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true" />
 
                 <Button
                     android:id="@+id/mBtnSavePhoto"
@@ -264,7 +265,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="5dp"
-                android:text="照片会影响被打电话的频率哦"
+                android:text="上传高颜值照片，提升连线次数"
                 android:textColor="@color/hint_b985e2"
                 android:textSize="13sp" />
 

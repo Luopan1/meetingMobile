@@ -224,7 +224,7 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
                 } else {
                     //保存用户,进入主页
                     Log.i(WXEntryActivity.TAG, "用户登录成功");
-                    showToast("用户登录成功");
+//                    showToast("用户登录成功");
                     LoginHelper.savaUser(user);
                     if (Preferences.isUserinfoEmpty()) {
 //                        showToast("请先填写姓名,电话,地址,照片");
