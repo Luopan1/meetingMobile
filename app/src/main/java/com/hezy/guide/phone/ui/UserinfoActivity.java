@@ -147,13 +147,13 @@ public class UserinfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
                 if (!hasFocus) {
                     //失去焦点提交请求
                     final String str = mBinding.mEtName.getText().toString().trim();
-                    long len = StringCheckUtil.calculateLength(str);
-                    if (len < Constant.NICKNAME_MIN || len > Constant.NICKNAME_MAX) {
-                        showToast("姓名为2-8个汉字或者4-16个英文,请重新输入");
-                        return;
-                    }
-
                     if ((!TextUtils.isEmpty(str)) && !Preferences.getUserName().equals(str)) {
+                        long len = StringCheckUtil.calculateLength(str);
+                        if (len < Constant.NICKNAME_MIN || len > Constant.NICKNAME_MAX) {
+                            showToast("姓名为2-8个汉字或者4-16个英文,请重新输入");
+                            return;
+                        }
+
                         Map<String, String> params = new HashMap<>();
                         params.put("name", str);
                         ApiClient.getInstance().requestUserExpostor(this, params, new OkHttpBaseCallback<BaseErrorBean>() {
@@ -294,6 +294,79 @@ public class UserinfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
     }
 
 
+    private void save(){
+
+        final String str = mBinding.mEtName.getText().toString().trim();
+        final String phoneStr = mBinding.mEtPhone.getText().toString().trim().trim();
+        final String verifyCode = mBinding.mEtCaptchaNum.getText().toString().trim();
+
+        if(TextUtils.isEmpty(str)){
+            showToast("姓名不能为空");
+            return;
+        }
+
+
+        if(TextUtils.isEmpty(phoneStr)){
+            showToast("电话不能为空");
+            return;
+        }
+        if ( !Preferences.getUserName().equals(str)|| !Preferences.getUserMobile().equals(phoneStr)) {
+            //性别或者电话改变
+            long len = StringCheckUtil.calculateLength(str);
+            if (len < Constant.NICKNAME_MIN || len > Constant.NICKNAME_MAX) {
+                showToast("姓名为2-8个汉字或者4-16个英文,请重新输入");
+                return;
+            }
+
+
+            if ((!TextUtils.isEmpty(phoneStr)) && !Preferences.getUserMobile().equals(phoneStr) && TextUtils.isEmpty(verifyCode)) {
+                showToast("验证码不能为空");
+                return;
+            }
+
+            Map<String, String> params = new HashMap<>();
+            if (!Preferences.getUserMobile().equals(str)) {
+                params.put("name", str);
+            }
+            if ( !Preferences.getUserMobile().equals(phoneStr) ) {
+                params.put("mobile", phoneStr);
+                params.put("verifyCode", verifyCode);
+
+            }
+
+            ApiClient.getInstance().requestUserExpostor(this, params, new OkHttpBaseCallback<BaseErrorBean>() {
+                @Override
+                public void onSuccess(BaseErrorBean entity) {
+                    if (!Preferences.getUserMobile().equals(str)) {
+                        Preferences.setUserName(str);
+                    }
+                    if ((!TextUtils.isEmpty(phoneStr)) && !Preferences.getUserMobile().equals(phoneStr) && !TextUtils.isEmpty(verifyCode)) {
+                        Preferences.setUserMobile(phoneStr);
+                    }
+                    if (Preferences.isUserinfoEmpty()) {
+                        showToast("请先填写姓名,电话,地址,照片");
+                        return;
+                    }
+                    if(isFirst){
+                        HomeActivity.actionStart(mContext);
+                    }
+                    finish();
+
+                }
+
+            });
+        }
+
+        if (Preferences.isUserinfoEmpty()) {
+            showToast("请先填写姓名,电话,地址,照片");
+            return;
+        }
+        if(isFirst){
+            HomeActivity.actionStart(mContext);
+        }
+        finish();
+    }
+
     @Override
     protected void normalOnClick(View v) {
         switch (v.getId()) {
@@ -301,14 +374,7 @@ public class UserinfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
                 finish();
                 break;
             case R.id.mTvRight:
-                if (Preferences.isUserinfoEmpty()) {
-                    showToast("请先填写姓名,电话,地址,照片");
-                    return;
-                }
-                if(isFirst){
-                    HomeActivity.actionStart(mContext);
-                }
-                finish();
+                save();
                 break;
             case R.id.mIvPicture:
                 configTakePhotoOption(takePhoto);
