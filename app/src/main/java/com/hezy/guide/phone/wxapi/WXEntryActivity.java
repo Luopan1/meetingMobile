@@ -2,6 +2,7 @@ package com.hezy.guide.phone.wxapi;
 
 import android.content.Context;
 import android.content.Intent;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -197,7 +198,8 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
                 Log.i(TAG,"失败 isWxLoging = false ");
                 break;
         }
-        if (result != null) {
+
+        if (!TextUtils.isEmpty(result) && baseResp.errCode != BaseResp.ErrCode.ERR_OK ) {
             Toast.makeText(this, baseResp.errCode + result, Toast.LENGTH_SHORT).show();
         }
     }
