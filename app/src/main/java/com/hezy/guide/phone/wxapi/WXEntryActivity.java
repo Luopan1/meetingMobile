@@ -72,7 +72,7 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
 
         if (Preferences.isLogin()){
             if (Preferences.isUserinfoEmpty()) {
-                showToast("请先填写姓名,电话,地址,照片");
+//                showToast("请先填写姓名,电话,地址,照片");
                 UserinfoActivity.actionStart(this,true);
                 return;
             }
@@ -226,7 +226,13 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
                     Log.i(WXEntryActivity.TAG, "用户登录成功");
                     showToast("用户登录成功");
                     LoginHelper.savaUser(user);
-                    HomeActivity.actionStart(mContext);
+                    if (Preferences.isUserinfoEmpty()) {
+//                        showToast("请先填写姓名,电话,地址,照片");
+                        UserinfoActivity.actionStart(mContext,true);
+                        return;
+                    }else{
+                        HomeActivity.actionStart(mContext);
+                    }
                     RxBus.sendMessage(new FinishWX());
                     finish();
                 }
