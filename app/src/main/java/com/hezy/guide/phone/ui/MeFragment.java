@@ -5,7 +5,6 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.view.View;
 
 import com.hezy.guide.phone.R;
 import com.hezy.guide.phone.base.BaseDataBindingFragment;
@@ -150,13 +149,6 @@ public class MeFragment extends BaseDataBindingFragment<MeFragmentBinding> {
         ApiClient.getInstance().requestRecord(this,"1", pageNo, pageSize, new OkHttpBaseCallback<BaseBean<RecordData>>() {
             @Override
             public void onSuccess(BaseBean<RecordData> entity) {
-                if (entity.getData().getTotalCount() == 0) {
-//                    mBinding.mLayoutNoData.setVisibility(View.VISIBLE);
-                    mBinding.mRecyclerView.setVisibility(View.GONE);
-                } else {
-//                    mBinding.mLayoutNoData.setVisibility(View.GONE);
-                    mBinding.mRecyclerView.setVisibility(View.VISIBLE);
-                }
                 if (isRefresh) {
                     isRefresh = false;
                     mAdapter.setData(entity.getData().getPageData());
