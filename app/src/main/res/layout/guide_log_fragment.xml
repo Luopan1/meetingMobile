@@ -19,7 +19,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:text="讲解员日志"
+                android:text="讲解记录"
                 android:textColor="@color/white"
                 android:textSize="@dimen/my_sp_48" />
         </RelativeLayout>
