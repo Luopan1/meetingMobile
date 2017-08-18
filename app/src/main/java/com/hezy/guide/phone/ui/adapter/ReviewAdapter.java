@@ -56,7 +56,7 @@ public class ReviewAdapter extends BaseRecyclerAdapter<RecordData.PageDataEntity
                 if (o instanceof ReplyReviewEvent) {
                     ReplyReviewEvent event = (ReplyReviewEvent) o;
                     RecordData.PageDataEntity changeBean = event.getBean();
-                    if(changeBean.getId().equals(bean.getId()) ){
+                    if(bean!=null && changeBean!=null && changeBean.getId().equals(bean.getId()) ){
                         bean.setReplyRating(changeBean.getReplyRating());
                         notifyDataSetChanged();
                     }else if(o instanceof UserUpdateEvent){
