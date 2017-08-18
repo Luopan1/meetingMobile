@@ -63,6 +63,11 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
     private static boolean isFirst = true;
 
     @Override
+    public String getStatisticsTag() {
+        return "登录";
+    }
+
+    @Override
     protected int initContentView() {
         return R.layout.login_activity;
     }

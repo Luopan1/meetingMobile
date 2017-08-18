@@ -41,6 +41,7 @@ import com.hezy.guide.phone.utils.LogUtils;
 import com.hezy.guide.phone.utils.RxBus;
 import com.hezy.guide.phone.utils.UUIDUtils;
 import com.tendcloud.tenddata.TCAgent;
+import com.hezy.guide.phone.utils.statistics.ZYAgent;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -116,6 +117,7 @@ public class WSService extends Service {
     @Override
     public void onCreate() {
         Log.i(TAG,"onCreate");
+        ZYAgent.onEvent(getApplicationContext(),"连接服务 创建");
         serviceIsCreate = true;
         mSocket = BaseApplication.getInstance().getSocket();
         //默认离线,用户手动切换在线
@@ -288,6 +290,7 @@ public class WSService extends Service {
             Log.i(TAG, "connectSocket SOCKET_ONLINE == true re");
             return;
         }
+        ZYAgent.onEvent(getApplicationContext(),"长连接 主动调用连接");
         LogUtils.i(TAG,WS_URL);
 //        try {
 //            LogUtils.i(TAG,WS_URL);
@@ -316,6 +319,7 @@ public class WSService extends Service {
             Log.i(TAG, "disConnectSocket mSocket==null return");
             return;
         }
+        ZYAgent.onEvent(getApplicationContext(),"长连接 主动调用断开连接");
         mSocket.disconnect();
         mSocket.off(Socket.EVENT_CONNECT, onConnect);
         mSocket.off(Socket.EVENT_DISCONNECT, onDisconnect);
@@ -335,6 +339,7 @@ public class WSService extends Service {
     private Emitter.Listener onConnect = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
+            ZYAgent.onEvent(getApplicationContext(),"连接回调");
 //            JSONObject data = (JSONObject) args;
             Log.i("wsserver", "Listener onConnect ");
 //            SOCKET_ONLINE = true;
@@ -366,6 +371,7 @@ public class WSService extends Service {
     private Emitter.Listener onDisconnect = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
+            ZYAgent.onEvent(getApplicationContext(),"断开连接回调");
             Log.i("wsserver", "Listener onDisconnect diconnected");
 //            SOCKET_ONLINE = false;
             sendUserStateEvent();
@@ -376,6 +382,7 @@ public class WSService extends Service {
     private Emitter.Listener onConnectError = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
+            ZYAgent.onEvent(getApplicationContext(),"连接错误回调");
             Log.e("wsserver", "Listener onConnectError Error ");
 //            SOCKET_ONLINE = false;
             sendUserStateEvent();
@@ -386,7 +393,7 @@ public class WSService extends Service {
     private Emitter.Listener onUserJoined = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
-
+            ZYAgent.onEvent(getApplicationContext(),"onUserJoined用户加入回调");
             JSONObject data = (JSONObject) args[0];
             String socketid = "";
             try {
@@ -419,7 +426,7 @@ public class WSService extends Service {
     private Emitter.Listener onCall = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
-
+            ZYAgent.onEvent(getApplicationContext(),"onCall呼叫回调");
             JSONObject data = (JSONObject) args[0];
             try {
                 String tvSocketId = data.getString("tvSocketId");
@@ -442,7 +449,7 @@ public class WSService extends Service {
     private Emitter.Listener onListenSalesSocketId = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
-
+            ZYAgent.onEvent(getApplicationContext(),"onListenSalesSocketId");
             JSONObject data = (JSONObject) args[0];
             try {
                 String socketId = data.getString("socketId");
@@ -465,6 +472,7 @@ public class WSService extends Service {
     private Emitter.Listener ON_SALES_ONLINE_WITH_STATUS_RETURN = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
+            ZYAgent.onEvent(getApplicationContext(),"ON_SALES_ONLINE_WITH_STATUS_RETURN");
             JSONObject data = (JSONObject) args[0];
             Log.i("wsserver", "Listener ON_SALES_ONLINE_WITH_STATUS_RETURN data ==" + data);
             try {
@@ -487,6 +495,7 @@ public class WSService extends Service {
     private Emitter.Listener ON_LISTEN_TV_LEAVE_CHANNEL = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
+            ZYAgent.onEvent(getApplicationContext(),"ON_LISTEN_TV_LEAVE_CHANNEL");
             Log.i("wsserver", "Listener ON_LISTEN_TV_LEAVE_CHANNEL ");
             runOnUiThread(new Runnable() {
                 @Override
@@ -501,6 +510,7 @@ public class WSService extends Service {
     private Emitter.Listener ON_TIMEOUT_WITHOUT_REPLY = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
+            ZYAgent.onEvent(getApplicationContext(),"ON_TIMEOUT_WITHOUT_REPLY");
             Log.i("wsserver", "Listener ON_TIMEOUT_WITHOUT_REPLY ");
             runOnUiThread(new Runnable() {
                 @Override
@@ -516,6 +526,7 @@ public class WSService extends Service {
     private Emitter.Listener ON_OLD_DISCONNECT = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
+            ZYAgent.onEvent(getApplicationContext(),"ON_OLD_DISCONNECT");
             Log.i("wsserver", "Listener ON_OLD_DISCONNECT");
             String str = (String) args[0];
             Log.i(TAG,str);
@@ -528,6 +539,7 @@ public class WSService extends Service {
     @Override
     public void onDestroy() {
         Log.i(TAG, "onDestroy");
+        ZYAgent.onEvent(getApplicationContext(),"连接服务 销毁");
         stopForeground(true);// 停止前台服务--参数：表示是否移除之前的通知
 //        if (isOnline()) {
 //            disConnectSocket();

@@ -109,6 +109,11 @@ public class UpdateDownloadActivity extends BasisActivity {
     private boolean mIsForceUpdate;
     private boolean mDownloadError;
 
+    @Override
+    public String getStatisticsTag() {
+        return "下载升级";
+    }
+
     private class UIHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {

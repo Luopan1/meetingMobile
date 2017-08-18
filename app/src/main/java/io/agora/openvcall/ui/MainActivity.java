@@ -19,12 +19,15 @@ import android.widget.EditText;
 import android.widget.Spinner;
 
 import com.hezy.guide.phone.R;
+import com.hezy.guide.phone.utils.LogUtils;
+import com.hezy.guide.phone.utils.statistics.ZYAgent;
 
 import io.agora.openvcall.model.ConstantApp;
 
 public class MainActivity extends BaseActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
+    public final String FTAG = LogUtils.lifecycle;
 
     private String channelId, callInfo;
 
@@ -37,6 +40,20 @@ public class MainActivity extends BaseActivity {
     };
 
     private AudioManager mAudioManager;
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        LogUtils.d(FTAG + TAG, "onResume");
+        ZYAgent.onPageStart(this, "视频通话");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        LogUtils.d(FTAG + TAG, "onResume");
+        ZYAgent.onPageEnd(this, "视频通话");
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

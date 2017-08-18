@@ -40,6 +40,9 @@ import io.agora.rtc.RtcEngine;
 public abstract class BaseActivity extends AppCompatActivity {
     private final static Logger log = LoggerFactory.getLogger(BaseActivity.class);
 
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

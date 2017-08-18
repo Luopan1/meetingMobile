@@ -31,6 +31,7 @@ import com.hezy.guide.phone.utils.RxBus;
 import com.hezy.guide.phone.utils.StringCheckUtil;
 import com.hezy.guide.phone.utils.ToastUtils;
 import com.hezy.guide.phone.utils.helper.TakePhotoHelper;
+import com.hezy.guide.phone.utils.statistics.ZYAgent;
 import com.jph.takephoto.app.TakePhoto;
 import com.jph.takephoto.app.TakePhotoImpl;
 import com.jph.takephoto.model.InvokeParam;
@@ -72,6 +73,11 @@ public class UserinfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
     private TakePhoto takePhoto;
     private String imagePath;
     private CountDownTimer countDownTimer;
+
+    @Override
+    public String getStatisticsTag() {
+        return "编辑资料";
+    }
 
     public static void actionStart(Context context) {
         Intent intent = new Intent(context, UserinfoActivity.class);
@@ -375,6 +381,7 @@ public class UserinfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
                 finish();
                 break;
             case R.id.mTvRight:
+                ZYAgent.onEvent(mContext,"用户信息,保存");
                 save();
                 RxBus.sendMessage(new UserUpdateEvent());
                 break;

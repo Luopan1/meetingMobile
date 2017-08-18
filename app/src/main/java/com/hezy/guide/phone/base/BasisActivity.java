@@ -13,17 +13,18 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-import com.hezy.guide.phone.net.ApiClient;
 import com.hezy.guide.phone.BaseApplication;
 import com.hezy.guide.phone.R;
-import com.hezy.guide.phone.utils.NetUtils;
+import com.hezy.guide.phone.net.ApiClient;
 import com.hezy.guide.phone.net.OkHttpUtil;
-import com.hezy.guide.phone.utils.ToastUtils;
 import com.hezy.guide.phone.utils.LogUtils;
+import com.hezy.guide.phone.utils.NetUtils;
+import com.hezy.guide.phone.utils.ToastUtils;
+import com.hezy.guide.phone.utils.statistics.ZYAgent;
 
 import java.util.Calendar;
 
-public class BasisActivity extends FragmentActivity implements View.OnClickListener{
+public abstract class BasisActivity extends FragmentActivity implements View.OnClickListener {
 
     public final String TAG = getClass().getSimpleName();
 
@@ -38,6 +39,15 @@ public class BasisActivity extends FragmentActivity implements View.OnClickListe
 
     protected ProgressDialog progressDialog;
 
+    /**
+     * 获得中文统计名
+     *
+     * @return
+     */
+    public abstract String getStatisticsTag() ;
+
+
+
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
@@ -49,13 +59,13 @@ public class BasisActivity extends FragmentActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         LogUtils.d(FTAG + TAG, "onCreate");
         mContext = this;
-        mMyApp = (BaseApplication)this.getApplicationContext();
+        mMyApp = (BaseApplication) this.getApplicationContext();
 //        userId = Preferences.getUserId();
 //        token = Preferences.getToken();
 
         client = ApiClient.getInstance();
 
-        registerReceiver(mHomeKeyEventReceiver, new IntentFilter(  Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
+        registerReceiver(mHomeKeyEventReceiver, new IntentFilter(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
     }
 
     @Override
@@ -74,7 +84,7 @@ public class BasisActivity extends FragmentActivity implements View.OnClickListe
     protected void onResume() {
         super.onResume();
         LogUtils.d(FTAG + TAG, "onResume");
-//        TCAgent.onPageStart(this, TAG);
+        ZYAgent.onPageStart(this, getStatisticsTag());
         mMyApp.setCurrentActivity(this);
     }
 
@@ -82,7 +92,7 @@ public class BasisActivity extends FragmentActivity implements View.OnClickListe
     protected void onPause() {
         super.onPause();
         LogUtils.d(FTAG + TAG, "onPause");
-//        TCAgent.onPageEnd(this, TAG);
+        ZYAgent.onPageEnd(this, getStatisticsTag());
     }
 
 
@@ -102,7 +112,7 @@ public class BasisActivity extends FragmentActivity implements View.OnClickListe
         super.onDestroy();
     }
 
-    private void clearReferences(){
+    private void clearReferences() {
         Activity currActivity = mMyApp.getCurrentActivity();
         if (this.equals(currActivity))
             mMyApp.setCurrentActivity(null);
@@ -156,22 +166,22 @@ public class BasisActivity extends FragmentActivity implements View.OnClickListe
                 String reason = intent.getStringExtra(SYSTEM_REASON);
                 if (TextUtils.equals(reason, SYSTEM_HOME_KEY)) {
                     //表示按了home键,程序到了后台
-                    Log.i(TAG,"mHomeKeyEventReceiver SYSTEM_HOME_KEY");
+                    Log.i(TAG, "mHomeKeyEventReceiver SYSTEM_HOME_KEY");
                     onHomeKey();
-                }else if(TextUtils.equals(reason, SYSTEM_HOME_KEY_LONG)){
+                } else if (TextUtils.equals(reason, SYSTEM_HOME_KEY_LONG)) {
                     //表示长按home键,显示最近使用的程序列表
-                    Log.i(TAG,"mHomeKeyEventReceiver SYSTEM_HOME_KEY_LONG");
+                    Log.i(TAG, "mHomeKeyEventReceiver SYSTEM_HOME_KEY_LONG");
                     onHomeKeyLong();
                 }
             }
         }
     };
 
-    protected void onHomeKey(){
+    protected void onHomeKey() {
 
     }
 
-    protected void onHomeKeyLong(){
+    protected void onHomeKeyLong() {
 
     }
 
@@ -192,7 +202,7 @@ public class BasisActivity extends FragmentActivity implements View.OnClickListe
 
             normalOnClick(v);
             if (!NetUtils.isNetworkConnected(this)) {//not network
-                Toast.makeText(this,getResources().getString(R.string.network_err_toast), Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getResources().getString(R.string.network_err_toast), Toast.LENGTH_SHORT).show();
             } else {//have network
                 checkNetWorkOnClick(v);
             }

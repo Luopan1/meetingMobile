@@ -36,6 +36,7 @@ import com.hezy.guide.phone.utils.LogUtils;
 import com.hezy.guide.phone.utils.Login.LoginHelper;
 import com.hezy.guide.phone.utils.RxBus;
 import com.hezy.guide.phone.utils.UUIDUtils;
+import com.hezy.guide.phone.utils.statistics.ZYAgent;
 import com.hezy.guide.phone.wxapi.WXEntryActivity;
 
 import org.json.JSONException;
@@ -60,6 +61,11 @@ public class HomeActivity extends BaseDataBindingActivity<HomeActivityBinding> {
     private int mIntentType;
     private boolean isNewActivity;
     private Dialog dialog;
+
+    @Override
+    public String getStatisticsTag() {
+        return "主页";
+    }
 
     public static void actionStart(Context context) {
         Intent intent = new Intent(context, HomeActivity.class);
@@ -245,11 +251,15 @@ public class HomeActivity extends BaseDataBindingActivity<HomeActivityBinding> {
                                 new ActionSheetDialog.OnSheetItemClickListener() {//
                                     @Override
                                     public void onClick(int which) {
+                                        ZYAgent.onEvent(mContext,"在线按钮");
 
                                         if (!WSService.isOnline()) {
                                             //当前状态离线,可切换在线
+                                            ZYAgent.onEvent(mContext,"在线按钮,当前离线,切换到在线");
                                             Log.i(TAG, "当前状态离线,可切换在线");
                                             RxBus.sendMessage(new SetUserStateEvent(true));
+                                        }else{
+                                            ZYAgent.onEvent(mContext,"在线按钮,当前在线,,无效操作");
                                         }
 
 
@@ -259,12 +269,16 @@ public class HomeActivity extends BaseDataBindingActivity<HomeActivityBinding> {
                                 new ActionSheetDialog.OnSheetItemClickListener() {//
                                     @Override
                                     public void onClick(int which) {
+                                        ZYAgent.onEvent(mContext,"离线按钮");
                                         if (WSService.isOnline()) {
                                             //当前状态在线,可切换离线
                                             Log.i(TAG, "当前状态在线,可切换离线");
+                                            ZYAgent.onEvent(mContext,"离线按钮,当前在线,切换到离线");
                                             RxBus.sendMessage(new SetUserStateEvent(false));
 //                                            WSService.SOCKET_ONLINE =false;
 //                                            setState(false);
+                                        }else{
+                                            ZYAgent.onEvent(mContext,"离线按钮,当前离线,无效操作");
                                         }
                                     }
                                 }).show();
@@ -399,6 +413,8 @@ public class HomeActivity extends BaseDataBindingActivity<HomeActivityBinding> {
 
     private void quit() {
 //        HeartService.stopService(this);
+        ZYAgent.onEvent(getApplicationContext(),"返回退出应用");
+        ZYAgent.onEvent(getApplicationContext(),"返回退出应用 连接服务 请求停止");
         WSService.stopService(this);
         finish();
         System.exit(0);

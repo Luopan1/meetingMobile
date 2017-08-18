@@ -20,6 +20,7 @@ import com.hezy.guide.phone.utils.RxBus;
 import com.hezy.guide.phone.utils.StringCheckUtil;
 import com.hezy.guide.phone.utils.TimeUtil;
 import com.hezy.guide.phone.utils.helper.ImageHelper;
+import com.hezy.guide.phone.utils.statistics.ZYAgent;
 
 /**
  * Created by wufan on 2017/8/16.
@@ -29,6 +30,11 @@ public class ReplyReviewActivity extends BaseDataBindingActivity<ReplyReviewActi
 
     private final static String PARAM_BEAN = "param_bean";
     private RecordData.PageDataEntity bean;
+
+    @Override
+    public String getStatisticsTag() {
+        return "回复评论";
+    }
 
     public static void actionStart(Context context, RecordData.PageDataEntity bean) {
         Intent intent = new Intent(context, ReplyReviewActivity.class);
@@ -110,6 +116,7 @@ public class ReplyReviewActivity extends BaseDataBindingActivity<ReplyReviewActi
                 finish();
                 break;
             case R.id.mTvRight:
+                ZYAgent.onEvent(mContext,"评论回复");
                 if(mBinding.mEtReplyContent.getText().toString().trim().length() == 0){
                     showToast("请先输入回复");
                     return;

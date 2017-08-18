@@ -29,6 +29,11 @@ public class GuideLogFragment extends BaseDataBindingFragment<GuideLogFragmentBi
     private int mTotalPage = -1;
     private int mPageNo = -1;
 
+    @Override
+    public String getStatisticsTag() {
+        return "记录";
+    }
+
     public static GuideLogFragment newInstance() {
         GuideLogFragment fragment = new GuideLogFragment();
         return fragment;

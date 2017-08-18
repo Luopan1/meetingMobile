@@ -3,7 +3,6 @@ package com.hezy.guide.phone.ui;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
-import android.media.MediaDrm;
 import android.media.MediaPlayer;
 import android.media.RingtoneManager;
 import android.os.Bundle;
@@ -26,6 +25,7 @@ import com.hezy.guide.phone.net.ApiClient;
 import com.hezy.guide.phone.net.OkHttpCallback;
 import com.hezy.guide.phone.utils.RxBus;
 import com.hezy.guide.phone.utils.ToastUtils;
+import com.hezy.guide.phone.utils.statistics.ZYAgent;
 
 import io.agora.openvcall.ui.MainActivity;
 import rx.Subscription;
@@ -43,6 +43,11 @@ public class OnCallActivity extends BaseDataBindingActivity<OnCallActivityBindin
     private String callInfo;
 
     private MediaPlayer mp;
+
+    @Override
+    public String getStatisticsTag() {
+        return "被呼叫";
+    }
 
     public static void actionStart(Context context, String channelId, String tvSocketId, String callInfo) {
         Intent intent = new Intent(context, OnCallActivity.class);
@@ -137,6 +142,7 @@ public class OnCallActivity extends BaseDataBindingActivity<OnCallActivityBindin
     public void normalOnClick(View v) {
         switch (v.getId()) {
             case R.id.mIvAccept:
+                ZYAgent.onEvent(mContext,"接听按钮");
                 releaseMP();
                 ApiClient.getInstance().startOrStopOrRejectCallExpostor(channelId, "1", new OkHttpCallback<BaseErrorBean>() {
                     @Override
@@ -157,6 +163,7 @@ public class OnCallActivity extends BaseDataBindingActivity<OnCallActivityBindin
                 });
                 break;
             case R.id.mIvReject:
+                ZYAgent.onEvent(mContext,"拒绝按钮");
                 releaseMP();
                 ApiClient.getInstance().startOrStopOrRejectCallExpostor(channelId, "2", new OkHttpCallback<BaseErrorBean>() {
                     @Override
