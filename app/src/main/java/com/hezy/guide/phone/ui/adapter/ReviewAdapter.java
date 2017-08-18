@@ -155,6 +155,13 @@ public class ReviewAdapter extends BaseRecyclerAdapter<RecordData.PageDataEntity
             String time = bean.getOrderTime();
             ViewHolder holder = (ViewHolder) viewHolder;
 
+            if(position == getItemCount() - 1){
+                //最后一条隐藏分界线
+                holder.mViewDivider.setVisibility(View.GONE);
+            }else{
+                holder.mViewDivider.setVisibility(View.VISIBLE);
+            }
+
 
             ImageHelper.loadImageDpId(bean.getPhoto(), R.dimen.my_px_100, R.dimen.my_px_100, holder.mIvHead);
             holder.mTvName.setText(bean.getAddress() + " " + bean.getName());
@@ -252,6 +259,8 @@ public class ReviewAdapter extends BaseRecyclerAdapter<RecordData.PageDataEntity
         ImageView mIvReplyArray;
         @BindView(R.id.mTvReply)
         TextView mTvReply;
+        @BindView(R.id.mViewDivider)
+        View mViewDivider;
 
         ViewHolder(View view, View.OnClickListener listener) {
             super(view);

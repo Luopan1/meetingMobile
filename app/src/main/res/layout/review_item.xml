@@ -183,6 +183,7 @@
         android:textSize="15sp" />
 
     <View
+        android:id="@+id/mViewDivider"
         android:layout_width="match_parent"
         android:layout_height="@dimen/my_px_40"
         android:layout_marginTop="@dimen/my_px_30"
