@@ -23,6 +23,7 @@ import com.hezy.guide.phone.utils.RxBus;
 import com.hezy.guide.phone.utils.StringUtils;
 import com.hezy.guide.phone.utils.TimeUtil;
 import com.hezy.guide.phone.utils.helper.ImageHelper;
+import com.hezy.guide.phone.utils.statistics.ZYAgent;
 
 import java.util.ArrayList;
 
@@ -318,6 +319,7 @@ public class ReviewAdapter extends BaseRecyclerAdapter<RecordData.PageDataEntity
                 bean = (RecordData.PageDataEntity) v.getTag(R.id.tag_bean);
 //                ToastUtils.showToast("点击");
                 ReplyReviewActivity.actionStart(mContext, bean);
+                ZYAgent.onEvent(mContext,"用户评论,点击回复");
                 break;
             default:
                 break;
