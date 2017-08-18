@@ -2,7 +2,11 @@ package com.hezy.guide.phone.wxapi;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
+import android.provider.Settings;
+import android.telephony.TelephonyManager;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -21,10 +25,13 @@ import com.hezy.guide.phone.net.OkHttpBaseCallback;
 import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.ui.HomeActivity;
 import com.hezy.guide.phone.ui.UserinfoActivity;
+import com.hezy.guide.phone.utils.DeviceUtil;
+import com.hezy.guide.phone.utils.Installation;
 import com.hezy.guide.phone.utils.LogUtils;
 import com.hezy.guide.phone.utils.Login.LoginHelper;
 import com.hezy.guide.phone.utils.RxBus;
 import com.hezy.guide.phone.utils.ToastUtils;
+import com.hezy.guide.phone.utils.UUIDUtils;
 import com.hezy.guide.phone.utils.statistics.ZYAgent;
 import com.tencent.mm.opensdk.modelbase.BaseReq;
 import com.tencent.mm.opensdk.modelbase.BaseResp;
@@ -32,6 +39,9 @@ import com.tencent.mm.opensdk.modelmsg.SendAuth;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.IWXAPIEventHandler;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import rx.Subscription;
 import rx.functions.Action1;
@@ -50,7 +60,7 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
      */
     private boolean isWxLoging;
 
-    private static boolean isFirst=true;
+    private static boolean isFirst = true;
 
     @Override
     public String getStatisticsTag() {
@@ -63,23 +73,23 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
     }
 
     public static void actionStart(Context context) {
-         Intent intent = new Intent(context, WXEntryActivity.class);
-         context.startActivity(intent);
-     }
+        Intent intent = new Intent(context, WXEntryActivity.class);
+        context.startActivity(intent);
+    }
 
     @Override
     protected void initView() {
 
-        if(BuildConfig.IS_LOGIN && isFirst){
-            LogUtils.i(TAG,"直接登录 BuildConfig.LOGIN_TOKEN "+BuildConfig.LOGIN_TOKEN);
+        if (BuildConfig.IS_LOGIN && isFirst) {
+            LogUtils.i(TAG, "直接登录 BuildConfig.LOGIN_TOKEN " + BuildConfig.LOGIN_TOKEN);
             Preferences.setToken(BuildConfig.LOGIN_TOKEN);
         }
         isFirst = false;
 
-        if (Preferences.isLogin()){
+        if (Preferences.isLogin()) {
             if (Preferences.isUserinfoEmpty()) {
 //                showToast("请先填写姓名,电话,地址,照片");
-                UserinfoActivity.actionStart(this,true);
+                UserinfoActivity.actionStart(this, true);
                 return;
             }
             HomeActivity.actionStart(mContext);
@@ -99,7 +109,54 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
                 }
             }
         });
+
+        registerDevice();
     }
+
+    /**
+     * 上传设备信息
+     */
+    private void registerDevice() {
+        String uuid = UUIDUtils.getUUID(this);
+        DisplayMetrics metric = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metric);
+        int width = metric.widthPixels;
+        int height = metric.heightPixels;
+        float density = metric.density;
+        int densityDpi = metric.densityDpi;
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("uuid", uuid);
+            jsonObject.put("androidId", TextUtils.isEmpty(Settings.System.getString(getContentResolver(), Settings.Secure.ANDROID_ID)) ? "" : Settings.System.getString(getContentResolver(), Settings.Secure.ANDROID_ID));
+            jsonObject.put("manufacturer", Build.MANUFACTURER);
+            jsonObject.put("name", Build.BRAND);
+            jsonObject.put("model", Build.MODEL);
+            jsonObject.put("sdkVersion", Build.VERSION.SDK_INT);
+            jsonObject.put("screenDensity", "width:" + width + ",height:" + height + ",density:" + density + ",densityDpi:" + densityDpi);
+            jsonObject.put("display", Build.DISPLAY);
+            jsonObject.put("finger", Build.FINGERPRINT);
+            jsonObject.put("appVersion", BuildConfig.FLAVOR + "_" + BuildConfig.VERSION_NAME + "_" + BuildConfig.VERSION_CODE);
+            jsonObject.put("cpuSerial", Installation.getCPUSerial());
+            TelephonyManager tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+            jsonObject.put("androidDeviceId", tm != null ? tm.getDeviceId() : "");
+            jsonObject.put("buildSerial", Build.SERIAL);
+            jsonObject.put("source", 2);
+            jsonObject.put("internalSpace", DeviceUtil.getDeviceTotalMemory(this));
+            jsonObject.put("internalFreeSpace", DeviceUtil.getDeviceAvailMemory(this));
+            jsonObject.put("sdSpace", DeviceUtil.getDeviceTotalInternalStorage());
+            jsonObject.put("sdFreeSpace", DeviceUtil.getDeviceAvailInternalStorage());
+            ApiClient.getInstance().deviceRegister(this, jsonObject.toString(), registerDeviceCb);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private OkHttpBaseCallback registerDeviceCb = new OkHttpBaseCallback<BaseBean>() {
+        @Override
+        public void onSuccess(BaseBean entity) {
+            Log.d(TAG, "registerDevice 成功===");
+        }
+    };
 
     @Override
     protected void initListener() {
@@ -132,8 +189,8 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
             ToastUtils.showToast("您还未安装微信客户端");
             return;
         }
-        if(isWxLoging){
-            Log.i(TAG,"isWxLoging == true return");
+        if (isWxLoging) {
+            Log.i(TAG, "isWxLoging == true return");
             return;
         }
         final SendAuth.Req req = new SendAuth.Req();
@@ -141,7 +198,7 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
         req.state = "GuideMobile_wx_login";
         mWxApi.sendReq(req);
         isWxLoging = true;
-        Log.i(TAG,"wxLogin() isWxLoging = true ");
+        Log.i(TAG, "wxLogin() isWxLoging = true ");
     }
 
     @Override
@@ -189,22 +246,22 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
                 break;
             case BaseResp.ErrCode.ERR_AUTH_DENIED:
                 result = "用户拒绝授权";
-                isWxLoging=false;
-                Log.i(TAG,"用户拒绝授权 isWxLoging = false ");
+                isWxLoging = false;
+                Log.i(TAG, "用户拒绝授权 isWxLoging = false ");
                 break;
             case BaseResp.ErrCode.ERR_USER_CANCEL:
                 result = "用户取消";
-                isWxLoging=false;
-                Log.i(TAG,"用户取消 isWxLoging = false ");
+                isWxLoging = false;
+                Log.i(TAG, "用户取消 isWxLoging = false ");
                 break;
             default:
                 result = "失败";
-                isWxLoging=false;
-                Log.i(TAG,"失败 isWxLoging = false ");
+                isWxLoging = false;
+                Log.i(TAG, "失败 isWxLoging = false ");
                 break;
         }
 
-        if (!TextUtils.isEmpty(result) && baseResp.errCode != BaseResp.ErrCode.ERR_OK ) {
+        if (!TextUtils.isEmpty(result) && baseResp.errCode != BaseResp.ErrCode.ERR_OK) {
             Toast.makeText(this, baseResp.errCode + result, Toast.LENGTH_SHORT).show();
         }
     }
@@ -235,9 +292,9 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
                     LoginHelper.savaUser(user);
                     if (Preferences.isUserinfoEmpty()) {
 //                        showToast("请先填写姓名,电话,地址,照片");
-                        UserinfoActivity.actionStart(mContext,true);
+                        UserinfoActivity.actionStart(mContext, true);
                         return;
-                    }else{
+                    } else {
                         HomeActivity.actionStart(mContext);
                     }
                     RxBus.sendMessage(new FinishWX());
@@ -249,8 +306,8 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
 
             @Override
             public void onFinish() {
-                isWxLoging=false;
-                Log.i(WXEntryActivity.TAG,"requestWechatLogin onFinish()  isWxLoging = false ");
+                isWxLoging = false;
+                Log.i(WXEntryActivity.TAG, "requestWechatLogin onFinish()  isWxLoging = false ");
             }
         });
     }
@@ -259,10 +316,10 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
 
     @Override
     public void onDestroy() {
-        if(subscription!=null){
+        if (subscription != null) {
             subscription.unsubscribe();
         }
-        if(mWxApi!=null){
+        if (mWxApi != null) {
             mWxApi.detach();
         }
         super.onDestroy();

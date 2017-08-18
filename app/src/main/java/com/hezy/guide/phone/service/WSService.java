@@ -15,10 +15,13 @@ import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 
+import com.alibaba.fastjson.JSON;
 import com.hezy.guide.phone.BaseApplication;
+import com.hezy.guide.phone.BaseException;
 import com.hezy.guide.phone.BuildConfig;
 import com.hezy.guide.phone.R;
 import com.hezy.guide.phone.entities.base.BaseBean;
+import com.hezy.guide.phone.entities.base.BaseErrorBean;
 import com.hezy.guide.phone.event.CallEvent;
 import com.hezy.guide.phone.event.HangDownEvent;
 import com.hezy.guide.phone.event.HangOnEvent;
@@ -29,6 +32,7 @@ import com.hezy.guide.phone.event.TvTimeoutHangUp;
 import com.hezy.guide.phone.event.UserStateEvent;
 import com.hezy.guide.phone.net.ApiClient;
 import com.hezy.guide.phone.net.OkHttpBaseCallback;
+import com.hezy.guide.phone.net.OkHttpCallback;
 import com.hezy.guide.phone.net.OkHttpUtil;
 import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.ui.OnCallActivity;
@@ -36,10 +40,13 @@ import com.hezy.guide.phone.utils.Installation;
 import com.hezy.guide.phone.utils.LogUtils;
 import com.hezy.guide.phone.utils.RxBus;
 import com.hezy.guide.phone.utils.UUIDUtils;
+import com.tendcloud.tenddata.TCAgent;
 import com.hezy.guide.phone.utils.statistics.ZYAgent;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.HashMap;
 
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
@@ -247,6 +254,25 @@ public class WSService extends Service {
 
     }
 
+    private void updateSocketId(String socketid) {
+        String uuid = UUIDUtils.getUUID(getApplication());
+        HashMap<String, Object> params = new HashMap<String, Object>();
+        params.put("socketId", socketid);
+        ApiClient.getInstance().updateDeviceInfo(this, uuid, new OkHttpCallback<BaseErrorBean>() {
+            @Override
+            public void onSuccess(BaseErrorBean bucket) {
+                Log.d("update socket id", bucket.toString());
+                TCAgent.onEvent(BaseApplication.getInstance(),"成功更新socket id");
+            }
+
+            @Override
+            public void onFailure(int errorCode, BaseException exception) {
+                super.onFailure(errorCode, exception);
+                TCAgent.onEvent(BaseApplication.getInstance(),"更新socket id失败");
+            }
+        }, JSON.toJSONString(params));
+    }
+
     private void runOnUiThread(Runnable task) {
         mHandler.post(task);
     }
@@ -373,7 +399,7 @@ public class WSService extends Service {
             try {
                 socketid = data.getString("socket_id");
                 Log.i("wsserver", "Listener onUserJoined  socketid==" + socketid);
-                registerDevice(socketid);
+                updateSocketId(socketid);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -433,7 +459,7 @@ public class WSService extends Service {
                 jsonObject.put("salesId", Preferences.getUserId());
                 mSocket.emit("RE_CHECK_SOCKET_ID", jsonObject);
                 Log.i("wsserver", "emit(RE_CHECK_SOCKET_ID, jsonObject)");
-                registerDevice(socketId);
+                updateSocketId(socketId);
             } catch (JSONException e) {
                 e.printStackTrace();
                 Log.e(TAG, "onListenSalesSocketId e " + e);

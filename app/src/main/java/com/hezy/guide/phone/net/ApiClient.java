@@ -4,6 +4,7 @@ import android.os.Build;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.google.gson.Gson;
 import com.hezy.guide.phone.BaseApplication;
 import com.hezy.guide.phone.BuildConfig;
 import com.hezy.guide.phone.Constant;
@@ -40,11 +41,7 @@ public class ApiClient {
     private static final String API_DOMAIN_NAME = BuildConfig.API_DOMAIN_NAME;
     private static final String API_DOMAIN_NAME_YOYOTU = BuildConfig.API_DOMAIN_NAME_YOYOTU;
 
-    private static final String URL_API_USER = "/liveapp/user";
-
     private OkHttpUtil okHttpUtil;
-
-    public static final String HEART_URL="/state";
 
     private static class SingletonHolder {
         private static ApiClient instance = new ApiClient();
@@ -102,6 +99,18 @@ public class ApiClient {
      */
     public void startOrStopOrRejectCallExpostor(String recordId, String state, OkHttpCallback responseCallback){
         okHttpUtil.put(API_DOMAIN_NAME + "/osg/app/call/record/" + recordId + "?state=" + state, getCommonHead(), null, responseCallback);
+    }
+
+    /**
+     * 更新设备信息，目前只有socketid的更新
+     *
+     * @param tag
+     * @param deviceId
+     * @param responseCallback
+     * @param jsonStr
+     */
+    public void updateDeviceInfo(Object tag, String deviceId, OkHttpCallback responseCallback, String jsonStr) {
+        okHttpUtil.putJson(API_DOMAIN_NAME + "/osg/app/device/" + deviceId, getCommonHead(), jsonStr, responseCallback, tag);
     }
 
     /**
