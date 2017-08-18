@@ -200,8 +200,8 @@ public class OkHttpUtil {
         request(request, callback);
     }
 
-    public void putJson(String url, Map<String, String> headers, String jsonStr, OkHttpCallback callback,Object tag){
-        Request request = buildRequest(url, headers, null,jsonStr, HttpMethodType.PUT_JSON,tag);
+    public void putJson(String url, Map<String, String> headers, String jsonStr, OkHttpCallback callback, Object tag){
+        Request request = buildRequest(url, headers, null, jsonStr, HttpMethodType.PUT_JSON,tag);
         request(request, callback);
     }
 

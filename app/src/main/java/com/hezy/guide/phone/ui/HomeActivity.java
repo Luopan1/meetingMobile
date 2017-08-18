@@ -66,6 +66,11 @@ public class HomeActivity extends BaseDataBindingActivity<HomeActivityBinding> {
         context.startActivity(intent);
     }
 
+    public static void actionStart(Context context, boolean isLogin) {
+        Intent intent = new Intent(context, HomeActivity.class);
+        context.startActivity(intent);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
