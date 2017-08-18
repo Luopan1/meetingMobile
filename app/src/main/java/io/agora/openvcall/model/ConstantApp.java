@@ -20,7 +20,7 @@ public class ConstantApp {
             Constants.VIDEO_PROFILE_480P,
             Constants.VIDEO_PROFILE_720P};
 
-    public static final int DEFAULT_PROFILE_IDX = 4; // default use 240P
+    public static final int DEFAULT_PROFILE_IDX = 5; // default use 240P
 
     public static class PrefManager {
         public static final String PREF_PROPERTY_PROFILE_IDX = "pref_profile_index";
