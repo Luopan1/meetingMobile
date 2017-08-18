@@ -26,7 +26,7 @@ import java.util.Calendar;
  * Created by wufan on 2016/12/23.
  */
 
-public class BaseFragment extends Fragment implements View.OnClickListener {
+public abstract class BaseFragment extends Fragment implements View.OnClickListener {
 
     public String TAG = getClass().getSimpleName();
     public final String FTAG= LogUtils.lifecycle;
@@ -47,6 +47,14 @@ public class BaseFragment extends Fragment implements View.OnClickListener {
     public String getTAG(){
         return TAG;
     }
+
+    /**
+     * 获得中文统计名
+     *
+     * @return
+     */
+    public abstract String getStatisticsTag() ;
+
 
     @Override
     public void onAttach(Context context) {

@@ -8,7 +8,6 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.media.AudioManager;
-import android.media.RingtoneManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -34,9 +33,10 @@ import com.hezy.guide.phone.net.ApiClient;
 import com.hezy.guide.phone.net.OkHttpCallback;
 import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.receiver.PhoneReceiver;
-import com.hezy.guide.phone.ui.OnCallActivity;
+import com.hezy.guide.phone.utils.LogUtils;
 import com.hezy.guide.phone.utils.RxBus;
 import com.hezy.guide.phone.utils.UIDUtil;
+import com.hezy.guide.phone.utils.statistics.ZYAgent;
 import com.tendcloud.tenddata.TCAgent;
 
 import org.slf4j.Logger;
@@ -58,6 +58,7 @@ import rx.functions.Action1;
 public class ChatActivity extends BaseActivity implements AGEventHandler {
 
     private final String TAG = ChatActivity.class.getSimpleName();
+    public final String FTAG = LogUtils.lifecycle;
 
     private final static Logger log = LoggerFactory.getLogger(ChatActivity.class);
 
@@ -95,6 +96,20 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
         mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         mAudioManager.requestAudioFocus(onAudioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        LogUtils.d(FTAG + TAG, "onResume");
+        ZYAgent.onPageStart(this, "视频通话");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        LogUtils.d(FTAG + TAG, "onResume");
+        ZYAgent.onPageEnd(this, "视频通话");
     }
 
     private AudioManager.OnAudioFocusChangeListener onAudioFocusChangeListener = new AudioManager.OnAudioFocusChangeListener() {
@@ -657,7 +672,8 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
 
         mAudioManager.abandonAudioFocus(onAudioFocusChangeListener);
 
-        TCAgent.onPageEnd(this, "退出手机端导购直播界面");
+        //文档中要写在onResume,onStart
+//        TCAgent.onPageEnd(this, "退出手机端导购直播界面");
 
     }
 }

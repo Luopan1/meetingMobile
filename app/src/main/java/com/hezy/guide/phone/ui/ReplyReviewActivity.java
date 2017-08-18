@@ -30,6 +30,11 @@ public class ReplyReviewActivity extends BaseDataBindingActivity<ReplyReviewActi
     private final static String PARAM_BEAN = "param_bean";
     private RecordData.PageDataEntity bean;
 
+    @Override
+    public String getStatisticsTag() {
+        return "回复评论";
+    }
+
     public static void actionStart(Context context, RecordData.PageDataEntity bean) {
         Intent intent = new Intent(context, ReplyReviewActivity.class);
         intent.putExtra(PARAM_BEAN, bean);

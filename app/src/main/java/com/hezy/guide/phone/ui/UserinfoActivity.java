@@ -73,6 +73,11 @@ public class UserinfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
     private String imagePath;
     private CountDownTimer countDownTimer;
 
+    @Override
+    public String getStatisticsTag() {
+        return "编辑资料";
+    }
+
     public static void actionStart(Context context) {
         Intent intent = new Intent(context, UserinfoActivity.class);
         context.startActivity(intent);

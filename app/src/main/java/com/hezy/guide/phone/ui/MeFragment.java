@@ -30,6 +30,11 @@ public class MeFragment extends BaseDataBindingFragment<MeFragmentBinding> {
     private int mTotalPage = -1;
     private int mPageNo = -1;
 
+    @Override
+    public String getStatisticsTag() {
+        return "我的";
+    }
+
     public static MeFragment newInstance() {
         MeFragment fragment = new MeFragment();
         return fragment;

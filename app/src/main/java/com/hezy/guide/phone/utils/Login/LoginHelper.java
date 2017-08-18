@@ -11,6 +11,7 @@ import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.service.WSService;
 import com.hezy.guide.phone.ui.HomeActivity;
 import com.hezy.guide.phone.utils.LogUtils;
+import com.hezy.guide.phone.utils.statistics.ZYAgent;
 
 
 /**
@@ -86,6 +87,8 @@ public class LoginHelper {
      * @param context
      */
     public static void logoutCustom(Context context) {
+        ZYAgent.onEvent(context,"退出登录");
+        ZYAgent.onEvent(context,"退出登录 连接服务 请求停止");
         Preferences.clear();
 //        HeartService.stopService(context);
         WSService.stopService(context);
