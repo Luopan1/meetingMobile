@@ -56,7 +56,7 @@ android {
         buildConfigField 'String', 'GIT_LOG', '"' + getGitLog() + '"'
         buildConfigField 'String', 'DATE', '"' + getDate().toString() + '"'
 
-        buildConfigField "boolean", "IS_LOGIN", "false"  //是否直接登录
+        buildConfigField "boolean", "IS_LOGIN", "true"  //是否直接登录
         buildConfigField 'String', 'LOGIN_TOKEN', '"9ece1ff2f67c42849b9df2991f5973da"' //直接登录的token,不要用这个,修改为自己的token
 
 
