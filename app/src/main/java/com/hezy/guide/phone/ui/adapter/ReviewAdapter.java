@@ -18,7 +18,7 @@ import com.hezy.guide.phone.event.UserUpdateEvent;
 import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.ui.ReplyReviewActivity;
 import com.hezy.guide.phone.ui.UserinfoActivity;
-import com.hezy.guide.phone.utils.LogUtils;
+import com.hezy.guide.phone.utils.Logger;
 import com.hezy.guide.phone.utils.RxBus;
 import com.hezy.guide.phone.utils.StringUtils;
 import com.hezy.guide.phone.utils.TimeUtil;
@@ -112,7 +112,7 @@ public class ReviewAdapter extends BaseRecyclerAdapter<RecordData.PageDataEntity
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
-        LogUtils.i(TAG, "position " + position);
+        Logger.i(TAG, "position " + position);
 
         if (getItemViewType(position) == ITEM_TYPE.ME.ordinal()) {
             MeViewHolder meHolder = (MeViewHolder) viewHolder;

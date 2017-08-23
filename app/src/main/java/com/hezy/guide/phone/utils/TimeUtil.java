@@ -61,7 +61,7 @@ public class TimeUtil {
 
     public static boolean isEnd(String time1) {
         {
-            LogUtils.d(TAG,"time1 "+time1);
+            Logger.d(TAG,"time1 "+time1);
             //如果想比较日期则写成"yyyy-MM-dd"就可以了
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:SS" ,Locale.getDefault());
             //将字符串形式的时间转化为Date类型的时间
@@ -73,8 +73,8 @@ public class TimeUtil {
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-            LogUtils.d(TAG,"timestamp1 "+timestamp1);
-            LogUtils.d(TAG,"timestamp2 "+timestamp2);
+            Logger.d(TAG,"timestamp1 "+timestamp1);
+            Logger.d(TAG,"timestamp2 "+timestamp2);
 
             if (timestamp1  < timestamp2)
                 return true;
@@ -86,7 +86,7 @@ public class TimeUtil {
 
     public static boolean isEnd(String time1,String time2) {
         {
-            LogUtils.d(TAG,"time1 "+time1);
+            Logger.d(TAG,"time1 "+time1);
             //如果想比较日期则写成"yyyy-MM-dd"就可以了
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:SS" ,Locale.getDefault());
             //将字符串形式的时间转化为Date类型的时间
@@ -99,8 +99,8 @@ public class TimeUtil {
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-            LogUtils.d(TAG,"timestamp1 "+timestamp1);
-            LogUtils.d(TAG,"timestamp2 "+timestamp2);
+            Logger.d(TAG,"timestamp1 "+timestamp1);
+            Logger.d(TAG,"timestamp2 "+timestamp2);
 
             if (timestamp1  < timestamp2)
                 return true;
@@ -117,7 +117,7 @@ public class TimeUtil {
      * @return
      */
     public static String getDayTime(String time) {
-        LogUtils.d(TAG,"time "+time);
+        Logger.d(TAG,"time "+time);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd" ,Locale.getDefault());
         try {
             Date date=sdf.parse(time);
@@ -125,7 +125,7 @@ public class TimeUtil {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        LogUtils.d(TAG,"time day "+time);
+        Logger.d(TAG,"time day "+time);
         return time;
     }
 

@@ -11,7 +11,7 @@ import com.hezy.guide.phone.R;
 import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.utils.DensityUtil;
 import com.hezy.guide.phone.utils.HalfType;
-import com.hezy.guide.phone.utils.LogUtils;
+import com.hezy.guide.phone.utils.Logger;
 import com.hezy.guide.phone.utils.RoundCornerTransform;
 import com.squareup.picasso.Picasso;
 
@@ -111,7 +111,7 @@ public class ImageHelper {
             url = ImageHelper.getUrlJoinAndThumAndCrop(url, w_dp, h_dp);
             int round_dp = (int) getContext().getResources().getDimension(R.dimen.my_px_20);
             int round_px = DensityUtil.dip2px(getContext(), round_dp);
-            LogUtils.i(TAG,"loadImageDpIdRound "+url);
+            Logger.i(TAG,"loadImageDpIdRound "+url);
             Picasso.with(getContext()).load(url).transform(new RoundCornerTransform(round_px, 0, HalfType.ALL)).into(imageView);
         }
     }
@@ -130,8 +130,8 @@ public class ImageHelper {
             int w_px = DensityUtil.dip2px(getContext(), w_dp);
             int h_px = DensityUtil.dip2px(getContext(), h_dp);
             url = ImageHelper.getUrlJoinAndThumAndCropAndBlur(url, w_dp, h_dp);
-            LogUtils.i(TAG,"loadImageDpIdBlur  "+w_dp+" "+h_dp+" "+w_px+" "+h_px);
-            LogUtils.i(TAG,"loadImageDpIdBlur "+url);
+            Logger.i(TAG,"loadImageDpIdBlur  "+w_dp+" "+h_dp+" "+w_px+" "+h_px);
+            Logger.i(TAG,"loadImageDpIdBlur "+url);
             Picasso.with(getContext()).load(url).into(imageView);
         }
     }

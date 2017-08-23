@@ -4,6 +4,9 @@ import android.content.Context;
 import android.os.Environment;
 import android.util.Log;
 
+import com.hezy.guide.phone.BaseApplication;
+import com.hezy.guide.phone.utils.statistics.ZYAgent;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -36,14 +39,14 @@ public class Installation {
                         //都为空的话,生成UUID.并且同时存储到SD和内部存储
                         Log.i(TAG,"都为空的话,生成UUID.并且同时存储到SD和内部存储");
                         sID = UUID.randomUUID().toString().replace("-", "");
-                        writeFile(extFile, sID);
-                        writeFile(installation, sID);
+                        writeFileE(extFile, sID);
+                        writeFileE(installation, sID);
 
                     }else if(!extFile.exists() ){
                         //外部存储空,内部存储有值,从内部读取值,并写入外部存储
                         Log.i(TAG,"外部存储空,内部存储有值,从内部读取值,并写入外部存储");
                         sID = readInstallationFile(installation);
-                        writeFile(extFile,sID);
+                        writeFileE(extFile,sID);
                     }else if(extFile.exists() && installation.exists()){
                         //都有值的情况.从内部读取值
                         Log.i(TAG,"都有值的情况.从内部读取值");
@@ -53,12 +56,12 @@ public class Installation {
                         //只有外部存储有值时,从外部读取值,并写入内部存储
                         Log.i(TAG,"只有外部存储有值时,从外部读取值,并写入内部存储");
                         sID = readInstallationFile(extFile);
-                        writeFile(installation,sID);
+                        writeFileE(installation,sID);
                     }
 
                 } catch (Exception e) {
-                    LogUtils.e(TAG,e.getMessage());
-                    throw new RuntimeException(e);
+                    Logger.e(TAG,e.getMessage());
+                    ZYAgent.onEvent(context,e.getMessage());
                 }
 
             } else {
@@ -68,8 +71,8 @@ public class Installation {
                         writeInstallationFile(installation);
                     sID = readInstallationFile(installation);
                 } catch (Exception e) {
-                    LogUtils.e(TAG,e.getMessage());
-                    throw new RuntimeException(e);
+                    Logger.e(TAG,e.getMessage());
+                    ZYAgent.onEvent(context,e.getMessage());
 
                 }
             }
@@ -77,6 +80,15 @@ public class Installation {
         }
         Log.i(TAG,"sID "+sID);
         return sID;
+    }
+
+    private static void writeFileE(File installation, String id){
+        try{
+            writeFile(installation, sID);
+        }catch (Exception e){
+            Logger.e(TAG,e.getMessage());
+            ZYAgent.onEvent(BaseApplication.getInstance(),installation.getAbsolutePath()+e.getMessage());
+        }
     }
 
     private static String readInstallationFile(File installation) throws IOException {

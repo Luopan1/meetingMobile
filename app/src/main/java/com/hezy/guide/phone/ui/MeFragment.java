@@ -15,7 +15,7 @@ import com.hezy.guide.phone.entities.base.BaseBean;
 import com.hezy.guide.phone.net.ApiClient;
 import com.hezy.guide.phone.net.OkHttpBaseCallback;
 import com.hezy.guide.phone.ui.adapter.ReviewAdapter;
-import com.hezy.guide.phone.utils.LogUtils;
+import com.hezy.guide.phone.utils.Logger;
 
 /**
  * 我的
@@ -81,10 +81,10 @@ public class MeFragment extends BaseDataBindingFragment<MeFragmentBinding> {
             public void onScrollStateChanged(RecyclerView recyclerView,
                                              int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-                LogUtils.i(TAG,"newState == RecyclerView.SCROLL_STATE_IDLE "+(newState == RecyclerView.SCROLL_STATE_IDLE));
-                LogUtils.i(TAG,"!mBinding.mSwipeRefreshLayout.isRefreshing() "+!mBinding.mSwipeRefreshLayout.isRefreshing());
-                LogUtils.i(TAG,"lastVisibleItemPosition + 1 == mAdapter.getItemCount() "+(lastVisibleItemPosition + 1 == mAdapter.getItemCount()));
-                LogUtils.i(TAG,"!(mPageNo == mTotalPage) "+!(mPageNo == mTotalPage));
+                Logger.i(TAG,"newState == RecyclerView.SCROLL_STATE_IDLE "+(newState == RecyclerView.SCROLL_STATE_IDLE));
+                Logger.i(TAG,"!mBinding.mSwipeRefreshLayout.isRefreshing() "+!mBinding.mSwipeRefreshLayout.isRefreshing());
+                Logger.i(TAG,"lastVisibleItemPosition + 1 == mAdapter.getItemCount() "+(lastVisibleItemPosition + 1 == mAdapter.getItemCount()));
+                Logger.i(TAG,"!(mPageNo == mTotalPage) "+!(mPageNo == mTotalPage));
                 if (newState == RecyclerView.SCROLL_STATE_IDLE
                         && !mBinding.mSwipeRefreshLayout.isRefreshing()
                         && lastVisibleItemPosition + 1 == mAdapter.getItemCount()
@@ -101,7 +101,7 @@ public class MeFragment extends BaseDataBindingFragment<MeFragmentBinding> {
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
                 lastVisibleItemPosition = mLayoutManager.findLastVisibleItemPosition();
-                LogUtils.i(TAG,"lastVisibleItemPosition "+lastVisibleItemPosition);
+                Logger.i(TAG,"lastVisibleItemPosition "+lastVisibleItemPosition);
             }
         });
     }
@@ -131,7 +131,7 @@ public class MeFragment extends BaseDataBindingFragment<MeFragmentBinding> {
             @Override
             public void onSuccess(BaseBean<RankInfo> entity) {
                 if (entity == null || entity.getData() == null || TextUtils.isEmpty(entity.getData().getStar())) {
-                    LogUtils.e(TAG, "获取评价信息数据为空");
+                    Logger.e(TAG, "获取评价信息数据为空");
                     return;
                 }
                 mAdapter.setRankInfo(entity.getData());

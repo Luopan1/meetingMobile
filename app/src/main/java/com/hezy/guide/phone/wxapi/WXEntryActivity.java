@@ -27,7 +27,7 @@ import com.hezy.guide.phone.ui.HomeActivity;
 import com.hezy.guide.phone.ui.UserinfoActivity;
 import com.hezy.guide.phone.utils.DeviceUtil;
 import com.hezy.guide.phone.utils.Installation;
-import com.hezy.guide.phone.utils.LogUtils;
+import com.hezy.guide.phone.utils.Logger;
 import com.hezy.guide.phone.utils.Login.LoginHelper;
 import com.hezy.guide.phone.utils.RxBus;
 import com.hezy.guide.phone.utils.ToastUtils;
@@ -81,7 +81,7 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
     protected void initView() {
 
         if (BuildConfig.IS_LOGIN && isFirst) {
-            LogUtils.i(TAG, "直接登录 BuildConfig.LOGIN_TOKEN " + BuildConfig.LOGIN_TOKEN);
+            Logger.i(TAG, "直接登录 BuildConfig.LOGIN_TOKEN " + BuildConfig.LOGIN_TOKEN);
             Preferences.setToken(BuildConfig.LOGIN_TOKEN);
         }
         isFirst = false;

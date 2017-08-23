@@ -8,7 +8,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.hezy.guide.phone.BaseApplication;
-import com.hezy.guide.phone.utils.LogUtils;
+import com.hezy.guide.phone.utils.Logger;
 
 
 public class Preferences {
@@ -539,15 +539,15 @@ public class Preferences {
     public static void initLog() {
         if (getPreferences().contains(PREFERENCE_IS_LOG)) {
             boolean isLog = getPreferences().getBoolean(PREFERENCE_IS_LOG, false);
-            LogUtils.setIsDebugLog(isLog);
-            LogUtils.setIsDebugLog(isLog);
+            Logger.setIsDebugLog(isLog);
+            Logger.setIsDebugLog(isLog);
         }
 
     }
 
     public static void setIsLog(boolean isLog) {
-        LogUtils.setIsDebugLog(isLog);
-        LogUtils.setIsDebugToast(isLog);
+        Logger.setIsDebugLog(isLog);
+        Logger.setIsDebugToast(isLog);
         SharedPreferences.Editor editor = getPreferences().edit();
         editor.putBoolean(PREFERENCE_IS_LOG, isLog);
         if (!editor.commit()) {

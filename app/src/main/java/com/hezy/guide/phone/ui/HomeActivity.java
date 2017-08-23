@@ -32,7 +32,7 @@ import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.service.WSService;
 import com.hezy.guide.phone.utils.DeviceUtil;
 import com.hezy.guide.phone.utils.Installation;
-import com.hezy.guide.phone.utils.LogUtils;
+import com.hezy.guide.phone.utils.Logger;
 import com.hezy.guide.phone.utils.Login.LoginHelper;
 import com.hezy.guide.phone.utils.RxBus;
 import com.hezy.guide.phone.utils.UUIDUtils;
@@ -103,14 +103,14 @@ public class HomeActivity extends BaseDataBindingActivity<HomeActivityBinding> {
 
     private void processExtraData(Intent intent) {
         mIntentType = intent.getIntExtra(LoginHelper.LOGIN_TYPE, 0);
-        LogUtils.d(TAG, "mIntentType " + mIntentType);
+        Logger.d(TAG, "mIntentType " + mIntentType);
         if (mIntentType == LoginHelper.LOGIN_TYPE_EXIT) {
             //退出应用
-            LogUtils.d(TAG, "退出应用");
+            Logger.d(TAG, "退出应用");
             quit();
         } else if (mIntentType == LoginHelper.LOGIN_TYPE_LOGOUT) {
             //退出登录
-            LogUtils.d(TAG, "退出登录");
+            Logger.d(TAG, "退出登录");
 //            showLogoutForceDialog();
 //            if(!isNewActivity){
 //                //非新activity,需要修改登录UI
@@ -230,7 +230,7 @@ public class HomeActivity extends BaseDataBindingActivity<HomeActivityBinding> {
         mFragments.add(MeFragment.newInstance());
         mHomePagerAdapter.setData(mFragments);
         mBinding.mVerticalViewPager.setAdapter(mHomePagerAdapter);
-        LogUtils.i(TAG, "getUserMobile" + Preferences.getUserMobile());
+        Logger.i(TAG, "getUserMobile" + Preferences.getUserMobile());
 //        initCurrentItem();
     }
 
@@ -335,7 +335,7 @@ public class HomeActivity extends BaseDataBindingActivity<HomeActivityBinding> {
         if (TextUtils.isEmpty(uuid)) {
             msg.append("UUID为空");
             showToast(msg.toString());
-            LogUtils.e(TAG, msg.toString());
+            Logger.e(TAG, msg.toString());
         } else {
 
             try {
