@@ -38,6 +38,7 @@ public class User {
     private String registerIp;
     private String lastLoginIp;
     private String lastLoginTime;
+    private int rank;
 
     public String getId() {
         return id;
@@ -149,5 +150,13 @@ public class User {
 
     public void setLastLoginTime(String lastLoginTime) {
         this.lastLoginTime = lastLoginTime;
+    }
+
+    public int getRank() {
+        return rank;
+    }
+
+    public void setRank(int rank) {
+        this.rank = rank;
     }
 }

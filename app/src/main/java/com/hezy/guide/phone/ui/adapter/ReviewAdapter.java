@@ -1,6 +1,8 @@
 package com.hezy.guide.phone.ui.adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
@@ -18,6 +20,7 @@ import com.hezy.guide.phone.event.UserUpdateEvent;
 import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.ui.ReplyReviewActivity;
 import com.hezy.guide.phone.ui.UserinfoActivity;
+import com.hezy.guide.phone.utils.ImageUtils;
 import com.hezy.guide.phone.utils.Logger;
 import com.hezy.guide.phone.utils.RxBus;
 import com.hezy.guide.phone.utils.StringUtils;
@@ -118,6 +121,17 @@ public class ReviewAdapter extends BaseRecyclerAdapter<RecordData.PageDataEntity
             MeViewHolder meHolder = (MeViewHolder) viewHolder;
             ImageHelper.loadImageDpIdRound(Preferences.getUserPhoto(), R.dimen.my_px_460, R.dimen.my_px_426, meHolder.mIvHead);
             ImageHelper.loadImageDpIdBlur(Preferences.getUserPhoto(), R.dimen.my_px_1080, R.dimen.my_px_530, meHolder.mIvBack);
+            if (Preferences.getUserRank() == 0) {
+                meHolder.mIvGold.setVisibility(View.GONE);
+            } else {
+                meHolder.mIvGold.setVisibility(View.VISIBLE);
+                Bitmap srcBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.ic_my_gold_medal);
+                Bitmap disBitmap = ImageUtils.toRoundCorner(srcBitmap, (int) mContext.getResources().getDimension(R.dimen.my_px_28),
+                        ImageUtils.CORNER_TOP_RIGHT);
+                meHolder.mIvGold.setImageBitmap(disBitmap);
+                srcBitmap.recycle();
+            }
+
             meHolder.mTvName.setText(Preferences.getUserName());
             meHolder.mTvAddress.setText(Preferences.getUserAddress());
             if (mRankInfo != null) {
@@ -279,6 +293,8 @@ public class ReviewAdapter extends BaseRecyclerAdapter<RecordData.PageDataEntity
         ImageView mIvBack;
         @BindView(R.id.mIvHead)
         ImageView mIvHead;
+        @BindView(R.id.mIvGold)
+        ImageView mIvGold;
         @BindView(R.id.mIvStar1)
         ImageView mIvStar1;
         @BindView(R.id.mIvStar2)

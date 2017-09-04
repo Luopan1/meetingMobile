@@ -33,6 +33,7 @@ public class Preferences {
     private static final String PREFERENCE_USER_PHOTO = "u_photo";
     private static final String PREFERENCE_USER_SIGNATURE = "u_signature";
     private static final String PREFERENCE_USER_SOURCE = "u_source";
+    private static final String PREFERENCE_USER_RANK = "u_rank";
 
     private static final String PREFERENCE_WECHAT_HEAD = "u_wechat_head";
 
@@ -271,6 +272,20 @@ public class Preferences {
             Log.d(tag, "User mobile save failure");
         } else {
             Log.d(tag, "User mobile save success");
+        }
+    }
+
+    public static int getUserRank() {
+        return getPreferences().getInt(PREFERENCE_USER_RANK, 0);
+    }
+
+    public static void setUserRank(int  rank) {
+        SharedPreferences.Editor editor = getPreferences().edit();
+        editor.putInt(PREFERENCE_USER_RANK, rank);
+        if (!editor.commit()) {
+            Log.d(tag, "User rank save failure");
+        } else {
+            Log.d(tag, "User rank save success");
         }
     }
 
