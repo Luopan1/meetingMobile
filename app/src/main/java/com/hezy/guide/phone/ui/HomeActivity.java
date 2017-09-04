@@ -203,6 +203,7 @@ public class HomeActivity extends BaseDataBindingActivity<HomeActivityBinding> {
     protected void onResume() {
         super.onResume();
         setState(WSService.isOnline());
+        ApiClient.getInstance().requestUser();
     }
 
     @Override

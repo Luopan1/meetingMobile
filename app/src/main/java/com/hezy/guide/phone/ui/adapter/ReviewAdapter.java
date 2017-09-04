@@ -47,7 +47,9 @@ public class ReviewAdapter extends BaseRecyclerAdapter<RecordData.PageDataEntity
 
     public enum ITEM_TYPE {
         ME,
+        EMPTY,
         REVIEW
+
     }
 
 
@@ -88,26 +90,31 @@ public class ReviewAdapter extends BaseRecyclerAdapter<RecordData.PageDataEntity
     public int getItemViewType(int position) {
         if (position == 0) {
             return ITEM_TYPE.ME.ordinal();
-        } else {
+        } else if(position == 1 && super.getItemCount() == 0) {
+            return ITEM_TYPE.EMPTY.ordinal();
+        }else{
             return ITEM_TYPE.REVIEW.ordinal();
         }
     }
 
     @Override
     public int getItemCount() {
-        return super.getItemCount() + 1;
+        //如果数据为空+2,多个me和空.
+        return super.getItemCount() ==0 ?  super.getItemCount() + 2 : super.getItemCount()+1;
     }
 
     private int getRealPosotion(int position) {
-        return position - 1;
+        return super.getItemCount() ==0 ?  super.getItemCount()  - 2 : super.getItemCount() - 1;
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == ITEM_TYPE.ME.ordinal()) {
             return new MeViewHolder(mInflater.inflate(R.layout.me_item, parent, false), this);
-        } else {
+        } else if (viewType == ITEM_TYPE.REVIEW.ordinal()) {
             return new ViewHolder(mInflater.inflate(R.layout.review_item, parent, false), this);
+        }else{
+            return new EmptyViewHolder(mInflater.inflate(R.layout.empty_item, parent, false));
         }
 
 
@@ -166,7 +173,7 @@ public class ReviewAdapter extends BaseRecyclerAdapter<RecordData.PageDataEntity
                 meHolder.mTvReviewCount.setText("连线" + mRankInfo.getServiceFrequency() + "次 评价" + mRankInfo.getRatingFrequency() + "次");
 
             }
-        } else {
+        } else if (getItemViewType(position) == ITEM_TYPE.REVIEW.ordinal()) {
             RecordData.PageDataEntity bean = mData.get(getRealPosotion(position));
             String time = bean.getOrderTime();
             ViewHolder holder = (ViewHolder) viewHolder;
@@ -322,6 +329,14 @@ public class ReviewAdapter extends BaseRecyclerAdapter<RecordData.PageDataEntity
             super(view);
             ButterKnife.bind(this, view);
             mIvHead.setOnClickListener(listener);
+        }
+    }
+
+    static class EmptyViewHolder extends RecyclerView.ViewHolder {
+
+
+        public EmptyViewHolder(View itemView) {
+            super(itemView);
         }
     }
 

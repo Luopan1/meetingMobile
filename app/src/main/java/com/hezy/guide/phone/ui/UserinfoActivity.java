@@ -287,17 +287,9 @@ public class UserinfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
     @Override
     public void onResume() {
         super.onResume();
-        requestRecordTotal();
     }
 
-    private void requestRecordTotal() {
-        ApiClient.getInstance().requestRecordTotal(this, new OkHttpBaseCallback<BaseBean<RecordTotal>>() {
-            @Override
-            public void onSuccess(BaseBean<RecordTotal> entity) {
-                String time = String.valueOf(entity.getData().getTotal());
-            }
-        });
-    }
+
 
 
     private void save(){

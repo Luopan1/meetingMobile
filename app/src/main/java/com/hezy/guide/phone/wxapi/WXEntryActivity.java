@@ -87,6 +87,7 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
         isFirst = false;
 
         if (Preferences.isLogin()) {
+            //TODO 需要请求用户信息
             if (Preferences.isUserinfoEmpty()) {
 //                showToast("请先填写姓名,电话,地址,照片");
                 UserinfoActivity.actionStart(this, true);

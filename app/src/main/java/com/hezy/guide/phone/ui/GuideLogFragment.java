@@ -10,7 +10,6 @@ import com.hezy.guide.phone.R;
 import com.hezy.guide.phone.base.BaseDataBindingFragment;
 import com.hezy.guide.phone.databinding.GuideLogFragmentBinding;
 import com.hezy.guide.phone.entities.RecordData;
-import com.hezy.guide.phone.entities.RecordTotal;
 import com.hezy.guide.phone.entities.base.BaseBean;
 import com.hezy.guide.phone.net.ApiClient;
 import com.hezy.guide.phone.net.OkHttpBaseCallback;
@@ -116,20 +115,20 @@ public class GuideLogFragment extends BaseDataBindingFragment<GuideLogFragmentBi
         //能下滑刷新没必要
     }
 
-    private void requestRecordTotal() {
-        ApiClient.getInstance().requestRecordTotal(this, new OkHttpBaseCallback<BaseBean<RecordTotal>>() {
-            @Override
-            public void onSuccess(BaseBean<RecordTotal> entity) {
-                if (entity == null || entity.getData() == null) {
-                    showToast("数据为空");
-                    return;
-                }
-                String time = String.valueOf(entity.getData().getTotal());
-            }
-
-
-        });
-    }
+//    private void requestRecordTotal() {
+//        ApiClient.getInstance().requestRecordTotal(this, new OkHttpBaseCallback<BaseBean<RecordTotal>>() {
+//            @Override
+//            public void onSuccess(BaseBean<RecordTotal> entity) {
+//                if (entity == null || entity.getData() == null) {
+//                    showToast("数据为空");
+//                    return;
+//                }
+//                String time = String.valueOf(entity.getData().getTotal());
+//            }
+//
+//
+//        });
+//    }
 
     private void requestRecord() {
         requestRecord("1", "20");
