@@ -17,7 +17,7 @@ public class BaseErrorBean {
     //{"errcode": 40003, "errmsg": "拒绝访问"}
     public static final int ERRCODE_TOKEN_ERROR = 40003;
     //{"errcode": 40001, "errmsg": "无访问权限"}//token格式错误,没token前缀
-    public static final int ERRCODE_TOKEN_ERROR_FORMAT_40001 = 40003;
+    public static final int ERRCODE_TOKEN_ERROR_FORMAT_40001 = 40001;
 
     public boolean isSuccess() {
         return errcode == 0;
