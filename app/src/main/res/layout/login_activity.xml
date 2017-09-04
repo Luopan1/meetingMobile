@@ -8,11 +8,21 @@
         android:background="@drawable/login_bg_shape">
 
          <ImageView
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
+             android:id="@+id/mIvLogo"
+              android:layout_width="@dimen/my_px_400"
+              android:layout_height="@dimen/my_px_400"
              android:layout_centerHorizontal="true"
              android:layout_marginTop="80dp"
-              android:src="@mipmap/img_login_icon"/>
+              android:src="@mipmap/ic_login_logo"/>
+
+
+         <ImageView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+             android:layout_below="@+id/mIvLogo"
+             android:layout_marginTop="@dimen/my_px_70"
+             android:layout_centerHorizontal="true"
+              android:src="@mipmap/img_login_slogen"/>
 
         <ImageView
             android:id="@+id/mIvWeChat"

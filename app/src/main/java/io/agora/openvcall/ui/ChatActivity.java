@@ -610,7 +610,7 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
     @Override
     public void onBackPressed() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("确定退出？");
+        builder.setTitle("您要退出当前通话吗？");
         builder.setNegativeButton("确定", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
