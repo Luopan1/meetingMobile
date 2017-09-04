@@ -125,6 +125,7 @@ public class ReviewAdapter extends BaseRecyclerAdapter<RecordData.PageDataEntity
                 //TODO 分数规则半颗星.
                 float star = Float.parseFloat(mRankInfo.getStar());
                 ArrayList<ImageView> views = new ArrayList<>();
+                views.add(meHolder.mIvStar1);
                 views.add(meHolder.mIvStar2);
                 views.add(meHolder.mIvStar3);
                 views.add(meHolder.mIvStar4);
@@ -132,9 +133,9 @@ public class ReviewAdapter extends BaseRecyclerAdapter<RecordData.PageDataEntity
 
                 for (int i = 0; i < views.size(); i++) {
                     ImageView ivStar = views.get(i);
-                    if (star > 1.5 + i) {
+                    if (star > 0.5 + i) {
                         ivStar.setImageResource(R.mipmap.ic_star_title);
-                    } else if (star > 1 + i) {
+                    } else if (star > i) {
                         ivStar.setImageResource(R.mipmap.ic_star_title_half);
                     } else {
                         ivStar.setImageResource(R.mipmap.ic_star_ungood);

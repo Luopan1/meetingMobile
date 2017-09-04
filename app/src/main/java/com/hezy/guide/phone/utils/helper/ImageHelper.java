@@ -110,9 +110,9 @@ public class ImageHelper {
 //            int h_px = DensityUtil.dip2px(getContext(), h_dp);
             url = ImageHelper.getUrlJoinAndThumAndCrop(url, w_dp, h_dp);
             int round_dp = (int) getContext().getResources().getDimension(R.dimen.my_px_20);
-            int round_px = DensityUtil.dip2px(getContext(), round_dp);
+//            int round_px = DensityUtil.dip2px(getContext(), round_dp);
             Logger.i(TAG,"loadImageDpIdRound "+url);
-            Picasso.with(getContext()).load(url).transform(new RoundCornerTransform(round_px, 0, HalfType.ALL)).into(imageView);
+            Picasso.with(getContext()).load(url).transform(new RoundCornerTransform(round_dp, 0, HalfType.ALL)).into(imageView);
         }
     }
 
