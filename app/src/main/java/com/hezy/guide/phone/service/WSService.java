@@ -37,7 +37,7 @@ import com.hezy.guide.phone.net.OkHttpUtil;
 import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.ui.OnCallActivity;
 import com.hezy.guide.phone.utils.Installation;
-import com.hezy.guide.phone.utils.LogUtils;
+import com.hezy.guide.phone.utils.Logger;
 import com.hezy.guide.phone.utils.RxBus;
 import com.hezy.guide.phone.utils.UUIDUtils;
 import com.tendcloud.tenddata.TCAgent;
@@ -222,7 +222,7 @@ public class WSService extends Service {
         if (TextUtils.isEmpty(uuid)) {
             msg.append("UUID为空");
             showToast(msg.toString());
-            LogUtils.e(TAG, msg.toString());
+            Logger.e(TAG, msg.toString());
         } else {
             try {
                 JSONObject params = new JSONObject();
@@ -291,7 +291,7 @@ public class WSService extends Service {
             return;
         }
         ZYAgent.onEvent(getApplicationContext(),"长连接 主动调用连接");
-        LogUtils.i(TAG,WS_URL);
+        Logger.i(TAG,WS_URL);
 //        try {
 //            LogUtils.i(TAG,WS_URL);
 //            mSocket = IO.socket(WS_URL);
@@ -350,7 +350,7 @@ public class WSService extends Service {
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("salesId", Preferences.getUserId());
                 mSocket.emit("SALES_ONLINE_WITH_STATUS", jsonObject);
-                LogUtils.i(TAG, "emit SALES_ONLINE_WITH_STATUS salesId " + Preferences.getUserId());
+                Logger.i(TAG, "emit SALES_ONLINE_WITH_STATUS salesId " + Preferences.getUserId());
             } catch (JSONException e) {
                 e.printStackTrace();
             }

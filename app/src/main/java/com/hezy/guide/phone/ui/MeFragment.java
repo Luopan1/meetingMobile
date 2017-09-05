@@ -11,11 +11,18 @@ import com.hezy.guide.phone.base.BaseDataBindingFragment;
 import com.hezy.guide.phone.databinding.MeFragmentBinding;
 import com.hezy.guide.phone.entities.RankInfo;
 import com.hezy.guide.phone.entities.RecordData;
+import com.hezy.guide.phone.entities.User;
+import com.hezy.guide.phone.entities.UserData;
+import com.hezy.guide.phone.entities.Wechat;
 import com.hezy.guide.phone.entities.base.BaseBean;
+import com.hezy.guide.phone.event.UserUpdateEvent;
 import com.hezy.guide.phone.net.ApiClient;
 import com.hezy.guide.phone.net.OkHttpBaseCallback;
+import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.ui.adapter.ReviewAdapter;
-import com.hezy.guide.phone.utils.LogUtils;
+import com.hezy.guide.phone.utils.Logger;
+import com.hezy.guide.phone.utils.Login.LoginHelper;
+import com.hezy.guide.phone.utils.RxBus;
 
 /**
  * 我的
@@ -81,10 +88,10 @@ public class MeFragment extends BaseDataBindingFragment<MeFragmentBinding> {
             public void onScrollStateChanged(RecyclerView recyclerView,
                                              int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-                LogUtils.i(TAG,"newState == RecyclerView.SCROLL_STATE_IDLE "+(newState == RecyclerView.SCROLL_STATE_IDLE));
-                LogUtils.i(TAG,"!mBinding.mSwipeRefreshLayout.isRefreshing() "+!mBinding.mSwipeRefreshLayout.isRefreshing());
-                LogUtils.i(TAG,"lastVisibleItemPosition + 1 == mAdapter.getItemCount() "+(lastVisibleItemPosition + 1 == mAdapter.getItemCount()));
-                LogUtils.i(TAG,"!(mPageNo == mTotalPage) "+!(mPageNo == mTotalPage));
+                Logger.i(TAG,"newState == RecyclerView.SCROLL_STATE_IDLE "+(newState == RecyclerView.SCROLL_STATE_IDLE));
+                Logger.i(TAG,"!mBinding.mSwipeRefreshLayout.isRefreshing() "+!mBinding.mSwipeRefreshLayout.isRefreshing());
+                Logger.i(TAG,"lastVisibleItemPosition + 1 == mAdapter.getItemCount() "+(lastVisibleItemPosition + 1 == mAdapter.getItemCount()));
+                Logger.i(TAG,"!(mPageNo == mTotalPage) "+!(mPageNo == mTotalPage));
                 if (newState == RecyclerView.SCROLL_STATE_IDLE
                         && !mBinding.mSwipeRefreshLayout.isRefreshing()
                         && lastVisibleItemPosition + 1 == mAdapter.getItemCount()
@@ -101,7 +108,7 @@ public class MeFragment extends BaseDataBindingFragment<MeFragmentBinding> {
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
                 lastVisibleItemPosition = mLayoutManager.findLastVisibleItemPosition();
-                LogUtils.i(TAG,"lastVisibleItemPosition "+lastVisibleItemPosition);
+                Logger.i(TAG,"lastVisibleItemPosition "+lastVisibleItemPosition);
             }
         });
     }
@@ -112,15 +119,42 @@ public class MeFragment extends BaseDataBindingFragment<MeFragmentBinding> {
 
     @Override
     protected void requestData() {
-        requestRankInfo();
-        requestRecord();
+
     }
 
     @Override
     public void onMyVisible() {
         super.onMyVisible();
+        requestRankInfo();
+        requestRecord();
+        //用户信息也每次前台刷新
+        requestUser();
 
+    }
 
+    public void requestUser() {
+        if(!Preferences.isLogin()){
+            return;
+        }
+        ApiClient.getInstance().requestUser(this, new OkHttpBaseCallback<BaseBean<UserData>>() {
+            @Override
+            public void onSuccess(BaseBean<UserData> entity) {
+                if (entity == null || entity.getData() == null || entity.getData().getUser() == null) {
+                    showToast("数据为空");
+                    return;
+                }
+                User user = entity.getData().getUser();
+                Wechat wechat = entity.getData().getWechat();
+                LoginHelper.savaUser(user);
+//                initCurrentItem();
+                if (wechat != null) {
+                    LoginHelper.savaWeChat(wechat);
+                }
+                RxBus.sendMessage(new UserUpdateEvent());
+                mAdapter.notifyDataSetChanged();
+
+            }
+        });
     }
 
 
@@ -131,7 +165,7 @@ public class MeFragment extends BaseDataBindingFragment<MeFragmentBinding> {
             @Override
             public void onSuccess(BaseBean<RankInfo> entity) {
                 if (entity == null || entity.getData() == null || TextUtils.isEmpty(entity.getData().getStar())) {
-                    LogUtils.e(TAG, "获取评价信息数据为空");
+                    Logger.e(TAG, "获取评价信息数据为空");
                     return;
                 }
                 mAdapter.setRankInfo(entity.getData());

@@ -17,7 +17,7 @@ import com.hezy.guide.phone.BaseApplication;
 import com.hezy.guide.phone.R;
 import com.hezy.guide.phone.net.ApiClient;
 import com.hezy.guide.phone.net.OkHttpUtil;
-import com.hezy.guide.phone.utils.LogUtils;
+import com.hezy.guide.phone.utils.Logger;
 import com.hezy.guide.phone.utils.NetUtils;
 import com.hezy.guide.phone.utils.ToastUtils;
 import com.hezy.guide.phone.utils.statistics.ZYAgent;
@@ -28,7 +28,7 @@ public abstract class BasisActivity extends FragmentActivity implements View.OnC
 
     public final String TAG = getClass().getSimpleName();
 
-    public final String FTAG = LogUtils.lifecycle;
+    public final String FTAG = Logger.lifecycle;
 
     protected Context mContext;
     private BaseApplication mMyApp;
@@ -51,13 +51,13 @@ public abstract class BasisActivity extends FragmentActivity implements View.OnC
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        LogUtils.d(FTAG + TAG, "onNewIntent");
+        Logger.d(FTAG + TAG, "onNewIntent");
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        LogUtils.d(FTAG + TAG, "onCreate");
+        Logger.d(FTAG + TAG, "onCreate");
         mContext = this;
         mMyApp = (BaseApplication) this.getApplicationContext();
 //        userId = Preferences.getUserId();
@@ -71,19 +71,19 @@ public abstract class BasisActivity extends FragmentActivity implements View.OnC
     @Override
     protected void onRestart() {
         super.onRestart();
-        LogUtils.d(FTAG + TAG, "onRestart");
+        Logger.d(FTAG + TAG, "onRestart");
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        LogUtils.d(FTAG + TAG, "onStart");
+        Logger.d(FTAG + TAG, "onStart");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        LogUtils.d(FTAG + TAG, "onResume");
+        Logger.d(FTAG + TAG, "onResume");
         ZYAgent.onPageStart(this, getStatisticsTag());
         mMyApp.setCurrentActivity(this);
     }
@@ -91,7 +91,7 @@ public abstract class BasisActivity extends FragmentActivity implements View.OnC
     @Override
     protected void onPause() {
         super.onPause();
-        LogUtils.d(FTAG + TAG, "onPause");
+        Logger.d(FTAG + TAG, "onPause");
         ZYAgent.onPageEnd(this, getStatisticsTag());
     }
 
@@ -99,12 +99,12 @@ public abstract class BasisActivity extends FragmentActivity implements View.OnC
     @Override
     protected void onStop() {
         super.onStop();
-        LogUtils.d(FTAG + TAG, "onStop");
+        Logger.d(FTAG + TAG, "onStop");
     }
 
     @Override
     protected void onDestroy() {
-        LogUtils.d(FTAG + TAG, "onDestroy");
+        Logger.d(FTAG + TAG, "onDestroy");
         OkHttpUtil.getInstance().cancelTag(this);
         unregisterReceiver(mHomeKeyEventReceiver);
         cancelDialog();
@@ -121,13 +121,13 @@ public abstract class BasisActivity extends FragmentActivity implements View.OnC
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        LogUtils.d(FTAG + TAG, "onSaveInstanceState");
+        Logger.d(FTAG + TAG, "onSaveInstanceState");
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        LogUtils.d(FTAG + TAG, "onRestoreInstanceState");
+        Logger.d(FTAG + TAG, "onRestoreInstanceState");
     }
 
     public void showToast(int resId) {

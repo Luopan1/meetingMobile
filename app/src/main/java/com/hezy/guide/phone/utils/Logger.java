@@ -9,7 +9,7 @@ import com.tencent.bugly.crashreport.BuglyLog;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-public class LogUtils {
+public class Logger {
 
 
     private static boolean IS_DEBUG_LOG = BuildConfig.IS_DEBUG_LOG;

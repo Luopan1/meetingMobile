@@ -12,7 +12,7 @@ import com.hezy.guide.phone.event.UserStateEvent;
 import com.hezy.guide.phone.net.ApiClient;
 import com.hezy.guide.phone.net.OkHttpBaseCallback;
 import com.hezy.guide.phone.net.OkHttpUtil;
-import com.hezy.guide.phone.utils.LogUtils;
+import com.hezy.guide.phone.utils.Logger;
 import com.hezy.guide.phone.utils.RxBus;
 import com.hezy.guide.phone.utils.ToastUtils;
 
@@ -65,7 +65,7 @@ public class HeartService   extends Service{
 
     @Override
     public void onCreate() {
-        LogUtils.i(TAG,"后台心跳服务启动");
+        Logger.i(TAG,"后台心跳服务启动");
         serviceIsCreate = true;
         super.onCreate();
     }
@@ -102,7 +102,7 @@ public class HeartService   extends Service{
                 OffLineFlagStage = false;
                 //用户设置为离线,不受心跳影响.
                 //用户设置为在线,心跳为离线,通知改变为在线
-                LogUtils.i(TAG,"心跳成功,用户设置为在线,旧状态心跳为离线,通知改变为在线");
+                Logger.i(TAG,"心跳成功,用户设置为在线,旧状态心跳为离线,通知改变为在线");
                 ToastUtils.showToast("心跳成功,用户设置为在线,旧状态心跳为离线,通知改变为在线");
                 RxBus.sendMessage(new UserStateEvent());
             }
@@ -115,7 +115,7 @@ public class HeartService   extends Service{
             if(!USER_SET_OFFLINE && !OffLineFlagStage ){
                 OffLineFlagStage = true;
                 //用户设置为在线,心跳为离线,通知改变为在线
-                LogUtils.i(TAG,"心跳失败,用户设置为在线,旧状态心跳为在线,通知改变为离线");
+                Logger.i(TAG,"心跳失败,用户设置为在线,旧状态心跳为在线,通知改变为离线");
                 ToastUtils.showToast("心跳失败,用户设置为在线,旧状态心跳为在线,通知改变为离线");
                 RxBus.sendMessage(new UserStateEvent());
             }
@@ -150,7 +150,7 @@ public class HeartService   extends Service{
     @Override
     public void onDestroy() {
         super.onDestroy();
-        LogUtils.i(TAG,"后台心跳服务被销毁");
+        Logger.i(TAG,"后台心跳服务被销毁");
         serviceIsCreate = false;
         OffLineFlagStage = true;
         handler.removeCallbacksAndMessages(null);

@@ -18,7 +18,7 @@ import com.hezy.guide.phone.R;
 import com.hezy.guide.phone.utils.NetUtils;
 import com.hezy.guide.phone.net.OkHttpUtil;
 import com.hezy.guide.phone.utils.ToastUtils;
-import com.hezy.guide.phone.utils.LogUtils;
+import com.hezy.guide.phone.utils.Logger;
 
 import java.util.Calendar;
 
@@ -29,7 +29,7 @@ import java.util.Calendar;
 public abstract class BaseFragment extends Fragment implements View.OnClickListener {
 
     public String TAG = getClass().getSimpleName();
-    public final String FTAG= LogUtils.lifecycle;
+    public final String FTAG= Logger.lifecycle;
     protected Context mContext;
 
     protected SharedPreferences prefs;
@@ -59,12 +59,12 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        LogUtils.d(FTAG+getTAG(), "onAttach");
+        Logger.d(FTAG+getTAG(), "onAttach");
     }
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        LogUtils.d(FTAG+getTAG(), "onCreate");
+        Logger.d(FTAG+getTAG(), "onCreate");
         prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
 //        token = Preferences.getToken();
         mContext = getActivity();
@@ -77,35 +77,35 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        LogUtils.d(FTAG+getTAG(), "onCreateView");
+        Logger.d(FTAG+getTAG(), "onCreateView");
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        LogUtils.d(FTAG+getTAG(), "onActivityCreated");
+        Logger.d(FTAG+getTAG(), "onActivityCreated");
     }
 
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        LogUtils.d(FTAG+getTAG(), "onViewCreated");
+        Logger.d(FTAG+getTAG(), "onViewCreated");
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        LogUtils.d(FTAG+getTAG(), "onActivityResult");
+        Logger.d(FTAG+getTAG(), "onActivityResult");
     }
 
     public void onStart() {
         super.onStart();
-        LogUtils.d(FTAG+getTAG(), "onStart");
+        Logger.d(FTAG+getTAG(), "onStart");
     }
 
     public void onResume() {
         super.onResume();
-        LogUtils.d(FTAG+getTAG(), "onResume");
+        Logger.d(FTAG+getTAG(), "onResume");
         isFirstResume=false;
 //        TCAgent.onPageStart(mContext,TAG);
         if(getUserVisibleHint()){
@@ -115,36 +115,36 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
 
     public void onPause() {
         super.onPause();
-        LogUtils.d(FTAG+getTAG(), "onPause");
+        Logger.d(FTAG+getTAG(), "onPause");
 //        TCAgent.onPageEnd(mContext,TAG );
 
     }
 
     public void onStop() {
         super.onStop();
-        LogUtils.d(FTAG+getTAG(), "onStop");
+        Logger.d(FTAG+getTAG(), "onStop");
     }
 
     public void onDestroyView() {
         super.onDestroyView();
-        LogUtils.d(FTAG+getTAG(), "onDestroyView");
+        Logger.d(FTAG+getTAG(), "onDestroyView");
     }
 
     public void onDestroy() {
         OkHttpUtil.getInstance().cancelTag(this);
         super.onDestroy();
-        LogUtils.d(FTAG+getTAG(), "onDestroy");
+        Logger.d(FTAG+getTAG(), "onDestroy");
     }
 
     public void onDetach() {
         super.onDetach();
-        LogUtils.d(FTAG+getTAG(), "onDetach");
+        Logger.d(FTAG+getTAG(), "onDetach");
     }
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        LogUtils.d(FTAG+getTAG(), "setUserVisibleHint " + isVisibleToUser);
+        Logger.d(FTAG+getTAG(), "setUserVisibleHint " + isVisibleToUser);
         mIsVisibleToUser=isVisibleToUser;
         if(isVisibleToUser && getView()!=null){  //第一次visible true,在onCreate前面,无view.
             onMyVisible();
@@ -152,7 +152,7 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
     }
 
     public void onMyVisible(){
-        LogUtils.d(FTAG+getTAG(), "onMyVisible");
+        Logger.d(FTAG+getTAG(), "onMyVisible");
     }
 
     public void showToast(int resId) {

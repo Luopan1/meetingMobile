@@ -1,6 +1,8 @@
 package com.hezy.guide.phone.ui.adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
@@ -18,7 +20,8 @@ import com.hezy.guide.phone.event.UserUpdateEvent;
 import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.ui.ReplyReviewActivity;
 import com.hezy.guide.phone.ui.UserinfoActivity;
-import com.hezy.guide.phone.utils.LogUtils;
+import com.hezy.guide.phone.utils.ImageUtils;
+import com.hezy.guide.phone.utils.Logger;
 import com.hezy.guide.phone.utils.RxBus;
 import com.hezy.guide.phone.utils.StringUtils;
 import com.hezy.guide.phone.utils.TimeUtil;
@@ -44,7 +47,9 @@ public class ReviewAdapter extends BaseRecyclerAdapter<RecordData.PageDataEntity
 
     public enum ITEM_TYPE {
         ME,
+        EMPTY,
         REVIEW
+
     }
 
 
@@ -85,26 +90,31 @@ public class ReviewAdapter extends BaseRecyclerAdapter<RecordData.PageDataEntity
     public int getItemViewType(int position) {
         if (position == 0) {
             return ITEM_TYPE.ME.ordinal();
-        } else {
+        } else if(position == 1 && super.getItemCount() == 0) {
+            return ITEM_TYPE.EMPTY.ordinal();
+        }else{
             return ITEM_TYPE.REVIEW.ordinal();
         }
     }
 
     @Override
     public int getItemCount() {
-        return super.getItemCount() + 1;
+        //如果数据为空+2,多个me和空.
+        return super.getItemCount() ==0 ?  super.getItemCount() + 2 : super.getItemCount()+1;
     }
 
     private int getRealPosotion(int position) {
-        return position - 1;
+        return super.getItemCount() ==0 ?  super.getItemCount()  - 2 : super.getItemCount() - 1;
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == ITEM_TYPE.ME.ordinal()) {
             return new MeViewHolder(mInflater.inflate(R.layout.me_item, parent, false), this);
-        } else {
+        } else if (viewType == ITEM_TYPE.REVIEW.ordinal()) {
             return new ViewHolder(mInflater.inflate(R.layout.review_item, parent, false), this);
+        }else{
+            return new EmptyViewHolder(mInflater.inflate(R.layout.empty_item, parent, false));
         }
 
 
@@ -112,12 +122,23 @@ public class ReviewAdapter extends BaseRecyclerAdapter<RecordData.PageDataEntity
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
-        LogUtils.i(TAG, "position " + position);
+        Logger.i(TAG, "position " + position);
 
         if (getItemViewType(position) == ITEM_TYPE.ME.ordinal()) {
             MeViewHolder meHolder = (MeViewHolder) viewHolder;
             ImageHelper.loadImageDpIdRound(Preferences.getUserPhoto(), R.dimen.my_px_460, R.dimen.my_px_426, meHolder.mIvHead);
             ImageHelper.loadImageDpIdBlur(Preferences.getUserPhoto(), R.dimen.my_px_1080, R.dimen.my_px_530, meHolder.mIvBack);
+            if (Preferences.getUserRank() == 0) {
+                meHolder.mIvGold.setVisibility(View.GONE);
+            } else {
+                meHolder.mIvGold.setVisibility(View.VISIBLE);
+                Bitmap srcBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.ic_my_gold_medal);
+                Bitmap disBitmap = ImageUtils.toRoundCorner(srcBitmap, (int) mContext.getResources().getDimension(R.dimen.my_px_28),
+                        ImageUtils.CORNER_TOP_RIGHT);
+                meHolder.mIvGold.setImageBitmap(disBitmap);
+                srcBitmap.recycle();
+            }
+
             meHolder.mTvName.setText(Preferences.getUserName());
             meHolder.mTvAddress.setText(Preferences.getUserAddress());
             if (mRankInfo != null) {
@@ -125,6 +146,7 @@ public class ReviewAdapter extends BaseRecyclerAdapter<RecordData.PageDataEntity
                 //TODO 分数规则半颗星.
                 float star = Float.parseFloat(mRankInfo.getStar());
                 ArrayList<ImageView> views = new ArrayList<>();
+                views.add(meHolder.mIvStar1);
                 views.add(meHolder.mIvStar2);
                 views.add(meHolder.mIvStar3);
                 views.add(meHolder.mIvStar4);
@@ -132,9 +154,9 @@ public class ReviewAdapter extends BaseRecyclerAdapter<RecordData.PageDataEntity
 
                 for (int i = 0; i < views.size(); i++) {
                     ImageView ivStar = views.get(i);
-                    if (star > 1.5 + i) {
+                    if (star > 0.5 + i) {
                         ivStar.setImageResource(R.mipmap.ic_star_title);
-                    } else if (star > 1 + i) {
+                    } else if (star > i) {
                         ivStar.setImageResource(R.mipmap.ic_star_title_half);
                     } else {
                         ivStar.setImageResource(R.mipmap.ic_star_ungood);
@@ -151,7 +173,7 @@ public class ReviewAdapter extends BaseRecyclerAdapter<RecordData.PageDataEntity
                 meHolder.mTvReviewCount.setText("连线" + mRankInfo.getServiceFrequency() + "次 评价" + mRankInfo.getRatingFrequency() + "次");
 
             }
-        } else {
+        } else if (getItemViewType(position) == ITEM_TYPE.REVIEW.ordinal()) {
             RecordData.PageDataEntity bean = mData.get(getRealPosotion(position));
             String time = bean.getOrderTime();
             ViewHolder holder = (ViewHolder) viewHolder;
@@ -278,6 +300,8 @@ public class ReviewAdapter extends BaseRecyclerAdapter<RecordData.PageDataEntity
         ImageView mIvBack;
         @BindView(R.id.mIvHead)
         ImageView mIvHead;
+        @BindView(R.id.mIvGold)
+        ImageView mIvGold;
         @BindView(R.id.mIvStar1)
         ImageView mIvStar1;
         @BindView(R.id.mIvStar2)
@@ -305,6 +329,14 @@ public class ReviewAdapter extends BaseRecyclerAdapter<RecordData.PageDataEntity
             super(view);
             ButterKnife.bind(this, view);
             mIvHead.setOnClickListener(listener);
+        }
+    }
+
+    static class EmptyViewHolder extends RecyclerView.ViewHolder {
+
+
+        public EmptyViewHolder(View itemView) {
+            super(itemView);
         }
     }
 

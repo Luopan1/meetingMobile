@@ -8,7 +8,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.hezy.guide.phone.BaseApplication;
-import com.hezy.guide.phone.utils.LogUtils;
+import com.hezy.guide.phone.utils.Logger;
 
 
 public class Preferences {
@@ -33,6 +33,7 @@ public class Preferences {
     private static final String PREFERENCE_USER_PHOTO = "u_photo";
     private static final String PREFERENCE_USER_SIGNATURE = "u_signature";
     private static final String PREFERENCE_USER_SOURCE = "u_source";
+    private static final String PREFERENCE_USER_RANK = "u_rank";
 
     private static final String PREFERENCE_WECHAT_HEAD = "u_wechat_head";
 
@@ -271,6 +272,20 @@ public class Preferences {
             Log.d(tag, "User mobile save failure");
         } else {
             Log.d(tag, "User mobile save success");
+        }
+    }
+
+    public static int getUserRank() {
+        return getPreferences().getInt(PREFERENCE_USER_RANK, 0);
+    }
+
+    public static void setUserRank(int  rank) {
+        SharedPreferences.Editor editor = getPreferences().edit();
+        editor.putInt(PREFERENCE_USER_RANK, rank);
+        if (!editor.commit()) {
+            Log.d(tag, "User rank save failure");
+        } else {
+            Log.d(tag, "User rank save success");
         }
     }
 
@@ -539,15 +554,15 @@ public class Preferences {
     public static void initLog() {
         if (getPreferences().contains(PREFERENCE_IS_LOG)) {
             boolean isLog = getPreferences().getBoolean(PREFERENCE_IS_LOG, false);
-            LogUtils.setIsDebugLog(isLog);
-            LogUtils.setIsDebugLog(isLog);
+            Logger.setIsDebugLog(isLog);
+            Logger.setIsDebugLog(isLog);
         }
 
     }
 
     public static void setIsLog(boolean isLog) {
-        LogUtils.setIsDebugLog(isLog);
-        LogUtils.setIsDebugToast(isLog);
+        Logger.setIsDebugLog(isLog);
+        Logger.setIsDebugToast(isLog);
         SharedPreferences.Editor editor = getPreferences().edit();
         editor.putBoolean(PREFERENCE_IS_LOG, isLog);
         if (!editor.commit()) {

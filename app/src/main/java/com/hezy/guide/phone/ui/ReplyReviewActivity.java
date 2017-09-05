@@ -15,7 +15,7 @@ import com.hezy.guide.phone.entities.base.BaseErrorBean;
 import com.hezy.guide.phone.event.ReplyReviewEvent;
 import com.hezy.guide.phone.net.ApiClient;
 import com.hezy.guide.phone.net.OkHttpBaseCallback;
-import com.hezy.guide.phone.utils.LogUtils;
+import com.hezy.guide.phone.utils.Logger;
 import com.hezy.guide.phone.utils.RxBus;
 import com.hezy.guide.phone.utils.StringCheckUtil;
 import com.hezy.guide.phone.utils.TimeUtil;
@@ -147,13 +147,13 @@ public class ReplyReviewActivity extends BaseDataBindingActivity<ReplyReviewActi
 
             // 注意这里只能每次都对整个EditText的内容求长度，不能对删除的单个字符求长度
             // 因为是中英文混合，单个字符而言，calculateLength函数都会返回1
-            LogUtils.d(TAG,"StringCheckUtil"+ StringCheckUtil.calculateLength(s.toString()) );
+            Logger.d(TAG,"StringCheckUtil"+ StringCheckUtil.calculateLength(s.toString()) );
             while (StringCheckUtil.calculateLength(s.toString()) > Constant.REPLY_REVIEW_MAX) { // 当输入字符个数超过限制的大小时，进行截断操作
                 s.delete(editStart - 1, editEnd);
                 editStart--;
                 editEnd--;
-                LogUtils.d(TAG,"while"+s.toString());
-                LogUtils.d(TAG,"while"+StringCheckUtil.calculateLength(s.toString()));
+                Logger.d(TAG,"while"+s.toString());
+                Logger.d(TAG,"while"+StringCheckUtil.calculateLength(s.toString()));
             }
             // mEtNickname.setText(s);将这行代码注释掉就不会出现后面所说的输入法在数字界面自动跳转回主界面的问题了，多谢@ainiyidiandian的提醒
             mBinding.mEtReplyContent.setSelection(editStart);

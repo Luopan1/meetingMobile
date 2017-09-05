@@ -6,7 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 
-import com.hezy.guide.phone.utils.LogUtils;
+import com.hezy.guide.phone.utils.Logger;
 
 import java.util.List;
 
@@ -57,7 +57,7 @@ public class DownloadService extends Service {
                 DOWNLOAD_MANAGER.stopAllDownload();
                 DOWNLOAD_MANAGER.backupDownloadInfoList();
             } catch (Exception e) {
-                LogUtils.e(e.getMessage(), e);
+                Logger.e(e.getMessage(), e);
             }
         }
         super.onDestroy();

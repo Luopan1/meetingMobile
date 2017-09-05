@@ -38,7 +38,7 @@ import com.hezy.guide.phone.utils.ApkUtil;
 import com.hezy.guide.phone.utils.AppUtil;
 import com.hezy.guide.phone.utils.CheckNetWorkStatus;
 import com.hezy.guide.phone.utils.DeviceUtil;
-import com.hezy.guide.phone.utils.LogUtils;
+import com.hezy.guide.phone.utils.Logger;
 import com.hezy.guide.phone.utils.Login.LoginHelper;
 import com.hezy.guide.phone.utils.MyDialog;
 import com.hezy.guide.phone.utils.SDCardUtils;
@@ -674,7 +674,7 @@ public class UpdateDownloadActivity extends BasisActivity {
                     false, // 如果从请求返回信息中获取到文件名，下载完成后自动重命名。
                     requestCallBack);
         } catch (DbException e) {
-            LogUtils.e(e.getMessage(), e);
+            Logger.e(e.getMessage(), e);
         }
     }
 

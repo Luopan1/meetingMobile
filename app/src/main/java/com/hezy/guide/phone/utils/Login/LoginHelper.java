@@ -10,7 +10,7 @@ import com.hezy.guide.phone.entities.Wechat;
 import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.service.WSService;
 import com.hezy.guide.phone.ui.HomeActivity;
-import com.hezy.guide.phone.utils.LogUtils;
+import com.hezy.guide.phone.utils.Logger;
 import com.hezy.guide.phone.utils.statistics.ZYAgent;
 
 
@@ -46,7 +46,7 @@ public class LoginHelper {
      * @param activity
      */
     public static void logout(Activity activity) {
-        LogUtils.d(TAG,activity.getClass().getSimpleName());
+        Logger.d(TAG,activity.getClass().getSimpleName());
 //        if(activity instanceof MainTabActivity){
 //
 //        }else{
@@ -102,6 +102,7 @@ public class LoginHelper {
         Preferences.setUserAddress(user.getAddress());
         Preferences.setUserPhoto(user.getPhoto());
         Preferences.setUserSignature(user.getSignature());
+        Preferences.setUserRank(user.getRank());
     }
 
     public static void savaWeChat(Wechat wechat){

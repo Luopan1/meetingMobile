@@ -33,13 +33,12 @@ import com.hezy.guide.phone.net.ApiClient;
 import com.hezy.guide.phone.net.OkHttpCallback;
 import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.receiver.PhoneReceiver;
-import com.hezy.guide.phone.utils.LogUtils;
+import com.hezy.guide.phone.utils.Logger;
 import com.hezy.guide.phone.utils.RxBus;
 import com.hezy.guide.phone.utils.UIDUtil;
 import com.hezy.guide.phone.utils.statistics.ZYAgent;
 import com.tendcloud.tenddata.TCAgent;
 
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
@@ -58,9 +57,9 @@ import rx.functions.Action1;
 public class ChatActivity extends BaseActivity implements AGEventHandler {
 
     private final String TAG = ChatActivity.class.getSimpleName();
-    public final String FTAG = LogUtils.lifecycle;
+    public final String FTAG = Logger.lifecycle;
 
-    private final static Logger log = LoggerFactory.getLogger(ChatActivity.class);
+    private final static org.slf4j.Logger log = LoggerFactory.getLogger(ChatActivity.class);
 
     private GridVideoViewContainer mGridVideoViewContainer;
 
@@ -101,14 +100,14 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
     @Override
     protected void onResume() {
         super.onResume();
-        LogUtils.d(FTAG + TAG, "onResume");
+        Logger.d(FTAG + TAG, "onResume");
         ZYAgent.onPageStart(this, "视频通话");
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        LogUtils.d(FTAG + TAG, "onResume");
+        Logger.d(FTAG + TAG, "onResume");
         ZYAgent.onPageEnd(this, "视频通话");
     }
 
@@ -611,7 +610,7 @@ public class ChatActivity extends BaseActivity implements AGEventHandler {
     @Override
     public void onBackPressed() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("确定退出？");
+        builder.setTitle("您要退出当前通话吗？");
         builder.setNegativeButton("确定", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {

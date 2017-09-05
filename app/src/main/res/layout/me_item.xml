@@ -25,11 +25,28 @@
         <!-- tools:background="@color/bg_gray_909090"-->
 
 
-        <ImageView
-            android:id="@+id/mIvHead"
-            tools:src="@color/green"
-            android:layout_width="@dimen/my_px_460"
-            android:layout_height="@dimen/my_px_426" />
+
+        <FrameLayout
+            android:id="@+id/mLayoutHead"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/mIvHead"
+                tools:src="@color/green"
+                android:layout_width="@dimen/my_px_460"
+                android:layout_height="@dimen/my_px_426" />
+
+             <ImageView
+                 android:id="@+id/mIvGold"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                 android:layout_gravity="right|top"
+                  android:src="@mipmap/ic_my_gold_medal"/>
+
+
+        </FrameLayout>
+
 
         <LinearLayout
             android:id="@+id/mLayoutStar"
@@ -112,7 +129,7 @@
             android:layout_below="@+id/mTvReviewCount"
             android:layout_marginLeft="@dimen/my_px_40"
             android:layout_marginTop="@dimen/my_px_40"
-            android:layout_toRightOf="@+id/mIvHead"
+            android:layout_toRightOf="@+id/mLayoutHead"
             android:text="唐大山"
             android:textColor="@color/text_yellow_fff000"
             android:textSize="@dimen/my_sp_48"
@@ -125,7 +142,7 @@
             android:layout_below="@+id/mTvName"
             android:layout_marginLeft="@dimen/my_px_40"
             android:layout_marginTop="@dimen/my_px_20"
-            android:layout_toRightOf="@+id/mIvHead"
+            android:layout_toRightOf="@+id/mLayoutHead"
             android:drawableLeft="@mipmap/ic_address"
             android:drawablePadding="@dimen/my_px_10"
             android:gravity="center_vertical"
