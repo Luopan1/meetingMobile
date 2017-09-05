@@ -14,8 +14,7 @@ import com.tendcloud.tenddata.TCAgent;
 
 import java.net.URISyntaxException;
 
-import io.agora.openvcall.model.CurrentUserSettings;
-import io.agora.openvcall.model.WorkerThread;
+import io.agora.openlive.model.WorkerThread;
 import io.socket.client.IO;
 import io.socket.client.Socket;
 
@@ -105,7 +104,7 @@ public class BaseApplication extends Application {
         mWorkerThread = null;
     }
 
-    public static final CurrentUserSettings mVideoSettings = new CurrentUserSettings();
+//    public static final CurrentUserSettings mVideoSettings = new CurrentUserSettings();
 
 //    private void initSocket() {
 //        try {

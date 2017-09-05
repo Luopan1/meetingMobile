@@ -61,7 +61,7 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
      */
     private boolean isWxLoging;
 
-    private static boolean isFirst = true;
+//    private static boolean isFirst = true;
 
     @Override
     public String getStatisticsTag() {
@@ -81,19 +81,19 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
     @Override
     protected void initView() {
 
-        if (BuildConfig.IS_LOGIN && isFirst) {
-            Logger.i(TAG, "直接登录 BuildConfig.LOGIN_TOKEN " + BuildConfig.LOGIN_TOKEN);
-            Preferences.setToken(BuildConfig.LOGIN_TOKEN);
-        }
-        isFirst = false;
+//        if (BuildConfig.IS_LOGIN && isFirst) {
+//            Logger.i(TAG, "直接登录 BuildConfig.LOGIN_TOKEN " + BuildConfig.LOGIN_TOKEN);
+//            Preferences.setToken(BuildConfig.LOGIN_TOKEN);
+//        }
+//        isFirst = false;
 
         if (Preferences.isLogin()) {
             //TODO 需要请求用户信息
-            if (Preferences.isUserinfoEmpty()) {
+//            if (Preferences.isUserinfoEmpty()) {
 //                showToast("请先填写姓名,电话,地址,照片");
-                UserinfoActivity.actionStart(this, true);
-                return;
-            }
+//                UserinfoActivity.actionStart(this, true);
+//                return;
+//            }
             HomeActivity.actionStart(mContext);
             finish();
             return;
