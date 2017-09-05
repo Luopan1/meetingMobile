@@ -1,6 +1,5 @@
 package io.agora.openlive.ui;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -8,7 +7,6 @@ import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,7 +19,6 @@ import android.view.View;
 import android.view.ViewStub;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -67,18 +64,12 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
 
     private AudioManager mAudioManager;
 
-    private Subscription stateSubs;
-
     private TextView textChannelName;
-    private ImageView fullImage;
 
     private String channelName, callInfo;
 
     private int remoteUid;
     private Subscription hangonScription;
-
-    private volatile boolean mFullscreen = false;
-    private boolean hasPerson = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -147,14 +138,6 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
         return false;
     }
 
-    private boolean isBroadcaster(int cRole) {
-        return cRole == Constants.CLIENT_ROLE_BROADCASTER;
-    }
-
-    private boolean isBroadcaster() {
-        return isBroadcaster(config().mClientRole);
-    }
-
     @Override
     protected void initUIandEvent() {
         event().addEventHandler(this);
@@ -216,6 +199,20 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
         textChannelName = (TextView) findViewById(R.id.channel_name);
         textChannelName.setText(callInfo);
 
+        findViewById(R.id.bottom_action_end_call).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+        findViewById(R.id.switch_camera).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                worker().getRtcEngine().switchCamera();
+            }
+        });
+
         hangonScription = RxBus.handleMessage(new Action1() {
             @Override
             public void call(Object o) {
@@ -262,9 +259,7 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
 
     private void doLeaveChannel() {
         worker().leaveChannel(config().mChannel);
-        if (isBroadcaster()) {
-            worker().preview(false, null, 0);
-        }
+        worker().preview(false, null, 0);
     }
 
     @Override
@@ -333,9 +328,6 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
                     return;
                 }
 
-                final boolean isBroadcaster = isBroadcaster();
-                log.debug("onJoinChannelSuccess " + channel + " " + uid + " " + elapsed + " " + isBroadcaster);
-
                 worker().getEngineConfig().mUid = uid;
 
                 SurfaceView surfaceV = mUidsList.remove(0);
@@ -387,23 +379,7 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
                     return;
                 }
 
-//                mUidsList.remove(uid);
-//
-//                int bigBgUid = -1;
-//                if (mSmallVideoViewAdapter != null) {
-//                    bigBgUid = mSmallVideoViewAdapter.getExceptedUid();
-//                }
-//
-//                log.debug("doRemoveRemoteUi " + (uid & 0xFFFFFFFFL) + " " + (bigBgUid & 0xFFFFFFFFL));
-//
-//                if (mViewType == VIEW_TYPE_DEFAULT || uid == bigBgUid) {
-//                    switchToDefaultVideoView();
-//                } else {
-//                    switchToSmallVideoView(bigBgUid);
-//                }
-
                 TCAgent.onEvent(LiveRoomActivity.this, "讲解员退出当前房间");
-
 
                 Object target = mUidsList.remove(uid);
                 if (target == null) {

@@ -98,6 +98,10 @@
         <activity android:name=".ui.ReplyReviewActivity"
             android:screenOrientation="portrait"/>
 
+        <activity android:name=".ui.SettingActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale" />
+
         <!--<receiver-->
             <!--android:name=".receiver.NetWorkReceiver"-->
             <!--android:enabled="true"-->

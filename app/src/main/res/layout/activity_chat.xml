@@ -3,7 +3,7 @@
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-             tools:context="io.agora.openvcall.ui.ChatActivity"
+             tools:context="io.agora.openlive.ui.LiveRoomActivity"
              android:keepScreenOn="true">
 
     <io.agora.openvcall.ui.GridVideoViewContainer
@@ -49,8 +49,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:src="@drawable/btn_endcall"
-                android:onClick="onEndCallClicked" />
+                android:src="@drawable/btn_endcall" />
+
+            <ImageView
+                android:id="@+id/switch_camera"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:src="@drawable/btn_record_camera" />
 
         </io.agora.propeller.ui.AGLinearLayout>
 
