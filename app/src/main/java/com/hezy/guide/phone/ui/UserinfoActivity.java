@@ -19,7 +19,6 @@ import com.hezy.guide.phone.R;
 import com.hezy.guide.phone.base.BaseDataBindingActivity;
 import com.hezy.guide.phone.databinding.UserinfoActivityBinding;
 import com.hezy.guide.phone.entities.QiniuToken;
-import com.hezy.guide.phone.entities.RecordTotal;
 import com.hezy.guide.phone.entities.base.BaseBean;
 import com.hezy.guide.phone.entities.base.BaseErrorBean;
 import com.hezy.guide.phone.event.UserUpdateEvent;
@@ -90,7 +89,7 @@ public class UserinfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
         context.startActivity(intent);
     }
 
-    private boolean isFirst;
+    public static boolean isFirst;
 
 
     @Override

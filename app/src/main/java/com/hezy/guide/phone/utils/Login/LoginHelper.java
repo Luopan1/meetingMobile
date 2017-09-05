@@ -10,8 +10,10 @@ import com.hezy.guide.phone.entities.Wechat;
 import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.service.WSService;
 import com.hezy.guide.phone.ui.HomeActivity;
+import com.hezy.guide.phone.ui.UserinfoActivity;
 import com.hezy.guide.phone.utils.Logger;
 import com.hezy.guide.phone.utils.statistics.ZYAgent;
+import com.hezy.guide.phone.wxapi.WXEntryActivity;
 
 
 /**
@@ -55,7 +57,11 @@ public class LoginHelper {
         logoutCustom(activity);
 
         Intent intent;
-        intent = new Intent(activity, HomeActivity.class);
+        if(activity instanceof WXEntryActivity || (activity instanceof UserinfoActivity && UserinfoActivity.isFirst)){
+            intent = new Intent(activity, WXEntryActivity.class);
+        }else{
+            intent = new Intent(activity, HomeActivity.class);
+        }
         intent.putExtra(LOGIN_TYPE, LOGIN_TYPE_LOGOUT);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);

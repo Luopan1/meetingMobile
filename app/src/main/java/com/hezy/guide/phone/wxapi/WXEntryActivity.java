@@ -1,5 +1,6 @@
 package com.hezy.guide.phone.wxapi;
 
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -19,6 +20,7 @@ import com.hezy.guide.phone.databinding.LoginActivityBinding;
 import com.hezy.guide.phone.entities.FinishWX;
 import com.hezy.guide.phone.entities.LoginWechat;
 import com.hezy.guide.phone.entities.User;
+import com.hezy.guide.phone.entities.UserData;
 import com.hezy.guide.phone.entities.Wechat;
 import com.hezy.guide.phone.entities.base.BaseBean;
 import com.hezy.guide.phone.net.ApiClient;
@@ -54,6 +56,8 @@ import rx.functions.Action1;
 public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBinding> implements IWXAPIEventHandler {
     public static final String TAG = "WXEntryActivity";
     private IWXAPI mWxApi;
+    private int mIntentType;
+    private boolean isNewActivity;
     private static final int RETURN_MSG_TYPE_LOGIN = 1;
     private static final int RETURN_MSG_TYPE_SHARE = 2;
     /**
@@ -62,6 +66,7 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
     private boolean isWxLoging;
 
     private static boolean isFirst = true;
+    private Dialog dialog;
 
     @Override
     public String getStatisticsTag() {
@@ -78,6 +83,57 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
         context.startActivity(intent);
     }
 
+
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+//        setIntent(intent);//must store the new intent unless getIntent() will return the old one
+        //如果没销毁,注销只调用onNewIntent,需要在这里处理注销逻辑
+        processExtraData(intent);
+
+
+    }
+
+    private void processExtraData(Intent intent) {
+        mIntentType = intent.getIntExtra(LoginHelper.LOGIN_TYPE, 0);
+        Logger.d(TAG, "mIntentType " + mIntentType);
+        if (mIntentType == LoginHelper.LOGIN_TYPE_EXIT) {
+            //退出应用
+            Logger.d(TAG, "退出应用");
+//            quit();
+        } else if (mIntentType == LoginHelper.LOGIN_TYPE_LOGOUT) {
+            //退出登录
+            Logger.d(TAG, "退出登录");
+            //判断是否是强制退出,强制退出在登录页有弹窗提醒
+            boolean isUserLogout = intent.getBooleanExtra("IS_USER_LOGOUT",false);
+            if(!isUserLogout){
+                showLogoutForceDialog();
+            }
+        }
+
+    }
+
+
+    /**
+     * 强制退出dialog
+     */
+    private void showLogoutForceDialog() {
+//        if (dialog == null) {
+//            View view = View.inflate(getApplicationContext(), R.layout.dialog_common_ok, null);
+//            TextView title = (TextView) view.findViewById(R.id.title);
+//            title.setText(getString(R.string.login_invalid));
+//            view.findViewById(R.id.ok).setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    dialog.cancel();
+//                }
+//            });
+//            dialog = new Dialog(this, R.style.MyDialog);
+//            dialog.setContentView(view);
+//        }
+//        dialog.show();
+
+    }
+
     @Override
     protected void initView() {
 
@@ -89,13 +145,29 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
 
         if (Preferences.isLogin()) {
             //TODO 需要请求用户信息
-            if (Preferences.isUserinfoEmpty()) {
-//                showToast("请先填写姓名,电话,地址,照片");
-                UserinfoActivity.actionStart(this, true);
-                return;
-            }
-            HomeActivity.actionStart(mContext);
-            finish();
+            ApiClient.getInstance().requestUser(this, new OkHttpBaseCallback<BaseBean<UserData>>() {
+                @Override
+                public void onSuccess(BaseBean<UserData> entity) {
+                    if (entity == null || entity.getData() == null || entity.getData().getUser() == null) {
+                        showToast("数据为空");
+                        return;
+                    }
+                    User user = entity.getData().getUser();
+                    Wechat wechat = entity.getData().getWechat();
+                    LoginHelper.savaUser(user);
+                    if (wechat != null) {
+                        LoginHelper.savaWeChat(wechat);
+                    }
+
+                    if (Preferences.isUserinfoEmpty()) {
+                        UserinfoActivity.actionStart(mContext, true);
+                        return;
+                    }
+                    HomeActivity.actionStart(mContext);
+                    finish();
+
+                }
+            });
             return;
         }
 
@@ -361,6 +433,9 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
         }
         if (mWxApi != null) {
             mWxApi.detach();
+        }
+        if(dialog != null){
+            dialog.cancel();
         }
         cancelDialog();
         super.onDestroy();
