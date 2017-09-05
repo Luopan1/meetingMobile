@@ -11,11 +11,18 @@ import com.hezy.guide.phone.base.BaseDataBindingFragment;
 import com.hezy.guide.phone.databinding.MeFragmentBinding;
 import com.hezy.guide.phone.entities.RankInfo;
 import com.hezy.guide.phone.entities.RecordData;
+import com.hezy.guide.phone.entities.User;
+import com.hezy.guide.phone.entities.UserData;
+import com.hezy.guide.phone.entities.Wechat;
 import com.hezy.guide.phone.entities.base.BaseBean;
+import com.hezy.guide.phone.event.UserUpdateEvent;
 import com.hezy.guide.phone.net.ApiClient;
 import com.hezy.guide.phone.net.OkHttpBaseCallback;
+import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.ui.adapter.ReviewAdapter;
 import com.hezy.guide.phone.utils.Logger;
+import com.hezy.guide.phone.utils.Login.LoginHelper;
+import com.hezy.guide.phone.utils.RxBus;
 
 /**
  * 我的
@@ -112,15 +119,42 @@ public class MeFragment extends BaseDataBindingFragment<MeFragmentBinding> {
 
     @Override
     protected void requestData() {
-        requestRankInfo();
-        requestRecord();
+
     }
 
     @Override
     public void onMyVisible() {
         super.onMyVisible();
+        requestRankInfo();
+        requestRecord();
+        //用户信息也每次前台刷新
+        requestUser();
 
+    }
 
+    public void requestUser() {
+        if(!Preferences.isLogin()){
+            return;
+        }
+        ApiClient.getInstance().requestUser(this, new OkHttpBaseCallback<BaseBean<UserData>>() {
+            @Override
+            public void onSuccess(BaseBean<UserData> entity) {
+                if (entity == null || entity.getData() == null || entity.getData().getUser() == null) {
+                    showToast("数据为空");
+                    return;
+                }
+                User user = entity.getData().getUser();
+                Wechat wechat = entity.getData().getWechat();
+                LoginHelper.savaUser(user);
+//                initCurrentItem();
+                if (wechat != null) {
+                    LoginHelper.savaWeChat(wechat);
+                }
+                RxBus.sendMessage(new UserUpdateEvent());
+                mAdapter.notifyDataSetChanged();
+
+            }
+        });
     }
 
 
