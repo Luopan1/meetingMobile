@@ -25,6 +25,7 @@ import com.hezy.guide.phone.utils.Logger;
 import com.hezy.guide.phone.utils.RxBus;
 import com.hezy.guide.phone.utils.StringUtils;
 import com.hezy.guide.phone.utils.TimeUtil;
+import com.hezy.guide.phone.utils.ToastUtils;
 import com.hezy.guide.phone.utils.helper.ImageHelper;
 import com.hezy.guide.phone.utils.statistics.ZYAgent;
 
@@ -324,11 +325,15 @@ public class ReviewAdapter extends BaseRecyclerAdapter<RecordData.PageDataEntity
         TextView mTvName;
         @BindView(R.id.mTvAddress)
         TextView mTvAddress;
+        @BindView(R.id.mIvSetting)
+        ImageView mIvSetting;
 
         MeViewHolder(View view, View.OnClickListener listener) {
             super(view);
             ButterKnife.bind(this, view);
             mIvHead.setOnClickListener(listener);
+            mIvSetting.setOnClickListener(listener);
+
         }
     }
 
@@ -346,6 +351,10 @@ public class ReviewAdapter extends BaseRecyclerAdapter<RecordData.PageDataEntity
         switch (v.getId()) {
             case R.id.mIvHead:
                 UserinfoActivity.actionStart(mContext);
+                break;
+            case R.id.mIvSetting:
+                ToastUtils.showToast("点击");
+                //TODO
                 break;
             case R.id.mTvReply:
                 bean = (RecordData.PageDataEntity) v.getTag(R.id.tag_bean);
