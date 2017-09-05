@@ -169,7 +169,7 @@ public class WorkerThread extends Thread {
         mEngineConfig.mClientRole = cRole;
         mEngineConfig.mVideoProfile = vProfile;
 
-        mRtcEngine.setVideoProfile(mEngineConfig.mVideoProfile, true);
+        mRtcEngine.setVideoProfile(mEngineConfig.mVideoProfile, false);
 
         mRtcEngine.setClientRole(cRole, "");
 
@@ -211,7 +211,7 @@ public class WorkerThread extends Thread {
                 mRtcEngine = RtcEngine.create(mContext, appId, mEngineEventHandler.mRtcEventHandler);
                 mRtcEngine.setChannelProfile(Constants.CHANNEL_PROFILE_LIVE_BROADCASTING);
                 mRtcEngine.enableVideo();
-                mRtcEngine.setLogFile("/sdcard/agora-live-zhuangmaidian.log");
+                mRtcEngine.setLogFile("/sdcard/agora-live.log");
                 mRtcEngine.enableDualStreamMode(true);
             } catch (Exception e) {
                 e.printStackTrace();
