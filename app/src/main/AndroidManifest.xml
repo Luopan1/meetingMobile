@@ -76,13 +76,13 @@
             </activity>
 
 
-        <activity android:name="io.agora.openvcall.ui.ChatActivity"
+        <activity android:name="io.agora.openlive.ui.LiveRoomActivity"
             android:launchMode="singleInstance"
             android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"
             android:screenOrientation="landscape"
             android:theme="@style/FullscreenTheme"/>
 
-        <activity android:name="io.agora.openvcall.ui.MainActivity"
+        <activity android:name="io.agora.openlive.ui.MainActivity"
             android:launchMode="singleInstance"
             android:screenOrientation="landscape"
             android:theme="@style/FullscreenTheme"
