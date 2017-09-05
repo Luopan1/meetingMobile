@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.hezy.guide.phone.R;
 import com.hezy.guide.phone.base.BasisActivity;
+import com.hezy.guide.phone.utils.Login.LoginHelper;
 
 import io.agora.openlive.model.ConstantApp;
 
@@ -18,6 +19,8 @@ import io.agora.openlive.model.ConstantApp;
  */
 
 public class SettingActivity extends BasisActivity {
+
+    private SharedPreferences pref;
 
     @Override
     public String getStatisticsTag() {
@@ -29,6 +32,15 @@ public class SettingActivity extends BasisActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
 
+        pref = PreferenceManager.getDefaultSharedPreferences(this);
+
+        findViewById(R.id.mIvLeft).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
         findViewById(R.id.resolution_layout).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -36,12 +48,20 @@ public class SettingActivity extends BasisActivity {
             }
         });
 
+        findViewById(R.id.exit).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LoginHelper.logout();
+            }
+        });
+
+        int prefIndex = pref.getInt(ConstantApp.PrefManager.PREF_PROPERTY_PROFILE_IDX, ConstantApp.DEFAULT_PROFILE_IDX);
+        ((TextView) findViewById(R.id.resolution_text)).setText(resolutionText(prefIndex));
     }
 
-    String[] items = new String[]{"流畅（网速慢时，小屏幕让你不卡顿）", "标准（大屏显示的清晰画质）", "高清（网速好时，可以选择高清画质）"};
+    String[] items = new String[]{"流畅（480x320）", "标准（640x480）", "高清（1280x720）"};
 
     private void showSelectDialog() {
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
         int prefIndex = pref.getInt(ConstantApp.PrefManager.PREF_PROPERTY_PROFILE_IDX, ConstantApp.DEFAULT_PROFILE_IDX);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("分辨率设置");
@@ -53,7 +73,7 @@ public class SettingActivity extends BasisActivity {
                 editor.putInt(ConstantApp.PrefManager.PREF_PROPERTY_PROFILE_IDX, which);
                 editor.apply();
                 dialog.dismiss();
-                ((TextView)findViewById(R.id.resolution_text)).setText(resolutionText(which));
+                ((TextView) findViewById(R.id.resolution_text)).setText(resolutionText(which));
             }
         });
         AlertDialog dialog = builder.create();
