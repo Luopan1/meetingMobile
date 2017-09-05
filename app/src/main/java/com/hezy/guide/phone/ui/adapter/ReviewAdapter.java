@@ -1,6 +1,7 @@
 package com.hezy.guide.phone.ui.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v7.widget.RecyclerView;
@@ -19,6 +20,7 @@ import com.hezy.guide.phone.event.ReplyReviewEvent;
 import com.hezy.guide.phone.event.UserUpdateEvent;
 import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.ui.ReplyReviewActivity;
+import com.hezy.guide.phone.ui.SettingActivity;
 import com.hezy.guide.phone.ui.UserinfoActivity;
 import com.hezy.guide.phone.utils.ImageUtils;
 import com.hezy.guide.phone.utils.Logger;
@@ -353,8 +355,7 @@ public class ReviewAdapter extends BaseRecyclerAdapter<RecordData.PageDataEntity
                 UserinfoActivity.actionStart(mContext);
                 break;
             case R.id.mIvSetting:
-                ToastUtils.showToast("点击");
-                //TODO
+                mContext.startActivity(new Intent(mContext, SettingActivity.class));
                 break;
             case R.id.mTvReply:
                 bean = (RecordData.PageDataEntity) v.getTag(R.id.tag_bean);

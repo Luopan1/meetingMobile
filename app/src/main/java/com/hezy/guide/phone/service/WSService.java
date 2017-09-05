@@ -8,6 +8,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.telephony.TelephonyManager;
@@ -48,6 +49,7 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 
+import io.agora.openlive.model.ConstantApp;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 import rx.Subscription;
@@ -309,6 +311,7 @@ public class WSService extends Service {
         mSocket.on("LISTEN_TV_LEAVE_CHANNEL", ON_LISTEN_TV_LEAVE_CHANNEL);
         mSocket.on("TIMEOUT_WITHOUT_REPLY", ON_TIMEOUT_WITHOUT_REPLY);
         mSocket.on("OLD_DISCONNECT", ON_OLD_DISCONNECT);
+        mSocket.on("CHANGE_RESOLUTION_EVENT", resolutionChangedListener);
         mSocket.connect();
 
     }
@@ -331,6 +334,7 @@ public class WSService extends Service {
         mSocket.off("SALES_ONLINE_WITH_STATUS_RETURN", ON_SALES_ONLINE_WITH_STATUS_RETURN);
         mSocket.off("LISTEN_TV_LEAVE_CHANNEL", ON_LISTEN_TV_LEAVE_CHANNEL);
         mSocket.off("OLD_DISCONNECT", ON_OLD_DISCONNECT);
+        mSocket.off("CHANGE_RESOLUTION_EVENT", resolutionChangedListener);
 //        SOCKET_ONLINE = false;
         sendUserStateEvent();
 
@@ -422,6 +426,21 @@ public class WSService extends Service {
         }
     };
 
+
+    private Emitter.Listener resolutionChangedListener = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            int prefIndex = PreferenceManager.getDefaultSharedPreferences(
+                    getApplication()).getInt(ConstantApp.PrefManager.PREF_PROPERTY_PROFILE_IDX, ConstantApp.DEFAULT_PROFILE_IDX);
+            try {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("resolution", prefIndex);
+                mSocket.emit("CHANGE_RESOLUTION", jsonObject);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    };
 
     private Emitter.Listener onCall = new Emitter.Listener() {
         @Override

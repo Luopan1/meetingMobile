@@ -17,8 +17,6 @@ import android.view.MenuItem;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewStub;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -78,13 +76,6 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
 
         TCAgent.onEvent(this, "进入手机端导购直播界面");
 
-        final Window win = getWindow();
-        win.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
-                | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
-                | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-                | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
-
-
         mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         mAudioManager.requestAudioFocus(onAudioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
 
@@ -126,16 +117,6 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
     protected void onPause() {
         super.onPause();
         TCAgent.onPageEnd(this, "视频通话");
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        return false;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        return false;
     }
 
     @Override
@@ -185,14 +166,14 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
         });
 
         SurfaceView surfaceV = RtcEngine.CreateRendererView(getApplicationContext());
-        rtcEngine().setupLocalVideo(new VideoCanvas(surfaceV, VideoCanvas.RENDER_MODE_HIDDEN, 0));
+        rtcEngine().setupLocalVideo(new VideoCanvas(surfaceV, VideoCanvas.RENDER_MODE_HIDDEN, config().mUid));
         surfaceV.setZOrderOnTop(true);
         surfaceV.setZOrderMediaOverlay(true);
 
-        mUidsList.put(0, surfaceV); // get first surface view
+        mUidsList.put(config().mUid, surfaceV); // get first surface view
 
-        mGridVideoViewContainer.initViewContainer(getApplicationContext(), 0, mUidsList); // first is now full view
-        worker().preview(true, surfaceV, 0);
+        mGridVideoViewContainer.initViewContainer(getApplicationContext(), config().mUid, mUidsList); // first is now full view
+        worker().preview(true, surfaceV, config().mUid);
 
         worker().joinChannel(channelName, config().mUid);
 
@@ -259,7 +240,7 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
 
     private void doLeaveChannel() {
         worker().leaveChannel(config().mChannel);
-        worker().preview(false, null, 0);
+        worker().preview(false, null, config().mUid);
     }
 
     @Override

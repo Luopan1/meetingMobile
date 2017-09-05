@@ -1,37 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
     tools:context="io.agora.openlive.ui.SettingsActivity">
 
     <LinearLayout
-        android:id="@+id/title"
+        android:id="@+id/resolution_layout"
         android:layout_width="match_parent"
-        android:layout_height="72dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:paddingEnd="16dp"
+        android:paddingStart="16dp"
+        android:background="@color/white"
         android:orientation="horizontal">
 
         <TextView
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="Resolution\n(Height * Width)"
-            android:gravity="center"/>
+            android:drawableLeft="@drawable/btn_my_set_resolution"
+            android:drawablePadding="8dp"
+            android:gravity="center_vertical"
+            android:text="分辨率设置" />
 
         <TextView
+            android:id="@+id/resolution_text"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
             android:layout_weight="1"
-            android:text="Frame Rate\n(fps)"
-            android:gravity="center"/>
+            android:paddingBottom="16dp"
+            android:paddingTop="16dp" />
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="Bit Rate\n(kbps)"
-            android:gravity="center"/>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/btn_my_set_resolution_more" />
 
     </LinearLayout>
 
-</RelativeLayout>
+</LinearLayout>
