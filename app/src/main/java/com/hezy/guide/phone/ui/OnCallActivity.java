@@ -5,7 +5,10 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.RingtoneManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.preference.Preference;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -13,20 +16,32 @@ import android.view.WindowManager;
 import android.view.animation.AnimationUtils;
 import android.widget.Toast;
 
+import com.hezy.guide.phone.BaseApplication;
 import com.hezy.guide.phone.BaseException;
 import com.hezy.guide.phone.R;
 import com.hezy.guide.phone.base.BaseDataBindingActivity;
 import com.hezy.guide.phone.databinding.OnCallActivityBinding;
+import com.hezy.guide.phone.entities.Agora;
+import com.hezy.guide.phone.entities.base.BaseBean;
 import com.hezy.guide.phone.entities.base.BaseErrorBean;
 import com.hezy.guide.phone.event.CallEvent;
 import com.hezy.guide.phone.event.TvLeaveChannel;
 import com.hezy.guide.phone.event.TvTimeoutHangUp;
 import com.hezy.guide.phone.net.ApiClient;
 import com.hezy.guide.phone.net.OkHttpCallback;
+import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.utils.RxBus;
 import com.hezy.guide.phone.utils.ToastUtils;
+import com.hezy.guide.phone.utils.UIDUtil;
 import com.hezy.guide.phone.utils.statistics.ZYAgent;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import io.agora.openlive.model.ConstantApp;
 import io.agora.openlive.ui.LiveRoomActivity;
 import io.agora.openlive.ui.MainActivity;
 import rx.Subscription;
@@ -150,11 +165,11 @@ public class OnCallActivity extends BaseDataBindingActivity<OnCallActivityBindin
                     public void onSuccess(BaseErrorBean entity) {
                         Log.d("start receive", entity.toString());
                         RxBus.sendMessage(new CallEvent(true, tvSocketId));
-                        Intent intent = new Intent(mContext, MainActivity.class);
-                        intent.putExtra("channelId", channelId);
-                        intent.putExtra("callInfo", callInfo);
-                        startActivity(intent);
-                        finish();
+
+                        Map<String, String> params = new HashMap<String, String>();
+                        params.put("channel", channelId);
+                        params.put("uid", UIDUtil.generatorUID(Preferences.getUserId()));
+                        ApiClient.getInstance().getAgoraKey(OnCallActivity.this, params, new AgoraCallback());
                     }
 
                     @Override
@@ -186,6 +201,26 @@ public class OnCallActivity extends BaseDataBindingActivity<OnCallActivityBindin
                 });
                 break;
         }
+    }
+
+    class AgoraCallback extends OkHttpCallback<BaseBean<Agora>> {
+
+        @Override
+        public void onSuccess(BaseBean<Agora> agoraBucket) {
+            Intent intent = new Intent(mContext, MainActivity.class);
+            intent.putExtra("channelId", channelId);
+            intent.putExtra("callInfo", callInfo);
+            intent.putExtra("agora", agoraBucket.getData());
+            startActivity(intent);
+            finish();
+            ZYAgent.onEvent(BaseApplication.getInstance(),"点击事件 拨打电话 进入房间");
+        }
+
+        @Override
+        public void onFailure(int errorCode, BaseException exception) {
+            Toast.makeText(getApplication(), "网络异常，请稍后重试！", Toast.LENGTH_SHORT).show();
+        }
+
     }
 
     private Subscription subscription;

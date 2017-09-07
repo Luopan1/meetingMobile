@@ -22,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hezy.guide.phone.R;
+import com.hezy.guide.phone.entities.Agora;
 import com.hezy.guide.phone.entities.base.BaseErrorBean;
 import com.hezy.guide.phone.event.HangOnEvent;
 import com.hezy.guide.phone.event.HangUpEvent;
@@ -65,6 +66,7 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
     private TextView textChannelName;
 
     private String channelName, callInfo;
+    private Agora agora;
 
     private int remoteUid;
     private Subscription hangonScription;
@@ -135,13 +137,13 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
         config().mUid = Integer.parseInt(UIDUtil.generatorUID(Preferences.getUserId()));
 
         callInfo = i.getStringExtra("callInfo");
+        agora = i.getParcelableExtra("agora");
 
         phoneReceiver = new PhoneReceiver();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("android.intent.action.PHONE_STATE");
         intentFilter.addAction("android.intent.action.NEW_OUTGOING_CALL");
         registerReceiver(phoneReceiver, intentFilter);
-
 
         doConfigEngine(cRole);
 
@@ -175,10 +177,11 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
         mGridVideoViewContainer.initViewContainer(getApplicationContext(), config().mUid, mUidsList); // first is now full view
         worker().preview(true, surfaceV, config().mUid);
 
-        worker().joinChannel(channelName, config().mUid);
+        worker().joinChannel(agora.getChannelKey(), channelName, config().mUid);
 
         textChannelName = (TextView) findViewById(R.id.channel_name);
         textChannelName.setText(callInfo);
+//        textChannelName.setText(channelName);
 
         findViewById(R.id.bottom_action_end_call).setOnClickListener(new View.OnClickListener() {
             @Override

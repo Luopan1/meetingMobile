@@ -22,6 +22,7 @@ public class BaseApplication extends Application {
     public static final String TAG = "BaseApplication";
     private static BaseApplication instance;
     private Socket mSocket;
+
     {
         try {
             mSocket = IO.socket(BuildConfig.WS_DOMAIN_NAME);
@@ -73,17 +74,13 @@ public class BaseApplication extends Application {
 
     public void setCurrentActivity(Activity mCurrentActivity) {
         this.mCurrentActivity = mCurrentActivity;
-//        if(mCurrentActivity!=null && LoginHelper.mIsLogout==true){
-//            LoginHelper.mIsLogout = false;
-//            LoginHelper.logout(mCurrentActivity);
-//        }
     }
 
     private WorkerThread mWorkerThread;
 
-    public synchronized void initWorkerThread() {
+    public synchronized void initWorkerThread(String appId) {
         if (mWorkerThread == null) {
-            mWorkerThread = new WorkerThread(getApplicationContext());
+            mWorkerThread = new WorkerThread(getApplicationContext(), appId);
             mWorkerThread.start();
 
             mWorkerThread.waitForReady();
@@ -103,16 +100,6 @@ public class BaseApplication extends Application {
         }
         mWorkerThread = null;
     }
-
-//    public static final CurrentUserSettings mVideoSettings = new CurrentUserSettings();
-
-//    private void initSocket() {
-//        try {
-//            mSocket = IO.socket(WS_URL);
-//        } catch (URISyntaxException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
 
     public Socket getSocket() {
         return mSocket;

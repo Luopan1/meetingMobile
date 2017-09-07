@@ -1,5 +1,6 @@
 package com.hezy.guide.phone.net;
 
+import android.net.Uri;
 import android.os.Build;
 import android.text.TextUtils;
 import android.util.Log;
@@ -53,6 +54,18 @@ public class ApiClient {
 
     private ApiClient() {
         okHttpUtil = OkHttpUtil.getInstance();
+    }
+
+    public static String jointParamsToUrl(String url, Map<String, String> params) {
+        if (params != null && params.size() > 0) {
+            Uri uri = Uri.parse(url);
+            Uri.Builder b = uri.buildUpon();
+            for (Map.Entry<String, String> entry : params.entrySet()) {
+                b.appendQueryParameter(entry.getKey(), entry.getValue());
+            }
+            return b.build().toString();
+        }
+        return url;
     }
 
     private static Map<String, String> getCommonHead() {
@@ -111,6 +124,17 @@ public class ApiClient {
      */
     public void updateDeviceInfo(Object tag, String deviceId, OkHttpCallback responseCallback, String jsonStr) {
         okHttpUtil.putJson(API_DOMAIN_NAME + "/osg/app/device/" + deviceId, getCommonHead(), jsonStr, responseCallback, tag);
+    }
+
+    /**
+     * 获取声网参数
+     *
+     * @param params
+     * @param responseCallback
+     *
+     */
+    public void getAgoraKey(Object tag, Map<String, String> params, OkHttpCallback responseCallback) {
+        okHttpUtil.get(jointParamsToUrl(API_DOMAIN_NAME_YOYOTU + "/dz/agora/key/osg", params), tag, responseCallback);
     }
 
     /**

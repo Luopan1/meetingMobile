@@ -59,7 +59,7 @@ public class WorkerThread extends Thread {
                     break;
                 case ACTION_WORKER_JOIN_CHANNEL:
                     String[] data = (String[]) msg.obj;
-                    mWorkerThread.joinChannel(data[0], msg.arg1);
+                    mWorkerThread.joinChannel(data[0], data[1], msg.arg1);
                     break;
                 case ACTION_WORKER_LEAVE_CHANNEL:
                     String channel = (String) msg.obj;
@@ -109,19 +109,19 @@ public class WorkerThread extends Thread {
 
     private RtcEngine mRtcEngine;
 
-    public final void joinChannel(final String channel, int uid) {
+    public final void joinChannel(final String channelKey, final String channel, int uid) {
         if (Thread.currentThread() != this) {
             log.warn("joinChannel() - worker thread asynchronously " + channel + " " + uid);
             Message envelop = new Message();
             envelop.what = ACTION_WORKER_JOIN_CHANNEL;
-            envelop.obj = new String[]{channel};
+            envelop.obj = new String[]{channelKey, channel};
             envelop.arg1 = uid;
             mWorkerHandler.sendMessage(envelop);
             return;
         }
 
         ensureRtcEngineReadyLock();
-        mRtcEngine.joinChannel(null, channel, "OpenLive", uid);
+        mRtcEngine.joinChannel(channelKey, channel, "GuideMobile", uid);
 
         mEngineConfig.mChannel = channel;
 
@@ -201,9 +201,10 @@ public class WorkerThread extends Thread {
         return Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
     }
 
+    private String appId;
     private RtcEngine ensureRtcEngineReadyLock() {
         if (mRtcEngine == null) {
-            String appId = mContext.getString(R.string.private_app_id);
+//            String appId = mContext.getString(R.string.private_app_id);
             if (TextUtils.isEmpty(appId)) {
                 throw new RuntimeException("NEED TO use your App ID, get your own ID at https://dashboard.agora.io/");
             }
@@ -211,7 +212,7 @@ public class WorkerThread extends Thread {
                 mRtcEngine = RtcEngine.create(mContext, appId, mEngineEventHandler.mRtcEventHandler);
                 mRtcEngine.setChannelProfile(Constants.CHANNEL_PROFILE_LIVE_BROADCASTING);
                 mRtcEngine.enableVideo();
-                mRtcEngine.setLogFile("/sdcard/agora-live.log");
+                mRtcEngine.setLogFile("/sdcard/agora-live-mobile.log");
                 mRtcEngine.enableDualStreamMode(true);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -253,8 +254,9 @@ public class WorkerThread extends Thread {
         log.debug("exit() > end");
     }
 
-    public WorkerThread(Context context) {
+    public WorkerThread(Context context, String appId) {
         this.mContext = context;
+        this.appId = appId;
 
         this.mEngineConfig = new EngineConfig();
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);

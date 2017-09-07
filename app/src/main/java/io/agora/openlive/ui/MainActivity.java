@@ -14,6 +14,7 @@ import android.view.WindowManager;
 import android.widget.EditText;
 
 import com.hezy.guide.phone.R;
+import com.hezy.guide.phone.entities.Agora;
 import com.hezy.guide.phone.utils.Logger;
 import com.tendcloud.tenddata.TCAgent;
 
@@ -26,6 +27,8 @@ public class MainActivity extends BaseActivity {
     public final String FTAG = Logger.lifecycle;
 
     private String channelId, callInfo;
+
+    private Agora agora;
 
     private Handler handler = new Handler() {
         @Override
@@ -94,6 +97,8 @@ public class MainActivity extends BaseActivity {
     protected void initUIandEvent() {
         channelId = getIntent().getStringExtra("channelId");
         callInfo = getIntent().getStringExtra("callInfo");
+        agora = getIntent().getParcelableExtra("agora");
+        setAppId(agora.getAppID());
 
         EditText textRoomName = (EditText) findViewById(R.id.room_name);
         textRoomName.addTextChangedListener(new TextWatcher() {
@@ -131,6 +136,7 @@ public class MainActivity extends BaseActivity {
         i.putExtra(ConstantApp.ACTION_KEY_CROLE, cRole);
         i.putExtra(ConstantApp.ACTION_KEY_ROOM_NAME, room);
         i.putExtra("callInfo", callInfo);
+        i.putExtra("agora", agora);
         startActivity(i);
 
         finish();

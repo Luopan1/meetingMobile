@@ -33,6 +33,12 @@ import io.agora.rtc.RtcEngine;
 public abstract class BaseActivity extends AppCompatActivity {
     private final static Logger log = LoggerFactory.getLogger(BaseActivity.class);
 
+    private String appId;
+
+    public void setAppId(String appId) {
+        this.appId = appId;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -127,7 +133,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
 
         if (Manifest.permission.CAMERA.equals(permission)) {
-            ((BaseApplication) getApplication()).initWorkerThread();
+            ((BaseApplication) getApplication()).initWorkerThread(appId);
         }
         return true;
     }
@@ -175,7 +181,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, ConstantApp.PERMISSION_REQ_ID_WRITE_EXTERNAL_STORAGE);
-                    ((BaseApplication) getApplication()).initWorkerThread();
+                    ((BaseApplication) getApplication()).initWorkerThread(appId);
                 } else {
                     finish();
                 }
