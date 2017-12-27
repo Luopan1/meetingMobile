@@ -1,4 +1,4 @@
-package com.hezy.guide.phone.net;
+package com.hezy.guide.phone.utils;
 
 /**
  * Created by whatisjava on 17-1-3.
@@ -9,12 +9,10 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.hezy.guide.phone.BaseException;
 import com.hezy.guide.phone.entities.base.BaseBean;
-import com.hezy.guide.phone.entities.base.BaseErrorBean;
 import com.hezy.guide.phone.utils.Login.LoginHelper;
 
 import java.io.IOException;

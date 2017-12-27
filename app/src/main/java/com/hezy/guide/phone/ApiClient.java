@@ -1,13 +1,10 @@
-package com.hezy.guide.phone.net;
+package com.hezy.guide.phone;
 
 import android.net.Uri;
 import android.os.Build;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.hezy.guide.phone.BaseApplication;
-import com.hezy.guide.phone.BuildConfig;
-import com.hezy.guide.phone.Constant;
 import com.hezy.guide.phone.entities.RankInfo;
 import com.hezy.guide.phone.entities.RecordData;
 import com.hezy.guide.phone.entities.RecordTotal;
@@ -20,6 +17,8 @@ import com.hezy.guide.phone.entities.base.BaseErrorBean;
 import com.hezy.guide.phone.event.UserUpdateEvent;
 import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.utils.Login.LoginHelper;
+import com.hezy.guide.phone.utils.OkHttpCallback;
+import com.hezy.guide.phone.utils.OkHttpUtil;
 import com.hezy.guide.phone.utils.RxBus;
 import com.hezy.guide.phone.utils.UUIDUtils;
 import com.tendcloud.tenddata.TCAgent;
