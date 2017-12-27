@@ -7,10 +7,13 @@ package com.hezy.guide.phone.net;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.hezy.guide.phone.BaseException;
+import com.hezy.guide.phone.entities.base.BaseBean;
 import com.hezy.guide.phone.entities.base.BaseErrorBean;
 import com.hezy.guide.phone.utils.Login.LoginHelper;
 
@@ -27,6 +30,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import okhttp3.logging.HttpLoggingInterceptor;
 
 import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
 
@@ -49,8 +53,8 @@ public class OkHttpUtil {
         clientBuilder.readTimeout(10, TimeUnit.SECONDS);
         clientBuilder.writeTimeout(30, TimeUnit.SECONDS);
 
-        MyHttpLoggingInterceptor httpLoggingInterceptor = new MyHttpLoggingInterceptor();
-        httpLoggingInterceptor.setLevel(MyHttpLoggingInterceptor.Level.BODY);
+        HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
+        httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         clientBuilder.addInterceptor(httpLoggingInterceptor);
 
         okHttpClient = clientBuilder.build();
@@ -95,29 +99,22 @@ public class OkHttpUtil {
                 }
                 if (response.body() != null) {
                     String resString = response.body().string();
-                    if (resString != null) {
+                    if (!TextUtils.isEmpty(resString)) {
                         try {
-                            BaseErrorBean baseErrorBean = gson.fromJson(resString, BaseErrorBean.class);
-                            if (baseErrorBean.isSuccess()) {
+                            System.out.println("=======================" + resString + "=======================");
+                            BaseBean baseBean = gson.fromJson(resString, BaseBean.class);
+                            if (baseBean.isSuccess()) {
                                 Object object = gson.fromJson(resString, callback.mType);
                                 callbackSuccess(object, callback);
-                            }else if (baseErrorBean.isTokenError()) {
+                            }else if (baseBean.isTokenError()) {
                                 Log.i(TAG, "baseErrorBean.isTokenError() LoginHelper.logout()");
                                 //心跳回触发这个,其他风格的请求回调可以不处理
                                 LoginHelper.logout();
                             }else {
-                                callbackFailure(response.code(),callback, new BaseException(baseErrorBean.getErrmsg()));
+                                callbackFailure(response.code(),callback, new BaseException(baseBean.getErrmsg()));
                             }
-
                         } catch (Exception e) {
                             e.printStackTrace();
-//                            try {
-//                                RespStatus respStatus = gson.fromJson(resString, RespStatus.class);
-//                                callbackFailure(response.code(), callback, new BaseException(respStatus.getErrmsg(), respStatus.getErrcode()));
-//                            } catch (JsonSyntaxException ee) {
-//                                ee.printStackTrace();
-//                                callbackFailure(response.code(), callback, new BaseException(ee.getMessage(), ee));
-//                            }
                             callbackFailure(response.code(), callback,new BaseException(e.getMessage()));
                         }
                     }else{

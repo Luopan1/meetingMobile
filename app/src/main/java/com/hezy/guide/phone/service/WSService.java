@@ -32,7 +32,6 @@ import com.hezy.guide.phone.event.TvLeaveChannel;
 import com.hezy.guide.phone.event.TvTimeoutHangUp;
 import com.hezy.guide.phone.event.UserStateEvent;
 import com.hezy.guide.phone.net.ApiClient;
-import com.hezy.guide.phone.net.OkHttpBaseCallback;
 import com.hezy.guide.phone.net.OkHttpCallback;
 import com.hezy.guide.phone.net.OkHttpUtil;
 import com.hezy.guide.phone.persistence.Preferences;
@@ -245,14 +244,17 @@ public class WSService extends Service {
                 params.put("source", 2);
                 params.put("socketId", socketid);
                 ApiClient.getInstance().deviceRegister(this, params.toString(), registerDeviceCb);
-                msg.append("client.deviceRegister call");
+                msg.append("apiClient.deviceRegister call");
             } catch (JSONException e) {
+                e.printStackTrace();
+                msg.append("registerDevice error jsonObject.put e.getMessage() = " + e.getMessage());
+            } catch (SecurityException e) {
                 e.printStackTrace();
                 msg.append("registerDevice error jsonObject.put e.getMessage() = " + e.getMessage());
             }
 
         }
-//        client.errorlog(mContext, 2, msg.toString(), respStatusCallback);
+//        apiClient.errorlog(mContext, 2, msg.toString(), respStatusCallback);
 
     }
 
@@ -279,7 +281,7 @@ public class WSService extends Service {
         mHandler.post(task);
     }
 
-    private OkHttpBaseCallback registerDeviceCb = new OkHttpBaseCallback<BaseBean>() {
+    private OkHttpCallback registerDeviceCb = new OkHttpCallback<BaseBean>() {
         @Override
         public void onSuccess(BaseBean entity) {
             Log.d(TAG, "registerDevice 成功===");

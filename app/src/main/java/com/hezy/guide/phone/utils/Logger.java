@@ -16,16 +16,8 @@ public class Logger {
     private static boolean IS_DEBUG_TOAST = BuildConfig.IS_DEBUG_TOAST;
     public static final String lifecycle = "lifecycle ";
 
-    public static boolean isDebugToast() {
-        return IS_DEBUG_TOAST;
-    }
-
     public static void setIsDebugToast(boolean isDebugToast) {
         IS_DEBUG_TOAST = isDebugToast;
-    }
-
-    public static boolean isDebugLog() {
-        return IS_DEBUG_LOG;
     }
 
     public static void setIsDebugLog(boolean isDebugLog) {

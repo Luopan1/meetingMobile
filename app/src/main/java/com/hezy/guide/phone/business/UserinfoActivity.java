@@ -14,6 +14,7 @@ import android.view.View;
 
 import com.adorkable.iosdialog.ActionSheetDialog;
 import com.hezy.guide.phone.BaseApplication;
+import com.hezy.guide.phone.BaseException;
 import com.hezy.guide.phone.Constant;
 import com.hezy.guide.phone.R;
 import com.hezy.guide.phone.databinding.UserinfoActivityBinding;
@@ -22,7 +23,7 @@ import com.hezy.guide.phone.entities.base.BaseBean;
 import com.hezy.guide.phone.entities.base.BaseErrorBean;
 import com.hezy.guide.phone.event.UserUpdateEvent;
 import com.hezy.guide.phone.net.ApiClient;
-import com.hezy.guide.phone.net.OkHttpBaseCallback;
+import com.hezy.guide.phone.net.OkHttpCallback;
 import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.utils.Logger;
 import com.hezy.guide.phone.utils.RxBus;
@@ -160,7 +161,7 @@ public class UserinfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
 
                         Map<String, String> params = new HashMap<>();
                         params.put("name", str);
-                        ApiClient.getInstance().requestUserExpostor(this, params, new OkHttpBaseCallback<BaseErrorBean>() {
+                        ApiClient.getInstance().requestUserExpostor(this, params, new OkHttpCallback<BaseErrorBean>() {
                             @Override
                             public void onSuccess(BaseErrorBean entity) {
                                 showToast("设置姓名成功");
@@ -196,7 +197,7 @@ public class UserinfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
                         Map<String, String> params = new HashMap<>();
                         params.put("mobile", str);
                         params.put("verifyCode", verifyCode);
-                        ApiClient.getInstance().requestUserExpostor(this, params, new OkHttpBaseCallback<BaseErrorBean>() {
+                        ApiClient.getInstance().requestUserExpostor(this, params, new OkHttpCallback<BaseErrorBean>() {
                             @Override
                             public void onSuccess(BaseErrorBean entity) {
                                 showToast("设置手机号成功");
@@ -248,7 +249,7 @@ public class UserinfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
                     if ((!TextUtils.isEmpty(str)) && !Preferences.getUserSignature().equals(str)) {
                         Map<String, String> params = new HashMap<>();
                         params.put("signature", str);
-                        ApiClient.getInstance().requestUserExpostor(this, params, new OkHttpBaseCallback<BaseErrorBean>() {
+                        ApiClient.getInstance().requestUserExpostor(this, params, new OkHttpCallback<BaseErrorBean>() {
                             @Override
                             public void onSuccess(BaseErrorBean entity) {
                                 showToast("设置签名成功");
@@ -330,7 +331,7 @@ public class UserinfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
 
             }
 
-            ApiClient.getInstance().requestUserExpostor(this, params, new OkHttpBaseCallback<BaseErrorBean>() {
+            ApiClient.getInstance().requestUserExpostor(this, params, new OkHttpCallback<BaseErrorBean>() {
                 @Override
                 public void onSuccess(BaseErrorBean entity) {
                     if (!Preferences.getUserMobile().equals(str)) {
@@ -344,7 +345,7 @@ public class UserinfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
                         return;
                     }
                     if(isFirst){
-                        HomeActivity.actionStart(mContext);
+                        startActivity(new Intent(UserinfoActivity.this, HomeActivity.class));
                     }
                     finish();
 
@@ -358,7 +359,7 @@ public class UserinfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
             return;
         }
         if(isFirst){
-            HomeActivity.actionStart(mContext);
+            startActivity(new Intent(UserinfoActivity.this, HomeActivity.class));
         }
         finish();
     }
@@ -415,19 +416,20 @@ public class UserinfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
                 }
                 mBinding.mTvObtainCaptcha.setEnabled(false);
                 countDownTimer.start();
-                ApiClient.getInstance().requestVerifyCode(this, str, new OkHttpBaseCallback<BaseErrorBean>() {
+                ApiClient.getInstance().requestVerifyCode(this, str, new OkHttpCallback<BaseErrorBean>() {
                     @Override
                     public void onSuccess(BaseErrorBean entity) {
 
                     }
 
                     @Override
-                    public void onErrorAll(Exception e) {
-                        super.onErrorAll(e);
+                    public void onFailure(int errorCode, BaseException exception) {
+                        super.onFailure(errorCode, exception);
                         countDownTimer.cancel();
                         mBinding.mTvObtainCaptcha.setEnabled(true);
                         mBinding.mTvObtainCaptcha.setText("获取验证码");
                     }
+
                 });
                 break;
             case R.id.mTvAddress:
@@ -527,7 +529,7 @@ public class UserinfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
                 if ((!TextUtils.isEmpty(str)) && !Preferences.getUserAddress().equals(str)) {
                     Map<String, String> params = new HashMap<>();
                     params.put("address", str);
-                    ApiClient.getInstance().requestUserExpostor(this, params, new OkHttpBaseCallback<BaseErrorBean>() {
+                    ApiClient.getInstance().requestUserExpostor(this, params, new OkHttpCallback<BaseErrorBean>() {
                         @Override
                         public void onSuccess(BaseErrorBean entity) {
                             showToast("设置地址成功");
@@ -561,7 +563,7 @@ public class UserinfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
     }
 
     private void uploadImage() {
-        ApiClient.getInstance().requestQiniuToken(this, new OkHttpBaseCallback<BaseBean<QiniuToken>>() {
+        ApiClient.getInstance().requestQiniuToken(this, new OkHttpCallback<BaseBean<QiniuToken>>() {
 
             @Override
             public void onSuccess(BaseBean<QiniuToken> result) {
@@ -614,7 +616,7 @@ public class UserinfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
         if ((!TextUtils.isEmpty(str)) && !Preferences.getUserMobile().equals(str)) {
             Map<String, String> params = new HashMap<>();
             params.put("photo", Preferences.getImgUrl() + str); //服务器存储全路径
-            ApiClient.getInstance().requestUserExpostor(this, params, new OkHttpBaseCallback<BaseErrorBean>() {
+            ApiClient.getInstance().requestUserExpostor(this, params, new OkHttpCallback<BaseErrorBean>() {
                 @Override
                 public void onSuccess(BaseErrorBean entity) {
                     Preferences.setUserPhoto(Preferences.getImgUrl() + str);

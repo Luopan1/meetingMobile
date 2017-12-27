@@ -167,15 +167,12 @@ dependencies {
 
 
     //view依赖注入根据layout 自动生成控件字段和自动查找
-    compile 'com.jakewharton:butterknife:8.7.0'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:8.7.0'
+    compile 'com.jakewharton:butterknife:8.8.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
 
     //图片带边
     compile 'de.hdodenhof:circleimageview:2.1.0'
     compile 'com.rengwuxian.materialedittext:library:2.1.4'
-
-    //垂直ViewPager
-//    compile 'me.kaelaela:verticalviewpager:1.0.0@aar'
 
     //照片选择
     compile 'com.jph.takephoto:takephoto_library:4.0.3'
@@ -184,10 +181,8 @@ dependencies {
     compile 'io.reactivex:rxjava:1.2.1'
     compile 'io.reactivex:rxandroid:1.2.1'
 
-    //socket.io
-    compile ('io.socket:socket.io-client:1.0.0') {
-        exclude group: 'org.json', module: 'json'
-    }
+    // https://mvnrepository.com/artifact/io.socket/socket.io-client
+    compile group: 'io.socket', name: 'socket.io-client', version: '1.0.0'
 
     compile 'com.google.code.gson:gson:2.8.2'
 

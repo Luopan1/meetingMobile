@@ -1,21 +1,24 @@
 package com.hezy.guide.phone.wxapi;
 
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.os.Bundle;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.hezy.guide.phone.BuildConfig;
 import com.hezy.guide.phone.R;
-import com.hezy.guide.phone.databinding.LoginActivityBinding;
+import com.hezy.guide.phone.business.BasicActivity;
+import com.hezy.guide.phone.business.HomeActivity;
+import com.hezy.guide.phone.business.UserinfoActivity;
 import com.hezy.guide.phone.entities.FinishWX;
 import com.hezy.guide.phone.entities.LoginWechat;
 import com.hezy.guide.phone.entities.User;
@@ -23,14 +26,10 @@ import com.hezy.guide.phone.entities.UserData;
 import com.hezy.guide.phone.entities.Wechat;
 import com.hezy.guide.phone.entities.base.BaseBean;
 import com.hezy.guide.phone.net.ApiClient;
-import com.hezy.guide.phone.net.OkHttpBaseCallback;
+import com.hezy.guide.phone.net.OkHttpCallback;
 import com.hezy.guide.phone.persistence.Preferences;
-import com.hezy.guide.phone.business.BaseDataBindingActivity;
-import com.hezy.guide.phone.business.HomeActivity;
-import com.hezy.guide.phone.business.UserinfoActivity;
 import com.hezy.guide.phone.utils.DeviceUtil;
 import com.hezy.guide.phone.utils.Installation;
-import com.hezy.guide.phone.utils.Logger;
 import com.hezy.guide.phone.utils.Login.LoginHelper;
 import com.hezy.guide.phone.utils.RxBus;
 import com.hezy.guide.phone.utils.ToastUtils;
@@ -52,97 +51,27 @@ import rx.functions.Action1;
  * Created by wufan on 2017/7/14.
  */
 
-public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBinding> implements IWXAPIEventHandler {
-    public static final String TAG = "WXEntryActivity";
+public class WXEntryActivity extends BasicActivity implements IWXAPIEventHandler {
+
+    private ImageView wchatLoginImage;
     private IWXAPI mWxApi;
-    private int mIntentType;
-    private static final int RETURN_MSG_TYPE_LOGIN = 1;
 
-    /**
-     * 微信登录中点击返回
-     */
-    private boolean isWxLoging;
-
-    private static boolean isFirst = true;
-    private Dialog dialog;
+    private Subscription subscription;
 
     @Override
     public String getStatisticsTag() {
-        return "登录";
+        return "微信登录页";
     }
 
     @Override
-    protected int initContentView() {
-        return R.layout.login_activity;
-    }
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.login_activity);
 
-    public static void actionStart(Context context) {
-        Intent intent = new Intent(context, WXEntryActivity.class);
-        context.startActivity(intent);
-    }
-
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-//        setIntent(intent);//must store the new intent unless getIntent() will return the old one
-        //如果没销毁,注销只调用onNewIntent,需要在这里处理注销逻辑
-        processExtraData(intent);
-
-
-    }
-
-    private void processExtraData(Intent intent) {
-        mIntentType = intent.getIntExtra(LoginHelper.LOGIN_TYPE, 0);
-        Logger.d(TAG, "mIntentType " + mIntentType);
-        if (mIntentType == LoginHelper.LOGIN_TYPE_EXIT) {
-            //退出应用
-            Logger.d(TAG, "退出应用");
-//            quit();
-        } else if (mIntentType == LoginHelper.LOGIN_TYPE_LOGOUT) {
-            //退出登录
-            Logger.d(TAG, "退出登录");
-            //判断是否是强制退出,强制退出在登录页有弹窗提醒
-            boolean isUserLogout = intent.getBooleanExtra("IS_USER_LOGOUT", false);
-            if (!isUserLogout) {
-                showLogoutForceDialog();
-            }
-        }
-
-    }
-
-
-    /**
-     * 强制退出dialog
-     */
-    private void showLogoutForceDialog() {
-//        if (dialog == null) {
-//            View view = View.inflate(getApplicationContext(), R.layout.dialog_common_ok, null);
-//            TextView title = (TextView) view.findViewById(R.id.title);
-//            title.setText(getString(R.string.login_invalid));
-//            view.findViewById(R.id.ok).setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    dialog.cancel();
-//                }
-//            });
-//            dialog = new Dialog(this, R.style.MyDialog);
-//            dialog.setContentView(view);
-//        }
-//        dialog.show();
-
-    }
-
-    @Override
-    protected void initView() {
-
-        if (BuildConfig.IS_LOGIN && isFirst) {
-            Logger.i(TAG, "直接登录 BuildConfig.LOGIN_TOKEN " + BuildConfig.LOGIN_TOKEN);
-            Preferences.setToken(BuildConfig.LOGIN_TOKEN);
-        }
-        isFirst = false;
+        initView();
 
         if (Preferences.isLogin()) {
-            //TODO 需要请求用户信息
-            ApiClient.getInstance().requestUser(this, new OkHttpBaseCallback<BaseBean<UserData>>() {
+            apiClient.requestUser(this, new OkHttpCallback<BaseBean<UserData>>() {
                 @Override
                 public void onSuccess(BaseBean<UserData> entity) {
                     if (entity == null || entity.getData() == null || entity.getData().getUser() == null) {
@@ -160,7 +89,7 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
                         UserinfoActivity.actionStart(mContext, true);
                         return;
                     }
-                    HomeActivity.actionStart(mContext);
+                    startActivity(new Intent(WXEntryActivity.this, HomeActivity.class));
                     finish();
 
                 }
@@ -169,6 +98,7 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
         }
 
         reToWx();
+
         mWxApi.handleIntent(getIntent(), this);
 
         subscription = RxBus.handleMessage(new Action1() {
@@ -182,6 +112,16 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
         });
 
         registerDevice();
+    }
+
+    protected void initView() {
+        wchatLoginImage = findViewById(R.id.wchat_login);
+        wchatLoginImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                wchatLogin();
+            }
+        });
     }
 
     /**
@@ -216,7 +156,7 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
             jsonObject.put("internalFreeSpace", DeviceUtil.getDeviceAvailMemory(this));
             jsonObject.put("sdSpace", DeviceUtil.getDeviceTotalInternalStorage());
             jsonObject.put("sdFreeSpace", DeviceUtil.getDeviceAvailInternalStorage());
-            ApiClient.getInstance().deviceRegister(this, jsonObject.toString(), registerDeviceCb);
+            apiClient.deviceRegister(this, jsonObject.toString(), registerDeviceCb);
         } catch (SecurityException e) {
             e.printStackTrace();
         } catch (Exception e) {
@@ -224,43 +164,22 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
         }
     }
 
-    private OkHttpBaseCallback registerDeviceCb = new OkHttpBaseCallback<BaseBean>() {
+    private OkHttpCallback registerDeviceCb = new OkHttpCallback<BaseBean>() {
         @Override
         public void onSuccess(BaseBean entity) {
             Log.d(TAG, "registerDevice 成功===");
         }
     };
 
-    @Override
-    protected void initListener() {
-        mBinding.mIvWeChat.setOnClickListener(this);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        ZYAgent.onPageStart(mContext, "登录");
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        ZYAgent.onPageEnd(mContext, "登录");
-    }
-
     private void reToWx() {
         String app_id = BuildConfig.WEIXIN_APP_ID;
-        Log.i(TAG, "Login BuildConfig.WEIXIN_APP_ID " + app_id);
-        //AppConst.WEIXIN.APP_ID是指你应用在微信开放平台上的AppID，记得替换。
         mWxApi = WXAPIFactory.createWXAPI(this.getApplicationContext(), app_id, false);
-        // 将该app注册到微信
         mWxApi.registerApp(app_id);
     }
 
-    public void wxLogin() {
+    public void wchatLogin() {
         if (!mWxApi.isWXAppInstalled()) {
-            ToastUtils.showToast("您还未安装微信客户端");
-            ZYAgent.onEvent(mContext,"微信按钮 您还未安装微信客户端");
+            ToastUtils.showToast("您还未安装微信客户端，请先安装");
             return;
         }
 //        if (isWxLoging) {
@@ -272,21 +191,8 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
         req.scope = "snsapi_userinfo";
         req.state = "GuideMobile_wx_login";
         mWxApi.sendReq(req);
-        isWxLoging = true;
         showDialog("正在加载...");
-        Log.i(TAG, "wxLogin() isWxLoging = true ");
-    }
-
-    @Override
-    protected void checkNetWorkOnClick(View v) {
-        switch (v.getId()) {
-            case R.id.mIvWeChat:
-                ZYAgent.onEvent(mContext,"微信按钮");
-                wxLogin();
-//                requestWechatLogin("081U5X7c2qUcTQ0LUX8c2adM7c2U5X7M","GuideMobile_wx_login");
-                break;
-
-        }
+        Log.i(TAG, "wchatLogin() isWxLoging = true ");
     }
 
     @Override
@@ -305,38 +211,33 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
         switch (baseResp.errCode) {
             case BaseResp.ErrCode.ERR_OK:
                 result = "登录成功";
-                switch (baseResp.getType()) {
-                    case RETURN_MSG_TYPE_LOGIN:
-                        ZYAgent.onEvent(mContext,"微信按钮 登录成功");
-                        final SendAuth.Resp sendResp = ((SendAuth.Resp) baseResp);
-                        String code = sendResp.code;
-                        Log.i(TAG, "sendResp.code " + code);
-                        Log.i(TAG, "sendResp.state " + sendResp.state);
-                        Log.i(TAG, "sendResp.lang " + sendResp.lang);
-                        Log.i(TAG, "sendResp.country " + sendResp.country);
-                        requestWechatLogin(sendResp.code, sendResp.state);
-                        ZYAgent.onEvent(mContext,"请求微信登录");
-                        break;
+                if (baseResp.getType() == 1) {
+                    ZYAgent.onEvent(mContext,"微信按钮 登录成功");
+                    final SendAuth.Resp sendResp = ((SendAuth.Resp) baseResp);
+                    String code = sendResp.code;
+                    Log.i(TAG, "sendResp.code " + code);
+                    Log.i(TAG, "sendResp.state " + sendResp.state);
+                    Log.i(TAG, "sendResp.lang " + sendResp.lang);
+                    Log.i(TAG, "sendResp.country " + sendResp.country);
+                    requestWechatLogin(sendResp.code, sendResp.state);
+                    ZYAgent.onEvent(mContext,"请求微信登录");
                 }
                 break;
             case BaseResp.ErrCode.ERR_AUTH_DENIED:
                 ZYAgent.onEvent(mContext,"微信按钮 用户拒绝授权");
                 result = "用户拒绝授权";
-                isWxLoging = false;
                 cancelDialog();
                 Log.i(TAG, "用户拒绝授权 isWxLoging = false ");
                 break;
             case BaseResp.ErrCode.ERR_USER_CANCEL:
                 ZYAgent.onEvent(mContext,"微信按钮 用户取消");
                 result = "用户取消";
-                isWxLoging = false;
                 cancelDialog();
                 Log.i(TAG, "用户取消 isWxLoging = false ");
                 break;
             default:
                 ZYAgent.onEvent(mContext,"微信按钮 失败");
                 result = "失败";
-                isWxLoging = false;
                 cancelDialog();
                 Log.i(TAG, "失败 isWxLoging = false ");
                 break;
@@ -349,13 +250,13 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
 
 
     private void requestWechatLogin(String code, String state) {
-        ApiClient.getInstance().requestWechat(code, state, this, new OkHttpBaseCallback<BaseBean<LoginWechat>>() {
+        ApiClient.getInstance().requestWechat(code, state, this, new OkHttpCallback<BaseBean<LoginWechat>>() {
 
             @Override
             public void onSuccess(BaseBean<LoginWechat> entity) {
                 ZYAgent.onEvent(mContext,"请求微信登录回调 成功");
                 if (entity.getData() == null) {
-                    Log.i(WXEntryActivity.TAG, "entity.getData() == null");
+                    Log.i(TAG, "entity.getData() == null");
                     showToast("没有数据");
                     return;
                 }
@@ -365,11 +266,11 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
                 User user = loginWechat.getUser();
                 if (loginWechat.getUser() == null) {
                     //没有获取到用户
-                    Log.i(WXEntryActivity.TAG, "没有用户数据");
+                    Log.i(TAG, "没有用户数据");
                     showToast("没有用户数据");
                 } else {
                     //保存用户,进入主页
-                    Log.i(WXEntryActivity.TAG, "用户登录成功");
+                    Log.i(TAG, "用户登录成功");
 //                    showToast("用户登录成功");
                     LoginHelper.savaUser(user);
                     if (Preferences.isUserinfoEmpty()) {
@@ -377,7 +278,7 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
                         UserinfoActivity.actionStart(mContext, true);
                         return;
                     } else {
-                        HomeActivity.actionStart(mContext);
+                        startActivity(new Intent(WXEntryActivity.this, HomeActivity.class));
                     }
                     RxBus.sendMessage(new FinishWX());
                     finish();
@@ -387,16 +288,9 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
             }
 
             @Override
-            public void onErrorAll(Exception e) {
-                super.onErrorAll(e);
-                ZYAgent.onEvent(mContext,"请求微信登录回调 失败");
-            }
-
-            @Override
             public void onFinish() {
-                isWxLoging = false;
                 cancelDialog();
-                Log.i(WXEntryActivity.TAG, "requestWechatLogin onFinish()  isWxLoging = false ");
+                Log.i(TAG, "requestWechatLogin onFinish()  isWxLoging = false ");
             }
         });
     }
@@ -419,8 +313,6 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
     }
 
 
-    private Subscription subscription;
-
     @Override
     public void onDestroy() {
         if (subscription != null) {
@@ -428,9 +320,6 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
         }
         if (mWxApi != null) {
             mWxApi.detach();
-        }
-        if(dialog != null){
-            dialog.cancel();
         }
         cancelDialog();
         super.onDestroy();

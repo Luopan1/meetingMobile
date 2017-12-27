@@ -200,8 +200,8 @@ public class ApkController {
 	}
 
 	/**
-	 * 启动app com.exmaple.client/.MainActivity
-	 * com.exmaple.client/com.exmaple.client.MainActivity
+	 * 启动app com.exmaple.apiClient/.MainActivity
+	 * com.exmaple.apiClient/com.exmaple.apiClient.MainActivity
 	 */
 	public static boolean startApp(String packageName, String activityName) {
 		boolean isSuccess = false;

@@ -1,14 +1,10 @@
 package com.hezy.guide.phone;
 
 import android.app.Activity;
-import android.app.Application;
-import android.util.Log;
+import android.support.multidex.MultiDexApplication;
 
-import com.hezy.guide.phone.entities.GlobalConfigurationInformation;
-import com.hezy.guide.phone.net.ApiClient;
-import com.hezy.guide.phone.net.OkHttpBaseCallback;
-import com.hezy.guide.phone.net.OkHttpUtil;
 import com.hezy.guide.phone.persistence.Preferences;
+import com.hezy.guide.phone.utils.Logger;
 import com.tencent.bugly.crashreport.CrashReport;
 import com.tendcloud.tenddata.TCAgent;
 
@@ -18,47 +14,41 @@ import io.agora.openlive.model.WorkerThread;
 import io.socket.client.IO;
 import io.socket.client.Socket;
 
-public class BaseApplication extends Application {
-    public static final String TAG = "BaseApplication";
-    private static BaseApplication instance;
-    private Socket mSocket;
+public class BaseApplication extends MultiDexApplication {
 
-    {
-        try {
-            mSocket = IO.socket(BuildConfig.WS_DOMAIN_NAME);
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        }
-    }
+    public static final String TAG = "BaseApplication";
+
+    private static BaseApplication instance;
+
+    private Socket mSocket;
 
     @Override
     public void onCreate() {
         super.onCreate();
+
         instance = this;
-//        initSocket();
+
+        initSocket();
         //内存泄露检测工具,开发中最好开启
-        if (BuildConfig.DEBUG) {
-            Log.i(TAG, "debug下开启LeakCanary");
+//        if (BuildConfig.DEBUG) {
+//            Log.i(TAG, "debug下开启LeakCanary");
 //            if (LeakCanary.isInAnalyzerProcess(this)) {
 //                // This process is dedicated to LeakCanary for heap analysis.
 //                // You should not init your app in this process.
 //                return;
 //            }
 //            LeakCanary.install(this);
-        }
+//        }
 
-        //初始化bugly 4390f8350d
+        //初始化bugly
         CrashReport.initCrashReport(getApplicationContext(), BuildConfig.BUGLY_APPID, true);
 
         //初始化TD
-        TCAgent.LOG_ON = true;
-        // App ID: 在TalkingData创建应用后，进入数据报表页中，在“系统设置”-“编辑应用”页面里查看App ID。
-        // 渠道 ID: 是渠道标识符，可通过不同渠道单独追踪数据。
+        TCAgent.LOG_ON = false;
         TCAgent.init(this);
-        // 如果已经在AndroidManifest.xml配置了App ID和渠道ID，调用TCAgent.init(this)即可；或与AndroidManifest.xml中的对应参数保持一致。
         TCAgent.setReportUncaughtExceptions(true);
 
-        requestGlobalConfig();
+//        requestGlobalConfig();
 
     }
 
@@ -101,26 +91,45 @@ public class BaseApplication extends Application {
         mWorkerThread = null;
     }
 
+    public void initSocket(){
+        try {
+            IO.Options options = new IO.Options();
+            options.forceNew = false;
+            options.reconnection = true;
+            options.reconnectionDelay = 1000;
+            options.reconnectionDelayMax = 5000;
+            options.reconnectionAttempts = 10;
+            options.query = "userId=" + Preferences.getUserId();
+            mSocket = IO.socket(BuildConfig.WS_DOMAIN_NAME, options);
+            Logger.i(TAG, "初始化WebSocket成功");
+            TCAgent.onEvent(this, "WebSocket", "初始化WebSocket成功");
+        } catch (URISyntaxException e) {
+            Logger.i(TAG, "初始化WebSocket失败" + e.getMessage());
+            TCAgent.onEvent(this, "WebSocket", "初始化WebSocket失败" + e.getMessage());
+            throw new RuntimeException(e);
+        }
+    }
+
     public Socket getSocket() {
         return mSocket;
     }
 
-    private void requestGlobalConfig() {
-        String url = ApiClient.getGlobalConfigurationInformation();
-
-        OkHttpUtil.getInstance().get(url, this, new OkHttpBaseCallback<GlobalConfigurationInformation>() {
-
-            @Override
-            public void onSuccess(final GlobalConfigurationInformation result) {
-                Preferences.setImgUrl(result.getData().getStaticRes().getImgUrl());
-                Preferences.setVideoUrl(result.getData().getStaticRes().getVideoUrl());
-                Preferences.setDownloadUrl(result.getData().getStaticRes().getDownloadUrl());
-                Preferences.setCooperationUrl(result.getData().getStaticRes().getDownloadUrl());
-            }
-
-
-        });
-    }
+//    private void requestGlobalConfig() {
+//        String url = ApiClient.getGlobalConfigurationInformation();
+//
+//        OkHttpUtil.getInstance().get(url, this, new OkHttpBaseCallback<GlobalConfigurationInformation>() {
+//
+//            @Override
+//            public void onSuccess(final GlobalConfigurationInformation result) {
+//                Preferences.setImgUrl(result.getData().getStaticRes().getImgUrl());
+//                Preferences.setVideoUrl(result.getData().getStaticRes().getVideoUrl());
+//                Preferences.setDownloadUrl(result.getData().getStaticRes().getDownloadUrl());
+//                Preferences.setCooperationUrl(result.getData().getStaticRes().getDownloadUrl());
+//            }
+//
+//
+//        });
+//    }
 
 
 }

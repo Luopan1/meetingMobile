@@ -33,7 +33,7 @@ public abstract class BasicActivity extends FragmentActivity implements View.OnC
     protected Context mContext;
     private BaseApplication mMyApp;
 
-    protected ApiClient client;
+    protected ApiClient apiClient;
     protected String userId;
     protected String token;
 
@@ -57,13 +57,15 @@ public abstract class BasicActivity extends FragmentActivity implements View.OnC
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         Logger.d(FTAG + TAG, "onCreate");
         mContext = this;
+
         mMyApp = (BaseApplication) this.getApplicationContext();
 //        userId = Preferences.getUserId();
 //        token = Preferences.getToken();
 
-        client = ApiClient.getInstance();
+        apiClient = ApiClient.getInstance();
 
         registerReceiver(mHomeKeyEventReceiver, new IntentFilter(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
     }
@@ -140,12 +142,12 @@ public abstract class BasicActivity extends FragmentActivity implements View.OnC
 
 
     protected void showDialog(String message) {
-//        if(progressDialog == null){
-//            progressDialog = new ProgressDialog(this, R.style.MyDialog);
-//            progressDialog.setMessage(message);
-//            progressDialog.setCancelable(false);
-//        }
-//        progressDialog.show();
+        if(progressDialog == null){
+            progressDialog = new ProgressDialog(this, R.style.MyDialog);
+            progressDialog.setMessage(message);
+            progressDialog.setCancelable(false);
+        }
+        progressDialog.show();
     }
 
     protected void cancelDialog() {

@@ -11,8 +11,8 @@ import com.hezy.guide.phone.databinding.GuideLogFragmentBinding;
 import com.hezy.guide.phone.entities.RecordData;
 import com.hezy.guide.phone.entities.base.BaseBean;
 import com.hezy.guide.phone.net.ApiClient;
-import com.hezy.guide.phone.net.OkHttpBaseCallback;
 import com.hezy.guide.phone.adapter.GuideLogAdapter;
+import com.hezy.guide.phone.net.OkHttpCallback;
 
 
 /**
@@ -136,7 +136,7 @@ public class GuideLogFragment extends BaseDataBindingFragment<GuideLogFragmentBi
     }
 
     private void requestRecord(String pageNo, String pageSize) {
-        ApiClient.getInstance().requestRecord(this,null, pageNo, pageSize, new OkHttpBaseCallback<BaseBean<RecordData>>() {
+        ApiClient.getInstance().requestRecord(this,null, pageNo, pageSize, new OkHttpCallback<BaseBean<RecordData>>() {
             @Override
             public void onSuccess(BaseBean<RecordData> entity) {
                 if (entity.getData().getTotalCount() == 0) {

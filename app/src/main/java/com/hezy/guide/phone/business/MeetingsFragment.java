@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 
 import com.hezy.guide.phone.R;
+import com.hezy.guide.phone.adapter.ReviewAdapter;
 import com.hezy.guide.phone.databinding.MeFragmentBinding;
 import com.hezy.guide.phone.entities.RankInfo;
 import com.hezy.guide.phone.entities.RecordData;
@@ -16,19 +17,13 @@ import com.hezy.guide.phone.entities.Wechat;
 import com.hezy.guide.phone.entities.base.BaseBean;
 import com.hezy.guide.phone.event.UserUpdateEvent;
 import com.hezy.guide.phone.net.ApiClient;
-import com.hezy.guide.phone.net.OkHttpBaseCallback;
+import com.hezy.guide.phone.net.OkHttpCallback;
 import com.hezy.guide.phone.persistence.Preferences;
-import com.hezy.guide.phone.adapter.ReviewAdapter;
 import com.hezy.guide.phone.utils.Logger;
 import com.hezy.guide.phone.utils.Login.LoginHelper;
 import com.hezy.guide.phone.utils.RxBus;
 
-/**
- * 我的
- * Created by wufan on 2017/8/15.
- */
-
-public class MeFragment extends BaseDataBindingFragment<MeFragmentBinding> {
+public class MeetingsFragment extends BaseDataBindingFragment<MeFragmentBinding> {
 
     private LinearLayoutManager mLayoutManager;
     private ReviewAdapter mAdapter;
@@ -38,11 +33,11 @@ public class MeFragment extends BaseDataBindingFragment<MeFragmentBinding> {
 
     @Override
     public String getStatisticsTag() {
-        return "我的";
+        return "会议";
     }
 
-    public static MeFragment newInstance() {
-        MeFragment fragment = new MeFragment();
+    public static MeetingsFragment newInstance() {
+        MeetingsFragment fragment = new MeetingsFragment();
         return fragment;
     }
 
@@ -135,7 +130,7 @@ public class MeFragment extends BaseDataBindingFragment<MeFragmentBinding> {
         if(!Preferences.isLogin()){
             return;
         }
-        ApiClient.getInstance().requestUser(this, new OkHttpBaseCallback<BaseBean<UserData>>() {
+        ApiClient.getInstance().requestUser(this, new OkHttpCallback<BaseBean<UserData>>() {
             @Override
             public void onSuccess(BaseBean<UserData> entity) {
                 if (entity == null || entity.getData() == null || entity.getData().getUser() == null) {
@@ -160,7 +155,7 @@ public class MeFragment extends BaseDataBindingFragment<MeFragmentBinding> {
 
 
     private void requestRankInfo() {
-        ApiClient.getInstance().requestRankInfo(this, new OkHttpBaseCallback<BaseBean<RankInfo>>() {
+        ApiClient.getInstance().requestRankInfo(this, new OkHttpCallback<BaseBean<RankInfo>>() {
             @Override
             public void onSuccess(BaseBean<RankInfo> entity) {
                 if (entity == null || entity.getData() == null || TextUtils.isEmpty(entity.getData().getStar())) {
@@ -184,7 +179,7 @@ public class MeFragment extends BaseDataBindingFragment<MeFragmentBinding> {
     }
 
     private void requestRecord(String pageNo, String pageSize) {
-        ApiClient.getInstance().requestRecord(this,"1", pageNo, pageSize, new OkHttpBaseCallback<BaseBean<RecordData>>() {
+        ApiClient.getInstance().requestRecord(this,"1", pageNo, pageSize, new OkHttpCallback<BaseBean<RecordData>>() {
             @Override
             public void onSuccess(BaseBean<RecordData> entity) {
                 if (isRefresh) {
