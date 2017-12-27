@@ -15,7 +15,6 @@ import android.widget.Toast;
 
 import com.hezy.guide.phone.BuildConfig;
 import com.hezy.guide.phone.R;
-import com.hezy.guide.phone.base.BaseDataBindingActivity;
 import com.hezy.guide.phone.databinding.LoginActivityBinding;
 import com.hezy.guide.phone.entities.FinishWX;
 import com.hezy.guide.phone.entities.LoginWechat;
@@ -26,8 +25,9 @@ import com.hezy.guide.phone.entities.base.BaseBean;
 import com.hezy.guide.phone.net.ApiClient;
 import com.hezy.guide.phone.net.OkHttpBaseCallback;
 import com.hezy.guide.phone.persistence.Preferences;
-import com.hezy.guide.phone.ui.HomeActivity;
-import com.hezy.guide.phone.ui.UserinfoActivity;
+import com.hezy.guide.phone.business.BaseDataBindingActivity;
+import com.hezy.guide.phone.business.HomeActivity;
+import com.hezy.guide.phone.business.UserinfoActivity;
 import com.hezy.guide.phone.utils.DeviceUtil;
 import com.hezy.guide.phone.utils.Installation;
 import com.hezy.guide.phone.utils.Logger;
@@ -43,7 +43,6 @@ import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.IWXAPIEventHandler;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import rx.Subscription;
@@ -57,9 +56,8 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
     public static final String TAG = "WXEntryActivity";
     private IWXAPI mWxApi;
     private int mIntentType;
-    private boolean isNewActivity;
     private static final int RETURN_MSG_TYPE_LOGIN = 1;
-    private static final int RETURN_MSG_TYPE_SHARE = 2;
+
     /**
      * 微信登录中点击返回
      */
@@ -83,7 +81,6 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
         context.startActivity(intent);
     }
 
-
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
 //        setIntent(intent);//must store the new intent unless getIntent() will return the old one
@@ -104,8 +101,8 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
             //退出登录
             Logger.d(TAG, "退出登录");
             //判断是否是强制退出,强制退出在登录页有弹窗提醒
-            boolean isUserLogout = intent.getBooleanExtra("IS_USER_LOGOUT",false);
-            if(!isUserLogout){
+            boolean isUserLogout = intent.getBooleanExtra("IS_USER_LOGOUT", false);
+            if (!isUserLogout) {
                 showLogoutForceDialog();
             }
         }
@@ -220,7 +217,9 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
             jsonObject.put("sdSpace", DeviceUtil.getDeviceTotalInternalStorage());
             jsonObject.put("sdFreeSpace", DeviceUtil.getDeviceAvailInternalStorage());
             ApiClient.getInstance().deviceRegister(this, jsonObject.toString(), registerDeviceCb);
-        } catch (JSONException e) {
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -318,10 +317,6 @@ public class WXEntryActivity extends BaseDataBindingActivity<LoginActivityBindin
                         requestWechatLogin(sendResp.code, sendResp.state);
                         ZYAgent.onEvent(mContext,"请求微信登录");
                         break;
-//                    case RETURN_MSG_TYPE_SHARE:
-//                        UIUtils.showToast("微信分享成功");
-//                        finish();
-//                        break;
                 }
                 break;
             case BaseResp.ErrCode.ERR_AUTH_DENIED:

@@ -30,8 +30,8 @@ def keystoreProperties = new Properties()
 keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.3"
+    compileSdkVersion 27
+    buildToolsVersion "27.0.3"
 
     signingConfigs {
         config {
@@ -45,7 +45,7 @@ android {
     defaultConfig {
         applicationId "com.hezy.guide.phone"
         minSdkVersion 16
-        targetSdkVersion 25
+        targetSdkVersion 27
         versionName "1.0.0"
         versionCode 16777216
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -70,8 +70,6 @@ android {
             // DO NOT MODIFY THIS LINE, IT'S UPDATED BY BUILD MACHINE AUTOMATICALLY.
         }
     }
-
-    useLibrary 'org.apache.http.legacy'
 
     dataBinding {
         enabled = true
@@ -143,17 +141,17 @@ dependencies {
     })
     testCompile 'junit:junit:4.12'
 
-    // ================agora相关================
-    compile 'com.android.support:appcompat-v7:25.3.1'
-    compile 'com.android.support:support-v4:25.3.1'
-    compile 'com.android.support:design:25.3.1'
-    compile 'org.slf4j:slf4j-api:1.7.21'
-    // ================agora相关================
+    compile 'com.android.support:appcompat-v7:27.0.2'
+    compile 'com.android.support:support-v4:27.0.2'
+    compile 'com.android.support:design:27.0.2'
+    compile 'com.android.support:recyclerview-v7:27.0.2'
+
+    compile 'com.android.support:multidex:1.0.2'
+
+    compile 'org.slf4j:slf4j-api:1.7.25'
 
     compile 'com.squareup.okhttp3:okhttp:3.8.1'
     compile 'com.squareup.okhttp3:logging-interceptor:3.8.1'
-    //andbase中有
-//    compile 'com.google.code.gson:gson:2.8.1'
 
     //图片加载
     compile 'com.squareup.picasso:picasso:2.5.2'
@@ -163,28 +161,39 @@ dependencies {
     //崩溃检测
     compile 'com.tencent.bugly:crashreport:latest.release'
     //内存泄露检测    https://github.com/square/leakcanary
-    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5.1'
-    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
-    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
+    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5.4'
+    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
+    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
+
+
     //view依赖注入根据layout 自动生成控件字段和自动查找
     compile 'com.jakewharton:butterknife:8.7.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.7.0'
+
     //图片带边
     compile 'de.hdodenhof:circleimageview:2.1.0'
     compile 'com.rengwuxian.materialedittext:library:2.1.4'
+
     //垂直ViewPager
-    compile 'me.kaelaela:verticalviewpager:1.0.0@aar'
+//    compile 'me.kaelaela:verticalviewpager:1.0.0@aar'
+
     //照片选择
     compile 'com.jph.takephoto:takephoto_library:4.0.3'
+
     //rxbus
-    compile 'io.reactivex:rxjava:1.2.0'
+    compile 'io.reactivex:rxjava:1.2.1'
     compile 'io.reactivex:rxandroid:1.2.1'
+
     //socket.io
     compile ('io.socket:socket.io-client:1.0.0') {
         exclude group: 'org.json', module: 'json'
     }
+
+    compile 'com.google.code.gson:gson:2.8.2'
+
     //七牛云存储
     compile 'com.qiniu:qiniu-android-sdk:7.3.+'
+
     //fastjson
     compile 'com.alibaba:fastjson:1.2.32'
 

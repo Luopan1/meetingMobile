@@ -36,7 +36,7 @@ import com.hezy.guide.phone.net.OkHttpBaseCallback;
 import com.hezy.guide.phone.net.OkHttpCallback;
 import com.hezy.guide.phone.net.OkHttpUtil;
 import com.hezy.guide.phone.persistence.Preferences;
-import com.hezy.guide.phone.ui.OnCallActivity;
+import com.hezy.guide.phone.business.OnCallActivity;
 import com.hezy.guide.phone.utils.Installation;
 import com.hezy.guide.phone.utils.Logger;
 import com.hezy.guide.phone.utils.RxBus;

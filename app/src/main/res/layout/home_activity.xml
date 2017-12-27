@@ -7,7 +7,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipChildren="false"
-        tools:context="com.hezy.guide.phone.ui.HomeActivity">
+        tools:context="com.hezy.guide.phone.business.HomeActivity">
 
 
 
