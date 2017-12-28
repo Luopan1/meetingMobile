@@ -1,4 +1,4 @@
-package com.hezy.guide.phone.adapter;
+package com.hezy.guide.phone.business.adapter;
 
 import android.content.Context;
 import android.content.Intent;
@@ -43,14 +43,15 @@ import rx.functions.Action1;
  */
 
 public class ReviewAdapter extends BaseRecyclerAdapter<RecordData.PageDataEntity> implements View.OnClickListener {
+
     RankInfo mRankInfo;
+
     private RecordData.PageDataEntity bean;
 
     public enum ITEM_TYPE {
         ME,
         EMPTY,
         REVIEW
-
     }
 
 

@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.hezy.guide.phone.ApiClient;
 import com.hezy.guide.phone.R;
 import com.hezy.guide.phone.utils.NetUtils;
 import com.hezy.guide.phone.utils.OkHttpUtil;
@@ -33,6 +34,8 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
     protected Context mContext;
 
     protected SharedPreferences prefs;
+
+    protected ApiClient apiClient;
 
 //    protected String token;
     /**
@@ -65,6 +68,9 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Logger.d(FTAG+getTAG(), "onCreate");
+
+        apiClient = ApiClient.getInstance();
+
         prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
 //        token = Preferences.getToken();
         mContext = getActivity();

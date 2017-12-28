@@ -99,7 +99,6 @@ public class OkHttpUtil {
                     String resString = response.body().string();
                     if (!TextUtils.isEmpty(resString)) {
                         try {
-                            System.out.println("=======================" + resString + "=======================");
                             BaseBean baseBean = gson.fromJson(resString, BaseBean.class);
                             if (baseBean.isSuccess()) {
                                 Object object = gson.fromJson(resString, callback.mType);

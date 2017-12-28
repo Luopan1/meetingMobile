@@ -11,7 +11,7 @@ import com.hezy.guide.phone.databinding.GuideLogFragmentBinding;
 import com.hezy.guide.phone.entities.RecordData;
 import com.hezy.guide.phone.entities.base.BaseBean;
 import com.hezy.guide.phone.ApiClient;
-import com.hezy.guide.phone.adapter.GuideLogAdapter;
+import com.hezy.guide.phone.business.adapter.GuideLogAdapter;
 import com.hezy.guide.phone.utils.OkHttpCallback;
 
 

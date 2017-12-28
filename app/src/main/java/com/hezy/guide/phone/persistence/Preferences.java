@@ -233,9 +233,9 @@ public class Preferences {
         SharedPreferences.Editor editor = getPreferences().edit();
         editor.putString(PREFERENCE_UUID, uuid);
         if (!editor.commit()) {
-            Log.d(tag, "User name save failure");
+            Log.d(tag, "UUID save failure");
         } else {
-            Log.d(tag, "User name save success");
+            Log.d(tag, "UUID save success");
         }
     }
 
@@ -243,9 +243,9 @@ public class Preferences {
         SharedPreferences.Editor editor = getPreferences().edit();
         editor.putString(PREFERENCE_WEIXIN_HEAD, weiXinHead);
         if (!editor.commit()) {
-            Log.d(tag, "User mobile save failure");
+            Log.d(tag, "WeiXinHead save failure");
         } else {
-            Log.d(tag, "User mobile save success");
+            Log.d(tag, "WeiXinHead save success");
         }
     }
 

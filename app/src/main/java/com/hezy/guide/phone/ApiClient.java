@@ -5,6 +5,7 @@ import android.os.Build;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.alibaba.fastjson.JSON;
 import com.hezy.guide.phone.entities.RankInfo;
 import com.hezy.guide.phone.entities.RecordData;
 import com.hezy.guide.phone.entities.RecordTotal;
@@ -54,6 +55,11 @@ public class ApiClient {
         okHttpUtil = OkHttpUtil.getInstance();
     }
 
+    private String jointBaseUrl(String apiName) {
+        return "http://" + (BuildConfig.DEBUG ? API_DOMAIN_NAME : API_DOMAIN_NAME)
+                + "/osg/app" + apiName;
+    }
+
     public static String jointParamsToUrl(String url, Map<String, String> params) {
         if (params != null && params.size() > 0) {
             Uri uri = Uri.parse(url);
@@ -84,10 +90,29 @@ public class ApiClient {
         return params;
     }
 
+    public void getAllMeeting(Object tag, OkHttpCallback callback) {
+        okHttpUtil.get(jointBaseUrl("/meeting/all"), tag, callback);
+    }
+
+    public void verifyRole(Object tag, OkHttpCallback callback, Map<String, Object> values){
+        okHttpUtil.postJson(jointBaseUrl("/meeting/verify"), getCommonHead(), JSON.toJSONString(values), callback, tag);
+    }
+
+    public void joinMeeting(Object tag, OkHttpCallback callback, Map<String, Object> values){
+        okHttpUtil.postJson(jointBaseUrl("/meeting/join"), getCommonHead(), JSON.toJSONString(values), callback, tag);
+    }
+
+    public void getMeeting(Object tag, String meetingId, OkHttpCallback callback) {
+        okHttpUtil.get(jointBaseUrl("/meeting/" + meetingId), tag, callback);
+    }
+
+    public void finishMeeting(Object tag, String meetingId, int attendance, OkHttpCallback callback){
+        okHttpUtil.postJson(jointBaseUrl("/meeting/" + meetingId + "/end?attendance=" + attendance), getCommonHead(), null, callback, tag);
+    }
 
     //  软件更新
     public void versionCheck(Object tag, OkHttpCallback<BaseBean<Version>> callback) {
-        OkHttpUtil.getInstance().get(Constant.VERSION_UPDATE_URL, tag, callback);
+        okHttpUtil.get(Constant.VERSION_UPDATE_URL, tag, callback);
     }
 
     //获取全局配置信息接口
@@ -98,7 +123,7 @@ public class ApiClient {
 
     //  注册设备信息
     public void deviceRegister(Object tag, String jsonStr, OkHttpCallback callback) {
-        OkHttpUtil.getInstance().postJson(API_DOMAIN_NAME + "/osg/app/device", getCommonHead(), jsonStr, callback, tag);
+        okHttpUtil.postJson(API_DOMAIN_NAME + "/osg/app/device", getCommonHead(), jsonStr, callback, tag);
     }
 
     /**

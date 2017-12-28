@@ -70,17 +70,20 @@ public class WXEntryActivity extends BasicActivity implements IWXAPIEventHandler
 
         initView();
 
+        Preferences.setToken("4f8752dcd9e34a1b876aae2ecfd20712");
+
         if (Preferences.isLogin()) {
             apiClient.requestUser(this, new OkHttpCallback<BaseBean<UserData>>() {
                 @Override
                 public void onSuccess(BaseBean<UserData> entity) {
                     if (entity == null || entity.getData() == null || entity.getData().getUser() == null) {
-                        showToast("数据为空");
+                        showToast("获取用户数据为空");
                         return;
                     }
                     User user = entity.getData().getUser();
-                    Wechat wechat = entity.getData().getWechat();
                     LoginHelper.savaUser(user);
+
+                    Wechat wechat = entity.getData().getWechat();
                     if (wechat != null) {
                         LoginHelper.savaWeChat(wechat);
                     }

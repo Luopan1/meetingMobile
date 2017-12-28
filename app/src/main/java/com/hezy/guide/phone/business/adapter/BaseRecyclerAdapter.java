@@ -1,4 +1,4 @@
-package com.hezy.guide.phone.adapter;
+package com.hezy.guide.phone.business.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
