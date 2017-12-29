@@ -173,7 +173,7 @@ public class HomeActivity extends BasicActivity implements View.OnClickListener 
     @Override
     protected void checkNetWorkOnClick(View v) {
         switch (v.getId()) {
-            case mTvState:
+            case R.id.state:
                 if (Preferences.isUserinfoEmpty()) {
                     showToast("请先填写姓名,电话,地址,照片");
                     UserinfoActivity.actionStart(this);

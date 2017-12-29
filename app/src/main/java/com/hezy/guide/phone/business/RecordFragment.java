@@ -9,7 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.hezy.guide.phone.ApiClient;
 import com.hezy.guide.phone.R;
@@ -27,7 +27,7 @@ public class RecordFragment extends BaseFragment {
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mRecyclerView;
-    private LinearLayout noMeetingLayout;
+    private TextView emptyText;
 
     private LinearLayoutManager mLayoutManager;
     private GuideLogAdapter mAdapter;
@@ -48,10 +48,10 @@ public class RecordFragment extends BaseFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.guide_log_fragment, null, false);
+        View view = inflater.inflate(R.layout.record_fragment, null, false);
         mSwipeRefreshLayout = view.findViewById(R.id.mSwipeRefreshLayout);
         mRecyclerView = view.findViewById(R.id.mRecyclerView);
-        noMeetingLayout = view.findViewById(R.id.mLayoutNoData);
+        emptyText = view.findViewById(R.id.emptyView);
         mAdapter = new GuideLogAdapter(mContext);
 
         //设置布局管理器
@@ -100,12 +100,6 @@ public class RecordFragment extends BaseFragment {
         return view;
     }
 
-    @Override
-    public void onMyVisible() {
-        super.onMyVisible();
-
-    }
-
     private void requestRecord() {
         requestRecord("1", "20");
         isRefresh = true;
@@ -117,10 +111,10 @@ public class RecordFragment extends BaseFragment {
             @Override
             public void onSuccess(BaseBean<RecordData> entity) {
                 if (entity.getData().getTotalCount() == 0) {
-                    noMeetingLayout.setVisibility(View.VISIBLE);
+                    emptyText.setVisibility(View.VISIBLE);
                     mSwipeRefreshLayout.setVisibility(View.GONE);
                 } else {
-                    noMeetingLayout.setVisibility(View.GONE);
+                    emptyText.setVisibility(View.GONE);
                     mSwipeRefreshLayout.setVisibility(View.VISIBLE);
                 }
                 if (isRefresh) {
