@@ -155,7 +155,7 @@ public class HomeActivity extends BasicActivity implements View.OnClickListener 
 
         mHomePagerAdapter = new HomePagerAdapter(getSupportFragmentManager());
         mFragments = new ArrayList<>();
-        mFragments.add(GuideLogFragment.newInstance());
+        mFragments.add(RecordFragment.newInstance());
         mFragments.add(MeetingsFragment.newInstance());
         mFragments.add(ProfileFragment.newInstance());
         mHomePagerAdapter.setData(mFragments);

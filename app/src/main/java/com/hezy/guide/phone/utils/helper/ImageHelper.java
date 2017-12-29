@@ -103,17 +103,18 @@ public class ImageHelper {
      * @param imageView
      */
     public static void loadImageDpIdRound(String url, @DimenRes int w_id, @DimenRes int h_id, ImageView imageView) {
-        if (!ImageHelper.isContextEmpty() && !ImageHelper.isEmpty(url)) {
+//        if (!ImageHelper.isContextEmpty() && !ImageHelper.isEmpty(url)) {
             int w_dp = (int) getContext().getResources().getDimension(w_id);
             int h_dp = (int) getContext().getResources().getDimension(h_id);
 //            int w_px = DensityUtil.dip2px(getContext(), w_dp);
 //            int h_px = DensityUtil.dip2px(getContext(), h_dp);
-            url = ImageHelper.getUrlJoinAndThumAndCrop(url, w_dp, h_dp);
+//            url = ImageHelper.getUrlJoinAndThumAndCrop(url, w_dp, h_dp);
             int round_dp = (int) getContext().getResources().getDimension(R.dimen.my_px_32);
 //            int round_px = DensityUtil.dip2px(getContext(), round_dp);
             Logger.i(TAG,"loadImageDpIdRound "+url);
+            System.out.println("processed image url is " + url);
             Picasso.with(getContext()).load(url).transform(new RoundCornerTransform(round_dp, 0, HalfType.ALL)).into(imageView);
-        }
+//        }
     }
 
     /**
@@ -124,16 +125,15 @@ public class ImageHelper {
      * @param imageView
      */
     public static void loadImageDpIdBlur(String url, @DimenRes int w_id, @DimenRes int h_id, ImageView imageView) {
-        if (!ImageHelper.isContextEmpty() && !ImageHelper.isEmpty(url)) {
+//        if (!ImageHelper.isContextEmpty() && !ImageHelper.isEmpty(url)) {
             int w_dp = (int) getContext().getResources().getDimension(w_id);
             int h_dp = (int) getContext().getResources().getDimension(h_id);
             int w_px = DensityUtil.dip2px(getContext(), w_dp);
             int h_px = DensityUtil.dip2px(getContext(), h_dp);
             url = ImageHelper.getUrlJoinAndThumAndCropAndBlur(url, w_dp, h_dp);
             Logger.i(TAG,"loadImageDpIdBlur  "+w_dp+" "+h_dp+" "+w_px+" "+h_px);
-            Logger.i(TAG,"loadImageDpIdBlur "+url);
             Picasso.with(getContext()).load(url).into(imageView);
-        }
+//        }
     }
 
 

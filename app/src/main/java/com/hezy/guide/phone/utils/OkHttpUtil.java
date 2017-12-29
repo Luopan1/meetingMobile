@@ -79,7 +79,7 @@ public class OkHttpUtil {
         callback.onStart();
 
         call = okHttpClient.newCall(request);
-        if (call.isExecuted() || call.isCanceled()){
+        if (call.isExecuted() || call.isCanceled()) {
             return;
         }
         call.enqueue(new Callback() {
@@ -103,25 +103,25 @@ public class OkHttpUtil {
                             if (baseBean.isSuccess()) {
                                 Object object = gson.fromJson(resString, callback.mType);
                                 callbackSuccess(object, callback);
-                            }else if (baseBean.isTokenError()) {
+                            } else if (baseBean.isTokenError()) {
                                 Log.i(TAG, "baseErrorBean.isTokenError() LoginHelper.logout()");
                                 //心跳回触发这个,其他风格的请求回调可以不处理
                                 LoginHelper.logout();
-                            }else {
-                                callbackFailure(response.code(),callback, new BaseException(baseBean.getErrmsg()));
+                            } else {
+                                callbackFailure(response.code(), callback, new BaseException(baseBean.getErrmsg()));
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
-                            callbackFailure(response.code(), callback,new BaseException(e.getMessage()));
+                            callbackFailure(response.code(), callback, new BaseException(e.getMessage()));
                         }
-                    }else{
+                    } else {
                         BaseException exception = new BaseException("服务器resString==null,请稍后重试");
                         callbackFailure(response.code(), callback, exception);
                     }
 
                 } else {
                     BaseException exception = new BaseException("服务器bady==null,请稍后重试");
-                    callbackFailure(response.code(), callback,exception);
+                    callbackFailure(response.code(), callback, exception);
                 }
             }
         });
@@ -152,35 +152,34 @@ public class OkHttpUtil {
     }
 
 
-
     public void get(String url, Map<String, String> headers, Map<String, String> params, OkHttpCallback callback) {
         Request request = buildRequest(jointUrl(url, params), headers, null, null, HttpMethodType.GET);
         request(request, callback);
     }
 
 
-    public void get(String url, Map<String, String> headers, Map<String, String> params, OkHttpCallback callback,Object tag) {
-        Request request = buildRequest(jointUrl(url, params), headers, null, null, HttpMethodType.GET,tag);
+    public void get(String url, Map<String, String> headers, Map<String, String> params, OkHttpCallback callback, Object tag) {
+        Request request = buildRequest(jointUrl(url, params), headers, null, null, HttpMethodType.GET, tag);
         request(request, callback);
     }
 
     public void post(String url, Map<String, String> headers, Map<String, String> params, OkHttpCallback callback) {
-        Request request = buildRequest(url, headers, params,null, HttpMethodType.POST);
+        Request request = buildRequest(url, headers, params, null, HttpMethodType.POST);
         request(request, callback);
     }
 
-    public void postJson(String url, Map<String, String> headers,String jsonStr, OkHttpCallback callback,Object tag) {
+    public void postJson(String url, Map<String, String> headers, String jsonStr, OkHttpCallback callback, Object tag) {
         Request request = buildRequest(url, headers, null, jsonStr, HttpMethodType.POST_JSON);
         request(request, callback);
     }
 
-    public void put(String url, Map<String, String> headers, Map<String, String> params, OkHttpCallback callback){
-        Request request = buildRequest(url, headers, params, null,HttpMethodType.PUT);
+    public void put(String url, Map<String, String> headers, Map<String, String> params, OkHttpCallback callback) {
+        Request request = buildRequest(url, headers, params, null, HttpMethodType.PUT);
         request(request, callback);
     }
 
-    public void delete(String url, Map<String, String> headers, Map<String, String> params, OkHttpCallback callback){
-        Request request = buildRequest(url, headers, params, null,HttpMethodType.DELETE);
+    public void delete(String url, Map<String, String> headers, Map<String, String> params, OkHttpCallback callback) {
+        Request request = buildRequest(url, headers, params, null, HttpMethodType.DELETE);
         request(request, callback);
     }
 
@@ -190,12 +189,12 @@ public class OkHttpUtil {
      * get请求
      */
     public void get(String url, Object tag, OkHttpCallback callback) {
-        Request request = buildRequest(url, null, null,null, HttpMethodType.GET, tag);
+        Request request = buildRequest(url, null, null, null, HttpMethodType.GET, tag);
         request(request, callback);
     }
 
-    public void putJson(String url, Map<String, String> headers, String jsonStr, OkHttpCallback callback, Object tag){
-        Request request = buildRequest(url, headers, null, jsonStr, HttpMethodType.PUT_JSON,tag);
+    public void putJson(String url, Map<String, String> headers, String jsonStr, OkHttpCallback callback, Object tag) {
+        Request request = buildRequest(url, headers, null, jsonStr, HttpMethodType.PUT_JSON, tag);
         request(request, callback);
     }
 
@@ -205,7 +204,6 @@ public class OkHttpUtil {
     public void get(String url, Map<String, String> params, Object tag, OkHttpCallback callback) {
         get(generateUrlString(url, params), tag, callback);
     }
-
 
 
     /**
@@ -228,12 +226,11 @@ public class OkHttpUtil {
     }
 
 
-    private Request buildRequest(String url, Map<String, String> headers, Map<String, String> params,String jsonStr, HttpMethodType type) {
-
-        return buildRequest(url,headers,params,jsonStr,type,null);
+    private Request buildRequest(String url, Map<String, String> headers, Map<String, String> params, String jsonStr, HttpMethodType type) {
+        return buildRequest(url, headers, params, jsonStr, type, null);
     }
 
-    private Request buildRequest(String url, Map<String, String> headers, Map<String, String> params,String jsonStr,HttpMethodType type,Object tag) {
+    private Request buildRequest(String url, Map<String, String> headers, Map<String, String> params, String jsonStr, HttpMethodType type, Object tag) {
         Request.Builder builder = new Request.Builder();
         addHeader(headers, builder);
         builder.url(url);

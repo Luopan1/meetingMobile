@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -21,13 +22,16 @@ import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.business.ReplyReviewActivity;
 import com.hezy.guide.phone.business.SettingActivity;
 import com.hezy.guide.phone.business.UserinfoActivity;
+import com.hezy.guide.phone.utils.HalfType;
 import com.hezy.guide.phone.utils.ImageUtils;
 import com.hezy.guide.phone.utils.Logger;
+import com.hezy.guide.phone.utils.RoundCornerTransform;
 import com.hezy.guide.phone.utils.RxBus;
 import com.hezy.guide.phone.utils.StringUtils;
 import com.hezy.guide.phone.utils.TimeUtil;
 import com.hezy.guide.phone.utils.helper.ImageHelper;
 import com.hezy.guide.phone.utils.statistics.ZYAgent;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -47,6 +51,7 @@ public class ReviewAdapter extends BaseRecyclerAdapter<RecordData.PageDataEntity
     RankInfo mRankInfo;
 
     private RecordData.PageDataEntity bean;
+    private Context mContext;
 
     public enum ITEM_TYPE {
         ME,
@@ -57,6 +62,7 @@ public class ReviewAdapter extends BaseRecyclerAdapter<RecordData.PageDataEntity
 
     public ReviewAdapter(Context context) {
         super(context);
+        this.mContext = context;
         subscription = RxBus.handleMessage(new Action1() {
             @Override
             public void call(Object o) {
@@ -118,7 +124,6 @@ public class ReviewAdapter extends BaseRecyclerAdapter<RecordData.PageDataEntity
         }else{
             return new EmptyViewHolder(mInflater.inflate(R.layout.empty_item, parent, false));
         }
-
 
     }
 

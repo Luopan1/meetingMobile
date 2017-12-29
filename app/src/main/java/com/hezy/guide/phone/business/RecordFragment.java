@@ -1,17 +1,21 @@
 package com.hezy.guide.phone.business;
 
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
+import com.hezy.guide.phone.ApiClient;
 import com.hezy.guide.phone.R;
-import com.hezy.guide.phone.databinding.GuideLogFragmentBinding;
+import com.hezy.guide.phone.business.adapter.GuideLogAdapter;
 import com.hezy.guide.phone.entities.RecordData;
 import com.hezy.guide.phone.entities.base.BaseBean;
-import com.hezy.guide.phone.ApiClient;
-import com.hezy.guide.phone.business.adapter.GuideLogAdapter;
 import com.hezy.guide.phone.utils.OkHttpCallback;
 
 
@@ -19,7 +23,11 @@ import com.hezy.guide.phone.utils.OkHttpCallback;
  * Created by wufan on 2017/7/26.
  */
 
-public class GuideLogFragment extends BaseDataBindingFragment<GuideLogFragmentBinding> {
+public class RecordFragment extends BaseFragment {
+
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+    private RecyclerView mRecyclerView;
+    private LinearLayout noMeetingLayout;
 
     private LinearLayoutManager mLayoutManager;
     private GuideLogAdapter mAdapter;
@@ -32,43 +40,28 @@ public class GuideLogFragment extends BaseDataBindingFragment<GuideLogFragmentBi
         return "记录";
     }
 
-    public static GuideLogFragment newInstance() {
-        GuideLogFragment fragment = new GuideLogFragment();
+    public static RecordFragment newInstance() {
+        RecordFragment fragment = new RecordFragment();
         return fragment;
     }
 
+    @Nullable
     @Override
-    protected int initContentView() {
-        return R.layout.guide_log_fragment;
-    }
-
-
-
-    @Override
-    protected void initView() {
-
-    }
-
-    @Override
-    protected void initAdapter() {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.guide_log_fragment, null, false);
+        mSwipeRefreshLayout = view.findViewById(R.id.mSwipeRefreshLayout);
+        mRecyclerView = view.findViewById(R.id.mRecyclerView);
+        noMeetingLayout = view.findViewById(R.id.mLayoutNoData);
         mAdapter = new GuideLogAdapter(mContext);
 
         //设置布局管理器
         mLayoutManager = new LinearLayoutManager(mContext);
         mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        mBinding.mRecyclerView.setLayoutManager(mLayoutManager);
-        mBinding.mRecyclerView.addItemDecoration(new DividerItemDecoration(mContext,DividerItemDecoration.VERTICAL));
-        mBinding.mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(mContext,DividerItemDecoration.VERTICAL));
+        mRecyclerView.setAdapter(mAdapter);
 
-        //刷新与分页加载
-        mBinding.mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                requestRecord();
-            }
-        });
-
-        mBinding.mRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+        mRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
             private int lastVisibleItemPosition;
 
             @Override
@@ -76,7 +69,7 @@ public class GuideLogFragment extends BaseDataBindingFragment<GuideLogFragmentBi
                                              int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 if (newState == RecyclerView.SCROLL_STATE_IDLE
-                        && !mBinding.mSwipeRefreshLayout.isRefreshing()
+                        && !mSwipeRefreshLayout.isRefreshing()
                         && lastVisibleItemPosition + 1 == mAdapter.getItemCount()
                         && !(mPageNo == mTotalPage)) {
 //                    requestLiveVideoListNext();
@@ -94,40 +87,24 @@ public class GuideLogFragment extends BaseDataBindingFragment<GuideLogFragmentBi
             }
         });
 
-    }
+        //刷新与分页加载
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                requestRecord();
+            }
+        });
 
-    @Override
-    protected void initListener() {
-        mBinding.mLayoutNoData.setOnClickListener(this);
-    }
-
-    @Override
-    protected void requestData() {
         requestRecord();
-    }
 
+        return view;
+    }
 
     @Override
     public void onMyVisible() {
         super.onMyVisible();
-//        requestRecord();
-        //能下滑刷新没必要
-    }
 
-//    private void requestRecordTotal() {
-//        ApiClient.getInstance().requestRecordTotal(this, new OkHttpBaseCallback<BaseBean<RecordTotal>>() {
-//            @Override
-//            public void onSuccess(BaseBean<RecordTotal> entity) {
-//                if (entity == null || entity.getData() == null) {
-//                    showToast("数据为空");
-//                    return;
-//                }
-//                String time = String.valueOf(entity.getData().getTotal());
-//            }
-//
-//
-//        });
-//    }
+    }
 
     private void requestRecord() {
         requestRecord("1", "20");
@@ -140,11 +117,11 @@ public class GuideLogFragment extends BaseDataBindingFragment<GuideLogFragmentBi
             @Override
             public void onSuccess(BaseBean<RecordData> entity) {
                 if (entity.getData().getTotalCount() == 0) {
-                    mBinding.mLayoutNoData.setVisibility(View.VISIBLE);
-                    mBinding.mSwipeRefreshLayout.setVisibility(View.GONE);
+                    noMeetingLayout.setVisibility(View.VISIBLE);
+                    mSwipeRefreshLayout.setVisibility(View.GONE);
                 } else {
-                    mBinding.mLayoutNoData.setVisibility(View.GONE);
-                    mBinding.mSwipeRefreshLayout.setVisibility(View.VISIBLE);
+                    noMeetingLayout.setVisibility(View.GONE);
+                    mSwipeRefreshLayout.setVisibility(View.VISIBLE);
                 }
                 if (isRefresh) {
                     isRefresh = false;
@@ -161,7 +138,7 @@ public class GuideLogFragment extends BaseDataBindingFragment<GuideLogFragmentBi
             @Override
             public void onFinish() {
                 super.onFinish();
-                mBinding.mSwipeRefreshLayout.setRefreshing(false);
+                mSwipeRefreshLayout.setRefreshing(false);
             }
         });
     }
@@ -173,14 +150,7 @@ public class GuideLogFragment extends BaseDataBindingFragment<GuideLogFragmentBi
             case R.id.mLayoutNoData:
                 requestRecord();
                 break;
-
-
         }
     }
 
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-    }
 }

@@ -1,79 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <LinearLayout
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/my_px_160"
+        android:background="@color/purple_811fcd">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="讲解记录"
+            android:textColor="@color/white"
+            android:textSize="@dimen/my_sp_48" />
+    </RelativeLayout>
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/mSwipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:visibility="visible">
 
-        <RelativeLayout
-            android:id="@+id/mLayoutTitle"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/my_px_160"
-            android:background="@color/purple_811fcd">
-
-            <TextView
-                android:id="@+id/mTvTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:text="讲解记录"
-                android:textColor="@color/white"
-                android:textSize="@dimen/my_sp_48" />
-        </RelativeLayout>
-
-
-        <android.support.v4.widget.SwipeRefreshLayout
-            android:id="@+id/mSwipeRefreshLayout"
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/mRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="visible">
+            android:background="@color/white"
+            android:cacheColorHint="@null"
+            android:paddingBottom="15dp"
+            android:paddingLeft="@dimen/my_px_40"
+            android:paddingRight="@dimen/my_px_40"
+            android:scrollbars="none"
+            android:visibility="visible" />
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/mRecyclerView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/white"
-                android:cacheColorHint="@null"
-                android:paddingLeft="@dimen/my_px_40"
-                android:paddingRight="@dimen/my_px_40"
-                android:paddingBottom="15dp"
-                android:scrollbars="none"
-                android:visibility="visible" />
+    </android.support.v4.widget.SwipeRefreshLayout>
 
+    <LinearLayout
+        android:id="@+id/mLayoutNoData"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
 
-        </android.support.v4.widget.SwipeRefreshLayout>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="center"
+            android:src="@mipmap/ic_home_record_none" />
 
-        <RelativeLayout
-            android:id="@+id/mLayoutNoData"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:visibility="gone">
-
-            <ImageView
-                android:id="@+id/mIvNoData"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:scaleType="center"
-                android:src="@mipmap/ic_home_record_none" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/mIvNoData"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="10dp"
-                android:text="暂时还没接到电话哦"
-                android:textColor="@color/text_gray_909090"
-                android:textSize="15sp" />
-
-        </RelativeLayout>
-
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="暂时还没接到电话哦"
+            android:textColor="@color/text_gray_909090"
+            android:textSize="15sp" />
 
     </LinearLayout>
 
-</layout>
+</LinearLayout>

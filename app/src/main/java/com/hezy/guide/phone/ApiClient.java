@@ -55,11 +55,6 @@ public class ApiClient {
         okHttpUtil = OkHttpUtil.getInstance();
     }
 
-    private String jointBaseUrl(String apiName) {
-        return "http://" + (BuildConfig.DEBUG ? API_DOMAIN_NAME : API_DOMAIN_NAME)
-                + "/osg/app" + apiName;
-    }
-
     public static String jointParamsToUrl(String url, Map<String, String> params) {
         if (params != null && params.size() > 0) {
             Uri uri = Uri.parse(url);
@@ -91,23 +86,23 @@ public class ApiClient {
     }
 
     public void getAllMeeting(Object tag, OkHttpCallback callback) {
-        okHttpUtil.get(jointBaseUrl("/meeting/all"), tag, callback);
+        okHttpUtil.get(API_DOMAIN_NAME + "/osg/app/meeting/all", getCommonHead(), null, callback);
     }
 
     public void verifyRole(Object tag, OkHttpCallback callback, Map<String, Object> values){
-        okHttpUtil.postJson(jointBaseUrl("/meeting/verify"), getCommonHead(), JSON.toJSONString(values), callback, tag);
+        okHttpUtil.postJson(API_DOMAIN_NAME + "/osg/app/meeting/verify", getCommonHead(), JSON.toJSONString(values), callback, tag);
     }
 
     public void joinMeeting(Object tag, OkHttpCallback callback, Map<String, Object> values){
-        okHttpUtil.postJson(jointBaseUrl("/meeting/join"), getCommonHead(), JSON.toJSONString(values), callback, tag);
+        okHttpUtil.postJson(API_DOMAIN_NAME + "/osg/app/meeting/join", getCommonHead(), JSON.toJSONString(values), callback, tag);
     }
 
     public void getMeeting(Object tag, String meetingId, OkHttpCallback callback) {
-        okHttpUtil.get(jointBaseUrl("/meeting/" + meetingId), tag, callback);
+        okHttpUtil.get(API_DOMAIN_NAME + "/osg/app/meeting/" + meetingId, getCommonHead(), null, callback);
     }
 
     public void finishMeeting(Object tag, String meetingId, int attendance, OkHttpCallback callback){
-        okHttpUtil.postJson(jointBaseUrl("/meeting/" + meetingId + "/end?attendance=" + attendance), getCommonHead(), null, callback, tag);
+        okHttpUtil.postJson(API_DOMAIN_NAME + "/osg/app/meeting/" + meetingId + "/end?attendance=" + attendance, getCommonHead(), null, callback, tag);
     }
 
     //  软件更新
