@@ -40,7 +40,7 @@ public class MeetingsFragment extends BaseFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.profile_fragment, null, false);
+        View view = inflater.inflate(R.layout.meeting_fragment, null, false);
         swipeRefreshLayout = view.findViewById(R.id.mSwipeRefreshLayout);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override

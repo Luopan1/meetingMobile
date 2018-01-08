@@ -13,7 +13,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="我的"
+            android:text="会议列表"
             android:textColor="@color/white"
             android:textSize="@dimen/my_sp_48" />
     </RelativeLayout>

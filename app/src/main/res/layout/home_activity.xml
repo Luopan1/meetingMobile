@@ -60,7 +60,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:drawablePadding="@dimen/my_px_10"
-                android:drawableTop="@drawable/home_tab_me_selector"
+                android:drawableTop="@drawable/home_tab_meeting_selector"
                 android:paddingTop="@dimen/my_px_14"
                 android:text="会议" />
 
