@@ -22,10 +22,12 @@ public class MeetingAdapter extends OpenPresenter {
     private ArrayList<Meeting> meetings;
 
     private GeneralAdapter mAdapter;
+    private OnItemClickListener listener;
 
-    public MeetingAdapter(Context context, ArrayList<Meeting> meetings) {
+    public MeetingAdapter(Context context, ArrayList<Meeting> meetings, OnItemClickListener listener) {
         this.mContext = context;
         this.meetings = meetings;
+        this.listener = listener;
     }
 
     @Override
@@ -46,7 +48,7 @@ public class MeetingAdapter extends OpenPresenter {
 
     @Override
     public void onBindViewHolder(final ViewHolder viewHolder, final int position) {
-        Meeting meeting = meetings.get(position);
+        final Meeting meeting = meetings.get(position);
         MeetingHodler holder = (MeetingHodler) viewHolder;
 
         if (meeting.getMeetingProcess() == 1) {
@@ -66,6 +68,21 @@ public class MeetingAdapter extends OpenPresenter {
         } else {
             holder.bgLayout.setBackgroundResource(R.mipmap.bg_meeting_item_a);
         }
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (listener != null) {
+                    listener.onItemClick(view, meeting);
+                }
+            }
+        });
+
+    }
+
+    public interface OnItemClickListener{
+
+        void onItemClick(View view, Meeting meeting);
 
     }
 

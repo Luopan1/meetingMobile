@@ -6,4 +6,16 @@ public interface AGEventHandler {
     void onJoinChannelSuccess(String channel, int uid, int elapsed);
 
     void onUserOffline(int uid, int reason);
+
+    void onConnectionLost();
+
+    void onConnectionInterrupted();
+
+    void onUserMuteVideo(int uid, boolean muted);
+
+    void onLastmileQuality(int quality);
+
+    void onNetworkQuality(int uid, int txQuality, int rxQuality);
+
+    void onError(int err);
 }

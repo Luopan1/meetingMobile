@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.support.v7.widget.RecyclerView;
 
+import com.hezy.guide.phone.BuildConfig;
 import com.hezy.guide.phone.R;
 import com.hezy.guide.phone.entities.Agora;
 import com.hezy.guide.phone.entities.base.BaseErrorBean;
@@ -324,6 +325,43 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
     public void onUserOffline(int uid, int reason) {
         log.debug("onUserOffline " + (uid & 0xFFFFFFFFL) + " " + reason);
         doRemoveRemoteUi(uid);
+    }
+
+    @Override
+    public void onConnectionLost() {
+
+    }
+
+    @Override
+    public void onConnectionInterrupted() {
+
+    }
+
+    @Override
+    public void onUserMuteVideo(final int uid, final boolean muted) {
+        if (BuildConfig.DEBUG) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(LiveRoomActivity.this, uid + " 的视频被暂停了 " + muted, Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
+
+    @Override
+    public void onLastmileQuality(int quality) {
+
+    }
+
+    @Override
+    public void onNetworkQuality(int uid, int txQuality, int rxQuality) {
+
+    }
+
+    @Override
+    public void onError(int err) {
+
     }
 
     private void requestRemoteStreamType(final int currentHostCount) {

@@ -11,7 +11,11 @@
 
     <color name="dark_black">#CC262626</color>
 
+    <color name="transparent_20_white">#33FFFFFF</color>
     <color name="transparent_75_white">#ACFFFFFF</color>
+
+    <color name="transparent_20_black">#33000000</color>
+    <color name="transparent_80_black">#cc000000</color>
 
     <color name="dark_gray">#FF55585A</color>
     <!-- ========================agora color======================== -->
@@ -63,6 +67,11 @@
 
     <color name="c_909090">#909090</color>
 
+    <color name="c_172938">#172938</color>
+    <color name="c_5f7c94">#5f7c94</color>
+    <color name="c_fffc00">#fffc00</color>
+
+    <color name="red_9e3603">#9e3606</color>
 
 
 

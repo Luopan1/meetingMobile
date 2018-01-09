@@ -70,7 +70,7 @@ public class WXEntryActivity extends BasicActivity implements IWXAPIEventHandler
 
         initView();
 
-        Preferences.setToken("4f8752dcd9e34a1b876aae2ecfd20712");
+//        Preferences.setToken("4f8752dcd9e34a1b876aae2ecfd20712");
 
         if (Preferences.isLogin()) {
             apiClient.requestUser(this, new OkHttpCallback<BaseBean<UserData>>() {

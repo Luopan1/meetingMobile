@@ -21,6 +21,7 @@ public class Preferences {
     private static final String PREFERENCE_USER_ADDRESS = "u_address";
     private static final String PREFERENCE_USER_PHOTO = "u_photo";
     private static final String PREFERENCE_USER_SIGNATURE = "u_signature";
+    private static final String PREFERENCE_USER_AREA_INFO = "u_area_info";
     private static final String PREFERENCE_USER_RANK = "u_rank";
 
     private static final String PREFERENCE_STUDENT_ID = "s_id";
@@ -131,6 +132,20 @@ public class Preferences {
         } else {
             Log.d(tag, "User photo save success");
         }
+    }
+
+    public static void setAreaInfo(String areaInfo){
+        SharedPreferences.Editor editor = getPreferences().edit();
+        editor.putString(PREFERENCE_USER_AREA_INFO, areaInfo);
+        if (!editor.commit()) {
+            Log.d(tag, "User Address save failure");
+        } else {
+            Log.d(tag, "User Address save success");
+        }
+    }
+
+    public static String getAreaInfo(){
+        return getPreferences().getString(PREFERENCE_USER_AREA_INFO, null);
     }
 
     public static String getUserSignature() {

@@ -96,7 +96,6 @@ public class LoginHelper {
         ZYAgent.onEvent(context,"退出登录");
         ZYAgent.onEvent(context,"退出登录 连接服务 请求停止");
         Preferences.clear();
-//        HeartService.stopService(context);
         WSService.stopService(context);
     }
 

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/stop_audience"
+    android:layout_width="@dimen/my_px_700"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:descendantFocusability="blocksDescendants"
+    android:background="@drawable/bg_audience_selector"
+    android:padding="3dp">
+
+    <TextView
+        android:id="@+id/audience_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.0"
+        android:padding="12dp"
+        tools:text="1. 唐姗姗"
+        android:textColor="@color/white"
+        android:textSize="@dimen/my_sp_30" />
+
+    <TextView
+        android:id="@+id/opr"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="12dp"
+        android:visibility="gone"
+        android:text="选择"
+        android:textColor="@color/text_color_selector"
+        android:textSize="@dimen/my_sp_30" />
+
+</LinearLayout>
