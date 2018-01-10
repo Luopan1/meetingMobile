@@ -1,19 +1,11 @@
 package io.agora.openlive.ui;
 
 import android.app.Dialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.hardware.usb.UsbDevice;
-import android.hardware.usb.UsbManager;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.SurfaceView;
 import android.view.View;
@@ -44,7 +36,6 @@ import io.agora.openlive.model.AGEventHandler;
 import io.agora.openlive.model.ConstantApp;
 import io.agora.rtc.Constants;
 import io.agora.rtc.RtcEngine;
-import io.agora.rtc.video.CameraHelper;
 import io.agora.rtc.video.VideoCanvas;
 
 public class MeetingAudienceActivity extends BaseActivity implements AGEventHandler {
@@ -63,112 +54,6 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 
     private String channelName;
 
-    private final BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            UsbDevice usbDevice = (UsbDevice) intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
-            String deviceName = usbDevice.getDeviceName();
-            Log.e(TAG, "--- 接收到广播， action: " + action);
-            if (UsbManager.ACTION_USB_DEVICE_ATTACHED.equals(action)) {
-                Log.e(TAG, "USB device is Attached: " + deviceName);
-
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-//                        if (CameraHelper.getNumberOfCameras() > 0) {
-//                            Audience audience = (Audience) audienceNameText.getTag();
-//                            if (audience != null) {
-//                                if (config().mUid == Integer.parseInt(audience.getUid())) {
-//                                    worker().getRtcEngine().setClientRole(Constants.CLIENT_ROLE_BROADCASTER, "");
-//
-//                                    SurfaceView localSurfaceView = RtcEngine.CreateRendererView(getApplicationContext());
-//                                    localSurfaceView.setZOrderOnTop(true);
-//                                    localSurfaceView.setZOrderMediaOverlay(true);
-//                                    rtcEngine().setupLocalVideo(new VideoCanvas(localSurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, config().mUid));
-//
-//                                    audienceLayout.addView(localSurfaceView);
-//
-//                                    audienceNameText.setTag(audience);
-//                                    audienceNameText.setText(audience.getUname());
-//                                    audienceTipsText.setVisibility(View.GONE);
-//
-//                                    finishButton.setVisibility(View.VISIBLE);
-//                                    micButton.setVisibility(View.GONE);
-//
-//                                    agoraAPI.setAttr("uname", audience.getUname());
-//                                }
-//                            }
-//                            if (BuildConfig.DEBUG) {
-//                                Toast.makeText(getApplicationContext(), "检测到有" + CameraHelper.getNumberOfCameras() + "个摄像头插入", Toast.LENGTH_SHORT).show();
-//                            }
-//                        } else {
-//                            if (BuildConfig.DEBUG) {
-//                                Toast.makeText(getApplicationContext(), "没有检测到摄像头", Toast.LENGTH_SHORT).show();
-//                            }
-//                        }
-                    }
-                }, 1000);
-            } else if (UsbManager.ACTION_USB_DEVICE_DETACHED.equals(action)) {
-                Log.e(TAG, "USB device is Detached: " + deviceName);
-
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-//                        if (CameraHelper.getNumberOfCameras() <= 0) {
-                            Audience audience = (Audience) audienceNameText.getTag();
-                            if (audience != null) {
-                                if (BuildConfig.DEBUG) {
-                                    Toast.makeText(getApplicationContext(), "检测到摄像头被拔出" + audience.toString(), Toast.LENGTH_SHORT).show();
-                                }
-                                if (config().mUid == Integer.parseInt(audience.getUid())) {
-                                    audienceLayout.removeAllViews();
-
-                                    try {
-                                        JSONObject jsonObject = new JSONObject();
-                                        jsonObject.put("finish", true);
-                                        agoraAPI.messageInstantSend(broadcastId, 0, jsonObject.toString(), "");
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-
-                                    worker().getRtcEngine().setClientRole(Constants.CLIENT_ROLE_AUDIENCE, "");
-
-                                    Toast.makeText(getApplicationContext(), "摄像头异常，请重新进入会议" + audience.toString(), Toast.LENGTH_SHORT).show();
-
-                                    agoraAPI.channelLeave(channelName);
-                                    agoraAPI.logout();
-                                    finish();
-                                }
-                            }
-                            if (request) {
-                                request = false;
-                                micButton.setText("我要发言");
-                                micButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_meeting_signup, 0, 0, 0);
-                                try {
-                                    JSONObject jsonObject = new JSONObject();
-                                    jsonObject.put("request", false);
-                                    jsonObject.put("uid", UIDUtil.generatorUID(Preferences.getUserId()));
-                                    if (TextUtils.isEmpty(Preferences.getAreaInfo())) {
-                                        jsonObject.put("uname", "店员-" + Preferences.getUserAddress() + "-"+ Preferences.getUserName());
-                                    } else {
-                                        jsonObject.put("uname", "店员-" + Preferences.getAreaInfo() + "-" + Preferences.getUserAddress() + "-" + Preferences.getUserName());
-                                    }
-                                    agoraAPI.messageInstantSend(broadcastId, 0, jsonObject.toString(), "");
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-//                        } else {
-//                            if (BuildConfig.DEBUG) {
-//                                Toast.makeText(getApplicationContext(), "检测到还有" + CameraHelper.getNumberOfCameras() + "个摄像头", Toast.LENGTH_SHORT).show();
-//                            }
-//                        }
-                    }
-                }, 1000);
-            }
-        }
-    };
 
     private AgoraAPIOnlySignal agoraAPI;
 
@@ -176,11 +61,6 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_meeting_audience);
-
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(UsbManager.ACTION_USB_DEVICE_ATTACHED);
-        filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
-        registerReceiver(mUsbReceiver, filter);
 
         TCAgent.onEvent(this, "进入会议直播界面");
 
@@ -265,26 +145,22 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                             e.printStackTrace();
                         }
                     } else {
-//                        if (CameraHelper.getNumberOfCameras() > 0) {
-                            request = true;
-                            micButton.setText("放弃发言");
-                            micButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_meeting_signup_giveup, 0, 0, 0);
-                            try {
-                                JSONObject jsonObject = new JSONObject();
-                                jsonObject.put("request", true);
-                                jsonObject.put("uid", UIDUtil.generatorUID(Preferences.getUserId()));
-                                if (TextUtils.isEmpty(Preferences.getAreaInfo())) {
-                                    jsonObject.put("uname", "店员-" + Preferences.getUserAddress() + "-"+ Preferences.getUserName());
-                                } else {
-                                    jsonObject.put("uname", "店员-" + Preferences.getAreaInfo() + "-" + Preferences.getUserAddress() + "-" + Preferences.getUserName());
-                                }
-                                agoraAPI.messageInstantSend(broadcastId, 0, jsonObject.toString(), "");
-                            } catch (Exception e) {
-                                e.printStackTrace();
+                        request = true;
+                        micButton.setText("放弃发言");
+                        micButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_meeting_signup_giveup, 0, 0, 0);
+                        try {
+                            JSONObject jsonObject = new JSONObject();
+                            jsonObject.put("request", true);
+                            jsonObject.put("uid", UIDUtil.generatorUID(Preferences.getUserId()));
+                            if (TextUtils.isEmpty(Preferences.getAreaInfo())) {
+                                jsonObject.put("uname", "店员-" + Preferences.getUserAddress() + "-"+ Preferences.getUserName());
+                            } else {
+                                jsonObject.put("uname", "店员-" + Preferences.getAreaInfo() + "-" + Preferences.getUserAddress() + "-" + Preferences.getUserName());
                             }
-//                        } else {
-//                            Toast.makeText(getApplicationContext(), "未检测到摄像头，请先连接摄像头", Toast.LENGTH_SHORT).show();
-//                        }
+                            agoraAPI.messageInstantSend(broadcastId, 0, jsonObject.toString(), "");
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 } else {
                     Toast.makeText(MeetingAudienceActivity.this, "请先等待主持人加入", Toast.LENGTH_SHORT).show();
@@ -834,10 +710,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
         TCAgent.onPageEnd(this, "MeetingAudienceActivity");
-
-        unregisterReceiver(mUsbReceiver);
 
         BaseApplication.getInstance().deInitWorkerThread();
     }

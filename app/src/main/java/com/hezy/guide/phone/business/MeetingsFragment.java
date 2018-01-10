@@ -155,7 +155,7 @@ public class MeetingsFragment extends BaseFragment {
         dialog.show();
     }
 
-    private OkHttpCallback verifyRoleCallback(final Meeting meeting, String token) {
+    private OkHttpCallback verifyRoleCallback(final Meeting meeting, final String token) {
         return new OkHttpCallback<Bucket<MeetingJoin>>() {
 
             @Override
@@ -163,7 +163,7 @@ public class MeetingsFragment extends BaseFragment {
                 HashMap<String, Object> params = new HashMap<String, Object>();
                 params.put("clientUid", UIDUtil.generatorUID(Preferences.getUserId()));
                 params.put("meetingId", meeting.getId());
-                params.put("token", Preferences.getToken());
+                params.put("token", token);
                 apiClient.joinMeeting(TAG, joinMeetingCallback, params);
             }
 

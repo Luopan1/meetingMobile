@@ -86,26 +86,33 @@
             android:screenOrientation="portrait"
             android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale" />
 
-        <activity android:name="io.agora.openlive.ui.LiveRoomActivity"
-            android:launchMode="singleInstance"
-            android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"
-            android:screenOrientation="landscape"
-            android:theme="@style/FullscreenTheme"/>
-
         <activity android:name="io.agora.openlive.ui.MainActivity"
             android:launchMode="singleInstance"
             android:screenOrientation="landscape"
             android:theme="@style/FullscreenTheme"
             android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale" />
 
-        <!--<receiver-->
-            <!--android:name=".receiver.NetWorkReceiver"-->
-            <!--android:enabled="true"-->
-            <!--android:exported="false">-->
-            <!--<intent-filter>-->
-                <!--<action android:name="android.net.conn.CONNECTIVITY_CHANGE" />-->
-            <!--</intent-filter>-->
-        <!--</receiver>-->
+        <activity android:name="io.agora.openlive.ui.LiveRoomActivity"
+            android:launchMode="singleInstance"
+            android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"
+            android:screenOrientation="landscape"
+            android:theme="@style/FullscreenTheme"/>
+
+        <activity
+            android:name="io.agora.openlive.ui.MeetingInitActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="landscape"
+            android:theme="@style/FullscreenTheme" />
+        <activity
+            android:name="io.agora.openlive.ui.MeetingBroadcastActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="landscape"
+            android:theme="@style/FullscreenTheme" />
+        <activity
+            android:name="io.agora.openlive.ui.MeetingAudienceActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="landscape"
+            android:theme="@style/FullscreenTheme" />
 
         <receiver android:name=".receiver.PhoneReceiver" >
             <intent-filter>

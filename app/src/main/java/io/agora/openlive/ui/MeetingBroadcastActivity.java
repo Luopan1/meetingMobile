@@ -2,18 +2,10 @@ package io.agora.openlive.ui;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.hardware.usb.UsbDevice;
-import android.hardware.usb.UsbManager;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.RemoteException;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.Window;
@@ -72,80 +64,12 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
     private TextView broadcastNameText, broadcastTipsText, countText, audienceNameText, audienceTipsText;
     private Button waiterButton, exitButton, stopButton;
 
-    private final BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            UsbDevice usbDevice = (UsbDevice) intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
-            String deviceName = usbDevice.getDeviceName();
-            Log.e(TAG, "--- 接收到广播， action: " + action);
-            if (UsbManager.ACTION_USB_DEVICE_ATTACHED.equals(action)) {
-                Log.e(TAG, "USB device is Attached: " + deviceName);
-
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-//                        if (CameraHelper.getNumberOfCameras() > 0) {
-
-                            doConfigEngine(Constants.CLIENT_ROLE_BROADCASTER);
-
-                            SurfaceView localSurfaceView = RtcEngine.CreateRendererView(getApplicationContext());
-                            rtcEngine().setupLocalVideo(new VideoCanvas(localSurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, config().mUid));
-                            localSurfaceView.setZOrderOnTop(true);
-                            localSurfaceView.setZOrderMediaOverlay(true);
-
-                            broadcasterLayout.addView(localSurfaceView);
-
-                            worker().getRtcEngine().setClientRole(Constants.CLIENT_ROLE_BROADCASTER, "");
-
-                            broadcastTipsText.setVisibility(View.GONE);
-
-//                            if (BuildConfig.DEBUG) {
-//                                Toast.makeText(getApplicationContext(), "检测到有" + CameraHelper.getNumberOfCameras() + "个摄像头插入", Toast.LENGTH_SHORT).show();
-//                            }
-//                        } else {
-//                            if (BuildConfig.DEBUG) {
-//                                Toast.makeText(getApplicationContext(), "没有检测到摄像头", Toast.LENGTH_SHORT).show();
-//                            }
-//                        }
-                    }
-                }, 1000);
-            } else if (UsbManager.ACTION_USB_DEVICE_DETACHED.equals(action)) {
-                Log.e(TAG, "USB device is Detached: " + deviceName);
-
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-//                        if (CameraHelper.getNumberOfCameras() <= 0) {
-                            if (BuildConfig.DEBUG) {
-                                Toast.makeText(getApplicationContext(), "检测到摄像头被拔出", Toast.LENGTH_SHORT).show();
-                            }
-                            broadcasterLayout.removeAllViews();
-                            broadcastTipsText.setText("未连接摄像头，请重新通话");
-                            broadcastTipsText.setVisibility(View.VISIBLE);
-                            worker().getRtcEngine().setClientRole(Constants.CLIENT_ROLE_AUDIENCE, "");
-//                        } else {
-//                            if (BuildConfig.DEBUG) {
-//                                Toast.makeText(getApplicationContext(), "检测到还有" + CameraHelper.getNumberOfCameras() + "个摄像头", Toast.LENGTH_SHORT).show();
-//                            }
-//                        }
-                    }
-                }, 1000);
-            }
-        }
-    };
-
     private AgoraAPIOnlySignal agoraAPI;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_meeting_broadcast);
-
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(UsbManager.ACTION_USB_DEVICE_ATTACHED);
-        filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
-        registerReceiver(mUsbReceiver, filter);
 
         TCAgent.onEvent(this, "进入会议直播界面");
 
@@ -767,8 +691,6 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
         super.onDestroy();
 
         TCAgent.onPageEnd(this, "MeetingAudienceActivity");
-
-        unregisterReceiver(mUsbReceiver);
 
         agoraAPI.logout();
 
