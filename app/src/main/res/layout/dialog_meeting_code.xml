@@ -2,52 +2,64 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_gravity="center"
+    android:paddingLeft="46.67dp"
+    android:paddingRight="46.67dp"
+    android:paddingTop="40dp"
+    android:paddingBottom="50dp"
     android:background="@drawable/bg_message_dialog"
     android:gravity="center"
-    android:orientation="vertical"
-    android:padding="48dp">
+    android:orientation="vertical">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="32dp"
         android:text="请输入会议加入码"
-        android:textColor="@color/black"
-        android:textSize="18sp" />
+        android:textColor="@color/c_434343"
+        android:textSize="14sp" />
 
     <EditText
         android:id="@+id/code"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/my_px_120"
-        android:layout_margin="@dimen/my_px_12"
-        android:background="@color/white"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
         android:focusable="true"
         android:inputType="number"
-        android:padding="@dimen/my_px_12"
-        android:textSize="22sp" />
+        android:textSize="20sp" >
+        <requestFocus />
+    </EditText>
 
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="45dp"
         android:orientation="horizontal">
 
         <Button
             android:id="@+id/confirm"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="100dp"
+            android:layout_height="38.33dp"
             android:layout_marginRight="16dp"
-            android:layout_weight="1.0"
-            android:focusable="true"
-            android:text="@string/sure"></Button>
+            android:background="@drawable/bg_meeting_button_selector"
+            android:paddingLeft="36dp"
+            android:paddingRight="36dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:text="@string/sure"
+            android:textColor="@color/white"
+            android:textSize="14sp" />
 
         <Button
             android:id="@+id/cancel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1.0"
-            android:focusable="true"
-            android:text="@string/cancel" />
+            android:layout_width="100dp"
+            android:layout_height="38.33dp"
+            android:background="@drawable/bg_meeting_button_selector"
+            android:paddingLeft="36dp"
+            android:paddingRight="36dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:text="@string/cancel"
+            android:textColor="@color/white"
+            android:textSize="14sp" />
 
     </LinearLayout>
 </LinearLayout>

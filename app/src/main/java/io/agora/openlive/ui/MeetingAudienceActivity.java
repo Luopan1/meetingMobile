@@ -54,7 +54,6 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 
     private String channelName;
 
-
     private AgoraAPIOnlySignal agoraAPI;
 
     @Override
@@ -435,10 +434,10 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 
     private void showDialog(final int type, final String title, final String leftText, final String rightText, final Audience audience) {
         View view = View.inflate(this, R.layout.dialog_selector, null);
-        TextView titleText = (TextView) view.findViewById(R.id.title);
+        TextView titleText = view.findViewById(R.id.title);
         titleText.setText(title);
 
-        Button leftButton = (Button) view.findViewById(R.id.left);
+        Button leftButton = view.findViewById(R.id.left);
         leftButton.setText(leftText);
         leftButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -450,7 +449,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
             }
         });
 
-        Button rightButton = (Button) view.findViewById(R.id.right);
+        Button rightButton = view.findViewById(R.id.right);
         rightButton.setText(rightText);
         rightButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -486,11 +485,11 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
         dialog = new Dialog(this, R.style.MyDialog);
         dialog.setContentView(view);
 
-        Window dialogWindow = dialog.getWindow();
-        WindowManager.LayoutParams lp = dialogWindow.getAttributes();
-        lp.width = 740;
-        lp.height = 480;
-        dialogWindow.setAttributes(lp);
+//        Window dialogWindow = dialog.getWindow();
+//        WindowManager.LayoutParams lp = dialogWindow.getAttributes();
+//        lp.width = 740;
+//        lp.height = 480;
+//        dialogWindow.setAttributes(lp);
 
         dialog.show();
     }

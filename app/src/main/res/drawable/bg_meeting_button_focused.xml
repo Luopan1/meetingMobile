@@ -10,8 +10,4 @@
     <corners
         android:radius="40dp" />
 
-    <stroke
-        android:width="@dimen/my_px_3"
-        android:color="@android:color/white" />
-
 </shape>

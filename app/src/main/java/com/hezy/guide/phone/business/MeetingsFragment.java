@@ -129,10 +129,11 @@ public class MeetingsFragment extends BaseFragment {
 
     private void initDialog(final Meeting meeting) {
         View view = View.inflate(mContext, R.layout.dialog_meeting_code, null);
-        final EditText codeEdit = (EditText) view.findViewById(R.id.code);
+        final EditText codeEdit = view.findViewById(R.id.code);
         view.findViewById(R.id.confirm).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                dialog.dismiss();
                 if (!TextUtils.isEmpty(codeEdit.getText())) {
                     HashMap<String, Object> params = new HashMap<String, Object>();
                     params.put("clientUid", UIDUtil.generatorUID(Preferences.getUserId()));

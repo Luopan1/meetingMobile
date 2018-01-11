@@ -1,54 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="@dimen/my_px_740"
-    android:layout_height="@dimen/my_px_480"
-    android:layout_gravity="center"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_message_dialog"
     android:gravity="center"
-    android:background="@drawable/bg_meeting_dialog"
     android:orientation="vertical">
 
     <TextView
         android:id="@+id/title"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:gravity="center"
-        android:textColor="#ffffff"
-        android:textSize="18sp" />
+        android:layout_marginBottom="32dp"
+        android:layout_marginTop="40dp"
+        android:textColor="@color/c_434343"
+        android:textSize="14sp"
+        tools:text="标题" />
 
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_height="45dp"
         android:orientation="horizontal">
 
         <Button
             android:id="@+id/left"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="32dp"
-            android:layout_weight="1"
+            android:layout_width="100dp"
+            android:layout_height="38.33dp"
+            android:layout_marginRight="26.67dp"
             android:background="@drawable/bg_meeting_button_selector"
-            android:focusable="true"
-            android:paddingLeft="18dp"
-            android:paddingRight="18dp"
+            android:paddingBottom="10dp"
+            android:paddingLeft="36dp"
+            android:paddingRight="36dp"
+            android:paddingTop="10dp"
             android:textColor="@color/white"
-            android:textSize="22sp">
-
-            <requestFocus />
-        </Button>
+            android:textSize="14sp"
+            tools:text="@string/sure"/>
 
         <Button
             android:id="@+id/right"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_width="100dp"
+            android:layout_height="38.33dp"
             android:background="@drawable/bg_meeting_button_selector"
-            android:focusable="true"
-            android:paddingLeft="18dp"
-            android:paddingRight="18dp"
+            android:paddingBottom="10dp"
+            android:paddingLeft="36dp"
+            android:paddingRight="36dp"
+            android:paddingTop="10dp"
             android:textColor="@color/white"
-            android:textSize="22sp" />
+            android:textSize="14sp"
+            tools:text="@string/cancel" />
     </LinearLayout>
 
 </LinearLayout>
