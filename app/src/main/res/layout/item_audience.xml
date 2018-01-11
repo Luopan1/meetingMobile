@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/stop_audience"
-    android:layout_width="@dimen/my_px_700"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:descendantFocusability="blocksDescendants"
@@ -17,7 +17,7 @@
         android:padding="12dp"
         tools:text="1. 唐姗姗"
         android:textColor="@color/white"
-        android:textSize="@dimen/my_sp_30" />
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/opr"
@@ -27,6 +27,6 @@
         android:visibility="gone"
         android:text="选择"
         android:textColor="@color/text_color_selector"
-        android:textSize="@dimen/my_sp_30" />
+        android:textSize="14sp" />
 
 </LinearLayout>

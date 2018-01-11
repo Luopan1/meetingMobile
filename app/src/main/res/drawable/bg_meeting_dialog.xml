@@ -8,5 +8,6 @@
         android:centerColor="@color/transparent_80_black"
         android:startColor="@color/transparent_80_black" />
 
-    <corners android:radius="36dp" />
+    <corners android:radius="8dp" />
+
 </shape>
