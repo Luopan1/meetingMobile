@@ -9,6 +9,7 @@ import com.alibaba.fastjson.JSON;
 import com.hezy.guide.phone.entities.RankInfo;
 import com.hezy.guide.phone.entities.RecordData;
 import com.hezy.guide.phone.entities.RecordTotal;
+import com.hezy.guide.phone.entities.StaticRes;
 import com.hezy.guide.phone.entities.User;
 import com.hezy.guide.phone.entities.UserData;
 import com.hezy.guide.phone.entities.Version;
@@ -111,9 +112,8 @@ public class ApiClient {
     }
 
     //获取全局配置信息接口
-    public static String getGlobalConfigurationInformation() {
-        String BabyHomeUrl = API_DOMAIN_NAME_YOYOTU + "/dz/app/config";
-        return BabyHomeUrl;
+    public void urlConfig(OkHttpCallback<BaseBean<StaticRes>> callback) {
+        okHttpUtil.get(API_DOMAIN_NAME_YOYOTU + "/dz/app/config", null, null, callback);
     }
 
     //  注册设备信息

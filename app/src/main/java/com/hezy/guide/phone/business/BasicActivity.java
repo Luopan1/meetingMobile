@@ -87,7 +87,7 @@ public abstract class BasicActivity extends FragmentActivity implements View.OnC
         super.onResume();
         Logger.d(FTAG + TAG, "onResume");
         ZYAgent.onPageStart(this, getStatisticsTag());
-        mMyApp.setCurrentActivity(this);
+//        mMyApp.setCurrentActivity(this);
     }
 
     @Override
@@ -110,15 +110,15 @@ public abstract class BasicActivity extends FragmentActivity implements View.OnC
         OkHttpUtil.getInstance().cancelTag(this);
         unregisterReceiver(mHomeKeyEventReceiver);
         cancelDialog();
-        clearReferences();
+//        clearReferences();
         super.onDestroy();
     }
 
-    private void clearReferences() {
-        Activity currActivity = mMyApp.getCurrentActivity();
-        if (this.equals(currActivity))
-            mMyApp.setCurrentActivity(null);
-    }
+//    private void clearReferences() {
+//        Activity currActivity = mMyApp.getCurrentActivity();
+//        if (this.equals(currActivity))
+//            mMyApp.setCurrentActivity(null);
+//    }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {

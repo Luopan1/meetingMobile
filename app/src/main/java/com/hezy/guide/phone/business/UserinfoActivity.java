@@ -610,16 +610,16 @@ public class UserinfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
     }
 
 
-    private void relate(String key) {
+    private void relate(final String key) {
         Logger.i(TAG, "key " + key);
-        final String str = key;
-        if ((!TextUtils.isEmpty(str)) && !Preferences.getUserMobile().equals(str)) {
+        if (!TextUtils.isEmpty(key)) {
             Map<String, String> params = new HashMap<>();
-            params.put("photo", Preferences.getImgUrl() + str); //服务器存储全路径
+            params.put("photo", Preferences.getImgUrl() + key); //服务器存储全路径
             ApiClient.getInstance().requestUserExpostor(this, params, new OkHttpCallback<BaseErrorBean>() {
                 @Override
                 public void onSuccess(BaseErrorBean entity) {
-                    Preferences.setUserPhoto(Preferences.getImgUrl() + str);
+                    Logger.i("photo", entity.toString());
+                    Preferences.setUserPhoto(Preferences.getImgUrl() + key);
                     ToastUtils.showToast("保存照片成功");
                 }
             });

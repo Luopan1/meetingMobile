@@ -51,9 +51,9 @@ public class OkHttpUtil {
         clientBuilder.readTimeout(10, TimeUnit.SECONDS);
         clientBuilder.writeTimeout(30, TimeUnit.SECONDS);
 
-        HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
-        httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-        clientBuilder.addInterceptor(httpLoggingInterceptor);
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        clientBuilder.addNetworkInterceptor(interceptor);
 
         okHttpClient = clientBuilder.build();
 
@@ -97,8 +97,10 @@ public class OkHttpUtil {
                 }
                 if (response.body() != null) {
                     String resString = response.body().string();
+                    System.out.println(resString);
                     if (!TextUtils.isEmpty(resString)) {
                         try {
+
                             BaseBean baseBean = gson.fromJson(resString, BaseBean.class);
                             if (baseBean.isSuccess()) {
                                 Object object = gson.fromJson(resString, callback.mType);
@@ -302,7 +304,11 @@ public class OkHttpUtil {
      * @return RequestBody
      */
     private RequestBody buildRequestBody(String jsonString) {
-        return RequestBody.create(MediaType.parse("application/json; charset=utf-8"), jsonString);
+        if (!TextUtils.isEmpty(jsonString)) {
+            return RequestBody.create(MediaType.parse("application/json; charset=utf-8"), jsonString);
+        } else {
+            return RequestBody.create(MediaType.parse("application/json; charset=utf-8"), "{}");
+        }
     }
 
     private MultipartBody buildMultipartRequestBody(Map<String, String> params) {

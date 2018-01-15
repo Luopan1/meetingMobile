@@ -1,10 +1,15 @@
 package com.hezy.guide.phone;
 
-import android.app.Activity;
 import android.support.multidex.MultiDexApplication;
+import android.util.Log;
+import android.widget.Toast;
 
+import com.hezy.guide.phone.entities.StaticRes;
+import com.hezy.guide.phone.entities.StaticResource;
+import com.hezy.guide.phone.entities.base.BaseBean;
 import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.utils.Logger;
+import com.hezy.guide.phone.utils.OkHttpCallback;
 import com.tencent.bugly.crashreport.CrashReport;
 import com.tendcloud.tenddata.TCAgent;
 
@@ -48,22 +53,11 @@ public class BaseApplication extends MultiDexApplication {
         TCAgent.init(this);
         TCAgent.setReportUncaughtExceptions(true);
 
-//        requestGlobalConfig();
-
+        ApiClient.getInstance().urlConfig(staticResCallback);
     }
 
     public static BaseApplication getInstance() {
         return instance;
-    }
-
-    private Activity mCurrentActivity = null;
-
-    public Activity getCurrentActivity() {
-        return mCurrentActivity;
-    }
-
-    public void setCurrentActivity(Activity mCurrentActivity) {
-        this.mCurrentActivity = mCurrentActivity;
     }
 
     private WorkerThread mWorkerThread;
@@ -114,22 +108,15 @@ public class BaseApplication extends MultiDexApplication {
         return mSocket;
     }
 
-//    private void requestGlobalConfig() {
-//        String url = ApiClient.getGlobalConfigurationInformation();
-//
-//        OkHttpUtil.getInstance().get(url, this, new OkHttpBaseCallback<GlobalConfigurationInformation>() {
-//
-//            @Override
-//            public void onSuccess(final GlobalConfigurationInformation result) {
-//                Preferences.setImgUrl(result.getData().getStaticRes().getImgUrl());
-//                Preferences.setVideoUrl(result.getData().getStaticRes().getVideoUrl());
-//                Preferences.setDownloadUrl(result.getData().getStaticRes().getDownloadUrl());
-//                Preferences.setCooperationUrl(result.getData().getStaticRes().getDownloadUrl());
-//            }
-//
-//
-//        });
-//    }
+    private OkHttpCallback staticResCallback = new OkHttpCallback<BaseBean<StaticResource>>() {
 
+        @Override
+        public void onSuccess(BaseBean<StaticResource> entity) {
+            Preferences.setImgUrl(entity.getData().getStaticRes().getImgUrl());
+            Preferences.setVideoUrl(entity.getData().getStaticRes().getVideoUrl());
+            Preferences.setDownloadUrl(entity.getData().getStaticRes().getDownloadUrl());
+            Preferences.setCooperationUrl(entity.getData().getStaticRes().getDownloadUrl());
+        }
+    };
 
 }

@@ -38,8 +38,6 @@ public class Preferences {
     private static String PREFERENCE_DOWNLOAD_URL = "downloadUrl";
     private static String PREFERENCE_COOPERATION_URL = "cooperationUrl";
 
-    private static String imgUrl;
-
     public static void setStudentId(String studentId) {
         SharedPreferences.Editor editor = getPreferences().edit();
         editor.putString(PREFERENCE_STUDENT_ID, studentId);
@@ -192,15 +190,10 @@ public class Preferences {
     }
 
     public static String getImgUrl() {
-        if (!TextUtils.isEmpty(imgUrl)) {
-            return imgUrl;
-        } else {
-            return getPreferences().getString(PREFERENCE_IMG_URL, null);
-        }
+        return getPreferences().getString(PREFERENCE_IMG_URL, null);
     }
 
     public static void setImgUrl(String str) {
-        imgUrl = str;
         SharedPreferences.Editor editor = getPreferences().edit();
         editor.putString(PREFERENCE_IMG_URL, str);
         if (!editor.commit()) {

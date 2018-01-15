@@ -76,13 +76,13 @@ public class LoginHelper {
      */
     public static void logout(){
         if(Preferences.isLogin()){
-            Activity currentActivity = BaseApplication.getInstance().getCurrentActivity();
-            if(currentActivity !=null){
-                LoginHelper.logout(currentActivity);
-            }else{
-                //应用不再前台,延迟到应用到前台处理
-                LoginHelper.mIsLogout=true;
-            }
+//            Activity currentActivity = BaseApplication.getInstance().getCurrentActivity();
+//            if(currentActivity !=null){
+//                LoginHelper.logout(currentActivity);
+//            }else{
+//                //应用不再前台,延迟到应用到前台处理
+//                LoginHelper.mIsLogout=true;
+//            }
 
         }
     }
