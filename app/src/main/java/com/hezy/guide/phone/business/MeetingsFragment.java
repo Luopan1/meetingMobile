@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hezy.guide.phone.BaseException;
@@ -43,6 +44,7 @@ public class MeetingsFragment extends BaseFragment {
     private RecyclerView recyclerView;
     private LinearLayoutManager mLayoutManager;
     private MeetingAdapter meetingAdapter;
+    private TextView emptyText;
 
     @Override
     public String getStatisticsTag() {
@@ -81,6 +83,7 @@ public class MeetingsFragment extends BaseFragment {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setHasFixedSize(true);
 //        recyclerView.addItemDecoration(new DividerItemDecoration(mContext,DividerItemDecoration.VERTICAL));
+        emptyText = view.findViewById(R.id.emptyView);
 
         return view;
     }
@@ -106,9 +109,11 @@ public class MeetingsFragment extends BaseFragment {
                 Logger.i("", meetingBucket.toString());
                 meetingAdapter = new MeetingAdapter(mContext, meetingBucket.getData().getList(), onItemClickListener);
                 recyclerView.setAdapter(new GeneralAdapter(meetingAdapter));
-                recyclerView.setVisibility(View.VISIBLE);
+                swipeRefreshLayout.setVisibility(View.VISIBLE);
+                emptyText.setVisibility(View.GONE);
             } else {
-                recyclerView.setVisibility(View.GONE);
+                swipeRefreshLayout.setVisibility(View.GONE);
+                emptyText.setVisibility(View.VISIBLE);
             }
         }
 
