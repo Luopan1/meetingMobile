@@ -46,6 +46,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="100dp"
+        android:gravity="center_horizontal"
         android:drawablePadding="8dp"
         android:drawableTop="@mipmap/ic_home_record_none"
         android:text="暂时还没有会议哦"

@@ -19,6 +19,7 @@
         android:layout_below="@+id/mIvNoData"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
+        android:gravity="center_horizontal"
         android:text="暂时还没收到评价哦"
         android:textColor="@color/text_gray_909090"
         android:textSize="15sp" />
