@@ -6,6 +6,8 @@ package com.hezy.guide.phone;
 
 public class Constant {
 
+    public static final String RELOGIN_ACTION = ".ACTION.RELOGIN";
+
     /**
      * 检查更新地址
      */

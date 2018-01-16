@@ -1,6 +1,6 @@
 package com.hezy.guide.phone.business;
 
-import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -11,11 +11,16 @@ import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hezy.guide.phone.BaseApplication;
+import com.hezy.guide.phone.BuildConfig;
+import com.hezy.guide.phone.Constant;
 import com.hezy.guide.phone.R;
 import com.hezy.guide.phone.ApiClient;
+import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.utils.OkHttpUtil;
 import com.hezy.guide.phone.utils.Logger;
 import com.hezy.guide.phone.utils.NetUtils;
@@ -28,7 +33,9 @@ public abstract class BasicActivity extends FragmentActivity implements View.OnC
 
     public final String TAG = getClass().getSimpleName();
 
-    public final String FTAG = Logger.lifecycle;
+    private static final String RELOGINACTION =  BuildConfig.APPLICATION_ID + Constant.RELOGIN_ACTION;
+
+    private ReLoginBroadcastReceiver reLoginBroadcastReceiver = new ReLoginBroadcastReceiver();
 
     protected Context mContext;
     private BaseApplication mMyApp;
@@ -39,31 +46,21 @@ public abstract class BasicActivity extends FragmentActivity implements View.OnC
 
     protected ProgressDialog progressDialog;
 
-    /**
-     * 获得中文统计名
-     *
-     * @return
-     */
     public abstract String getStatisticsTag() ;
-
-
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        Logger.d(FTAG + TAG, "onNewIntent");
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Logger.d(FTAG + TAG, "onCreate");
         mContext = this;
 
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(RELOGINACTION);
+        registerReceiver(reLoginBroadcastReceiver, filter);
+
         mMyApp = (BaseApplication) this.getApplicationContext();
-//        userId = Preferences.getUserId();
-//        token = Preferences.getToken();
+        userId = Preferences.getUserId();
+        token = Preferences.getToken();
 
         apiClient = ApiClient.getInstance();
 
@@ -71,65 +68,24 @@ public abstract class BasicActivity extends FragmentActivity implements View.OnC
     }
 
     @Override
-    protected void onRestart() {
-        super.onRestart();
-        Logger.d(FTAG + TAG, "onRestart");
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        Logger.d(FTAG + TAG, "onStart");
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
-        Logger.d(FTAG + TAG, "onResume");
         ZYAgent.onPageStart(this, getStatisticsTag());
-//        mMyApp.setCurrentActivity(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        Logger.d(FTAG + TAG, "onPause");
         ZYAgent.onPageEnd(this, getStatisticsTag());
-    }
-
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        Logger.d(FTAG + TAG, "onStop");
     }
 
     @Override
     protected void onDestroy() {
-        Logger.d(FTAG + TAG, "onDestroy");
         OkHttpUtil.getInstance().cancelTag(this);
         unregisterReceiver(mHomeKeyEventReceiver);
+        unregisterReceiver(reLoginBroadcastReceiver);
         cancelDialog();
-//        clearReferences();
         super.onDestroy();
-    }
-
-//    private void clearReferences() {
-//        Activity currActivity = mMyApp.getCurrentActivity();
-//        if (this.equals(currActivity))
-//            mMyApp.setCurrentActivity(null);
-//    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        Logger.d(FTAG + TAG, "onSaveInstanceState");
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        Logger.d(FTAG + TAG, "onRestoreInstanceState");
     }
 
     public void showToast(int resId) {
@@ -229,6 +185,44 @@ public abstract class BasicActivity extends FragmentActivity implements View.OnC
      */
     protected void normalOnClick(View v) {
 
+    }
+
+    private AlertDialog dialog;
+
+    class ReLoginBroadcastReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(BuildConfig.DEBUG) {
+                Toast.makeText(context, "40001|40003", Toast.LENGTH_SHORT).show();
+            }
+            if (dialog != null) {
+                if (!dialog.isShowing()) {
+                    dialog.show();
+                }
+            } else {
+                createDialog().show();
+            }
+        }
+    }
+
+    private AlertDialog createDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View view = View.inflate(this, R.layout.dialog_common_ok, null);
+        TextView titleText = (TextView) findViewById(R.id.title);
+        titleText.setText("您的登录信息已过期，请重新登录");
+        Button button = (Button) findViewById(R.id.ok);
+        button.requestFocus();
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                BasicActivity.this.finish();
+            }
+        });
+        builder.setView(view);
+        dialog = builder.create();
+        return dialog;
     }
 
 }

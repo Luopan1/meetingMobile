@@ -4,6 +4,8 @@ package com.hezy.guide.phone.utils;
  * Created by whatisjava on 17-1-3.
  */
 
+import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
@@ -11,9 +13,14 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.hezy.guide.phone.BaseApplication;
 import com.hezy.guide.phone.BaseException;
+import com.hezy.guide.phone.BuildConfig;
+import com.hezy.guide.phone.Constant;
 import com.hezy.guide.phone.entities.base.BaseBean;
+import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.utils.Login.LoginHelper;
+import com.hezy.guide.phone.wxapi.WXEntryActivity;
 
 import java.io.IOException;
 import java.util.Map;
@@ -43,6 +50,7 @@ public class OkHttpUtil {
     }
 
     private static Gson gson;
+    private Context mContext;
 
     private OkHttpUtil() {
         OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder();
@@ -58,6 +66,7 @@ public class OkHttpUtil {
         okHttpClient = clientBuilder.build();
 
         mHandler = new Handler(Looper.getMainLooper());
+        mContext = BaseApplication.getInstance();
     }
 
     public static OkHttpUtil getInstance() {
@@ -100,15 +109,14 @@ public class OkHttpUtil {
                     System.out.println(resString);
                     if (!TextUtils.isEmpty(resString)) {
                         try {
-
                             BaseBean baseBean = gson.fromJson(resString, BaseBean.class);
                             if (baseBean.isSuccess()) {
                                 Object object = gson.fromJson(resString, callback.mType);
                                 callbackSuccess(object, callback);
                             } else if (baseBean.isTokenError()) {
-                                Log.i(TAG, "baseErrorBean.isTokenError() LoginHelper.logout()");
-                                //心跳回触发这个,其他风格的请求回调可以不处理
-                                LoginHelper.logout();
+                                mContext.sendBroadcast(new Intent(BuildConfig.APPLICATION_ID + Constant.RELOGIN_ACTION));
+                                Preferences.clear();
+                                mContext.startActivity(new Intent(mContext, WXEntryActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                             } else {
                                 callbackFailure(response.code(), callback, new BaseException(baseBean.getErrmsg()));
                             }
