@@ -15,15 +15,14 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.hezy.guide.phone.ApiClient;
 import com.hezy.guide.phone.BaseApplication;
 import com.hezy.guide.phone.BuildConfig;
 import com.hezy.guide.phone.Constant;
 import com.hezy.guide.phone.R;
-import com.hezy.guide.phone.ApiClient;
 import com.hezy.guide.phone.persistence.Preferences;
-import com.hezy.guide.phone.utils.OkHttpUtil;
-import com.hezy.guide.phone.utils.Logger;
 import com.hezy.guide.phone.utils.NetUtils;
+import com.hezy.guide.phone.utils.OkHttpUtil;
 import com.hezy.guide.phone.utils.ToastUtils;
 import com.hezy.guide.phone.utils.statistics.ZYAgent;
 

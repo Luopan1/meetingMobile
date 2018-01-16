@@ -1,10 +1,7 @@
 package com.hezy.guide.phone;
 
 import android.support.multidex.MultiDexApplication;
-import android.util.Log;
-import android.widget.Toast;
 
-import com.hezy.guide.phone.entities.StaticRes;
 import com.hezy.guide.phone.entities.StaticResource;
 import com.hezy.guide.phone.entities.base.BaseBean;
 import com.hezy.guide.phone.persistence.Preferences;
@@ -34,6 +31,7 @@ public class BaseApplication extends MultiDexApplication {
         instance = this;
 
         initSocket();
+
         //内存泄露检测工具,开发中最好开启
 //        if (BuildConfig.DEBUG) {
 //            Log.i(TAG, "debug下开启LeakCanary");
