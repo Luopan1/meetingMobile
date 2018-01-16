@@ -208,9 +208,9 @@ public abstract class BasicActivity extends FragmentActivity implements View.OnC
     private AlertDialog createDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View view = View.inflate(this, R.layout.dialog_common_ok, null);
-        TextView titleText = (TextView) findViewById(R.id.title);
+        TextView titleText = view.findViewById(R.id.title);
         titleText.setText("您的登录信息已过期，请重新登录");
-        Button button = (Button) findViewById(R.id.ok);
+        Button button = view.findViewById(R.id.ok);
         button.requestFocus();
         button.setOnClickListener(new View.OnClickListener() {
             @Override
