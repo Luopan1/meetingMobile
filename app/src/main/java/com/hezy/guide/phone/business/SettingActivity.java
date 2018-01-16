@@ -2,14 +2,19 @@ package com.hezy.guide.phone.business;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.TextView;
 
+import com.hezy.guide.phone.BuildConfig;
+import com.hezy.guide.phone.Constant;
 import com.hezy.guide.phone.R;
+import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.utils.Login.LoginHelper;
+import com.hezy.guide.phone.wxapi.WXEntryActivity;
 
 import io.agora.openlive.model.ConstantApp;
 
@@ -50,7 +55,11 @@ public class SettingActivity extends BasicActivity {
         findViewById(R.id.exit).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LoginHelper.logout();
+                Preferences.clear();
+                finish();
+
+//                getApplicationContext().sendBroadcast(new Intent(BuildConfig.APPLICATION_ID + Constant.RELOGIN_ACTION).putExtra("active", true));
+//                getApplicationContext().startActivity(new Intent(mContext, WXEntryActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
             }
         });
 

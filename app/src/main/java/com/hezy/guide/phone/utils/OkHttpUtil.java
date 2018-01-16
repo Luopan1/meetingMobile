@@ -106,7 +106,6 @@ public class OkHttpUtil {
                 }
                 if (response.body() != null) {
                     String resString = response.body().string();
-                    System.out.println(resString);
                     if (!TextUtils.isEmpty(resString)) {
                         try {
                             BaseBean baseBean = gson.fromJson(resString, BaseBean.class);
@@ -114,7 +113,7 @@ public class OkHttpUtil {
                                 Object object = gson.fromJson(resString, callback.mType);
                                 callbackSuccess(object, callback);
                             } else if (baseBean.isTokenError()) {
-                                mContext.sendBroadcast(new Intent(BuildConfig.APPLICATION_ID + Constant.RELOGIN_ACTION));
+                                mContext.sendBroadcast(new Intent(BuildConfig.APPLICATION_ID + Constant.RELOGIN_ACTION).putExtra("active", false));
                                 Preferences.clear();
                                 mContext.startActivity(new Intent(mContext, WXEntryActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                             } else {

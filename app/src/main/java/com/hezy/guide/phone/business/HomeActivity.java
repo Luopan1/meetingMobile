@@ -35,6 +35,7 @@ import com.hezy.guide.phone.utils.Logger;
 import com.hezy.guide.phone.utils.RxBus;
 import com.hezy.guide.phone.utils.UUIDUtils;
 import com.hezy.guide.phone.utils.statistics.ZYAgent;
+import com.hezy.guide.phone.wxapi.WXEntryActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -167,7 +168,18 @@ public class HomeActivity extends BasicActivity implements View.OnClickListener 
     protected void onResume() {
         super.onResume();
         setState(WSService.isOnline());
-        ApiClient.getInstance().requestUser();
+        if (!TextUtils.isEmpty(Preferences.getToken())) {
+            ApiClient.getInstance().requestUser();
+        }
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        if (TextUtils.isEmpty(Preferences.getToken())) {
+            startActivity(new Intent(this, WXEntryActivity.class));
+            finish();
+        }
     }
 
     @Override

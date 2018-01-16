@@ -6,17 +6,17 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.v4.app.FragmentActivity;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.hezy.guide.phone.ApiClient;
 import com.hezy.guide.phone.BuildConfig;
 import com.hezy.guide.phone.R;
-import com.hezy.guide.phone.business.BasicActivity;
 import com.hezy.guide.phone.business.HomeActivity;
 import com.hezy.guide.phone.business.UserinfoActivity;
 import com.hezy.guide.phone.entities.FinishWX;
@@ -25,12 +25,11 @@ import com.hezy.guide.phone.entities.User;
 import com.hezy.guide.phone.entities.UserData;
 import com.hezy.guide.phone.entities.Wechat;
 import com.hezy.guide.phone.entities.base.BaseBean;
-import com.hezy.guide.phone.ApiClient;
-import com.hezy.guide.phone.utils.OkHttpCallback;
 import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.utils.DeviceUtil;
 import com.hezy.guide.phone.utils.Installation;
 import com.hezy.guide.phone.utils.Login.LoginHelper;
+import com.hezy.guide.phone.utils.OkHttpCallback;
 import com.hezy.guide.phone.utils.RxBus;
 import com.hezy.guide.phone.utils.ToastUtils;
 import com.hezy.guide.phone.utils.UUIDUtils;
@@ -51,17 +50,12 @@ import rx.functions.Action1;
  * Created by wufan on 2017/7/14.
  */
 
-public class WXEntryActivity extends BasicActivity implements IWXAPIEventHandler {
+public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHandler {
 
     private ImageView wchatLoginImage;
     private IWXAPI mWxApi;
 
     private Subscription subscription;
-
-    @Override
-    public String getStatisticsTag() {
-        return "微信登录页";
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,11 +67,11 @@ public class WXEntryActivity extends BasicActivity implements IWXAPIEventHandler
 //        Preferences.setToken("4f8752dcd9e34a1b876aae2ecfd20712");
 
         if (Preferences.isLogin()) {
-            apiClient.requestUser(this, new OkHttpCallback<BaseBean<UserData>>() {
+            ApiClient.getInstance().requestUser(this, new OkHttpCallback<BaseBean<UserData>>() {
                 @Override
                 public void onSuccess(BaseBean<UserData> entity) {
                     if (entity == null || entity.getData() == null || entity.getData().getUser() == null) {
-                        showToast("获取用户数据为空");
+                        Toast.makeText(WXEntryActivity.this, "用户数据为空", Toast.LENGTH_SHORT).show();
                         return;
                     }
                     User user = entity.getData().getUser();
@@ -89,7 +83,7 @@ public class WXEntryActivity extends BasicActivity implements IWXAPIEventHandler
                     }
 
                     if (Preferences.isUserinfoEmpty()) {
-                        UserinfoActivity.actionStart(mContext, true);
+                        UserinfoActivity.actionStart(WXEntryActivity.this, true);
                         return;
                     }
                     startActivity(new Intent(WXEntryActivity.this, HomeActivity.class));
@@ -159,7 +153,7 @@ public class WXEntryActivity extends BasicActivity implements IWXAPIEventHandler
             jsonObject.put("internalFreeSpace", DeviceUtil.getDeviceAvailMemory(this));
             jsonObject.put("sdSpace", DeviceUtil.getDeviceTotalInternalStorage());
             jsonObject.put("sdFreeSpace", DeviceUtil.getDeviceAvailInternalStorage());
-            apiClient.deviceRegister(this, jsonObject.toString(), registerDeviceCb);
+            ApiClient.getInstance().deviceRegister(this, jsonObject.toString(), registerDeviceCb);
         } catch (SecurityException e) {
             e.printStackTrace();
         } catch (Exception e) {
@@ -170,7 +164,7 @@ public class WXEntryActivity extends BasicActivity implements IWXAPIEventHandler
     private OkHttpCallback registerDeviceCb = new OkHttpCallback<BaseBean>() {
         @Override
         public void onSuccess(BaseBean entity) {
-            Log.d(TAG, "registerDevice 成功===");
+
         }
     };
 
@@ -195,7 +189,6 @@ public class WXEntryActivity extends BasicActivity implements IWXAPIEventHandler
         req.state = "GuideMobile_wx_login";
         mWxApi.sendReq(req);
         showDialog("正在加载...");
-        Log.i(TAG, "wchatLogin() isWxLoging = true ");
     }
 
     @Override
@@ -207,42 +200,32 @@ public class WXEntryActivity extends BasicActivity implements IWXAPIEventHandler
     //app发送消息给微信，处理返回消息的回调
     @Override
     public void onResp(BaseResp baseResp) {
-        Log.i(TAG, "baseResp errStr " + baseResp.errStr);
-        Log.i(TAG, "baseResp transaction " + baseResp.transaction);
-        Log.i(TAG, "baseResp openId " + baseResp.openId);
         String result;
         switch (baseResp.errCode) {
             case BaseResp.ErrCode.ERR_OK:
                 result = "登录成功";
                 if (baseResp.getType() == 1) {
-                    ZYAgent.onEvent(mContext,"微信按钮 登录成功");
+                    ZYAgent.onEvent(WXEntryActivity.this,"微信按钮 登录成功");
                     final SendAuth.Resp sendResp = ((SendAuth.Resp) baseResp);
                     String code = sendResp.code;
-                    Log.i(TAG, "sendResp.code " + code);
-                    Log.i(TAG, "sendResp.state " + sendResp.state);
-                    Log.i(TAG, "sendResp.lang " + sendResp.lang);
-                    Log.i(TAG, "sendResp.country " + sendResp.country);
                     requestWechatLogin(sendResp.code, sendResp.state);
-                    ZYAgent.onEvent(mContext,"请求微信登录");
+                    ZYAgent.onEvent(WXEntryActivity.this,"请求微信登录");
                 }
                 break;
             case BaseResp.ErrCode.ERR_AUTH_DENIED:
-                ZYAgent.onEvent(mContext,"微信按钮 用户拒绝授权");
+                ZYAgent.onEvent(WXEntryActivity.this,"微信按钮 用户拒绝授权");
                 result = "用户拒绝授权";
                 cancelDialog();
-                Log.i(TAG, "用户拒绝授权 isWxLoging = false ");
                 break;
             case BaseResp.ErrCode.ERR_USER_CANCEL:
-                ZYAgent.onEvent(mContext,"微信按钮 用户取消");
+                ZYAgent.onEvent(WXEntryActivity.this,"微信按钮 用户取消");
                 result = "用户取消";
                 cancelDialog();
-                Log.i(TAG, "用户取消 isWxLoging = false ");
                 break;
             default:
-                ZYAgent.onEvent(mContext,"微信按钮 失败");
+                ZYAgent.onEvent(WXEntryActivity.this,"微信按钮 失败");
                 result = "失败";
                 cancelDialog();
-                Log.i(TAG, "失败 isWxLoging = false ");
                 break;
         }
 
@@ -257,10 +240,8 @@ public class WXEntryActivity extends BasicActivity implements IWXAPIEventHandler
 
             @Override
             public void onSuccess(BaseBean<LoginWechat> entity) {
-                ZYAgent.onEvent(mContext,"请求微信登录回调 成功");
+                ZYAgent.onEvent(WXEntryActivity.this,"请求微信登录回调 成功");
                 if (entity.getData() == null) {
-                    Log.i(TAG, "entity.getData() == null");
-                    showToast("没有数据");
                     return;
                 }
                 LoginWechat loginWechat = entity.getData();
@@ -268,17 +249,13 @@ public class WXEntryActivity extends BasicActivity implements IWXAPIEventHandler
                 Preferences.setWeiXinHead(wechat.getHeadimgurl());
                 User user = loginWechat.getUser();
                 if (loginWechat.getUser() == null) {
-                    //没有获取到用户
-                    Log.i(TAG, "没有用户数据");
-                    showToast("没有用户数据");
                 } else {
                     //保存用户,进入主页
-                    Log.i(TAG, "用户登录成功");
 //                    showToast("用户登录成功");
                     LoginHelper.savaUser(user);
                     if (Preferences.isUserinfoEmpty()) {
 //                        showToast("请先填写姓名,电话,地址,照片");
-                        UserinfoActivity.actionStart(mContext, true);
+                        UserinfoActivity.actionStart(WXEntryActivity.this, true);
                         return;
                     } else {
                         startActivity(new Intent(WXEntryActivity.this, HomeActivity.class));
@@ -293,11 +270,11 @@ public class WXEntryActivity extends BasicActivity implements IWXAPIEventHandler
             @Override
             public void onFinish() {
                 cancelDialog();
-                Log.i(TAG, "requestWechatLogin onFinish()  isWxLoging = false ");
             }
         });
     }
 
+    private ProgressDialog progressDialog;
 
     protected void showDialog(String message) {
         if(progressDialog == null){

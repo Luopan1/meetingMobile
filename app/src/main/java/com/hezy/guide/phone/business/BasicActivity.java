@@ -25,6 +25,7 @@ import com.hezy.guide.phone.utils.NetUtils;
 import com.hezy.guide.phone.utils.OkHttpUtil;
 import com.hezy.guide.phone.utils.ToastUtils;
 import com.hezy.guide.phone.utils.statistics.ZYAgent;
+import com.hezy.guide.phone.wxapi.WXEntryActivity;
 
 import java.util.Calendar;
 
@@ -167,7 +168,6 @@ public abstract class BasicActivity extends FragmentActivity implements View.OnC
 
     }
 
-
     /**
      * 检查网络，如果没有网络的话，就不能点击
      *
@@ -195,12 +195,16 @@ public abstract class BasicActivity extends FragmentActivity implements View.OnC
             if(BuildConfig.DEBUG) {
                 Toast.makeText(context, "40001|40003", Toast.LENGTH_SHORT).show();
             }
-            if (dialog != null) {
-                if (!dialog.isShowing()) {
-                    dialog.show();
+            if (!intent.getBooleanExtra("active", false)) {
+                if (dialog != null) {
+                    if (!dialog.isShowing()) {
+                        dialog.show();
+                    }
+                } else {
+                    createDialog().show();
                 }
             } else {
-                createDialog().show();
+                finish();
             }
         }
     }

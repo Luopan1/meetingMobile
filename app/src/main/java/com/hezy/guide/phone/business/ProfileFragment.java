@@ -106,11 +106,13 @@ public class ProfileFragment extends BaseFragment {
     public void onMyVisible() {
         super.onMyVisible();
 
-        requestRankInfo();
+        if (!TextUtils.isEmpty(Preferences.getToken())) {
+            requestRankInfo();
 
-        requestRecord("1", "20");
+            requestRecord("1", "20");
 
-        requestUser();
+            requestUser();
+        }
 
     }
 
