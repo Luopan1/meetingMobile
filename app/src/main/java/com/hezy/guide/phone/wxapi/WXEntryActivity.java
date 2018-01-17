@@ -1,11 +1,13 @@
 package com.hezy.guide.phone.wxapi;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
@@ -43,6 +45,10 @@ import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 
 import org.json.JSONObject;
 
+import java.util.List;
+
+import pub.devrel.easypermissions.AppSettingsDialog;
+import pub.devrel.easypermissions.EasyPermissions;
 import rx.Subscription;
 import rx.functions.Action1;
 
@@ -50,7 +56,7 @@ import rx.functions.Action1;
  * Created by wufan on 2017/7/14.
  */
 
-public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHandler {
+public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHandler, EasyPermissions.PermissionCallbacks {
 
     private ImageView wchatLoginImage;
     private IWXAPI mWxApi;
@@ -58,9 +64,14 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
     private Subscription subscription;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.login_activity);
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
+    }
+
+    @Override
+    public void onPermissionsGranted(int i, @NonNull List<String> list) {
 
         initView();
 
@@ -109,6 +120,95 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
         });
 
         registerDevice();
+
+    }
+
+    @Override
+    public void onPermissionsDenied(int i, @NonNull List<String> list) {
+        if (EasyPermissions.somePermissionPermanentlyDenied(this, list)) {
+            new AppSettingsDialog.Builder(this)
+                    .setTitle("权限不足")
+                    .setRationale("请授予必须的权限，否则应用无法正常运行")
+                    .build().show();
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == AppSettingsDialog.DEFAULT_SETTINGS_REQ_CODE) {
+            // Do something after user returned from app settings screen, like showing a Toast.
+//            Toast.makeText(this, "授权成功", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private String[] perms = {
+            Manifest.permission.CAMERA,
+            Manifest.permission.READ_PHONE_STATE,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.RECORD_AUDIO,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.login_activity);
+
+        if (EasyPermissions.hasPermissions(this, perms)){
+
+            initView();
+
+//        Preferences.setToken("4f8752dcd9e34a1b876aae2ecfd20712");
+
+            if (Preferences.isLogin()) {
+                ApiClient.getInstance().requestUser(this, new OkHttpCallback<BaseBean<UserData>>() {
+                    @Override
+                    public void onSuccess(BaseBean<UserData> entity) {
+                        if (entity == null || entity.getData() == null || entity.getData().getUser() == null) {
+                            Toast.makeText(WXEntryActivity.this, "用户数据为空", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        User user = entity.getData().getUser();
+                        LoginHelper.savaUser(user);
+
+                        Wechat wechat = entity.getData().getWechat();
+                        if (wechat != null) {
+                            LoginHelper.savaWeChat(wechat);
+                        }
+
+                        if (Preferences.isUserinfoEmpty()) {
+                            UserinfoActivity.actionStart(WXEntryActivity.this, true);
+                            return;
+                        }
+                        startActivity(new Intent(WXEntryActivity.this, HomeActivity.class));
+                        finish();
+
+                    }
+                });
+                return;
+            }
+
+            reToWx();
+
+            mWxApi.handleIntent(getIntent(), this);
+
+            subscription = RxBus.handleMessage(new Action1() {
+                @Override
+                public void call(Object o) {
+                    if (o instanceof FinishWX) {
+                        //会打开两个微信界面
+                        finish();
+                    }
+                }
+            });
+
+            registerDevice();
+        } else {
+            EasyPermissions.requestPermissions(this, "请授予必要的权限", 0, perms);
+        }
+
     }
 
     protected void initView() {

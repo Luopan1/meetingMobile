@@ -177,7 +177,9 @@ dependencies {
     compile 'io.reactivex:rxandroid:1.2.1'
 
     // https://mvnrepository.com/artifact/io.socket/socket.io-client
-    compile group: 'io.socket', name: 'socket.io-client', version: '1.0.0'
+    compile ('io.socket:socket.io-client:1.0.0'){
+        exclude group: 'org.json', module: 'json'
+    }
 
     compile 'com.google.code.gson:gson:2.8.2'
 
@@ -186,5 +188,5 @@ dependencies {
 
     //fastjson
     compile 'com.alibaba:fastjson:1.2.32'
-
+    compile 'pub.devrel:easypermissions:1.1.2'
 }
