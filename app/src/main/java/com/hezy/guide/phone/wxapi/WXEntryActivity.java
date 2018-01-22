@@ -275,7 +275,7 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
     }
 
     public void wchatLogin() {
-        if (!mWxApi.isWXAppInstalled()) {
+        if (mWxApi != null && !mWxApi.isWXAppInstalled()) {
             ToastUtils.showToast("您还未安装微信客户端，请先安装");
             return;
         }
@@ -356,7 +356,6 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
                     if (Preferences.isUserinfoEmpty()) {
 //                        showToast("请先填写姓名,电话,地址,照片");
                         UserinfoActivity.actionStart(WXEntryActivity.this, true);
-                        return;
                     } else {
                         startActivity(new Intent(WXEntryActivity.this, HomeActivity.class));
                     }

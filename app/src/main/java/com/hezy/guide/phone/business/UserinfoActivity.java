@@ -271,6 +271,7 @@ public class UserinfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
         mBinding.mBtnSavePhoto.setOnClickListener(this);
         mBinding.mTvObtainCaptcha.setOnClickListener(this);
         mBinding.mTvAddress.setOnClickListener(this);
+        mBinding.mEtDistrict.setOnClickListener(this);
         mBinding.mIvLeft.setOnClickListener(this);
         mBinding.mTvRight.setOnClickListener(this);
 
@@ -439,6 +440,14 @@ public class UserinfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
                 mBinding.mTvAddress.requestFocus();
                 Intent intent = new Intent(mContext, CityPickerActivity.class);
                 startActivityForResult(intent, CityPickerActivity.REQUEST_CODE_PICK_CITY);
+                break;
+
+            case R.id.mEtDistrict:
+                mBinding.mTvAddress.setFocusable(true);
+                mBinding.mTvAddress.setFocusableInTouchMode(true);
+                mBinding.mTvAddress.requestFocus();
+                Intent districtIntent = new Intent(mContext, CityPickerActivity.class);
+                startActivityForResult(districtIntent, CityPickerActivity.REQUEST_CODE_PICK_CITY);
                 break;
 
         }

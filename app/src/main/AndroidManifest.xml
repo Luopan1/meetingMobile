@@ -74,13 +74,20 @@
 
         <activity android:name=".business.OnCallActivity"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"/>
 
         <activity android:name=".business.UserinfoActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"/>
+
+        <activity android:name=".business.DistrictActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"/>
 
         <activity android:name=".business.ReplyReviewActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"/>
 
         <activity android:name=".business.SettingActivity"
             android:screenOrientation="portrait"

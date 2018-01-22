@@ -116,6 +116,10 @@ public class ApiClient {
         okHttpUtil.get(API_DOMAIN_NAME_YOYOTU + "/dz/app/config", null, null, callback);
     }
 
+    public void districts(OkHttpCallback callback){
+        okHttpUtil.get(API_DOMAIN_NAME + "/osg/app/user/district", null, null, callback);
+    }
+
     //  注册设备信息
     public void deviceRegister(Object tag, String jsonStr, OkHttpCallback callback) {
         okHttpUtil.postJson(API_DOMAIN_NAME + "/osg/app/device", getCommonHead(), jsonStr, callback, tag);

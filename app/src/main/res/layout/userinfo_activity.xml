@@ -225,6 +225,53 @@
 
             </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_marginTop="8dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@mipmap/ic_input_address" />
+
+                <EditText
+                    android:id="@+id/mEtDistrict"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="5dp"
+                    android:background="@mipmap/img_input_small"
+                    android:gravity="center_vertical"
+                    android:hint="输入省市地址"
+                    android:maxLength="14"
+                    android:paddingLeft="25dp"
+                    android:paddingRight="25dp"
+                    android:textColor="@android:color/white"
+                    android:textColorHint="@color/hint_b985e2"
+                    android:textSize="16sp"
+                    android:visibility="gone"
+                    tools:text="总部" />
+
+                <TextView
+                    android:id="@+id/mTvDistrict"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="5dp"
+                    android:background="@mipmap/img_input_small"
+                    android:gravity="center_vertical"
+                    android:hint="输入省市地址"
+                    android:maxLength="14"
+                    android:paddingLeft="25dp"
+                    android:paddingRight="25dp"
+                    android:textColor="@android:color/white"
+                    android:textColorHint="@color/hint_b985e2"
+                    android:textSize="16sp"
+                    tools:text="总部" />
+
+            </LinearLayout>
+
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
