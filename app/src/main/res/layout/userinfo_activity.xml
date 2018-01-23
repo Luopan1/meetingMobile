@@ -72,7 +72,7 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@mipmap/ic_input_name" />
+                    android:src="@drawable/ic_input_name" />
 
                 <EditText
                     android:id="@+id/mEtName"
@@ -102,7 +102,7 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@mipmap/ic_input_phone" />
+                    android:src="@drawable/ic_input_phone" />
 
                 <EditText
                     android:id="@+id/mEtPhone"
@@ -134,7 +134,7 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@mipmap/ic_input_phone"
+                    android:src="@drawable/ic_input_phone"
                     android:visibility="invisible" />
 
 
@@ -188,7 +188,7 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@mipmap/ic_input_address" />
+                    android:src="@drawable/ic_input_address" />
 
                 <EditText
                     android:id="@+id/mEtAddress"
@@ -235,7 +235,7 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@mipmap/ic_input_address" />
+                    android:src="@drawable/ic_input_district" />
 
                 <EditText
                     android:id="@+id/mEtDistrict"
@@ -283,7 +283,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:src="@mipmap/ic_input_picture" />
+                    android:src="@drawable/ic_input_picture" />
 
 
                 <ImageView

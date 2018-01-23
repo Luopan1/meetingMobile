@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.hezy.guide.phone.R;
@@ -18,6 +19,7 @@ import com.hezy.guide.phone.utils.OkHttpCallback;
 
 public class DistrictActivity extends BasicActivity {
 
+    private ImageView backImage;
     private ListView listView;
     private DistrictAdapter districtAdapter;
 
@@ -30,6 +32,14 @@ public class DistrictActivity extends BasicActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_district);
+
+        backImage = findViewById(R.id.mIvLeft);
+        backImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
 
         listView = findViewById(R.id.list_view);
 
