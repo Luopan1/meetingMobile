@@ -261,7 +261,7 @@
                     android:layout_marginLeft="5dp"
                     android:background="@mipmap/img_input_small"
                     android:gravity="center_vertical"
-                    android:hint="输入省市地址"
+                    android:hint="输入机构"
                     android:maxLength="14"
                     android:paddingLeft="25dp"
                     android:paddingRight="25dp"

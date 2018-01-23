@@ -12,6 +12,7 @@ import android.support.v4.app.FragmentActivity;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -75,7 +76,7 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
 
         initView();
 
-//        Preferences.setToken("4f8752dcd9e34a1b876aae2ecfd20712");
+//        Preferences.setToken("8deb6de8b8004878b5f75d81ac5ba8d3");
 
         if (Preferences.isLogin()) {
             ApiClient.getInstance().requestUser(this, new OkHttpCallback<BaseBean<UserData>>() {
@@ -160,7 +161,7 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
 
             initView();
 
-//        Preferences.setToken("4f8752dcd9e34a1b876aae2ecfd20712");
+            Preferences.setToken("814faedd55364256939d7823adbd2728");
 
             if (Preferences.isLogin()) {
                 ApiClient.getInstance().requestUser(this, new OkHttpCallback<BaseBean<UserData>>() {
@@ -184,10 +185,8 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
                         }
                         startActivity(new Intent(WXEntryActivity.this, HomeActivity.class));
                         finish();
-
                     }
                 });
-                return;
             }
 
             reToWx();

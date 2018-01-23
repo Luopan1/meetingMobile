@@ -159,4 +159,25 @@ public class User {
     public void setRank(int rank) {
         this.rank = rank;
     }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id='" + id + '\'' +
+                ", createDate='" + createDate + '\'' +
+                ", updateDate='" + updateDate + '\'' +
+                ", delFlag='" + delFlag + '\'' +
+                ", name='" + name + '\'' +
+                ", mobile='" + mobile + '\'' +
+                ", address='" + address + '\'' +
+                ", photo='" + photo + '\'' +
+                ", signature='" + signature + '\'' +
+                ", token='" + token + '\'' +
+                ", type=" + type +
+                ", registerIp='" + registerIp + '\'' +
+                ", lastLoginIp='" + lastLoginIp + '\'' +
+                ", lastLoginTime='" + lastLoginTime + '\'' +
+                ", rank=" + rank +
+                '}';
+    }
 }

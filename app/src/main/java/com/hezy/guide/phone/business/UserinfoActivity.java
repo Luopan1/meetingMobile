@@ -18,6 +18,7 @@ import com.hezy.guide.phone.BaseException;
 import com.hezy.guide.phone.Constant;
 import com.hezy.guide.phone.R;
 import com.hezy.guide.phone.databinding.UserinfoActivityBinding;
+import com.hezy.guide.phone.entities.District;
 import com.hezy.guide.phone.entities.QiniuToken;
 import com.hezy.guide.phone.entities.base.BaseBean;
 import com.hezy.guide.phone.entities.base.BaseErrorBean;
@@ -271,7 +272,7 @@ public class UserinfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
         mBinding.mBtnSavePhoto.setOnClickListener(this);
         mBinding.mTvObtainCaptcha.setOnClickListener(this);
         mBinding.mTvAddress.setOnClickListener(this);
-        mBinding.mEtDistrict.setOnClickListener(this);
+        mBinding.mTvDistrict.setOnClickListener(this);
         mBinding.mIvLeft.setOnClickListener(this);
         mBinding.mTvRight.setOnClickListener(this);
 
@@ -303,13 +304,12 @@ public class UserinfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
             return;
         }
 
-
         if(TextUtils.isEmpty(phoneStr)){
             showToast("电话不能为空");
             return;
         }
         if ( !Preferences.getUserName().equals(str)|| !Preferences.getUserMobile().equals(phoneStr)) {
-            //性别或者电话改变
+            // 姓名或者电话改变
             long len = StringCheckUtil.calculateLength(str);
             if (len < Constant.NICKNAME_MIN || len > Constant.NICKNAME_MAX) {
                 showToast("姓名为2-8个汉字或者4-16个英文,请重新输入");
@@ -442,12 +442,12 @@ public class UserinfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
                 startActivityForResult(intent, CityPickerActivity.REQUEST_CODE_PICK_CITY);
                 break;
 
-            case R.id.mEtDistrict:
-                mBinding.mTvAddress.setFocusable(true);
-                mBinding.mTvAddress.setFocusableInTouchMode(true);
-                mBinding.mTvAddress.requestFocus();
-                Intent districtIntent = new Intent(mContext, CityPickerActivity.class);
-                startActivityForResult(districtIntent, CityPickerActivity.REQUEST_CODE_PICK_CITY);
+            case R.id.mTvDistrict:
+                mBinding.mTvDistrict.setFocusable(true);
+                mBinding.mTvDistrict.setFocusableInTouchMode(true);
+                mBinding.mTvDistrict.requestFocus();
+                Intent districtIntent = new Intent(mContext, DistrictActivity.class);
+                startActivityForResult(districtIntent, 0x100);
                 break;
 
         }
@@ -530,8 +530,8 @@ public class UserinfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         getTakePhoto().onActivityResult(requestCode, resultCode, data);
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == CityPickerActivity.REQUEST_CODE_PICK_CITY) {
-            if (resultCode == RESULT_OK) {
+        if (resultCode == RESULT_OK) {
+            if (requestCode == CityPickerActivity.REQUEST_CODE_PICK_CITY) {
                 String result = data.getStringExtra(CityPickerActivity.KEY_PICKED_CITY);
                 mBinding.mTvAddress.setText(result);
                 final String str = result;
@@ -547,6 +547,18 @@ public class UserinfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
 
                     });
                 }
+            } else if(requestCode == 0x100){
+                District district = data.getParcelableExtra("district");
+                mBinding.mTvDistrict.setText(district.getName());
+                Map<String, String> params = new HashMap<>();
+                params.put("areaId", district.getId());
+                ApiClient.getInstance().requestUserExpostor(this, params, new OkHttpCallback<BaseErrorBean>() {
+                    @Override
+                    public void onSuccess(BaseErrorBean entity) {
+                        showToast("设置机构成功");
+                    }
+
+                });
             }
         }
     }

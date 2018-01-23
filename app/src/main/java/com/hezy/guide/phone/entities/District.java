@@ -2,12 +2,15 @@ package com.hezy.guide.phone.entities;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.TextUtils;
 
 /**
  * Created by whatisjava on 18-1-22.
  */
 
 public class District implements Parcelable, Entity {
+
+    private String id;
 
     private String districtName;
 
@@ -69,10 +72,19 @@ public class District implements Parcelable, Entity {
         this.name = name;
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     @Override
     public String toString() {
         return "District{" +
-                "districtName='" + districtName + '\'' +
+                "id='" + id + '\'' +
+                ", districtName='" + districtName + '\'' +
                 ", districtCode=" + districtCode +
                 ", centerName='" + centerName + '\'' +
                 ", centerCode=" + centerCode +
@@ -89,6 +101,7 @@ public class District implements Parcelable, Entity {
         District district = (District) o;
 
         if (priority != district.priority) return false;
+        if (id != null ? !id.equals(district.id) : district.id != null) return false;
         if (districtName != null ? !districtName.equals(district.districtName) : district.districtName != null)
             return false;
         if (districtCode != null ? !districtCode.equals(district.districtCode) : district.districtCode != null)
@@ -102,7 +115,8 @@ public class District implements Parcelable, Entity {
 
     @Override
     public int hashCode() {
-        int result = districtName != null ? districtName.hashCode() : 0;
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (districtName != null ? districtName.hashCode() : 0);
         result = 31 * result + (districtCode != null ? districtCode.hashCode() : 0);
         result = 31 * result + (centerName != null ? centerName.hashCode() : 0);
         result = 31 * result + (centerCode != null ? centerCode.hashCode() : 0);
@@ -118,6 +132,7 @@ public class District implements Parcelable, Entity {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.id);
         dest.writeString(this.districtName);
         dest.writeValue(this.districtCode);
         dest.writeString(this.centerName);
@@ -130,6 +145,7 @@ public class District implements Parcelable, Entity {
     }
 
     protected District(Parcel in) {
+        this.id = in.readString();
         this.districtName = in.readString();
         this.districtCode = (Integer) in.readValue(Integer.class.getClassLoader());
         this.centerName = in.readString();
