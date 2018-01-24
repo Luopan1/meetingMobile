@@ -19,6 +19,7 @@ public class Preferences {
     private static final String PREFERENCE_USER_NAME = "u_name";
     private static final String PREFERENCE_USER_MOBILE = "u_mobile";
     private static final String PREFERENCE_USER_ADDRESS = "u_address";
+    private static final String PREFERENCE_USER_DISTRICT = "u_district";
     private static final String PREFERENCE_USER_PHOTO = "u_photo";
     private static final String PREFERENCE_USER_SIGNATURE = "u_signature";
     private static final String PREFERENCE_USER_AREA_INFO = "u_area_info";
@@ -113,6 +114,20 @@ public class Preferences {
         editor.putString(PREFERENCE_USER_ADDRESS, userName);
         if (!editor.commit()) {
             Log.d(tag, "User address save failure");
+        } else {
+            Log.d(tag, "User address save success");
+        }
+    }
+
+    public static String getUserDistrict() {
+        return getPreferences().getString(PREFERENCE_USER_DISTRICT, "");
+    }
+
+    public static void setUserDistrict(String district) {
+        SharedPreferences.Editor editor = getPreferences().edit();
+        editor.putString(PREFERENCE_USER_DISTRICT, district);
+        if (!editor.commit()) {
+            Log.d(tag, "User district save failure");
         } else {
             Log.d(tag, "User address save success");
         }

@@ -109,8 +109,8 @@ public class UserinfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
         mBinding.mEtPhone.setText(Preferences.getUserMobile());
         mBinding.mEtAddress.setText(Preferences.getUserAddress());
         mBinding.mEtSignature.setText(Preferences.getUserSignature());
-//        mBinding.mEtAddress.setText(Preferences.getUserAddress());
         mBinding.mTvAddress.setText(Preferences.getUserAddress());
+        mBinding.mTvDistrict.setText(Preferences.getUserDistrict());
         if (!TextUtils.isEmpty(Preferences.getUserPhoto())) {
             Picasso.with(BaseApplication.getInstance()).load(Preferences.getUserPhoto()).into(mBinding.mIvPicture);
         }
@@ -549,7 +549,7 @@ public class UserinfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
                     });
                 }
             } else if(requestCode == 0x100){
-                District district = data.getParcelableExtra("district");
+                final District district = data.getParcelableExtra("district");
                 mBinding.mTvDistrict.setText(district.getName());
                 Map<String, String> params = new HashMap<>();
                 params.put("areaId", district.getId());
@@ -557,6 +557,7 @@ public class UserinfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
                     @Override
                     public void onSuccess(BaseErrorBean entity) {
                         showToast("设置机构成功");
+                        Preferences.setUserDistrict(district.getName());
                     }
 
                 });
