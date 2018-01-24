@@ -20,6 +20,7 @@ import com.hezy.guide.phone.R;
 import com.hezy.guide.phone.databinding.UserinfoActivityBinding;
 import com.hezy.guide.phone.entities.District;
 import com.hezy.guide.phone.entities.QiniuToken;
+import com.hezy.guide.phone.entities.StaticResource;
 import com.hezy.guide.phone.entities.base.BaseBean;
 import com.hezy.guide.phone.entities.base.BaseErrorBean;
 import com.hezy.guide.phone.event.UserUpdateEvent;
@@ -640,12 +641,32 @@ public class UserinfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
                 @Override
                 public void onSuccess(BaseErrorBean entity) {
                     Logger.i("photo", entity.toString());
-                    Preferences.setUserPhoto(Preferences.getImgUrl() + key);
-                    ToastUtils.showToast("保存照片成功");
+                    if (TextUtils.isEmpty(Preferences.getImgUrl())) {
+                        ApiClient.getInstance().urlConfig(staticResCallback(key));
+                    } else {
+                        Preferences.setUserPhoto(Preferences.getImgUrl() + key);
+                        ToastUtils.showToast("保存照片成功");
+                    }
                 }
             });
         }
 
+    }
+
+    private OkHttpCallback staticResCallback(final String key){
+        return new OkHttpCallback<BaseBean<StaticResource>>() {
+
+            @Override
+            public void onSuccess(BaseBean<StaticResource> entity) {
+                Preferences.setImgUrl(entity.getData().getStaticRes().getImgUrl());
+                Preferences.setVideoUrl(entity.getData().getStaticRes().getVideoUrl());
+                Preferences.setDownloadUrl(entity.getData().getStaticRes().getDownloadUrl());
+                Preferences.setCooperationUrl(entity.getData().getStaticRes().getDownloadUrl());
+
+                Preferences.setUserPhoto(Preferences.getImgUrl() + key);
+                ToastUtils.showToast("保存照片成功");
+            }
+        };
     }
 
     @Override
