@@ -26,6 +26,7 @@ import com.hezy.guide.phone.entities.Bucket;
 import com.hezy.guide.phone.entities.Meeting;
 import com.hezy.guide.phone.entities.MeetingJoin;
 import com.hezy.guide.phone.entities.Meetings;
+import com.hezy.guide.phone.entities.base.BaseArrayBean;
 import com.hezy.guide.phone.entities.base.BaseBean;
 import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.utils.Logger;
@@ -101,13 +102,13 @@ public class MeetingsFragment extends BaseFragment {
 
     }
 
-    private OkHttpCallback meetingsCallback = new OkHttpCallback<BaseBean<Meetings>>() {
+    private OkHttpCallback meetingsCallback = new OkHttpCallback<BaseArrayBean<Meeting>>() {
 
         @Override
-        public void onSuccess(final BaseBean<Meetings> meetingBucket) {
-            if (meetingBucket.getData().getCount() > 0) {
+        public void onSuccess(final BaseArrayBean<Meeting> meetingBucket) {
+            if (meetingBucket.getData().size() > 0) {
                 Logger.i("", meetingBucket.toString());
-                meetingAdapter = new MeetingAdapter(mContext, meetingBucket.getData().getList(), onItemClickListener);
+                meetingAdapter = new MeetingAdapter(mContext, meetingBucket.getData(), onItemClickListener);
                 recyclerView.setAdapter(new GeneralAdapter(meetingAdapter));
                 swipeRefreshLayout.setVisibility(View.VISIBLE);
                 emptyText.setVisibility(View.GONE);

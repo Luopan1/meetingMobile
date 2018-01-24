@@ -21,7 +21,7 @@ public class Meetings implements Entity, Parcelable {
 
     private int count;
 
-    private ArrayList<Meeting> list;
+    private ArrayList<Meeting> data;
 
     public int getPageNo() {
         return pageNo;
@@ -63,12 +63,12 @@ public class Meetings implements Entity, Parcelable {
         this.count = count;
     }
 
-    public ArrayList<Meeting> getList() {
-        return list;
+    public ArrayList<Meeting> getData() {
+        return data;
     }
 
-    public void setList(ArrayList<Meeting> list) {
-        this.list = list;
+    public void setData(ArrayList<Meeting> data) {
+        this.data = data;
     }
 
     @Override
@@ -79,7 +79,7 @@ public class Meetings implements Entity, Parcelable {
                 ", pageSize=" + pageSize +
                 ", totalCount=" + totalCount +
                 ", count=" + count +
-                ", list=" + list +
+                ", data=" + data +
                 '}';
     }
 
@@ -95,7 +95,7 @@ public class Meetings implements Entity, Parcelable {
         if (pageSize != meetings.pageSize) return false;
         if (totalCount != meetings.totalCount) return false;
         if (count != meetings.count) return false;
-        return list != null ? list.equals(meetings.list) : meetings.list == null;
+        return data != null ? data.equals(meetings.data) : meetings.data == null;
     }
 
     @Override
@@ -105,7 +105,7 @@ public class Meetings implements Entity, Parcelable {
         result = 31 * result + pageSize;
         result = 31 * result + totalCount;
         result = 31 * result + count;
-        result = 31 * result + (list != null ? list.hashCode() : 0);
+        result = 31 * result + (data != null ? data.hashCode() : 0);
         return result;
     }
 
@@ -121,7 +121,7 @@ public class Meetings implements Entity, Parcelable {
         dest.writeInt(this.pageSize);
         dest.writeInt(this.totalCount);
         dest.writeInt(this.count);
-        dest.writeTypedList(this.list);
+        dest.writeTypedList(this.data);
     }
 
     public Meetings() {
@@ -133,7 +133,7 @@ public class Meetings implements Entity, Parcelable {
         this.pageSize = in.readInt();
         this.totalCount = in.readInt();
         this.count = in.readInt();
-        this.list = in.createTypedArrayList(Meeting.CREATOR);
+        this.data = in.createTypedArrayList(Meeting.CREATOR);
     }
 
     public static final Creator<Meetings> CREATOR = new Creator<Meetings>() {

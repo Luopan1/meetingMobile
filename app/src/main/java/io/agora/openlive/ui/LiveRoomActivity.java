@@ -185,7 +185,7 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
         findViewById(R.id.bottom_action_end_call).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                stopCallRecord();
             }
         });
 
