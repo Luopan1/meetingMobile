@@ -2,6 +2,7 @@ package com.hezy.guide.phone.business;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -26,6 +27,7 @@ import com.hezy.guide.phone.entities.base.BaseBean;
 import com.hezy.guide.phone.event.SetUserStateEvent;
 import com.hezy.guide.phone.event.UserStateEvent;
 import com.hezy.guide.phone.ApiClient;
+import com.hezy.guide.phone.receiver.PhoneReceiver;
 import com.hezy.guide.phone.utils.OkHttpCallback;
 import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.service.WSService;
@@ -68,6 +70,8 @@ public class HomeActivity extends BasicActivity implements View.OnClickListener 
     private int mIntentType;
 
     private Subscription subscription;
+
+    private PhoneReceiver phoneReceiver;
 
     @Override
     public String getStatisticsTag() {
@@ -161,6 +165,12 @@ public class HomeActivity extends BasicActivity implements View.OnClickListener 
         mFragments.add(ProfileFragment.newInstance());
         mHomePagerAdapter.setData(mFragments);
         viewPager.setAdapter(mHomePagerAdapter);
+
+        phoneReceiver = new PhoneReceiver();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("android.intent.action.PHONE_STATE");
+        intentFilter.addAction("android.intent.action.NEW_OUTGOING_CALL");
+        registerReceiver(phoneReceiver, intentFilter);
 
     }
 
@@ -345,6 +355,9 @@ public class HomeActivity extends BasicActivity implements View.OnClickListener 
 
     @Override
     public void onDestroy() {
+
+        unregisterReceiver(phoneReceiver);
+
         subscription.unsubscribe();
         super.onDestroy();
     }
