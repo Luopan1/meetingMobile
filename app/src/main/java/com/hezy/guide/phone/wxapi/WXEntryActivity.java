@@ -161,7 +161,7 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
 
             initView();
 
-            Preferences.setToken("814faedd55364256939d7823adbd2728");
+//            Preferences.setToken("814faedd55364256939d7823adbd2728");
 
             if (Preferences.isLogin()) {
                 ApiClient.getInstance().requestUser(this, new OkHttpCallback<BaseBean<UserData>>() {
