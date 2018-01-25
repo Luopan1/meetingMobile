@@ -278,7 +278,6 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                         remoteSurfaceView.setZOrderOnTop(true);
                         remoteSurfaceView.setZOrderMediaOverlay(true);
                         rtcEngine().setupRemoteVideo(new VideoCanvas(remoteSurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, Integer.parseInt(account)));
-
                         audienceTipsText.setVisibility(View.GONE);
                         audienceLayout.addView(remoteSurfaceView);
 
@@ -546,8 +545,8 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                     broadcastNameText.setText("主持人：" + meetingJoin.getHostUser().getHostUserName());
 
                     SurfaceView remoteSurfaceView = RtcEngine.CreateRendererView(getApplicationContext());
-                    remoteSurfaceView.setZOrderOnTop(true);
-                    remoteSurfaceView.setZOrderMediaOverlay(true);
+                    remoteSurfaceView.setZOrderOnTop(false);
+                    remoteSurfaceView.setZOrderMediaOverlay(false);
                     rtcEngine().setupRemoteVideo(new VideoCanvas(remoteSurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, uid));
 
                     broadcasterLayout.addView(remoteSurfaceView);

@@ -138,8 +138,8 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
 
         SurfaceView localSurfaceView = RtcEngine.CreateRendererView(getApplicationContext());
         rtcEngine().setupLocalVideo(new VideoCanvas(localSurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, config().mUid));
-        localSurfaceView.setZOrderOnTop(true);
-        localSurfaceView.setZOrderMediaOverlay(true);
+        localSurfaceView.setZOrderOnTop(false);
+        localSurfaceView.setZOrderMediaOverlay(false);
         broadcasterLayout.addView(localSurfaceView);
         worker().preview(true, localSurfaceView, config().mUid);
 
@@ -519,7 +519,6 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                 remoteSurfaceView.setZOrderMediaOverlay(true);
                 rtcEngine().setupRemoteVideo(new VideoCanvas(remoteSurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, uid));
                 audienceLayout.addView(remoteSurfaceView);
-                audienceLayout.setVisibility(View.VISIBLE);
                 audienceTipsText.setVisibility(View.GONE);
             }
         });
