@@ -41,27 +41,35 @@
         android:layout_marginRight="16dp"
         android:orientation="vertical">
 
-        <FrameLayout
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
 
             <FrameLayout
-                android:id="@+id/audience_view"
-                android:layout_width="@dimen/my_px_647"
-                android:layout_height="@dimen/my_px_378"
-                android:background="@android:color/black" />
-
-            <TextView
-                android:id="@+id/audience_tips"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="@dimen/my_px_20"
-                android:text="等待参会人连麦"
-                android:textColor="@color/white"
-                android:textSize="@dimen/my_sp_30" />
+                android:layout_height="wrap_content">
 
-        </FrameLayout>
+                <FrameLayout
+                    android:id="@+id/audience_view"
+                    android:layout_width="@dimen/my_px_647"
+                    android:layout_height="@dimen/my_px_378"
+                    android:background="@android:color/black" />
+
+                <TextView
+                    android:id="@+id/audience_tips"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/my_px_20"
+                    android:text="等待参会人连麦"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/my_sp_30" />
+
+            </FrameLayout>
+
+        </LinearLayout>
 
         <TextView
             android:id="@+id/audience_name"
