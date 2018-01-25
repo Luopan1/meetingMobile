@@ -22,6 +22,7 @@ import android.support.v7.widget.RecyclerView;
 import com.hezy.guide.phone.BuildConfig;
 import com.hezy.guide.phone.R;
 import com.hezy.guide.phone.entities.Agora;
+import com.hezy.guide.phone.entities.Audience;
 import com.hezy.guide.phone.entities.base.BaseErrorBean;
 import com.hezy.guide.phone.event.HangOnEvent;
 import com.hezy.guide.phone.event.HangUpEvent;
@@ -33,11 +34,14 @@ import com.hezy.guide.phone.utils.RxBus;
 import com.hezy.guide.phone.utils.UIDUtil;
 import com.tendcloud.tenddata.TCAgent;
 
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 
+import io.agora.AgoraAPI;
+import io.agora.AgoraAPIOnlySignal;
 import io.agora.openlive.model.AGEventHandler;
 import io.agora.openlive.model.ConstantApp;
 import io.agora.openlive.model.VideoStatusData;
@@ -69,6 +73,8 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
 
     private int remoteUid;
     private Subscription hangonScription;
+
+    private AgoraAPIOnlySignal agoraAPI;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -178,9 +184,104 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
 
         worker().joinChannel(agora.getChannelKey(), channelName, config().mUid);
 
-        textChannelName = (TextView) findViewById(R.id.channel_name);
+        agoraAPI = AgoraAPIOnlySignal.getInstance(this, agora.getAppID());
+        agoraAPI.callbackSet(new AgoraAPI.CallBack() {
+
+            @Override
+            public void onLoginSuccess(int uid, int fd) {
+                super.onLoginSuccess(uid, fd);
+                if (BuildConfig.DEBUG) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(LiveRoomActivity.this, "观众登陆信令系统成功", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+                agoraAPI.channelJoin(channelName);
+            }
+
+            @Override
+            public void onLoginFailed(final int ecode) {
+                super.onLoginFailed(ecode);
+                if (BuildConfig.DEBUG) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(LiveRoomActivity.this, "观众登陆信令系统失败" + ecode, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onChannelJoined(String channelID) {
+                super.onChannelJoined(channelID);
+
+            }
+
+            @Override
+            public void onChannelJoinFailed(String channelID, int ecode) {
+                super.onChannelJoinFailed(channelID, ecode);
+
+            }
+
+            @Override
+            public void onChannelQueryUserNumResult(String channelID, int ecode, final int num) {
+                super.onChannelQueryUserNumResult(channelID, ecode, num);
+            }
+
+            @Override
+            public void onChannelUserJoined(String account, int uid) {
+                super.onChannelUserJoined(account, uid);
+            }
+
+            @Override
+            public void onChannelUserLeaved(String account, int uid) {
+                super.onChannelUserLeaved(account, uid);
+            }
+
+            @Override
+            public void onUserAttrResult(final String account, final String name, final String value) {
+                super.onUserAttrResult(account, name, value);
+            }
+
+            @Override
+            public void onMessageSendSuccess(String messageID) {
+                super.onMessageSendSuccess(messageID);
+            }
+
+            @Override
+            public void onMessageSendError(String messageID, int ecode) {
+                super.onMessageSendError(messageID, ecode);
+            }
+
+            @Override
+            public void onMessageInstantReceive(final String account, final int uid, final String msg) {
+                super.onMessageInstantReceive(account, uid, msg);
+            }
+
+            @Override
+            public void onMessageChannelReceive(String channelID, String account, int uid, final String msg) {
+                super.onMessageChannelReceive(channelID, account, uid, msg);
+            }
+
+            @Override
+            public void onError(final String name, final int ecode, final String desc) {
+                super.onError(name, ecode, desc);
+                if (BuildConfig.DEBUG) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(LiveRoomActivity.this, "name: " + name + "ecode: " + ecode + "desc: " + desc, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }
+        });
+
+        textChannelName = findViewById(R.id.channel_name);
         textChannelName.setText(callInfo);
-//        textChannelName.setText(channelName);
 
         findViewById(R.id.bottom_action_end_call).setOnClickListener(new View.OnClickListener() {
             @Override
