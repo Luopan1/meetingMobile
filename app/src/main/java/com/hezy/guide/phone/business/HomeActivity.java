@@ -100,7 +100,6 @@ public class HomeActivity extends BasicActivity implements View.OnClickListener 
 
         registerDevice();
 
-//        requestUser();
     }
 
     private void initView(){
