@@ -67,61 +67,12 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
     }
 
     @Override
     public void onPermissionsGranted(int i, @NonNull List<String> list) {
-
         initView();
-
-//        Preferences.setToken("8deb6de8b8004878b5f75d81ac5ba8d3");
-
-        if (Preferences.isLogin()) {
-            ApiClient.getInstance().requestUser(this, new OkHttpCallback<BaseBean<UserData>>() {
-                @Override
-                public void onSuccess(BaseBean<UserData> entity) {
-                    if (entity == null || entity.getData() == null || entity.getData().getUser() == null) {
-                        Toast.makeText(WXEntryActivity.this, "用户数据为空", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    User user = entity.getData().getUser();
-                    LoginHelper.savaUser(user);
-
-                    Wechat wechat = entity.getData().getWechat();
-                    if (wechat != null) {
-                        LoginHelper.savaWeChat(wechat);
-                    }
-
-                    if (Preferences.isUserinfoEmpty()) {
-                        UserinfoActivity.actionStart(WXEntryActivity.this, true);
-                        return;
-                    }
-                    startActivity(new Intent(WXEntryActivity.this, HomeActivity.class));
-                    finish();
-
-                }
-            });
-            return;
-        }
-
-        reToWx();
-
-        mWxApi.handleIntent(getIntent(), this);
-
-        subscription = RxBus.handleMessage(new Action1() {
-            @Override
-            public void call(Object o) {
-                if (o instanceof FinishWX) {
-                    //会打开两个微信界面
-                    finish();
-                }
-            }
-        });
-
-        registerDevice();
-
     }
 
     @Override
@@ -137,7 +88,6 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         if (requestCode == AppSettingsDialog.DEFAULT_SETTINGS_REQ_CODE) {
             // Do something after user returned from app settings screen, like showing a Toast.
 //            Toast.makeText(this, "授权成功", Toast.LENGTH_SHORT).show();
@@ -158,52 +108,7 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
         setContentView(R.layout.login_activity);
 
         if (EasyPermissions.hasPermissions(this, perms)){
-
             initView();
-
-//            Preferences.setToken("814faedd55364256939d7823adbd2728");
-
-            if (Preferences.isLogin()) {
-                ApiClient.getInstance().requestUser(this, new OkHttpCallback<BaseBean<UserData>>() {
-                    @Override
-                    public void onSuccess(BaseBean<UserData> entity) {
-                        if (entity == null || entity.getData() == null || entity.getData().getUser() == null) {
-                            Toast.makeText(WXEntryActivity.this, "用户数据为空", Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-                        User user = entity.getData().getUser();
-                        LoginHelper.savaUser(user);
-
-                        Wechat wechat = entity.getData().getWechat();
-                        if (wechat != null) {
-                            LoginHelper.savaWeChat(wechat);
-                        }
-
-                        if (Preferences.isUserinfoEmpty()) {
-                            UserinfoActivity.actionStart(WXEntryActivity.this, true);
-                            return;
-                        }
-                        startActivity(new Intent(WXEntryActivity.this, HomeActivity.class));
-                        finish();
-                    }
-                });
-            }
-
-            reToWx();
-
-            mWxApi.handleIntent(getIntent(), this);
-
-            subscription = RxBus.handleMessage(new Action1() {
-                @Override
-                public void call(Object o) {
-                    if (o instanceof FinishWX) {
-                        //会打开两个微信界面
-                        finish();
-                    }
-                }
-            });
-
-            registerDevice();
         } else {
             EasyPermissions.requestPermissions(this, "请授予必要的权限", 0, perms);
         }
@@ -218,6 +123,56 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
                 wchatLogin();
             }
         });
+
+//        Preferences.setToken("814faedd55364256939d7823adbd2728");
+
+        if (Preferences.isLogin()) {
+            ApiClient.getInstance().requestUser(this, new OkHttpCallback<BaseBean<UserData>>() {
+                @Override
+                public void onSuccess(BaseBean<UserData> entity) {
+                    if (entity == null || entity.getData() == null || entity.getData().getUser() == null) {
+                        Toast.makeText(WXEntryActivity.this, "用户数据为空", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    User user = entity.getData().getUser();
+                    LoginHelper.savaUser(user);
+
+                    Toast.makeText(WXEntryActivity.this, "save user", Toast.LENGTH_SHORT).show();
+
+                    Wechat wechat = entity.getData().getWechat();
+                    if (wechat != null) {
+                        LoginHelper.savaWeChat(wechat);
+                    }
+
+                    Toast.makeText(WXEntryActivity.this, "save wechat", Toast.LENGTH_SHORT).show();
+
+                    if (Preferences.isUserinfoEmpty()) {
+                        UserinfoActivity.actionStart(WXEntryActivity.this, true);
+                        return;
+                    }
+
+                    Toast.makeText(WXEntryActivity.this, "to home", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(WXEntryActivity.this, HomeActivity.class));
+                    finish();
+                }
+            });
+        }
+
+        reToWx();
+
+        mWxApi.handleIntent(getIntent(), this);
+
+        subscription = RxBus.handleMessage(new Action1() {
+            @Override
+            public void call(Object o) {
+                if (o instanceof FinishWX) {
+                    //会打开两个微信界面
+                    finish();
+                }
+            }
+        });
+
+        registerDevice();
     }
 
     /**

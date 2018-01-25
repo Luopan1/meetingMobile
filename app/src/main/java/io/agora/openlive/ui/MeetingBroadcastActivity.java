@@ -519,6 +519,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                 remoteSurfaceView.setZOrderMediaOverlay(true);
                 rtcEngine().setupRemoteVideo(new VideoCanvas(remoteSurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, uid));
                 audienceLayout.addView(remoteSurfaceView);
+                audienceLayout.setVisibility(View.VISIBLE);
                 audienceTipsText.setVisibility(View.GONE);
             }
         });

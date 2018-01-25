@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.adorkable.iosdialog.ActionSheetDialog;
 import com.hezy.guide.phone.BaseApplication;
@@ -110,7 +111,9 @@ public class UserinfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
         mBinding.mEtAddress.setText(Preferences.getUserAddress());
         mBinding.mEtSignature.setText(Preferences.getUserSignature());
         mBinding.mTvAddress.setText(Preferences.getUserAddress());
+        mBinding.mEtDistrict.setText(Preferences.getUserDistrict());
         mBinding.mTvDistrict.setText(Preferences.getUserDistrict());
+        Toast.makeText(mContext, "设置用户信息", Toast.LENGTH_SHORT).show();
         if (!TextUtils.isEmpty(Preferences.getUserPhoto())) {
             Picasso.with(BaseApplication.getInstance()).load(Preferences.getUserPhoto()).into(mBinding.mIvPicture);
         }
@@ -277,7 +280,7 @@ public class UserinfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
         mBinding.mIvLeft.setOnClickListener(this);
         mBinding.mTvRight.setOnClickListener(this);
 
-        mBinding.mEtName.addTextChangedListener(mTextWatcher);
+//        mBinding.mEtName.addTextChangedListener(mTextWatcher);
 
     }
 
@@ -290,9 +293,6 @@ public class UserinfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
     public void onResume() {
         super.onResume();
     }
-
-
-
 
     private void save(){
 
@@ -455,46 +455,43 @@ public class UserinfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
     }
 
 
-    private TextWatcher mTextWatcher =new TextWatcher() {
-        private int editStart;
-        private int editEnd;
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-        }
-
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {
-            editStart = mBinding.mEtName.getSelectionStart();
-            editEnd = mBinding.mEtName.getSelectionEnd();
-
-            // 先去掉监听器，否则会出现栈溢出
-            mBinding.mEtName.removeTextChangedListener(mTextWatcher);
-
-            // 注意这里只能每次都对整个EditText的内容求长度，不能对删除的单个字符求长度
-            // 因为是中英文混合，单个字符而言，calculateLength函数都会返回1
-            Logger.d(TAG,"StringCheckUtil"+ StringCheckUtil.calculateLength(s.toString()) );
-            while (StringCheckUtil.calculateLength(s.toString()) > Constant.NICKNAME_MAX) { // 当输入字符个数超过限制的大小时，进行截断操作
-                s.delete(editStart - 1, editEnd);
-                editStart--;
-                editEnd--;
-                Logger.d(TAG,"while"+s.toString());
-                Logger.d(TAG,"while"+StringCheckUtil.calculateLength(s.toString()));
-            }
-            // mEtNickname.setText(s);将这行代码注释掉就不会出现后面所说的输入法在数字界面自动跳转回主界面的问题了，多谢@ainiyidiandian的提醒
-            mBinding.mEtName.setSelection(editStart);
-
-            // 恢复监听器
-            mBinding.mEtName.addTextChangedListener(mTextWatcher);
-
-
-
-
-        }
-    };
+//    private TextWatcher mTextWatcher =new TextWatcher() {
+//        private int editStart;
+//        private int editEnd;
+//        @Override
+//        public void onTextChanged(CharSequence s, int start, int before, int count) {
+//        }
+//
+//        @Override
+//        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//        }
+//
+//        @Override
+//        public void afterTextChanged(Editable s) {
+//            editStart = mBinding.mEtName.getSelectionStart();
+//            editEnd = mBinding.mEtName.getSelectionEnd();
+//
+//            // 先去掉监听器，否则会出现栈溢出
+//            mBinding.mEtName.removeTextChangedListener(mTextWatcher);
+//
+//            // 注意这里只能每次都对整个EditText的内容求长度，不能对删除的单个字符求长度
+//            // 因为是中英文混合，单个字符而言，calculateLength函数都会返回1
+//            Logger.d(TAG,"StringCheckUtil"+ StringCheckUtil.calculateLength(s.toString()) );
+//            while (StringCheckUtil.calculateLength(s.toString()) > Constant.NICKNAME_MAX) { // 当输入字符个数超过限制的大小时，进行截断操作
+//                s.delete(editStart - 1, editEnd);
+//                editStart--;
+//                editEnd--;
+//                Logger.d(TAG,"while"+s.toString());
+//                Logger.d(TAG,"while"+StringCheckUtil.calculateLength(s.toString()));
+//            }
+//            // mEtNickname.setText(s);将这行代码注释掉就不会出现后面所说的输入法在数字界面自动跳转回主界面的问题了，多谢@ainiyidiandian的提醒
+//            mBinding.mEtName.setSelection(editStart);
+//
+//            // 恢复监听器
+//            mBinding.mEtName.addTextChangedListener(mTextWatcher);
+//
+//        }
+//    };
 
   
 
@@ -636,20 +633,21 @@ public class UserinfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
     private void relate(final String key) {
         Logger.i(TAG, "key " + key);
         if (!TextUtils.isEmpty(key)) {
-            Map<String, String> params = new HashMap<>();
-            params.put("photo", Preferences.getImgUrl() + key); //服务器存储全路径
-            ApiClient.getInstance().requestUserExpostor(this, params, new OkHttpCallback<BaseErrorBean>() {
-                @Override
-                public void onSuccess(BaseErrorBean entity) {
-                    Logger.i("photo", entity.toString());
-                    if (TextUtils.isEmpty(Preferences.getImgUrl())) {
-                        ApiClient.getInstance().urlConfig(staticResCallback(key));
-                    } else {
+            if (TextUtils.isEmpty(Preferences.getImgUrl())) {
+                ApiClient.getInstance().urlConfig(staticResCallback(key));
+            } else {
+                Map<String, String> params = new HashMap<>();
+                params.put("photo", Preferences.getImgUrl() + key); //服务器存储全路径
+                ApiClient.getInstance().requestUserExpostor(this, params, new OkHttpCallback<BaseErrorBean>() {
+                    @Override
+                    public void onSuccess(BaseErrorBean entity) {
+                        Logger.i("photo", entity.toString());
+
                         Preferences.setUserPhoto(Preferences.getImgUrl() + key);
                         ToastUtils.showToast("保存照片成功");
                     }
-                }
-            });
+                });
+            }
         }
 
     }
@@ -664,8 +662,22 @@ public class UserinfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
                 Preferences.setDownloadUrl(entity.getData().getStaticRes().getDownloadUrl());
                 Preferences.setCooperationUrl(entity.getData().getStaticRes().getDownloadUrl());
 
-                Preferences.setUserPhoto(Preferences.getImgUrl() + key);
-                ToastUtils.showToast("保存照片成功");
+                Map<String, String> params = new HashMap<>();
+                params.put("photo", Preferences.getImgUrl() + key); //服务器存储全路径
+                ApiClient.getInstance().requestUserExpostor(this, params, new OkHttpCallback<BaseErrorBean>() {
+                    @Override
+                    public void onSuccess(BaseErrorBean entity) {
+                        Logger.i("photo", entity.toString());
+                        Preferences.setUserPhoto(Preferences.getImgUrl() + key);
+                        ToastUtils.showToast("保存照片成功");
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(int errorCode, BaseException exception) {
+                super.onFailure(errorCode, exception);
+                Toast.makeText(mContext, "获取前缀失败", Toast.LENGTH_SHORT).show();
             }
         };
     }

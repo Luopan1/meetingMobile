@@ -40,6 +40,10 @@ public class User {
     private String lastLoginTime;
     private int rank;
 
+    private String areaId;
+    private String areaInfo;
+    private String customId;
+
     public String getId() {
         return id;
     }
@@ -160,6 +164,30 @@ public class User {
         this.rank = rank;
     }
 
+    public String getAreaId() {
+        return areaId;
+    }
+
+    public void setAreaId(String areaId) {
+        this.areaId = areaId;
+    }
+
+    public String getAreaInfo() {
+        return areaInfo;
+    }
+
+    public void setAreaInfo(String areaInfo) {
+        this.areaInfo = areaInfo;
+    }
+
+    public String getCustomId() {
+        return customId;
+    }
+
+    public void setCustomId(String customId) {
+        this.customId = customId;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -178,6 +206,9 @@ public class User {
                 ", lastLoginIp='" + lastLoginIp + '\'' +
                 ", lastLoginTime='" + lastLoginTime + '\'' +
                 ", rank=" + rank +
+                ", areaId='" + areaId + '\'' +
+                ", areaInfo='" + areaInfo + '\'' +
+                ", customId='" + customId + '\'' +
                 '}';
     }
 }
