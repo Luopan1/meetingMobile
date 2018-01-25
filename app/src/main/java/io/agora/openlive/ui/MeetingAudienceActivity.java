@@ -497,7 +497,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
     private void doConfigEngine(int cRole) {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
         int prefIndex = pref.getInt(ConstantApp.PrefManager.PREF_PROPERTY_PROFILE_IDX, ConstantApp.DEFAULT_PROFILE_IDX);
-        int vProfile = ConstantApp.VIDEO_PROFILES[prefIndex - 2];
+        int vProfile = ConstantApp.VIDEO_PROFILES[prefIndex];
         worker().configEngine(cRole, vProfile);
     }
 
