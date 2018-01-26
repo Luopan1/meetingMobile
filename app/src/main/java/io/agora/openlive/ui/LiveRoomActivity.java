@@ -616,8 +616,16 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
     }
 
     @Override
+    protected void onStop() {
+        super.onStop();
+        System.out.println("onStop..........................");
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
+
+        System.out.println("onDestroy..........................");
 
         hangonScription.unsubscribe();
 

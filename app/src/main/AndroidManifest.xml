@@ -101,7 +101,7 @@
 
         <activity android:name="io.agora.openlive.ui.LiveRoomActivity"
             android:launchMode="singleInstance"
-            android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"
+            android:configChanges="keyboard|keyboardHidden|navigation|orientation|screenSize|fontScale"
             android:screenOrientation="landscape"
             android:theme="@style/FullscreenTheme"/>
 
@@ -113,11 +113,13 @@
         <activity
             android:name="io.agora.openlive.ui.MeetingBroadcastActivity"
             android:launchMode="singleTask"
+            android:configChanges="keyboard|keyboardHidden|navigation|orientation|screenSize|fontScale"
             android:screenOrientation="landscape"
             android:theme="@style/FullscreenTheme" />
         <activity
             android:name="io.agora.openlive.ui.MeetingAudienceActivity"
             android:launchMode="singleTask"
+            android:configChanges="keyboard|keyboardHidden|navigation|orientation|screenSize|fontScale"
             android:screenOrientation="landscape"
             android:theme="@style/FullscreenTheme" />
 
