@@ -65,7 +65,7 @@
 
         <TextView
             android:id="@+id/audience_name"
-            android:layout_width="wrap_content"
+            android:layout_width="@dimen/my_px_647"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/my_px_20"
             tools:text="唐姗姗唐姗姗"
