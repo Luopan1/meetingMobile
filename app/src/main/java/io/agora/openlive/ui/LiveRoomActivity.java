@@ -414,6 +414,8 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
                 if (surfaceV != null) {
                     mUidsList.put(uid, surfaceV);
                 }
+
+                agoraAPI.login(agora.getAppID(), "" + uid, agora.getSignalingKey(), 0, "");
             }
         });
     }
