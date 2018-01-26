@@ -3,6 +3,7 @@ package io.agora.openlive.ui;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
@@ -319,7 +320,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                     public void run() {
                         try {
                             if (BuildConfig.DEBUG) {
-                                Toast.makeText(MeetingAudienceActivity.this, "" + msg, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(MeetingAudienceActivity.this, "接收到消息" + msg, Toast.LENGTH_SHORT).show();
                             }
                             JSONObject jsonObject = new JSONObject(msg);
                             if (jsonObject.has("response")) {
@@ -544,6 +545,10 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                     broadcastTipsText.setVisibility(View.GONE);
                     broadcastNameText.setText("主持人：" + meetingJoin.getHostUser().getHostUserName());
 
+                    if (BuildConfig.DEBUG) {
+                        Toast.makeText(MeetingAudienceActivity.this, "主持人" + broadcastId + "---" + uid + meetingJoin.getHostUser().getHostUserName() + "进入了", Toast.LENGTH_SHORT).show();
+                    }
+
                     SurfaceView remoteSurfaceView = RtcEngine.CreateRendererView(getApplicationContext());
                     remoteSurfaceView.setZOrderOnTop(false);
                     remoteSurfaceView.setZOrderMediaOverlay(false);
@@ -551,6 +556,11 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 
                     broadcasterLayout.addView(remoteSurfaceView);
                 } else {
+
+                    if (BuildConfig.DEBUG) {
+                        Toast.makeText(MeetingAudienceActivity.this, "连麦观众" + uid + "进入了，去获取连麦观众的名字", Toast.LENGTH_SHORT).show();
+                    }
+
                     agoraAPI.getUserAttr("" + uid, "uname");
                 }
             }
