@@ -280,6 +280,8 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
             }
         });
 
+        agoraAPI.login(agora.getAppID(), "" + config().mUid, agora.getSignalingKey(), 0, "");
+
         textChannelName = findViewById(R.id.channel_name);
         textChannelName.setText(callInfo);
 
@@ -379,7 +381,7 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
                     log.debug("doRenderRemoteUi LAYOUT_TYPE_SMALL " + (uid & 0xFFFFFFFFL) + " " + (bigBgUid & 0xFFFFFFFFL));
                     switchToSmallVideoView(bigBgUid);
                 }
-//
+
             }
         });
     }
@@ -415,7 +417,6 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
                     mUidsList.put(uid, surfaceV);
                 }
 
-                agoraAPI.login(agora.getAppID(), "" + uid, agora.getSignalingKey(), 0, "");
             }
         });
     }
