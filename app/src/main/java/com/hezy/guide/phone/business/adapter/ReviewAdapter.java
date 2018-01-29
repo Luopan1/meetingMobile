@@ -181,7 +181,7 @@ public class ReviewAdapter extends BaseRecyclerAdapter<RecordData.PageDataEntity
 
             }
         } else if (getItemViewType(position) == ITEM_TYPE.REVIEW.ordinal()) {
-            RecordData.PageDataEntity bean = mData.get(position);
+            RecordData.PageDataEntity bean = mData.get(getRealPosotion(position));
             String time = bean.getOrderTime();
 
             System.out.println("time " + time);
