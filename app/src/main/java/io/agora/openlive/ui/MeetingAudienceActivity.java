@@ -376,6 +376,8 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                                     micButton.setText("我要发言");
                                     micButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_meeting_signup, 0, 0, 0);
 
+                                    isExit = false;
+
                                     worker().getRtcEngine().setClientRole(Constants.CLIENT_ROLE_AUDIENCE, "");
                                 }
                             }
@@ -573,6 +575,8 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
         doRemoveRemoteUi(uid);
     }
 
+    private boolean isExit = false;
+
     private void doRemoveRemoteUi(final int uid) {
         runOnUiThread(new Runnable() {
             @Override
@@ -586,9 +590,17 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                     broadcastTipsText.setVisibility(View.VISIBLE);
                     broadcastNameText.setText("");
                 } else {
-                    audienceLayout.removeAllViews();
-                    audienceNameText.setText("");
-                    audienceTipsText.setVisibility(View.VISIBLE);
+                    if (BuildConfig.DEBUG)
+                        Toast.makeText(MeetingAudienceActivity.this, "连麦观众" + uid + "退出了" + config().mUid, Toast.LENGTH_SHORT).show();
+
+                    if (!isExit) {
+                        if (uid != config().mUid) {
+                            audienceLayout.removeAllViews();
+                            audienceNameText.setText("");
+                            audienceTipsText.setVisibility(View.VISIBLE);
+                            isExit = true;
+                        }
+                    }
                 }
             }
         });
