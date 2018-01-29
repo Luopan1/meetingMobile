@@ -9,8 +9,10 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.hezy.guide.phone.ApiClient;
+import com.hezy.guide.phone.BaseException;
 import com.hezy.guide.phone.BuildConfig;
 import com.hezy.guide.phone.Constant;
 import com.hezy.guide.phone.R;
@@ -91,9 +93,16 @@ public class SettingActivity extends BasicActivity {
                     Uri content_url = Uri.parse(version.getUrl());
                     intent.setData(content_url);
                     startActivity(Intent.createChooser(intent, "请选择浏览器"));
+                } else {
+                    Toast.makeText(mContext, "已经是最新版了", Toast.LENGTH_SHORT).show();
                 }
             }
 
+            @Override
+            public void onFailure(int errorCode, BaseException exception) {
+                super.onFailure(errorCode, exception);
+                Toast.makeText(mContext, "" + exception.getMessage(), Toast.LENGTH_SHORT).show();
+            }
         });
     }
 
