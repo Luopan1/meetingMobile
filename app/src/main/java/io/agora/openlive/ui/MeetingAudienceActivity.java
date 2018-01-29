@@ -136,9 +136,9 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                             jsonObject.put("request", false);
                             jsonObject.put("uid", UIDUtil.generatorUID(Preferences.getUserId()));
                             if (TextUtils.isEmpty(Preferences.getAreaInfo())) {
-                                jsonObject.put("uname", "店员-" + Preferences.getUserAddress() + "-"+ Preferences.getUserName());
+                                jsonObject.put("uname", "店员-" + Preferences.getUserName());
                             } else {
-                                jsonObject.put("uname", "店员-" + Preferences.getAreaInfo() + "-" + Preferences.getUserAddress() + "-" + Preferences.getUserName());
+                                jsonObject.put("uname", "店员-" + Preferences.getAreaInfo() + "-" + Preferences.getUserName());
                             }
                             agoraAPI.messageInstantSend(broadcastId, 0, jsonObject.toString(), "");
                         } catch (Exception e) {
@@ -153,9 +153,9 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                             jsonObject.put("request", true);
                             jsonObject.put("uid", UIDUtil.generatorUID(Preferences.getUserId()));
                             if (TextUtils.isEmpty(Preferences.getAreaInfo())) {
-                                jsonObject.put("uname", "店员-" + Preferences.getUserAddress() + "-"+ Preferences.getUserName());
+                                jsonObject.put("uname", "店员-" +  Preferences.getUserName());
                             } else {
-                                jsonObject.put("uname", "店员-" + Preferences.getAreaInfo() + "-" + Preferences.getUserAddress() + "-" + Preferences.getUserName());
+                                jsonObject.put("uname", "店员-" + Preferences.getAreaInfo() + Preferences.getUserName());
                             }
                             agoraAPI.messageInstantSend(broadcastId, 0, jsonObject.toString(), "");
                         } catch (Exception e) {
@@ -178,9 +178,9 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                         jsonObject.put("request", false);
                         jsonObject.put("uid", UIDUtil.generatorUID(Preferences.getUserId()));
                         if (TextUtils.isEmpty(Preferences.getAreaInfo())) {
-                            jsonObject.put("uname", "店员-" + Preferences.getUserAddress() + "-"+ Preferences.getUserName());
+                            jsonObject.put("uname", "店员-" + "-"+ Preferences.getUserName());
                         } else {
-                            jsonObject.put("uname", "店员-" + Preferences.getAreaInfo() + "-" + Preferences.getUserAddress() + "-" + Preferences.getUserName());
+                            jsonObject.put("uname", "店员-" + Preferences.getAreaInfo() + "-" + Preferences.getUserName());
                         }
                         agoraAPI.messageInstantSend(broadcastId, 0, jsonObject.toString(), "");
                     } catch (Exception e) {
@@ -466,9 +466,9 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                             jsonObject.put("request", false);
                             jsonObject.put("uid", UIDUtil.generatorUID(Preferences.getUserId()));
                             if (TextUtils.isEmpty(Preferences.getAreaInfo())) {
-                                jsonObject.put("uname", "店员-" + Preferences.getUserAddress() + "-"+ Preferences.getUserName());
+                                jsonObject.put("uname", "店员-" +  Preferences.getUserName());
                             } else {
-                                jsonObject.put("uname", "店员-" + Preferences.getAreaInfo() + "-" + Preferences.getUserAddress() + "-" + Preferences.getUserName());
+                                jsonObject.put("uname", "店员-" + Preferences.getAreaInfo() + "-" + Preferences.getUserName());
                             }
                             agoraAPI.messageInstantSend(broadcastId, 0, jsonObject.toString(), "");
                         } catch (Exception e) {
