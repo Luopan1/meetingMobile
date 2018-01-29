@@ -42,6 +42,7 @@ public class User {
 
     private String areaId;
     private String areaInfo;
+    private String areaName;
     private String customId;
 
     public String getId() {
@@ -50,6 +51,14 @@ public class User {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getAreaName() {
+        return areaName;
+    }
+
+    public void setAreaName(String areaName) {
+        this.areaName = areaName;
     }
 
     public String getCreateDate() {
@@ -208,6 +217,7 @@ public class User {
                 ", rank=" + rank +
                 ", areaId='" + areaId + '\'' +
                 ", areaInfo='" + areaInfo + '\'' +
+                ", areaName='" + areaName + '\'' +
                 ", customId='" + customId + '\'' +
                 '}';
     }

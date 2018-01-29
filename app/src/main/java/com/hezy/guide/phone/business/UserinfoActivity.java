@@ -113,7 +113,7 @@ public class UserinfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
         mBinding.mTvAddress.setText(Preferences.getUserAddress());
         mBinding.mEtDistrict.setText(Preferences.getUserDistrict());
         mBinding.mTvDistrict.setText(Preferences.getUserDistrict());
-        Toast.makeText(mContext, "设置用户信息", Toast.LENGTH_SHORT).show();
+        Toast.makeText(mContext, "设置用户信息--->" + Preferences.getUserDistrict(), Toast.LENGTH_SHORT).show();
         if (!TextUtils.isEmpty(Preferences.getUserPhoto())) {
             Picasso.with(BaseApplication.getInstance()).load(Preferences.getUserPhoto()).into(mBinding.mIvPicture);
         }
