@@ -27,6 +27,7 @@ import com.hezy.guide.phone.event.CallEvent;
 import com.hezy.guide.phone.event.HangDownEvent;
 import com.hezy.guide.phone.event.HangOnEvent;
 import com.hezy.guide.phone.event.HangUpEvent;
+import com.hezy.guide.phone.event.ResolutionChangeEvent;
 import com.hezy.guide.phone.event.SetUserStateEvent;
 import com.hezy.guide.phone.event.TvLeaveChannel;
 import com.hezy.guide.phone.event.TvTimeoutHangUp;
@@ -72,14 +73,7 @@ public class WSService extends Service {
      */
     public static boolean IS_ON_PHONE = false;
     private static String WS_URL = BuildConfig.WS_DOMAIN_NAME;
-    //    /**
-//     * 是否已离线
-//     */
-//    public static boolean SOCKET_ONLINE = false;
-//    /**
-//     * 用户设置离线,废弃
-//     */
-//    public static boolean USER_SET_OFFLINE = false;
+
     private static Socket mSocket;
 
     private Subscription subscription;
@@ -169,10 +163,23 @@ public class WSService extends Service {
                     } else {
                         Log.i(TAG, " HangDownEvent 挂断电话转在线 IS_ON_PHONE false");
                     }
+                } else if (o instanceof ResolutionChangeEvent) {
+                    ResolutionChangeEvent resolutionChangeEvent = (ResolutionChangeEvent) o;
+                    resolutionChanged(resolutionChangeEvent.getResolution());
                 }
 
             }
         });
+    }
+
+    private void resolutionChanged(int resolution) {
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("resolution", resolution + 2);
+            mSocket.emit("CHANGE_RESOLUTION", jsonObject);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -313,7 +320,7 @@ public class WSService extends Service {
         mSocket.on("LISTEN_TV_LEAVE_CHANNEL", ON_LISTEN_TV_LEAVE_CHANNEL);
         mSocket.on("TIMEOUT_WITHOUT_REPLY", ON_TIMEOUT_WITHOUT_REPLY);
         mSocket.on("OLD_DISCONNECT", ON_OLD_DISCONNECT);
-        mSocket.on("CHANGE_RESOLUTION_EVENT", resolutionChangedListener);
+//        mSocket.on("CHANGE_RESOLUTION_EVENT", resolutionChangedListener);
         mSocket.connect();
 
     }
@@ -336,7 +343,7 @@ public class WSService extends Service {
         mSocket.off("SALES_ONLINE_WITH_STATUS_RETURN", ON_SALES_ONLINE_WITH_STATUS_RETURN);
         mSocket.off("LISTEN_TV_LEAVE_CHANNEL", ON_LISTEN_TV_LEAVE_CHANNEL);
         mSocket.off("OLD_DISCONNECT", ON_OLD_DISCONNECT);
-        mSocket.off("CHANGE_RESOLUTION_EVENT", resolutionChangedListener);
+//        mSocket.off("CHANGE_RESOLUTION_EVENT", resolutionChangedListener);
 //        SOCKET_ONLINE = false;
         sendUserStateEvent();
 
@@ -429,20 +436,20 @@ public class WSService extends Service {
     };
 
 
-    private Emitter.Listener resolutionChangedListener = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-            int prefIndex = PreferenceManager.getDefaultSharedPreferences(
-                    getApplication()).getInt(ConstantApp.PrefManager.PREF_PROPERTY_PROFILE_IDX, ConstantApp.DEFAULT_PROFILE_IDX);
-            try {
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("resolution", prefIndex);
-                mSocket.emit("CHANGE_RESOLUTION", jsonObject);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-    };
+//    private Emitter.Listener resolutionChangedListener = new Emitter.Listener() {
+//        @Override
+//        public void call(Object... args) {
+//            int prefIndex = PreferenceManager.getDefaultSharedPreferences(
+//                    getApplication()).getInt(ConstantApp.PrefManager.PREF_PROPERTY_PROFILE_IDX, ConstantApp.DEFAULT_PROFILE_IDX);
+//            try {
+//                JSONObject jsonObject = new JSONObject();
+//                jsonObject.put("resolution", prefIndex + 2);
+//                mSocket.emit("CHANGE_RESOLUTION", jsonObject);
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//    };
 
     private Emitter.Listener onCall = new Emitter.Listener() {
         @Override
@@ -452,12 +459,16 @@ public class WSService extends Service {
             try {
                 String tvSocketId = data.getString("tvSocketId");
                 String channelId = data.getString("channelId");
+                String deviceInfo = data.getString("deviceInfo");
+                int shopOwnerResolution = data.getInt("shopOwnerResolution");
+
                 JSONObject caller = data.getJSONObject("caller");
                 String name = caller.getString("name");
                 String address = caller.getString("address");
-                Log.i("wsserver", "Listener onCall tvSocketId ==" + tvSocketId);
-                Log.i("wsserver", "Listener onCall channelId ==" + channelId);
-                OnCallActivity.actionStart(WSService.this, channelId, tvSocketId, address + " " + name);
+                String shopPhoto = caller.getString("shopPhoto");
+                String photo = caller.getString("photo");
+
+                OnCallActivity.actionStart(WSService.this, channelId, tvSocketId, address + " " + name, photo, deviceInfo, shopOwnerResolution, shopPhoto);
             } catch (JSONException e) {
                 e.printStackTrace();
                 Log.e(TAG, "onCall e " + e);

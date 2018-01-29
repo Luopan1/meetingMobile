@@ -12,8 +12,10 @@ import android.widget.TextView;
 import com.hezy.guide.phone.BuildConfig;
 import com.hezy.guide.phone.Constant;
 import com.hezy.guide.phone.R;
+import com.hezy.guide.phone.event.ResolutionChangeEvent;
 import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.utils.Login.LoginHelper;
+import com.hezy.guide.phone.utils.RxBus;
 import com.hezy.guide.phone.wxapi.WXEntryActivity;
 
 import io.agora.openlive.model.ConstantApp;
@@ -57,9 +59,6 @@ public class SettingActivity extends BasicActivity {
             public void onClick(View v) {
                 Preferences.clear();
                 finish();
-
-//                getApplicationContext().sendBroadcast(new Intent(BuildConfig.APPLICATION_ID + Constant.RELOGIN_ACTION).putExtra("active", true));
-//                getApplicationContext().startActivity(new Intent(mContext, WXEntryActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
             }
         });
 
@@ -80,6 +79,11 @@ public class SettingActivity extends BasicActivity {
                 SharedPreferences.Editor editor = pref.edit();
                 editor.putInt(ConstantApp.PrefManager.PREF_PROPERTY_PROFILE_IDX, which);
                 editor.apply();
+
+                ResolutionChangeEvent resolutionChangeEvent = new ResolutionChangeEvent();
+                resolutionChangeEvent.setResolution(pref.getInt(ConstantApp.PrefManager.PREF_PROPERTY_PROFILE_IDX, ConstantApp.DEFAULT_PROFILE_IDX));
+                RxBus.sendMessage(resolutionChangeEvent);
+
                 dialog.dismiss();
                 ((TextView) findViewById(R.id.resolution_text)).setText(resolutionText(which));
             }

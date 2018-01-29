@@ -56,13 +56,17 @@ public class OnCallActivity extends BaseDataBindingActivity<OnCallActivityBindin
         return "被呼叫";
     }
 
-    public static void actionStart(Context context, String channelId, String tvSocketId, String callInfo) {
+    public static void actionStart(Context context, String channelId, String tvSocketId, String callInfo,String photo,String deviceInfo, int shopOwnerResolution, String shopPhoto) {
         Intent intent = new Intent(context, OnCallActivity.class);
         //service中调用需要添加flag
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra("channelId", channelId);
         intent.putExtra("tvSocketId", tvSocketId);
         intent.putExtra("callInfo", callInfo);
+        intent.putExtra("photo", photo);
+        intent.putExtra("deviceInfo", deviceInfo);
+        intent.putExtra("shopOwnerResolution", shopOwnerResolution);
+        intent.putExtra("shopPhoto", shopPhoto);
         context.startActivity(intent);
     }
 
@@ -71,6 +75,11 @@ public class OnCallActivity extends BaseDataBindingActivity<OnCallActivityBindin
         channelId = getIntent().getStringExtra("channelId");
         tvSocketId = getIntent().getStringExtra("tvSocketId");
         callInfo = getIntent().getStringExtra("callInfo");
+
+        avatar = getIntent().getStringExtra("photo");
+        deviceInfo = getIntent().getStringExtra("deviceInfo");
+        shopOwnerResolution = getIntent().getIntExtra("shopOwnerResolution", 0);
+        shopPhoto = getIntent().getStringExtra("shopPhoto");
     }
 
     private AudioManager mAudioManager;
@@ -124,6 +133,9 @@ public class OnCallActivity extends BaseDataBindingActivity<OnCallActivityBindin
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        avatar = getIntent().getStringExtra("photo");
+        name = callInfo.split(" ")[1];
 
         mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         mAudioManager.requestAudioFocus(onAudioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
@@ -194,6 +206,11 @@ public class OnCallActivity extends BaseDataBindingActivity<OnCallActivityBindin
         }
     }
 
+    private String deviceInfo;
+    private int shopOwnerResolution;
+    private String shopPhoto;
+    private String avatar, name;
+
     class AgoraCallback extends OkHttpCallback<BaseBean<Agora>> {
 
         @Override
@@ -202,6 +219,13 @@ public class OnCallActivity extends BaseDataBindingActivity<OnCallActivityBindin
             intent.putExtra("channelId", channelId);
             intent.putExtra("callInfo", callInfo);
             intent.putExtra("agora", agoraBucket.getData());
+
+            intent.putExtra("deviceInfo", deviceInfo);
+            intent.putExtra("shopOwnerResolution", shopOwnerResolution);
+            intent.putExtra("photo", avatar);
+            intent.putExtra("name", name);
+            intent.putExtra("shopPhoto", shopPhoto);
+
             startActivity(intent);
             finish();
             ZYAgent.onEvent(BaseApplication.getInstance(),"点击事件 拨打电话 进入房间");
