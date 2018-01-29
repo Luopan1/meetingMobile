@@ -112,7 +112,7 @@ public class ReviewAdapter extends BaseRecyclerAdapter<RecordData.PageDataEntity
     }
 
     private int getRealPosotion(int position) {
-        return super.getItemCount() ==0 ?  super.getItemCount()  - 2 : super.getItemCount() - 1;
+        return super.getItemCount() == 0 ?  position - 2 : position - 1;
     }
 
     @Override

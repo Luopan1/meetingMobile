@@ -317,25 +317,3 @@ public class UpdateActivity extends BasicActivity {
     }
 
 }
-
-// TODO
-//        D/TVM     (15864): VMThread.create: new thread 18333
-//        W/System.err(16069): java.lang.RuntimeException: Can't create handler inside thread that has not called Looper.prepare()
-//        W/System.err(16069): 	at android.os.Handler.<init>(Handler.java:200)
-//        W/System.err(16069): 	at android.os.Handler.<init>(Handler.java:114)
-//        W/System.err(16069): 	at android.app.Dialog.<init>(Dialog.java:109)
-//        W/System.err(16069): 	at android.app.AlertDialog.<init>(AlertDialog.java:114)
-//        W/System.err(16069): 	at android.app.AlertDialog.<init>(AlertDialog.java:110)
-//        W/System.err(16069): 	at com.hezy.guide.tv.c.n.<init>(Unknown Source)
-//        D/TVM     (15864): VMThread.create: new thread 18334
-//        W/System.err(16069): 	at com.hezy.guide.tv.c.n.<init>(Unknown Source)
-//        W/System.err(16069): 	at com.hezy.guide.tv.c.n$a.a(Unknown Source)
-//        W/System.err(16069): 	at com.hezy.guide.tv.business.UpdateActivity.c(Unknown Source)
-//        W/System.err(16069): 	at com.hezy.guide.tv.business.UpdateActivity.e(Unknown Source)
-//        W/System.err(16069): 	at com.hezy.guide.tv.business.UpdateActivity.c(Unknown Source)
-//        W/System.err(16069): 	at com.hezy.guide.tv.business.UpdateActivity$b.onChange(Unknown Source)
-//        W/System.err(16069): 	at android.database.ContentObserver.onChange(ContentObserver.java:129)
-//        W/System.err(16069): 	at android.database.ContentObserver.dispatchChange(ContentObserver.java:163)
-//        W/System.err(16069): 	at android.database.ContentObserver$Transport.onChange(ContentObserver.java:195)
-//        W/System.err(16069): 	at android.database.IContentObserver$Stub.onTransact(IContentObserver.java:60)
-//        W/System.err(16069): 	at android.os.Binder.execTransact(Binder.java:404)

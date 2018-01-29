@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -26,6 +27,7 @@ import com.hezy.guide.phone.entities.FinishWX;
 import com.hezy.guide.phone.entities.LoginWechat;
 import com.hezy.guide.phone.entities.User;
 import com.hezy.guide.phone.entities.UserData;
+import com.hezy.guide.phone.entities.Version;
 import com.hezy.guide.phone.entities.Wechat;
 import com.hezy.guide.phone.entities.base.BaseBean;
 import com.hezy.guide.phone.persistence.Preferences;
@@ -37,6 +39,7 @@ import com.hezy.guide.phone.utils.RxBus;
 import com.hezy.guide.phone.utils.ToastUtils;
 import com.hezy.guide.phone.utils.UUIDUtils;
 import com.hezy.guide.phone.utils.statistics.ZYAgent;
+import com.tencent.bugly.crashreport.BuglyLog;
 import com.tencent.mm.opensdk.modelbase.BaseReq;
 import com.tencent.mm.opensdk.modelbase.BaseResp;
 import com.tencent.mm.opensdk.modelmsg.SendAuth;
@@ -220,7 +223,29 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
         public void onSuccess(BaseBean entity) {
 
         }
+
+        @Override
+        public void onFinish() {
+            versionCheck();
+        }
     };
+
+    private void versionCheck() {
+        ApiClient.getInstance().versionCheck(this, new OkHttpCallback<BaseBean<Version>>() {
+            @Override
+            public void onSuccess(BaseBean<Version> entity) {
+                Version version = entity.getData();
+                if (version.getImportance() != 1) {
+                    Intent intent = new Intent();
+                    intent.setAction(Intent.ACTION_VIEW);
+                    Uri content_url = Uri.parse(version.getUrl());
+                    intent.setData(content_url);
+                    startActivity(Intent.createChooser(intent, "请选择浏览器"));
+                }
+            }
+
+        });
+    }
 
     private void reToWx() {
         String app_id = BuildConfig.WEIXIN_APP_ID;

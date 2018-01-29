@@ -77,6 +77,45 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/version_layout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/my_px_160"
+        android:layout_marginTop="@dimen/my_px_40"
+        android:paddingEnd="@dimen/my_px_32"
+        android:paddingStart="@dimen/my_px_32"
+        android:background="@color/white"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:drawableLeft="@drawable/btn_my_set_resolution"
+            android:drawablePadding="@dimen/my_px_24"
+            android:gravity="center_vertical"
+            android:textColor="#434343"
+            android:textSize="@dimen/my_sp_42"
+            android:text="检查新版本" />
+
+        <TextView
+            android:id="@+id/version_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/my_px_24"
+            android:layout_marginStart="@dimen/my_px_24"
+            android:gravity="right"
+            android:layout_weight="1"
+            android:textColor="#909090"
+            android:textSize="@dimen/my_sp_36" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/btn_my_set_resolution_more" />
+
+    </LinearLayout>
+
     <View
         android:layout_width="match_parent"
         android:layout_height="0dp"
