@@ -278,7 +278,8 @@ public class Preferences {
      */
     public static boolean isUserinfoEmpty(){
         return (TextUtils.isEmpty(Preferences.getUserMobile()) || TextUtils.isEmpty(Preferences.getUserPhoto())
-                || TextUtils.isEmpty(Preferences.getUserName()) || TextUtils.isEmpty(Preferences.getUserAddress()));
+                || TextUtils.isEmpty(Preferences.getUserName()) || TextUtils.isEmpty(Preferences.getUserAddress())
+                || TextUtils.isEmpty(Preferences.getUserDistrict()));
     }
 
 }

@@ -124,7 +124,7 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
             }
         });
 
-//        Preferences.setToken("814faedd55364256939d7823adbd2728");
+//        Preferences.setToken("90dd5c25795d4436ae3cb68cf844e3f2");
 
         if (Preferences.isLogin()) {
             ApiClient.getInstance().requestUser(this, new OkHttpCallback<BaseBean<UserData>>() {
@@ -304,11 +304,9 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
                 User user = loginWechat.getUser();
                 if (loginWechat.getUser() == null) {
                 } else {
-                    //保存用户,进入主页
-//                    showToast("用户登录成功");
                     LoginHelper.savaUser(user);
+
                     if (Preferences.isUserinfoEmpty()) {
-//                        showToast("请先填写姓名,电话,地址,照片");
                         UserinfoActivity.actionStart(WXEntryActivity.this, true);
                     } else {
                         startActivity(new Intent(WXEntryActivity.this, HomeActivity.class));
