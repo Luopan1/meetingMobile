@@ -87,7 +87,7 @@ public class ApiClient {
     }
 
     public void getAllMeeting(Object tag, OkHttpCallback callback) {
-        okHttpUtil.get(API_DOMAIN_NAME + "/osg/app/meeting/all", getCommonHead(), null, callback);
+        okHttpUtil.get(API_DOMAIN_NAME + "/osg/app/meeting/list", getCommonHead(), null, callback);
     }
 
     public void verifyRole(Object tag, OkHttpCallback callback, Map<String, Object> values){
