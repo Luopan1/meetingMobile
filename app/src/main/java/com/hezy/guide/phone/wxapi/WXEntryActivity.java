@@ -140,21 +140,15 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
                     User user = entity.getData().getUser();
                     LoginHelper.savaUser(user);
 
-                    Toast.makeText(WXEntryActivity.this, "save user", Toast.LENGTH_SHORT).show();
-
                     Wechat wechat = entity.getData().getWechat();
                     if (wechat != null) {
                         LoginHelper.savaWeChat(wechat);
                     }
 
-                    Toast.makeText(WXEntryActivity.this, "save wechat", Toast.LENGTH_SHORT).show();
-
                     if (Preferences.isUserinfoEmpty()) {
                         UserinfoActivity.actionStart(WXEntryActivity.this, true);
                         return;
                     }
-
-                    Toast.makeText(WXEntryActivity.this, "to home", Toast.LENGTH_SHORT).show();
                     startActivity(new Intent(WXEntryActivity.this, HomeActivity.class));
                     finish();
                 }
