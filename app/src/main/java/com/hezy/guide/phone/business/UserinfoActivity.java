@@ -94,7 +94,6 @@ public class UserinfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
 
     public static boolean isFirst;
 
-
     @Override
     protected void initExtraIntent() {
         isFirst = getIntent().getBooleanExtra("isFirst", false);
@@ -113,11 +112,9 @@ public class UserinfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
         mBinding.mTvAddress.setText(Preferences.getUserAddress());
         mBinding.mEtDistrict.setText(Preferences.getUserDistrict());
         mBinding.mTvDistrict.setText(Preferences.getUserDistrict());
-//        Toast.makeText(mContext, "设置用户信息--->" + Preferences.getUserDistrict(), Toast.LENGTH_SHORT).show();
         if (!TextUtils.isEmpty(Preferences.getUserPhoto())) {
             Picasso.with(BaseApplication.getInstance()).load(Preferences.getUserPhoto()).into(mBinding.mIvPicture);
         }
-
     }
 
     @Override
@@ -279,14 +276,10 @@ public class UserinfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
         mBinding.mTvDistrict.setOnClickListener(this);
         mBinding.mIvLeft.setOnClickListener(this);
         mBinding.mTvRight.setOnClickListener(this);
-
-//        mBinding.mEtName.addTextChangedListener(mTextWatcher);
-
     }
 
     @Override
     protected void requestData() {
-//        requestRecordTotal();
     }
 
     @Override

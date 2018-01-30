@@ -108,7 +108,7 @@ public class LoginHelper {
         Preferences.setUserPhoto(user.getPhoto());
         Preferences.setUserSignature(user.getSignature());
         Preferences.setUserRank(user.getRank());
-//        Preferences.setUserDistrict(user.getAreaInfo());
+        Preferences.setUserDistrict(user.getAreaName());
     }
 
     public static void savaWeChat(Wechat wechat){
