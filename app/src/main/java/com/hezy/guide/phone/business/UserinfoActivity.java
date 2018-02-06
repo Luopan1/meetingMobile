@@ -335,10 +335,10 @@ public class UserinfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
                     if ((!TextUtils.isEmpty(phoneStr)) && !Preferences.getUserMobile().equals(phoneStr) && !TextUtils.isEmpty(verifyCode)) {
                         Preferences.setUserMobile(phoneStr);
                     }
-                    if (Preferences.isUserinfoEmpty()) {
-                        showToast("请先填写姓名,电话,地址,照片");
-                        return;
-                    }
+//                    if (Preferences.isUserinfoEmpty()) {
+//                        showToast("请先填写姓名,电话,地址,照片");
+//                        return;
+//                    }
                     if(isFirst){
                         startActivity(new Intent(UserinfoActivity.this, HomeActivity.class));
                     }
