@@ -20,8 +20,8 @@ import com.hezy.guide.phone.utils.OkHttpCallback;
 public class DistrictActivity extends BasicActivity {
 
     private ImageView backImage;
-    private ListView listView;
-    private DistrictAdapter districtAdapter;
+    private ListView listView, listView1;
+    private DistrictAdapter districtAdapter, districtAdapter1;
 
     @Override
     public String getStatisticsTag() {
@@ -42,25 +42,45 @@ public class DistrictActivity extends BasicActivity {
         });
 
         listView = findViewById(R.id.list_view);
+        listView1 = findViewById(R.id.list_view_1);
 
-        apiClient.districts(new OkHttpCallback<BaseArrayBean<District>>() {
+        apiClient.districts(districtCallback, "0");
 
-            @Override
-            public void onSuccess(BaseArrayBean<District> entity) {
-                districtAdapter = new DistrictAdapter(getApplicationContext(), entity.getData());
-                listView.setAdapter(districtAdapter);
-                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                        District district = (District) districtAdapter.getItem(i);
-                        Intent intent = new Intent();
-                        intent.putExtra("district", district);
-                        setResult(RESULT_OK, intent);
-                        finish();
-                    }
-                });
-            }
-        });
     }
+
+    private OkHttpCallback<BaseArrayBean<District>> districtCallback = new OkHttpCallback<BaseArrayBean<District>>() {
+        @Override
+        public void onSuccess(BaseArrayBean<District> entity) {
+            districtAdapter = new DistrictAdapter(getApplicationContext(), entity.getData());
+            listView.setAdapter(districtAdapter);
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    District district = (District) districtAdapter.getItem(i);
+                    apiClient.districts(districtCallback1, district.getId());
+                }
+            });
+            listView.setSelection(0);
+        }
+    };
+
+    private OkHttpCallback<BaseArrayBean<District>> districtCallback1 = new OkHttpCallback<BaseArrayBean<District>>() {
+        @Override
+        public void onSuccess(BaseArrayBean<District> entity) {
+            districtAdapter1 = new DistrictAdapter(getApplicationContext(), entity.getData());
+            listView1.setAdapter(districtAdapter1);
+            listView1.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    District district = (District) districtAdapter1.getItem(i);
+
+                    Intent intent = new Intent();
+                    intent.putExtra("district", district);
+                    setResult(RESULT_OK, intent);
+                    finish();
+                }
+            });
+        }
+    };
 
 }
