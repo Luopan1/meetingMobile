@@ -147,7 +147,7 @@ public class ReviewAdapter extends BaseRecyclerAdapter<RecordData.PageDataEntity
             }
 
             meHolder.mTvName.setText(Preferences.getUserName());
-            meHolder.mTvAddress.setText(Preferences.getUserAddress());
+            meHolder.mTvAddress.setText(Preferences.getAreaName());
             if (mRankInfo != null) {
                 meHolder.mTvStar.setText(mRankInfo.getStar());
                 //TODO 分数规则半颗星.
