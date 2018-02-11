@@ -8,7 +8,6 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
-import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.telephony.TelephonyManager;
@@ -17,10 +16,12 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
+import com.hezy.guide.phone.ApiClient;
 import com.hezy.guide.phone.BaseApplication;
 import com.hezy.guide.phone.BaseException;
 import com.hezy.guide.phone.BuildConfig;
 import com.hezy.guide.phone.R;
+import com.hezy.guide.phone.business.OnCallActivity;
 import com.hezy.guide.phone.entities.base.BaseBean;
 import com.hezy.guide.phone.entities.base.BaseErrorBean;
 import com.hezy.guide.phone.event.CallEvent;
@@ -32,24 +33,20 @@ import com.hezy.guide.phone.event.SetUserStateEvent;
 import com.hezy.guide.phone.event.TvLeaveChannel;
 import com.hezy.guide.phone.event.TvTimeoutHangUp;
 import com.hezy.guide.phone.event.UserStateEvent;
-import com.hezy.guide.phone.ApiClient;
-import com.hezy.guide.phone.utils.OkHttpCallback;
-import com.hezy.guide.phone.utils.OkHttpUtil;
 import com.hezy.guide.phone.persistence.Preferences;
-import com.hezy.guide.phone.business.OnCallActivity;
 import com.hezy.guide.phone.utils.Installation;
 import com.hezy.guide.phone.utils.Logger;
+import com.hezy.guide.phone.utils.OkHttpCallback;
+import com.hezy.guide.phone.utils.OkHttpUtil;
 import com.hezy.guide.phone.utils.RxBus;
-import com.hezy.guide.phone.utils.UUIDUtils;
-import com.tendcloud.tenddata.TCAgent;
 import com.hezy.guide.phone.utils.statistics.ZYAgent;
+import com.tendcloud.tenddata.TCAgent;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
 
-import io.agora.openlive.model.ConstantApp;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 import rx.Subscription;
@@ -215,8 +212,7 @@ public class WSService extends Service {
      * 上传设备信息
      */
     private void registerDevice(String socketid) {
-
-        String uuid = UUIDUtils.getUUID(this);
+        String uuid = Installation.id(this);
         DisplayMetrics metric = new DisplayMetrics();
 //        getWindowManager().getDefaultDisplay().getMetrics(metric);
         metric = getResources().getDisplayMetrics();
@@ -266,7 +262,7 @@ public class WSService extends Service {
     }
 
     private void updateSocketId(String socketid) {
-        String uuid = UUIDUtils.getUUID(getApplication());
+        String uuid = Installation.id(getApplication());
         HashMap<String, Object> params = new HashMap<String, Object>();
         params.put("socketId", socketid);
         ApiClient.getInstance().updateDeviceInfo(this, uuid, new OkHttpCallback<BaseErrorBean>() {

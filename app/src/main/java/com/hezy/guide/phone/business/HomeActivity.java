@@ -20,22 +20,21 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.adorkable.iosdialog.ActionSheetDialog;
+import com.hezy.guide.phone.ApiClient;
 import com.hezy.guide.phone.BuildConfig;
 import com.hezy.guide.phone.R;
 import com.hezy.guide.phone.entities.Version;
 import com.hezy.guide.phone.entities.base.BaseBean;
 import com.hezy.guide.phone.event.SetUserStateEvent;
 import com.hezy.guide.phone.event.UserStateEvent;
-import com.hezy.guide.phone.ApiClient;
-import com.hezy.guide.phone.receiver.PhoneReceiver;
-import com.hezy.guide.phone.utils.OkHttpCallback;
 import com.hezy.guide.phone.persistence.Preferences;
+import com.hezy.guide.phone.receiver.PhoneReceiver;
 import com.hezy.guide.phone.service.WSService;
 import com.hezy.guide.phone.utils.DeviceUtil;
 import com.hezy.guide.phone.utils.Installation;
 import com.hezy.guide.phone.utils.Logger;
+import com.hezy.guide.phone.utils.OkHttpCallback;
 import com.hezy.guide.phone.utils.RxBus;
-import com.hezy.guide.phone.utils.UUIDUtils;
 import com.hezy.guide.phone.utils.statistics.ZYAgent;
 import com.hezy.guide.phone.wxapi.WXEntryActivity;
 
@@ -46,8 +45,6 @@ import java.util.ArrayList;
 
 import rx.Subscription;
 import rx.functions.Action1;
-
-import static com.hezy.guide.phone.R.id.mTvState;
 
 
 /**
@@ -277,7 +274,7 @@ public class HomeActivity extends BasicActivity implements View.OnClickListener 
      * 上传设备信息
      */
     private void registerDevice() {
-        String uuid = UUIDUtils.getUUID(this);
+        String uuid = Installation.id(this);
         DisplayMetrics metric = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metric);
         int width = metric.widthPixels;

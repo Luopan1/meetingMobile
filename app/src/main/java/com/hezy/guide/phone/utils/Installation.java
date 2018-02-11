@@ -2,10 +2,12 @@ package com.hezy.guide.phone.utils;
 
 import android.content.Context;
 import android.os.Environment;
+import android.text.TextUtils;
 import android.util.Log;
 
-import com.hezy.guide.phone.BaseApplication;
+import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.utils.statistics.ZYAgent;
+import com.yunos.baseservice.impl.YunOSApiImpl;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -23,72 +25,40 @@ import java.util.UUID;
  */
 
 public class Installation {
-    public  static final String TAG = "UUID";
-    private static String sID = null;
+    public static final String TAG = "DeviceUUID";
+    private static String deviceUUID = null;
     private static final String INSTALLATION = "INSTALLATION";
 
     public synchronized static String id(Context context) {
-        if (sID == null) {
+        if (deviceUUID == null) {
             if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-                //有外部SD卡情况,优先从SD卡取,并且同时存储到SD和内部存储
-                Log.i(TAG,"有外部SD卡情况,优先从SD卡取,并且同时存储到SD和内部存储");
-                File extFile = new File(Environment.getExternalStorageDirectory(), INSTALLATION);
-                File installation = new File(context.getFilesDir(), INSTALLATION);
+                File externalStorageFile = new File(Environment.getExternalStorageDirectory(), INSTALLATION);
                 try {
-                    if (!extFile.exists() && !installation.exists()) {
-                        //都为空的话,生成UUID.并且同时存储到SD和内部存储
-                        Log.i(TAG,"都为空的话,生成UUID.并且同时存储到SD和内部存储");
-                        sID = UUID.randomUUID().toString().replace("-", "");
-                        writeFileE(extFile, sID);
-                        writeFileE(installation, sID);
-
-                    }else if(!extFile.exists() ){
-                        //外部存储空,内部存储有值,从内部读取值,并写入外部存储
-                        Log.i(TAG,"外部存储空,内部存储有值,从内部读取值,并写入外部存储");
-                        sID = readInstallationFile(installation);
-                        writeFileE(extFile,sID);
-                    }else if(extFile.exists() && installation.exists()){
-                        //都有值的情况.从内部读取值
-                        Log.i(TAG,"都有值的情况.从内部读取值");
-                        sID = readInstallationFile(installation);
-
-                    }else{
-                        //只有外部存储有值时,从外部读取值,并写入内部存储
-                        Log.i(TAG,"只有外部存储有值时,从外部读取值,并写入内部存储");
-                        sID = readInstallationFile(extFile);
-                        writeFileE(installation,sID);
+                    if (!externalStorageFile.exists()) {
+                        writeInstallationFile(context, externalStorageFile);
                     }
-
+                    deviceUUID = readInstallationFile(externalStorageFile);
+                    Logger.d(TAG, "External Storage : " + deviceUUID);
                 } catch (Exception e) {
-                    Logger.e(TAG,e.getMessage());
-                    ZYAgent.onEvent(context,e.getMessage());
+                    Logger.e(TAG, "external device uuid get failed " + e.getMessage());
+                    ZYAgent.onEvent(context, "external device uuid get failed " + e.getMessage());
                 }
-
             } else {
-                File installation = new File(context.getFilesDir(), INSTALLATION);
+                File internalStorageFile = new File(context.getFilesDir(), INSTALLATION);
                 try {
-                    if (!installation.exists())
-                        writeInstallationFile(installation);
-                    sID = readInstallationFile(installation);
+                    if (!internalStorageFile.exists()) {
+                        writeInstallationFile(context, internalStorageFile);
+                    }
+                    deviceUUID = readInstallationFile(internalStorageFile);
+                    Logger.d(TAG, "Internal Storage : " + deviceUUID);
                 } catch (Exception e) {
-                    Logger.e(TAG,e.getMessage());
-                    ZYAgent.onEvent(context,e.getMessage());
-
+                    Logger.e(TAG, "internal device uuid get failed " + e.getMessage());
+                    ZYAgent.onEvent(context, "internal device uuid get failed " + e.getMessage());
                 }
             }
-
         }
-        Log.i(TAG,"sID "+sID);
-        return sID;
-    }
-
-    private static void writeFileE(File installation, String id){
-        try{
-            writeFile(installation, sID);
-        }catch (Exception e){
-            Logger.e(TAG,e.getMessage());
-            ZYAgent.onEvent(BaseApplication.getInstance(),installation.getAbsolutePath()+e.getMessage());
-        }
+        Log.i(TAG, "device uuid : " + deviceUUID);
+        return deviceUUID;
     }
 
     private static String readInstallationFile(File installation) throws IOException {
@@ -96,35 +66,36 @@ public class Installation {
         byte[] bytes = new byte[(int) f.length()];
         f.readFully(bytes);
         f.close();
-        return new String(bytes);
+        String devicesUUID = new String(bytes);
+        Preferences.setUUID(deviceUUID);
+        return devicesUUID;
     }
 
-    private static void writeInstallationFile(File installation) throws IOException {
+    private static void writeInstallationFile(Context context, File installation) throws IOException {
         FileOutputStream out = new FileOutputStream(installation);
-        String id = UUID.randomUUID().toString().replace("-", "");
-        out.write(id.getBytes());
+        YunOSApiImpl api = new YunOSApiImpl(context);
+        String deviceUUID = api.getCloudUUID();
+        if (TextUtils.isEmpty(deviceUUID) || "false".equals(deviceUUID)) {
+            deviceUUID = UUID.randomUUID().toString().replace("-", "");
+        }
+        Preferences.setUUID(deviceUUID);
+        out.write(deviceUUID.getBytes());
         out.close();
     }
 
-    public static void writeFile(File installation, String id) throws IOException {
-        FileOutputStream out = new FileOutputStream(installation);
-        out.write(id.getBytes());
-        out.close();
-    }
-
-    public static String getCPUSerial(){
+    public static String getCPUSerial() {
         String str = "", strCPU = "", cpuAddress = "0000000000000000";
-        try{
+        try {
 
             Process pp = Runtime.getRuntime().exec("cat /proc/cpuinfo");
             InputStreamReader ir = new InputStreamReader(pp.getInputStream());
             LineNumberReader input = new LineNumberReader(ir);
             //查找CPU序列号
-            for(int i = 1; i<100; i++){
+            for (int i = 1; i < 100; i++) {
                 str = input.readLine();
-                if(str != null){
-                    if(str.indexOf("Serial") > -1){
-                        strCPU = str.substring(str.indexOf(":")+1, str.length());
+                if (str != null) {
+                    if (str.contains("Serial")) {
+                        strCPU = str.substring(str.indexOf(":") + 1, str.length());
                         cpuAddress = strCPU.trim();
                         Log.d("cpu address", cpuAddress);
                         break;
@@ -134,9 +105,7 @@ public class Installation {
                     break;
                 }
             }
-
-        }catch (IOException e){
-
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return cpuAddress;

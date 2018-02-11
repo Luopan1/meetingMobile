@@ -13,7 +13,6 @@ import android.support.v4.app.FragmentActivity;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -37,9 +36,7 @@ import com.hezy.guide.phone.utils.Login.LoginHelper;
 import com.hezy.guide.phone.utils.OkHttpCallback;
 import com.hezy.guide.phone.utils.RxBus;
 import com.hezy.guide.phone.utils.ToastUtils;
-import com.hezy.guide.phone.utils.UUIDUtils;
 import com.hezy.guide.phone.utils.statistics.ZYAgent;
-import com.tencent.bugly.crashreport.BuglyLog;
 import com.tencent.mm.opensdk.modelbase.BaseReq;
 import com.tencent.mm.opensdk.modelbase.BaseResp;
 import com.tencent.mm.opensdk.modelmsg.SendAuth;
@@ -176,7 +173,7 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
      * 上传设备信息
      */
     private void registerDevice() {
-        String uuid = UUIDUtils.getUUID(this);
+        String uuid = Installation.id(this);
         DisplayMetrics metric = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metric);
         int width = metric.widthPixels;

@@ -18,11 +18,11 @@ import com.hezy.guide.phone.entities.base.BaseBean;
 import com.hezy.guide.phone.entities.base.BaseErrorBean;
 import com.hezy.guide.phone.event.UserUpdateEvent;
 import com.hezy.guide.phone.persistence.Preferences;
+import com.hezy.guide.phone.utils.Installation;
 import com.hezy.guide.phone.utils.Login.LoginHelper;
 import com.hezy.guide.phone.utils.OkHttpCallback;
 import com.hezy.guide.phone.utils.OkHttpUtil;
 import com.hezy.guide.phone.utils.RxBus;
-import com.hezy.guide.phone.utils.UUIDUtils;
 import com.tendcloud.tenddata.TCAgent;
 
 import org.json.JSONException;
@@ -72,7 +72,7 @@ public class ApiClient {
         Map<String, String> params = new HashMap<>();
         params.put("Authorization", TextUtils.isEmpty(Preferences.getToken()) ? "" : "Token " + Preferences.getToken());
         params.put("Content-Type", "application/json; charset=UTF-8");
-        params.put("DeviceUuid", UUIDUtils.getUUID(BaseApplication.getInstance()));
+        params.put("DeviceUuid", Installation.id(BaseApplication.getInstance()));
         params.put("User-Agent", "HRZY_HOME"
                 + "_"
                 + BuildConfig.APPLICATION_ID
