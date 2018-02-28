@@ -17,19 +17,26 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.hezy.guide.phone.ApiClient;
 import com.hezy.guide.phone.BaseApplication;
 import com.hezy.guide.phone.BuildConfig;
 import com.hezy.guide.phone.R;
 import com.hezy.guide.phone.entities.Agora;
 import com.hezy.guide.phone.entities.Audience;
+import com.hezy.guide.phone.entities.Bucket;
+import com.hezy.guide.phone.entities.MeetingHostingStats;
 import com.hezy.guide.phone.entities.MeetingJoin;
+import com.hezy.guide.phone.entities.MeetingJoinStats;
 import com.hezy.guide.phone.persistence.Preferences;
+import com.hezy.guide.phone.utils.OkHttpCallback;
 import com.hezy.guide.phone.utils.UIDUtil;
 import com.tendcloud.tenddata.TCAgent;
 
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
 
 import io.agora.AgoraAPI;
 import io.agora.AgoraAPIOnlySignal;
@@ -349,6 +356,10 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                                     agoraAPI.setAttr("uname", audienceName);
 
                                     worker().getRtcEngine().setClientRole(Constants.CLIENT_ROLE_BROADCASTER, "");
+                                    HashMap<String, Object> params = new HashMap<String, Object>();
+                                    params.put("status", 1);
+                                    params.put("meetingId", meetingJoin.getMeeting().getId());
+                                    ApiClient.getInstance().meetingHostStats(TAG, meetingHostJoinTraceCallback, params);
                                 } else {
                                     if (BuildConfig.DEBUG) {
                                         Toast.makeText(MeetingAudienceActivity.this, "拒绝连麦", Toast.LENGTH_SHORT).show();
@@ -379,6 +390,12 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                                     isExit = false;
 
                                     worker().getRtcEngine().setClientRole(Constants.CLIENT_ROLE_AUDIENCE, "");
+
+                                    HashMap<String, Object> params = new HashMap<String, Object>();
+                                    params.put("meetingHostJoinTraceId", meetingHostJoinTraceId);
+                                    params.put("status", 2);
+                                    params.put("meetingId", meetingJoin.getMeeting().getId());
+                                    ApiClient.getInstance().meetingHostStats(TAG, meetingHostJoinTraceCallback, params);
                                 }
                             }
                         } catch (Exception e) {
@@ -431,6 +448,20 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
         });
 
     }
+
+    private String meetingHostJoinTraceId;
+
+    private OkHttpCallback meetingHostJoinTraceCallback = new OkHttpCallback<Bucket<MeetingHostingStats>>() {
+
+        @Override
+        public void onSuccess(Bucket<MeetingHostingStats> meetingHostingStatsBucket) {
+            if (TextUtils.isEmpty(meetingHostJoinTraceId)) {
+                meetingHostJoinTraceId = meetingHostingStatsBucket.getData().getId();
+            } else {
+                meetingHostJoinTraceId = null;
+            }
+        }
+    };
 
     private Dialog dialog;
 
@@ -513,6 +544,13 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
     private void doLeaveChannel() {
         worker().leaveChannel(config().mChannel);
         worker().preview(false, null, 0);
+
+        HashMap<String, Object> params = new HashMap<String, Object>();
+        params.put("meetingJoinTraceId", meetingJoinTraceId);
+        params.put("meetingId", meetingJoin.getMeeting().getId());
+        params.put("status", 2);
+        params.put("type", 2);
+        ApiClient.getInstance().meetingJoinStats(TAG, meetingJoinStatsCallback, params);
     }
 
     @Override
@@ -525,9 +563,29 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                 }
                 worker().getEngineConfig().mUid = uid;
                 agoraAPI.login(agora.getAppID(), "" + uid, agora.getSignalingKey(), 0, "");
+
+                HashMap<String, Object> params = new HashMap<String, Object>();
+                params.put("status", 1);
+                params.put("type", 2);
+                params.put("meetingId", meetingJoin.getMeeting().getId());
+                ApiClient.getInstance().meetingJoinStats(TAG, meetingJoinStatsCallback, params);
             }
         });
     }
+
+    private String meetingJoinTraceId;
+
+    private OkHttpCallback meetingJoinStatsCallback = new OkHttpCallback<Bucket<MeetingJoinStats>>() {
+
+        @Override
+        public void onSuccess(Bucket<MeetingJoinStats> meetingJoinStatsBucket) {
+            if (TextUtils.isEmpty(meetingJoinTraceId)) {
+                meetingJoinTraceId = meetingJoinStatsBucket.getData().getId();
+            } else {
+                meetingJoinTraceId = null;
+            }
+        }
+    };
 
     @Override
     public void onFirstRemoteVideoDecoded(int uid, int width, int height, int elapsed) {

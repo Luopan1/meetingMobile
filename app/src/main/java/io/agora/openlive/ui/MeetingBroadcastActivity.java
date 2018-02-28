@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.Window;
@@ -28,6 +29,7 @@ import com.hezy.guide.phone.entities.Audience;
 import com.hezy.guide.phone.entities.Bucket;
 import com.hezy.guide.phone.entities.Meeting;
 import com.hezy.guide.phone.entities.MeetingJoin;
+import com.hezy.guide.phone.entities.MeetingJoinStats;
 import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.utils.OkHttpCallback;
 import com.hezy.guide.phone.utils.UIDUtil;
@@ -38,6 +40,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import io.agora.AgoraAPI;
 import io.agora.AgoraAPIOnlySignal;
@@ -481,6 +484,13 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
     private void doLeaveChannel() {
         worker().leaveChannel(config().mChannel);
         worker().preview(false, null, 0);
+
+        HashMap<String, Object> params = new HashMap<String, Object>();
+        params.put("meetingJoinTraceId", meetingJoinTraceId);
+        params.put("meetingId", meetingJoin.getMeeting().getId());
+        params.put("status", 2);
+        params.put("type", 2);
+        ApiClient.getInstance().meetingJoinStats(TAG, meetingJoinStatsCallback, params);
     }
 
     @Override
@@ -493,9 +503,29 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                 }
                 worker().getEngineConfig().mUid = uid;
                 agoraAPI.login(agora.getAppID(), "" + uid, agora.getSignalingKey(), 0, "");
+
+                HashMap<String, Object> params = new HashMap<String, Object>();
+                params.put("status", 1);
+                params.put("type", 2);
+                params.put("meetingId", meetingJoin.getMeeting().getId());
+                ApiClient.getInstance().meetingJoinStats(TAG, meetingJoinStatsCallback, params);
             }
         });
     }
+
+    private String meetingJoinTraceId;
+
+    private OkHttpCallback meetingJoinStatsCallback = new OkHttpCallback<Bucket<MeetingJoinStats>>() {
+
+        @Override
+        public void onSuccess(Bucket<MeetingJoinStats> meetingJoinStatsBucket) {
+            if (TextUtils.isEmpty(meetingJoinTraceId)) {
+                meetingJoinTraceId = meetingJoinStatsBucket.getData().getId();
+            } else {
+                meetingJoinTraceId = null;
+            }
+        }
+    };
 
     @Override
     public void onFirstRemoteVideoDecoded(int uid, int width, int height, int elapsed) {
