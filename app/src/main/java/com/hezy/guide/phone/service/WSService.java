@@ -22,6 +22,8 @@ import com.hezy.guide.phone.BaseException;
 import com.hezy.guide.phone.BuildConfig;
 import com.hezy.guide.phone.R;
 import com.hezy.guide.phone.business.OnCallActivity;
+import com.hezy.guide.phone.entities.Bucket;
+import com.hezy.guide.phone.entities.ExpostorOnlineStats;
 import com.hezy.guide.phone.entities.base.BaseBean;
 import com.hezy.guide.phone.entities.base.BaseErrorBean;
 import com.hezy.guide.phone.event.CallEvent;
@@ -123,10 +125,16 @@ public class WSService extends Service {
                     SetUserStateEvent event = (SetUserStateEvent) o;
                     if (event.isOnline()) {
                         connectSocket();
+                        HashMap<String, Object> params = new HashMap<String, Object>();
+                        params.put("status", 1);
+                        ApiClient.getInstance().expostorOnlineStats(TAG, expostorStatsCallback, params);
                     } else {
                         disConnectSocket();
+                        HashMap<String, Object> params = new HashMap<String, Object>();
+                        params.put("onlineTraceId", onlineTraceId);
+                        params.put("status", 2);
+                        ApiClient.getInstance().expostorOnlineStats(TAG, expostorStatsCallback, params);
                     }
-
                 } else if (o instanceof CallEvent) {
                     CallEvent event = (CallEvent) o;
                     try {
@@ -168,6 +176,21 @@ public class WSService extends Service {
             }
         });
     }
+
+    private String onlineTraceId;
+
+    private OkHttpCallback expostorStatsCallback = new OkHttpCallback<Bucket<ExpostorOnlineStats>>() {
+
+        @Override
+        public void onSuccess(Bucket<ExpostorOnlineStats> entity) {
+            Logger.i("stats", entity.getData().toString());
+            if (TextUtils.isEmpty(onlineTraceId)) {
+                onlineTraceId = entity.getData().getId();
+            } else {
+                onlineTraceId = null;
+            }
+        }
+    };
 
     private void resolutionChanged(int resolution) {
         try {

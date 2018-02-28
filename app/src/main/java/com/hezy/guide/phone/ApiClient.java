@@ -86,6 +86,18 @@ public class ApiClient {
         return params;
     }
 
+    public void expostorOnlineStats(Object tag, OkHttpCallback callback, Map<String, Object> values){
+        okHttpUtil.postJson(API_DOMAIN_NAME + "/osg/app/user/expostor/online/stats", getCommonHead(), JSON.toJSONString(values), callback, tag);
+    }
+
+    public void meetingJoinStats(Object tag, OkHttpCallback callback, Map<String, Object> values){
+        okHttpUtil.postJson(API_DOMAIN_NAME + "/osg/app/meeting/join/stats", getCommonHead(), JSON.toJSONString(values), callback, tag);
+    }
+
+    public void meetingHostStats(Object tag, OkHttpCallback callback, Map<String, Object> values){
+        okHttpUtil.postJson(API_DOMAIN_NAME + "/osg/app/meeting/host/stats", getCommonHead(), JSON.toJSONString(values), callback, tag);
+    }
+
     public void getAllMeeting(Object tag, OkHttpCallback callback) {
         okHttpUtil.get(API_DOMAIN_NAME + "/osg/app/meeting/list", getCommonHead(), null, callback);
     }
