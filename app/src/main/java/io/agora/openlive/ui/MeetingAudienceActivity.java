@@ -126,6 +126,14 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                     e.printStackTrace();
                 }
 
+                if (!TextUtils.isEmpty(meetingHostJoinTraceId)) {
+                    HashMap<String, Object> params = new HashMap<String, Object>();
+                    params.put("meetingHostJoinTraceId", meetingHostJoinTraceId);
+                    params.put("status", 2);
+                    params.put("meetingId", meetingJoin.getMeeting().getId());
+                    ApiClient.getInstance().meetingHostStats(TAG, meetingHostJoinTraceCallback, params);
+                }
+
             }
         });
 
@@ -391,11 +399,13 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 
                                     worker().getRtcEngine().setClientRole(Constants.CLIENT_ROLE_AUDIENCE, "");
 
-                                    HashMap<String, Object> params = new HashMap<String, Object>();
-                                    params.put("meetingHostJoinTraceId", meetingHostJoinTraceId);
-                                    params.put("status", 2);
-                                    params.put("meetingId", meetingJoin.getMeeting().getId());
-                                    ApiClient.getInstance().meetingHostStats(TAG, meetingHostJoinTraceCallback, params);
+                                    if (!TextUtils.isEmpty(meetingHostJoinTraceId)) {
+                                        HashMap<String, Object> params = new HashMap<String, Object>();
+                                        params.put("meetingHostJoinTraceId", meetingHostJoinTraceId);
+                                        params.put("status", 2);
+                                        params.put("meetingId", meetingJoin.getMeeting().getId());
+                                        ApiClient.getInstance().meetingHostStats(TAG, meetingHostJoinTraceCallback, params);
+                                    }
                                 }
                             }
                         } catch (Exception e) {
@@ -545,12 +555,14 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
         worker().leaveChannel(config().mChannel);
         worker().preview(false, null, 0);
 
-        HashMap<String, Object> params = new HashMap<String, Object>();
-        params.put("meetingJoinTraceId", meetingJoinTraceId);
-        params.put("meetingId", meetingJoin.getMeeting().getId());
-        params.put("status", 2);
-        params.put("type", 2);
-        ApiClient.getInstance().meetingJoinStats(TAG, meetingJoinStatsCallback, params);
+        if (!TextUtils.isEmpty(meetingJoinTraceId)) {
+            HashMap<String, Object> params = new HashMap<String, Object>();
+            params.put("meetingJoinTraceId", meetingJoinTraceId);
+            params.put("meetingId", meetingJoin.getMeeting().getId());
+            params.put("status", 2);
+            params.put("type", 2);
+            ApiClient.getInstance().meetingJoinStats(TAG, meetingJoinStatsCallback, params);
+        }
     }
 
     @Override
