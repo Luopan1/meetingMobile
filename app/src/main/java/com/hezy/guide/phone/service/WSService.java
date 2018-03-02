@@ -592,6 +592,15 @@ public class WSService extends Service {
         Log.i(TAG, "onDestroy");
         ZYAgent.onEvent(getApplicationContext(),"连接服务 销毁");
         stopForeground(true);// 停止前台服务--参数：表示是否移除之前的通知
+
+        if (!TextUtils.isEmpty(Preferences.getToken())) {
+            HashMap<String, Object> params = new HashMap<String, Object>();
+            if (!TextUtils.isEmpty(onlineTraceId)) {
+                params.put("onlineTraceId", onlineTraceId);
+                params.put("status", 2);
+                ApiClient.getInstance().expostorOnlineStats(TAG, expostorStatsCallback, params);
+            }
+        }
 //        if (isOnline()) {
 //            disConnectSocket();
 //        }
@@ -599,7 +608,7 @@ public class WSService extends Service {
         disConnectSocket();
         subscription.unsubscribe();
         mHandler.removeCallbacksAndMessages(null);
-        OkHttpUtil.getInstance().cancelTag(this);
+//        OkHttpUtil.getInstance().cancelTag(this);
         super.onDestroy();
     }
 

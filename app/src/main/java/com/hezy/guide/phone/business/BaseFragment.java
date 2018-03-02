@@ -137,7 +137,7 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
     }
 
     public void onDestroy() {
-        OkHttpUtil.getInstance().cancelTag(this);
+//        OkHttpUtil.getInstance().cancelTag(this);
         super.onDestroy();
         Logger.d(FTAG+getTAG(), "onDestroy");
     }

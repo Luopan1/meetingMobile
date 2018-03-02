@@ -81,7 +81,7 @@ public abstract class BasicActivity extends FragmentActivity implements View.OnC
 
     @Override
     protected void onDestroy() {
-        OkHttpUtil.getInstance().cancelTag(this);
+//        OkHttpUtil.getInstance().cancelTag(this);
         unregisterReceiver(mHomeKeyEventReceiver);
         unregisterReceiver(reLoginBroadcastReceiver);
         cancelDialog();
