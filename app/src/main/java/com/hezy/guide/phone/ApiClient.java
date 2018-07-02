@@ -98,6 +98,10 @@ public class ApiClient {
         okHttpUtil.postJson(API_DOMAIN_NAME + "/osg/app/meeting/host/stats", getCommonHead(), JSON.toJSONString(values), callback, tag);
     }
 
+    public void searchMeeting(Object tag, String meetingName, OkHttpCallback callback) {
+        okHttpUtil.get(API_DOMAIN_NAME + "/osg/app/meeting/all?title=" + meetingName, getCommonHead(), null, callback);
+    }
+
     public void getAllMeeting(Object tag, OkHttpCallback callback) {
         okHttpUtil.get(API_DOMAIN_NAME + "/osg/app/meeting/list", getCommonHead(), null, callback);
     }

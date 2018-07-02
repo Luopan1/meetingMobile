@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,6 +44,8 @@ public class MeetingsFragment extends BaseFragment {
 
     private SwipeRefreshLayout swipeRefreshLayout;
     private RecyclerView recyclerView;
+    private EditText searchEdit;
+    private ImageButton searchButton;
     private LinearLayoutManager mLayoutManager;
     private MeetingAdapter meetingAdapter;
     private TextView emptyText;
@@ -76,6 +79,19 @@ public class MeetingsFragment extends BaseFragment {
             }
         });
 
+        searchEdit = view.findViewById(R.id.search_text);
+        searchButton = view.findViewById(R.id.search_btn);
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (TextUtils.isEmpty(searchEdit.getText())) {
+                    Toast.makeText(mContext, "搜索会议名称不能为空", Toast.LENGTH_SHORT).show();
+                } else {
+                    apiClient.searchMeeting(TAG, searchEdit.getText().toString(), meetingsCallback);
+                }
+            }
+        });
+        
         recyclerView = view.findViewById(R.id.mRecyclerView);
         mLayoutManager = new LinearLayoutManager(mContext);
         mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -99,7 +115,6 @@ public class MeetingsFragment extends BaseFragment {
 
     public void requestMeetings() {
         apiClient.getAllMeeting(TAG, meetingsCallback);
-
     }
 
     private OkHttpCallback meetingsCallback = new OkHttpCallback<BaseArrayBean<Meeting>>() {
