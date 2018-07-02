@@ -87,7 +87,7 @@ public class MeetingsFragment extends BaseFragment {
                 if (TextUtils.isEmpty(searchEdit.getText())) {
                     Toast.makeText(mContext, "搜索会议名称不能为空", Toast.LENGTH_SHORT).show();
                 } else {
-                    apiClient.searchMeeting(TAG, searchEdit.getText().toString(), meetingsCallback);
+                    apiClient.getAllMeeting(TAG, searchEdit.getText().toString(), meetingsCallback);
                 }
             }
         });
@@ -114,7 +114,7 @@ public class MeetingsFragment extends BaseFragment {
     }
 
     public void requestMeetings() {
-        apiClient.getAllMeeting(TAG, meetingsCallback);
+        apiClient.getAllMeeting(TAG, null, meetingsCallback);
     }
 
     private OkHttpCallback meetingsCallback = new OkHttpCallback<BaseArrayBean<Meeting>>() {
