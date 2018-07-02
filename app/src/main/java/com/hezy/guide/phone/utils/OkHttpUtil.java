@@ -107,7 +107,7 @@ public class OkHttpUtil {
                 }
                 if (response.body() != null) {
                     String resString = response.body().string();
-                    System.out.println(resString);
+                    Log.v("api response", resString);
                     if (!TextUtils.isEmpty(resString)) {
                         try {
                             BaseBean baseBean = gson.fromJson(resString, BaseBean.class);
