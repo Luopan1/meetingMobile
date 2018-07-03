@@ -134,6 +134,13 @@ public class MeetingSearchActivity extends BasicActivity {
 //        recyclerView.addItemDecoration(new DividerItemDecoration(mContext,DividerItemDecoration.VERTICAL));
         emptyText = findViewById(R.id.emptyView);
 
+        findViewById(R.id.mIvLeft).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
     }
 
     public void requestMeetings(String title) {
