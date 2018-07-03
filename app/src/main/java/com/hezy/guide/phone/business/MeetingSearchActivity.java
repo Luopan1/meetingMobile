@@ -1,6 +1,8 @@
 package com.hezy.guide.phone.business;
 
+import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -8,10 +10,15 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,17 +42,19 @@ import java.util.Map;
 
 import io.agora.openlive.ui.MeetingInitActivity;
 
-public class MeetingsFragment extends BaseFragment {
+public class MeetingSearchActivity extends BasicActivity {
 
     private SwipeRefreshLayout swipeRefreshLayout;
     private RecyclerView recyclerView;
+    private EditText searchEdit;
+    private TextView cancelText;
     private LinearLayoutManager mLayoutManager;
     private MeetingAdapter meetingAdapter;
     private TextView emptyText;
 
     @Override
     public String getStatisticsTag() {
-        return "会议列表";
+        return "会议搜索列表";
     }
 
     public MeetingAdapter.OnItemClickListener onItemClickListener = new MeetingAdapter.OnItemClickListener() {
@@ -55,31 +64,73 @@ public class MeetingsFragment extends BaseFragment {
         }
     };
 
-    public static MeetingsFragment newInstance() {
-        MeetingsFragment fragment = new MeetingsFragment();
-        return fragment;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_meeting_search);
+
+        initView();
     }
 
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.meeting_fragment, null, false);
-        swipeRefreshLayout = view.findViewById(R.id.mSwipeRefreshLayout);
+    private void initView(){
+        swipeRefreshLayout = findViewById(R.id.mSwipeRefreshLayout);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                onMyVisible();
+                if (TextUtils.isEmpty(searchEdit.getText())) {
+                    Toast.makeText(mContext, "搜索会议名称不能为空", Toast.LENGTH_SHORT).show();
+                } else {
+                    requestMeetings(searchEdit.getText().toString());
+                }
             }
         });
 
-        view.findViewById(R.id.search_text).setOnClickListener(new View.OnClickListener() {
+        searchEdit = findViewById(R.id.search_text);
+        cancelText = findViewById(R.id.cancel);
+        cancelText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(mContext, MeetingSearchActivity.class));
+                finish();
+            }
+        });
+        searchEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_SEARCH)) {
+                    if (TextUtils.isEmpty(searchEdit.getText())) {
+                        Toast.makeText(mContext, "搜索会议名称不能为空", Toast.LENGTH_SHORT).show();
+                    } else {
+                        requestMeetings(searchEdit.getText().toString());
+                    }
+                    return true;
+                } else {
+                    return false;
+                }
             }
         });
 
-        recyclerView = view.findViewById(R.id.mRecyclerView);
+        searchEdit.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (TextUtils.isEmpty(s)){
+                    cancelText.setVisibility(View.GONE);
+                } else {
+                    cancelText.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        recyclerView = findViewById(R.id.mRecyclerView);
         mLayoutManager = new LinearLayoutManager(mContext);
         mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(mLayoutManager);
@@ -87,15 +138,8 @@ public class MeetingsFragment extends BaseFragment {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setHasFixedSize(true);
 //        recyclerView.addItemDecoration(new DividerItemDecoration(mContext,DividerItemDecoration.VERTICAL));
-        emptyText = view.findViewById(R.id.emptyView);
+        emptyText = findViewById(R.id.emptyView);
 
-        return view;
-    }
-
-    @Override
-    public void onMyVisible() {
-        super.onMyVisible();
-        requestMeetings(null);
     }
 
     public void requestMeetings(String title) {
