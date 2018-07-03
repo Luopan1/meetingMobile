@@ -44,6 +44,7 @@
                     android:paddingRight="6dp"
                     android:background="#f0f0f0"
                     android:layout_weight="1.0"
+                    android:maxLength="1"
                     android:hint="请输入会议名称搜索"
                     android:textSize="14sp"/>
 
