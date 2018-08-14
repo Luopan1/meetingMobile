@@ -263,7 +263,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                                     if (audienceAdapter != null) {
                                         audienceAdapter.setDate(audiences);
                                     }
-                                    Toast.makeText(MeetingBroadcastActivity.this, audience.getUname() + "请求发言", Toast.LENGTH_SHORT).show();
+//                                    Toast.makeText(MeetingBroadcastActivity.this, audience.getUname() + "请求发言", Toast.LENGTH_SHORT).show();
                                 } else {
                                     Audience audience = JSON.parseObject(jsonObject.toString(), Audience.class);
                                     if (audiences.contains(audience)) {
@@ -274,7 +274,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                                     if (audienceAdapter != null) {
                                         audienceAdapter.setDate(audiences);
                                     }
-                                    Toast.makeText(MeetingBroadcastActivity.this, audience.getUname() + "取消了请求发言", Toast.LENGTH_SHORT).show();
+//                                    Toast.makeText(MeetingBroadcastActivity.this, audience.getUname() + "取消了请求发言", Toast.LENGTH_SHORT).show();
                                 }
                             }
                             if (jsonObject.has("finish")) {
