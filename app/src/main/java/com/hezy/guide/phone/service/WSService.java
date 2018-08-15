@@ -1,6 +1,9 @@
 package com.hezy.guide.phone.service;
 
+import android.annotation.TargetApi;
 import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -217,16 +220,31 @@ public class WSService extends Service {
 //
 //        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
 
-
-        Notification notification = new Notification.Builder(this)
-                .setAutoCancel(true)
-                .setContentTitle("应用正常运行")
-                .setContentText("这个通知是为了标识应用是否正常运行中")
-                .setSmallIcon(R.mipmap.icon_launcher)
-                .setWhen(System.currentTimeMillis())
-                .build();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel("im_channel_id","System", NotificationManager.IMPORTANCE_LOW);
+            NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            manager.createNotificationChannel(channel);
+            Notification notification = new Notification.Builder(this,"im_channel_id")
+//                    .setAutoCancel(true)
+                    .setContentTitle("应用正常运行")
+                    .setContentText("这个通知是为了标识应用是否正常运行中")
+                    .setSmallIcon(R.mipmap.icon_launcher)
+                    .setWhen(System.currentTimeMillis())
+                    .build();
 //           .setContentIntent(pendingIntent)
-        startForeground(1, notification);
+            startForeground(1, notification);
+        } else {
+            Notification notification = new Notification.Builder(this)
+                    .setAutoCancel(true)
+                    .setContentTitle("应用正常运行")
+                    .setContentText("这个通知是为了标识应用是否正常运行中")
+                    .setSmallIcon(R.mipmap.icon_launcher)
+                    .setWhen(System.currentTimeMillis())
+                    .build();
+//           .setContentIntent(pendingIntent)
+            startForeground(1, notification);
+        }
+
 
     }
 
