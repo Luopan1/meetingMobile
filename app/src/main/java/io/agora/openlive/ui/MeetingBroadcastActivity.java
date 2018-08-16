@@ -63,7 +63,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
     private String channelName;
     private int memberCount;
 
-    private FrameLayout broadcasterLayout, audienceLayout;
+    private FrameLayout broadcasterLayout, audienceView, audienceLayout;
     private TextView broadcastNameText, broadcastTipsText, countText, audienceNameText, audienceTipsText;
     private Button waiterButton, exitButton, stopButton;
 
@@ -105,7 +105,8 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
         broadcastNameText.setText("主持人：" + meetingJoin.getHostUser().getHostUserName());
         broadcasterLayout = (FrameLayout) findViewById(R.id.broadcaster_view);
         audienceTipsText = (TextView) findViewById(R.id.audience_tips);
-        audienceLayout = (FrameLayout) findViewById(R.id.audience_view);
+        audienceLayout = (FrameLayout) findViewById(R.id.audience_layout);
+        audienceView = (FrameLayout) findViewById(R.id.audience_view);
         countText = (TextView) findViewById(R.id.online_count);
 
         waiterButton = (Button) findViewById(R.id.waiter);
@@ -427,7 +428,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Audience audience = (Audience) audienceAdapter.getItem(i);
-                if (audienceLayout.getChildCount() > 0) {
+                if (audienceView.getChildCount() > 0) {
                     showDialog(4, "中断当前" + currentAudience.getUname() + "的连麦，连接" + audience.getUname() + "的连麦", "取消", "确定", audience);
                 } else {
                     showDialog(2, audience.getUname() + "请求连麦", "接受", "拒绝", audience);
@@ -541,15 +542,16 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                 }
                 if (BuildConfig.DEBUG)
                     Toast.makeText(MeetingBroadcastActivity.this,  "观众" + uid + "进入了", Toast.LENGTH_SHORT).show();
-                if (audienceLayout.getChildCount() > 0) {
-                    audienceLayout.removeAllViews();
+                if (audienceView.getChildCount() > 0) {
+                    audienceView.removeAllViews();
                 }
                 SurfaceView remoteSurfaceView = RtcEngine.CreateRendererView(getApplicationContext());
                 remoteSurfaceView.setZOrderOnTop(true);
                 remoteSurfaceView.setZOrderMediaOverlay(true);
                 rtcEngine().setupRemoteVideo(new VideoCanvas(remoteSurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, uid));
-                audienceLayout.addView(remoteSurfaceView);
+                audienceView.addView(remoteSurfaceView);
                 audienceTipsText.setVisibility(View.GONE);
+                audienceLayout.setVisibility(View.VISIBLE);
             }
         });
     }
@@ -570,9 +572,10 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                 if (BuildConfig.DEBUG)
                     Toast.makeText(MeetingBroadcastActivity.this,  uid + "退出了", Toast.LENGTH_SHORT).show();
                 if (currentAudience != null && uid == Integer.parseInt(currentAudience.getUid())) {
-                    audienceLayout.removeAllViews();
+                    audienceView.removeAllViews();
                     audienceTipsText.setVisibility(View.VISIBLE);
                     audienceNameText.setText("");
+                    audienceLayout.setVisibility(View.GONE);
 
                     if (newAudience != null) {
                         try {
@@ -595,6 +598,8 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
 
                             currentAudience = newAudience;
                             newAudience = null;
+
+                            audienceLayout.setVisibility(View.VISIBLE);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
