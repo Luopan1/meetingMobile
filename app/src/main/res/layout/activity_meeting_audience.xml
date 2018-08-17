@@ -28,19 +28,19 @@
     </FrameLayout>
 
     <LinearLayout
+        android:id="@+id/audience_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_marginRight="16dp"
         android:layout_gravity="right"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <FrameLayout
-            android:id="@+id/audience_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@android:color/black"
-            android:visibility="gone">
+            android:background="@android:color/black">
 
             <FrameLayout
                 android:id="@+id/audience_view"
