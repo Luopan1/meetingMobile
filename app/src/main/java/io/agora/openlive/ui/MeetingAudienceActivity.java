@@ -295,8 +295,6 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                         audienceTipsText.setVisibility(View.GONE);
                         audienceView.addView(remoteSurfaceView);
 
-                        audienceLayout.setVisibility(View.VISIBLE);
-
                     }
                 });
             }
@@ -633,6 +631,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                         Toast.makeText(MeetingAudienceActivity.this, "连麦观众" + uid + "进入了，去获取连麦观众的名字", Toast.LENGTH_SHORT).show();
                     }
 
+                    audienceLayout.setVisibility(View.VISIBLE);
                     agoraAPI.getUserAttr("" + uid, "uname");
                 }
             }
