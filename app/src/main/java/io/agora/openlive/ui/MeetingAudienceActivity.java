@@ -611,6 +611,9 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                 if (isFinishing()) {
                     return;
                 }
+
+                audienceLayout.setVisibility(View.VISIBLE);
+
                 TCAgent.onEvent(MeetingAudienceActivity.this, "讲解员进入当前通话");
                 if (uid == Integer.parseInt(meetingJoin.getHostUser().getClientUid())) {
                     broadcastId = "" + uid;
@@ -633,7 +636,6 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                         Toast.makeText(MeetingAudienceActivity.this, "连麦观众" + uid + "进入了，去获取连麦观众的名字", Toast.LENGTH_SHORT).show();
                     }
 
-                    audienceLayout.setVisibility(View.VISIBLE);
                     agoraAPI.getUserAttr("" + uid, "uname");
                 }
             }
