@@ -3,15 +3,12 @@ package io.agora.openlive.ui;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.SurfaceView;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
@@ -56,7 +53,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
     private Agora agora;
     private String broadcastId;
 
-    private FrameLayout broadcasterLayout, audienceLayout;
+    private FrameLayout broadcasterLayout, audienceView, audienceLayout;
     private TextView broadcastNameText, broadcastTipsText, countText, audienceNameText, audienceTipsText;
     private Button micButton, finishButton, exitButton;
 
@@ -102,7 +99,8 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
         broadcastNameText = (TextView) findViewById(R.id.broadcaster);
         broadcastNameText.setText("主持人：" + meetingJoin.getHostUser().getHostUserName());
 
-        audienceLayout = (FrameLayout) findViewById(R.id.audience_view);
+        audienceLayout = (FrameLayout) findViewById(R.id.audience_layout);
+        audienceView = (FrameLayout) findViewById(R.id.audience_view);
         audienceTipsText = (TextView) findViewById(R.id.audience_tips);
         audienceNameText = (TextView) findViewById(R.id.audience_name);
 
@@ -113,7 +111,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
             @Override
             public void onClick(View view) {
                 worker().getRtcEngine().setClientRole(Constants.CLIENT_ROLE_AUDIENCE, "");
-                audienceLayout.removeAllViews();
+                audienceView.removeAllViews();
                 audienceNameText.setText("");
                 finishButton.setVisibility(View.GONE);
                 micButton.setVisibility(View.VISIBLE);
@@ -295,7 +293,9 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                         remoteSurfaceView.setZOrderMediaOverlay(true);
                         rtcEngine().setupRemoteVideo(new VideoCanvas(remoteSurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, Integer.parseInt(account)));
                         audienceTipsText.setVisibility(View.GONE);
-                        audienceLayout.addView(remoteSurfaceView);
+                        audienceView.addView(remoteSurfaceView);
+
+                        audienceLayout.setVisibility(View.VISIBLE);
 
                     }
                 });
@@ -348,7 +348,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                                     localSurfaceView.setZOrderOnTop(true);
                                     localSurfaceView.setZOrderMediaOverlay(true);
                                     rtcEngine().setupLocalVideo(new VideoCanvas(localSurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, config().mUid));
-                                    audienceLayout.addView(localSurfaceView);
+                                    audienceView.addView(localSurfaceView);
 
                                     String audienceName = jsonObject.getString("name");
                                     audienceNameText.setText(audienceName);
@@ -383,7 +383,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                             if (jsonObject.has("finish")) {
                                 boolean finish = jsonObject.getBoolean("finish");
                                 if (finish) {
-                                    audienceLayout.removeAllViews();
+                                    audienceView.removeAllViews();
                                     audienceNameText.setText("");
                                     audienceTipsText.setVisibility(View.VISIBLE);
                                     audienceTipsText.setText("等待参会人连麦");
@@ -665,9 +665,10 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 
                     if (!isExit) {
                         if (uid != config().mUid) {
-                            audienceLayout.removeAllViews();
+                            audienceView.removeAllViews();
                             audienceNameText.setText("");
                             audienceTipsText.setVisibility(View.VISIBLE);
+                            audienceLayout.setVisibility(View.GONE);
                             isExit = true;
                         }
                     }
