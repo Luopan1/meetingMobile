@@ -55,7 +55,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
     private String broadcastId;
 
     private FrameLayout broadcasterLayout, audienceView;
-    private LinearLayout audienceLayout;
+//    private LinearLayout audienceLayout;
     private TextView broadcastNameText, broadcastTipsText, countText, audienceNameText, audienceTipsText;
     private Button micButton, finishButton, exitButton;
 
@@ -101,7 +101,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
         broadcastNameText = (TextView) findViewById(R.id.broadcaster);
         broadcastNameText.setText("主持人：" + meetingJoin.getHostUser().getHostUserName());
 
-        audienceLayout = (LinearLayout) findViewById(R.id.audience_layout);
+//        audienceLayout = (LinearLayout) findViewById(R.id.audience_layout);
         audienceView = (FrameLayout) findViewById(R.id.audience_view);
         audienceTipsText = (TextView) findViewById(R.id.audience_tips);
         audienceNameText = (TextView) findViewById(R.id.audience_name);
@@ -290,7 +290,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 
                         audienceNameText.setText(value);
 
-                        audienceLayout.setVisibility(View.VISIBLE);
+//                        audienceLayout.setVisibility(View.VISIBLE);
                         Toast.makeText(MeetingAudienceActivity.this, "显示连麦观众", Toast.LENGTH_SHORT).show();
 
                         SurfaceView remoteSurfaceView = RtcEngine.CreateRendererView(getApplicationContext());
@@ -671,7 +671,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                             audienceView.removeAllViews();
                             audienceNameText.setText("");
                             audienceTipsText.setVisibility(View.VISIBLE);
-                            audienceLayout.setVisibility(View.GONE);
+//                            audienceLayout.setVisibility(View.GONE);
                             isExit = true;
                         }
                     }
