@@ -298,8 +298,6 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                         rtcEngine().setupRemoteVideo(new VideoCanvas(remoteSurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, Integer.parseInt(account)));
                         audienceTipsText.setVisibility(View.GONE);
                         audienceView.addView(remoteSurfaceView);
-
-                        audienceLayout.setVisibility(View.VISIBLE);
                     }
                 });
             }
