@@ -299,6 +299,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                         audienceTipsText.setVisibility(View.GONE);
                         audienceView.addView(remoteSurfaceView);
 
+                        audienceLayout.setVisibility(View.VISIBLE);
                     }
                 });
             }
