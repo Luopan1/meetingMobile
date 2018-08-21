@@ -366,7 +366,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                                     String audienceName = jsonObject.getString("name");
                                     audienceNameText.setText(audienceName);
                                     Audience audience = new Audience();
-                                    audience.setUid(config().mUid + "");
+                                    audience.setUid(config().mUid);
                                     audience.setUname(audienceName);
                                     audienceNameText.setTag(audience);
                                     audienceTipsText.setVisibility(View.GONE);

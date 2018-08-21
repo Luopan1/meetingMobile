@@ -3,21 +3,23 @@ package com.hezy.guide.phone.entities;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.Objects;
+
 /**
  * Created by yuna on 2017/7/27.
  */
 
 public class Audience implements Entity, Parcelable {
 
-    private String uid;
+    private int uid;
 
     private String uname;
 
-    public String getUid() {
+    public int getUid() {
         return uid;
     }
 
-    public void setUid(String uid) {
+    public void setUid(int uid) {
         this.uid = uid;
     }
 
@@ -46,18 +48,15 @@ public class Audience implements Entity, Parcelable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         Audience audience = (Audience) o;
-
-        if (uid != null ? !uid.equals(audience.uid) : audience.uid != null) return false;
-        return uname != null ? uname.equals(audience.uname) : audience.uname == null;
+        return uid == audience.uid &&
+                Objects.equals(uname, audience.uname);
     }
 
     @Override
     public int hashCode() {
-        int result = uid != null ? uid.hashCode() : 0;
-        result = 31 * result + (uname != null ? uname.hashCode() : 0);
-        return result;
+
+        return Objects.hash(uid, uname);
     }
 
     @Override
@@ -67,7 +66,7 @@ public class Audience implements Entity, Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.uid);
+        dest.writeInt(this.uid);
         dest.writeString(this.uname);
     }
 
@@ -75,7 +74,7 @@ public class Audience implements Entity, Parcelable {
     }
 
     protected Audience(Parcel in) {
-        this.uid = in.readString();
+        this.uid = in.readInt();
         this.uname = in.readString();
     }
 

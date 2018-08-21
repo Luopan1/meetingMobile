@@ -339,7 +339,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                         JSONObject jsonObject = new JSONObject();
                         jsonObject.put("response", true);
                         jsonObject.put("name", audience.getUname());
-                        agoraAPI.messageInstantSend(audience.getUid(), 0, jsonObject.toString(), "");
+                        agoraAPI.messageInstantSend("" + audience.getUid(), 0, jsonObject.toString(), "");
                         if (audiences.contains(audience)) {
                             audiences.remove(audience);
                         }
@@ -370,7 +370,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                     try {
                         JSONObject jsonObject = new JSONObject();
                         jsonObject.put("response", false);
-                        agoraAPI.messageInstantSend(audience.getUid(), 0, jsonObject.toString(), "");
+                        agoraAPI.messageInstantSend("" + audience.getUid(), 0, jsonObject.toString(), "");
 
                         if (audiences.contains(audience)) {
                             audiences.remove(audience);
@@ -384,7 +384,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                     try {
                         JSONObject jsonObject = new JSONObject();
                         jsonObject.put("finish", true);
-                        agoraAPI.messageInstantSend(audience.getUid(), 0, jsonObject.toString(), "");
+                        agoraAPI.messageInstantSend("" + audience.getUid(), 0, jsonObject.toString(), "");
 
                         stopButton.setVisibility(View.GONE);
 
@@ -397,7 +397,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                     try {
                         JSONObject jsonObject = new JSONObject();
                         jsonObject.put("finish", true);
-                        agoraAPI.messageInstantSend(currentAudience.getUid(), 0, jsonObject.toString(), "");
+                        agoraAPI.messageInstantSend("" + currentAudience.getUid(), 0, jsonObject.toString(), "");
 
                         stopButton.setVisibility(View.GONE);
 
@@ -578,7 +578,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                 }
                 if (BuildConfig.DEBUG)
                     Toast.makeText(MeetingBroadcastActivity.this,  uid + "退出了", Toast.LENGTH_SHORT).show();
-                if (currentAudience != null && uid == Integer.parseInt(currentAudience.getUid())) {
+                if (currentAudience != null && uid == currentAudience.getUid()) {
                     audienceView.removeAllViews();
                     audienceTipsText.setVisibility(View.VISIBLE);
                     audienceNameText.setText("");
@@ -592,7 +592,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                             JSONObject jsonObject = new JSONObject();
                             jsonObject.put("response", true);
                             jsonObject.put("name", newAudience.getUname());
-                            agoraAPI.messageInstantSend(newAudience.getUid(), 0, jsonObject.toString(), "");
+                            agoraAPI.messageInstantSend("" + newAudience.getUid(), 0, jsonObject.toString(), "");
 
                             if (audiences.contains(newAudience)) {
                                 audiences.remove(newAudience);
