@@ -148,7 +148,8 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                         try {
                             JSONObject jsonObject = new JSONObject();
                             jsonObject.put("request", false);
-                            jsonObject.put("uid", UIDUtil.generatorUID(Preferences.getUserId()));
+                            int uid = Integer.parseInt(UIDUtil.generatorUID(Preferences.getUserId()));
+                            jsonObject.put("uid", uid);
                             if (TextUtils.isEmpty(Preferences.getAreaInfo())) {
                                 jsonObject.put("uname", "店员-" + Preferences.getUserName());
                             } else {
@@ -165,7 +166,8 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                         try {
                             JSONObject jsonObject = new JSONObject();
                             jsonObject.put("request", true);
-                            jsonObject.put("uid", UIDUtil.generatorUID(Preferences.getUserId()));
+                            int uid = Integer.parseInt(UIDUtil.generatorUID(Preferences.getUserId()));
+                            jsonObject.put("uid", uid);
                             if (TextUtils.isEmpty(Preferences.getAreaInfo())) {
                                 jsonObject.put("uname", "店员-" +  Preferences.getUserName());
                             } else {
@@ -190,7 +192,8 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                     try {
                         JSONObject jsonObject = new JSONObject();
                         jsonObject.put("request", false);
-                        jsonObject.put("uid", UIDUtil.generatorUID(Preferences.getUserId()));
+                        int uid = Integer.parseInt(UIDUtil.generatorUID(Preferences.getUserId()));
+                        jsonObject.put("uid", uid);
                         if (TextUtils.isEmpty(Preferences.getAreaInfo())) {
                             jsonObject.put("uname", "店员-" + "-"+ Preferences.getUserName());
                         } else {
@@ -526,8 +529,8 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                         try {
                             JSONObject jsonObject = new JSONObject();
                             jsonObject.put("request", false);
-                            int code = Integer.parseInt(UIDUtil.generatorUID(Preferences.getUserId()));
-                            jsonObject.put("uid", code);
+                            int uid = Integer.parseInt(UIDUtil.generatorUID(Preferences.getUserId()));
+                            jsonObject.put("uid", uid);
                             if (TextUtils.isEmpty(Preferences.getAreaInfo())) {
                                 jsonObject.put("uname", "店员-" +  Preferences.getUserName());
                             } else {
