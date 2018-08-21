@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.Window;
@@ -303,6 +304,12 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                     });
                 }
             }
+
+            @Override
+            public void onLog(String txt) {
+                super.onLog(txt);
+                Log.v("信令broadcast", txt);
+            }
         });
 
     }
@@ -370,7 +377,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                         }
                         waiterButton.setText("等待发言（" + audiences.size() + "）");
                         stopButton.setVisibility(View.GONE);
-                    } catch (Exception e) {
+                    } catch (Exception e)  {
                         e.printStackTrace();
                     }
                 } else if (type == 3) {

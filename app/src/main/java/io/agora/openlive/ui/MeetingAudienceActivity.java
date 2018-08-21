@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.SurfaceView;
 import android.view.View;
@@ -66,7 +67,6 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_meeting_audience);
-
         TCAgent.onEvent(this, "进入会议直播界面");
 
     }
@@ -206,6 +206,9 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
         });
 
         config().mUid = Integer.parseInt(UIDUtil.generatorUID(Preferences.getUserId()));
+
+        System.out.println("uid--->" + config().mUid);
+
         doConfigEngine(Constants.CLIENT_ROLE_AUDIENCE);
 
         worker().joinChannel(agora.getChannelKey(), channelName, config().mUid);
@@ -244,6 +247,14 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
             @Override
             public void onChannelJoined(String channelID) {
                 super.onChannelJoined(channelID);
+                if (BuildConfig.DEBUG) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(MeetingAudienceActivity.this, "观众登陆信令频道成功", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
                 agoraAPI.channelQueryUserNum(channelName);
 
             }
@@ -289,7 +300,6 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 
                         audienceNameText.setText(value);
 
-                        audienceLayout.setVisibility(View.VISIBLE);
                         Toast.makeText(MeetingAudienceActivity.this, "显示连麦观众", Toast.LENGTH_SHORT).show();
 
                         SurfaceView remoteSurfaceView = RtcEngine.CreateRendererView(getApplicationContext());
@@ -298,6 +308,8 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                         rtcEngine().setupRemoteVideo(new VideoCanvas(remoteSurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, Integer.parseInt(account)));
                         audienceTipsText.setVisibility(View.GONE);
                         audienceView.addView(remoteSurfaceView);
+
+                        audienceLayout.setVisibility(View.VISIBLE);
                     }
                 });
             }
@@ -456,6 +468,12 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                     });
                 }
             }
+
+            @Override
+            public void onLog(String txt) {
+                super.onLog(txt);
+                Log.v("信令audience", txt);
+            }
         });
 
     }
@@ -508,7 +526,8 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                         try {
                             JSONObject jsonObject = new JSONObject();
                             jsonObject.put("request", false);
-                            jsonObject.put("uid", UIDUtil.generatorUID(Preferences.getUserId()));
+                            int code = Integer.parseInt(UIDUtil.generatorUID(Preferences.getUserId()));
+                            jsonObject.put("uid", code);
                             if (TextUtils.isEmpty(Preferences.getAreaInfo())) {
                                 jsonObject.put("uname", "店员-" +  Preferences.getUserName());
                             } else {
@@ -575,6 +594,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                     return;
                 }
                 worker().getEngineConfig().mUid = uid;
+                System.out.println("uid--->8192171" + uid);
                 agoraAPI.login(agora.getAppID(), "" + uid, agora.getSignalingKey(), 0, "");
 
                 HashMap<String, Object> params = new HashMap<String, Object>();
@@ -615,7 +635,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 
                 TCAgent.onEvent(MeetingAudienceActivity.this, "讲解员进入当前通话");
                 if (uid == Integer.parseInt(meetingJoin.getHostUser().getClientUid())) {
-                    broadcastId = "" + uid;
+                    broadcastId = String.valueOf(uid);
                     broadcastTipsText.setVisibility(View.GONE);
                     broadcastNameText.setText("主持人：" + meetingJoin.getHostUser().getHostUserName());
 
