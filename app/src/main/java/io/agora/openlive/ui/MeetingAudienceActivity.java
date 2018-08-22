@@ -117,6 +117,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                 finishButton.setVisibility(View.GONE);
                 micButton.setVisibility(View.VISIBLE);
                 audienceTipsText.setVisibility(View.VISIBLE);
+                audienceLayout.setVisibility(View.GONE);
                 try {
                     JSONObject jsonObject = new JSONObject();
                     jsonObject.put("finish", true);
@@ -302,9 +303,6 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                         }
 
                         audienceNameText.setText(value);
-                        audienceLayout.setVisibility(View.VISIBLE);
-
-                        Toast.makeText(MeetingAudienceActivity.this, "显示连麦观众", Toast.LENGTH_SHORT).show();
 
                         SurfaceView remoteSurfaceView = RtcEngine.CreateRendererView(getApplicationContext());
                         remoteSurfaceView.setZOrderOnTop(true);
@@ -360,6 +358,9 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                                     if (BuildConfig.DEBUG) {
                                         Toast.makeText(MeetingAudienceActivity.this, "接受连麦", Toast.LENGTH_SHORT).show();
                                     }
+
+                                    audienceLayout.setVisibility(View.VISIBLE);
+
                                     SurfaceView localSurfaceView = RtcEngine.CreateRendererView(getApplicationContext());
                                     localSurfaceView.setZOrderOnTop(true);
                                     localSurfaceView.setZOrderMediaOverlay(true);
@@ -403,6 +404,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                                     audienceNameText.setText("");
                                     audienceTipsText.setVisibility(View.VISIBLE);
                                     audienceTipsText.setText("等待参会人连麦");
+                                    audienceLayout.setVisibility(View.GONE);
 
                                     micButton.setVisibility(View.VISIBLE);
                                     finishButton.setVisibility(View.GONE);
