@@ -302,6 +302,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                         }
 
                         audienceNameText.setText(value);
+                        audienceLayout.setVisibility(View.VISIBLE);
 
                         Toast.makeText(MeetingAudienceActivity.this, "显示连麦观众", Toast.LENGTH_SHORT).show();
 
@@ -312,7 +313,6 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                         audienceTipsText.setVisibility(View.GONE);
                         audienceView.addView(remoteSurfaceView);
 
-                        audienceLayout.setVisibility(View.VISIBLE);
                     }
                 });
             }
