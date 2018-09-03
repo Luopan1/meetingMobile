@@ -3,15 +3,15 @@ package com.hezy.guide.phone.entities;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.Objects;
+
 public class Agora implements Parcelable, Entity {
 
     private String isTest;
 
-    private String channelKey;
-
     private String appID;
 
-    private String recordingKey;
+    private String token;
 
     private String signalingKey;
 
@@ -23,14 +23,6 @@ public class Agora implements Parcelable, Entity {
         this.isTest = isTest;
     }
 
-    public String getChannelKey() {
-        return channelKey;
-    }
-
-    public void setChannelKey(String channelKey) {
-        this.channelKey = channelKey;
-    }
-
     public String getAppID() {
         return appID;
     }
@@ -39,12 +31,12 @@ public class Agora implements Parcelable, Entity {
         this.appID = appID;
     }
 
-    public String getRecordingKey() {
-        return recordingKey;
+    public String getToken() {
+        return token;
     }
 
-    public void setRecordingKey(String recordingKey) {
-        this.recordingKey = recordingKey;
+    public void setToken(String token) {
+        this.token = token;
     }
 
     public String getSignalingKey() {
@@ -59,9 +51,8 @@ public class Agora implements Parcelable, Entity {
     public String toString() {
         return "Agora{" +
                 "isTest='" + isTest + '\'' +
-                ", channelKey='" + channelKey + '\'' +
                 ", appID='" + appID + '\'' +
-                ", recordingKey='" + recordingKey + '\'' +
+                ", token='" + token + '\'' +
                 ", signalingKey='" + signalingKey + '\'' +
                 '}';
     }
@@ -70,26 +61,17 @@ public class Agora implements Parcelable, Entity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         Agora agora = (Agora) o;
-
-        if (isTest != null ? !isTest.equals(agora.isTest) : agora.isTest != null) return false;
-        if (channelKey != null ? !channelKey.equals(agora.channelKey) : agora.channelKey != null)
-            return false;
-        if (appID != null ? !appID.equals(agora.appID) : agora.appID != null) return false;
-        if (recordingKey != null ? !recordingKey.equals(agora.recordingKey) : agora.recordingKey != null)
-            return false;
-        return signalingKey != null ? signalingKey.equals(agora.signalingKey) : agora.signalingKey == null;
+        return Objects.equals(isTest, agora.isTest) &&
+                Objects.equals(appID, agora.appID) &&
+                Objects.equals(token, agora.token) &&
+                Objects.equals(signalingKey, agora.signalingKey);
     }
 
     @Override
     public int hashCode() {
-        int result = isTest != null ? isTest.hashCode() : 0;
-        result = 31 * result + (channelKey != null ? channelKey.hashCode() : 0);
-        result = 31 * result + (appID != null ? appID.hashCode() : 0);
-        result = 31 * result + (recordingKey != null ? recordingKey.hashCode() : 0);
-        result = 31 * result + (signalingKey != null ? signalingKey.hashCode() : 0);
-        return result;
+
+        return Objects.hash(isTest, appID, token, signalingKey);
     }
 
     @Override
@@ -100,9 +82,8 @@ public class Agora implements Parcelable, Entity {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.isTest);
-        dest.writeString(this.channelKey);
         dest.writeString(this.appID);
-        dest.writeString(this.recordingKey);
+        dest.writeString(this.token);
         dest.writeString(this.signalingKey);
     }
 
@@ -111,9 +92,8 @@ public class Agora implements Parcelable, Entity {
 
     protected Agora(Parcel in) {
         this.isTest = in.readString();
-        this.channelKey = in.readString();
         this.appID = in.readString();
-        this.recordingKey = in.readString();
+        this.token = in.readString();
         this.signalingKey = in.readString();
     }
 

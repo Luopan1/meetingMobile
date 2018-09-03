@@ -190,7 +190,8 @@ public class MeetingsFragment extends BaseFragment {
             MeetingJoin meetingJoin = meetingJoinBucket.getData();
             Map<String, String> params = new HashMap<String, String>();
             params.put("channel", meetingJoin.getMeeting().getId());
-            params.put("uid", UIDUtil.generatorUID(Preferences.getUserId()));
+            params.put("account", UIDUtil.generatorUID(Preferences.getUserId()));
+            params.put("role", meetingJoin.getRole() == 0 ? "Publisher" : "Subscriber");
             apiClient.getAgoraKey(mContext, params, getAgoraCallback(meetingJoin));
         }
 

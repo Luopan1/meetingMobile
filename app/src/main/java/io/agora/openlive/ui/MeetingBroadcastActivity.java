@@ -148,7 +148,11 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
         broadcasterLayout.addView(localSurfaceView);
         worker().preview(true, localSurfaceView, config().mUid);
 
-        worker().joinChannel(agora.getChannelKey(), channelName, config().mUid);
+        if ("true".equals(agora.getIsTest())) {
+            worker().joinChannel(null, channelName, config().mUid);
+        } else {
+            worker().joinChannel(agora.getToken(), channelName, config().mUid);
+        }
 
         agoraAPI = AgoraAPIOnlySignal.getInstance(this, agora.getAppID());
         agoraAPI.callbackSet(new AgoraAPI.CallBack() {

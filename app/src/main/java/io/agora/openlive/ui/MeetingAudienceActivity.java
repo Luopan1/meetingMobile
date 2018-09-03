@@ -111,7 +111,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
         finishButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                worker().getRtcEngine().setClientRole(Constants.CLIENT_ROLE_AUDIENCE, "");
+                worker().getRtcEngine().setClientRole(Constants.CLIENT_ROLE_AUDIENCE);
                 audienceView.removeAllViews();
                 audienceNameText.setText("");
                 finishButton.setVisibility(View.GONE);
@@ -215,7 +215,11 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 
         doConfigEngine(Constants.CLIENT_ROLE_AUDIENCE);
 
-        worker().joinChannel(agora.getChannelKey(), channelName, config().mUid);
+        if ("true".equals(agora.getIsTest())) {
+            worker().joinChannel(null, channelName, config().mUid);
+        } else {
+            worker().joinChannel(agora.getToken(), channelName, config().mUid);
+        }
 
         agoraAPI = AgoraAPIOnlySignal.getInstance(this, agora.getAppID());
         agoraAPI.callbackSet(new AgoraAPI.CallBack() {
@@ -380,7 +384,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 
                                     agoraAPI.setAttr("uname", audienceName);
 
-                                    worker().getRtcEngine().setClientRole(Constants.CLIENT_ROLE_BROADCASTER, "");
+                                    worker().getRtcEngine().setClientRole(Constants.CLIENT_ROLE_BROADCASTER);
                                     HashMap<String, Object> params = new HashMap<String, Object>();
                                     params.put("status", 1);
                                     params.put("meetingId", meetingJoin.getMeeting().getId());
@@ -415,7 +419,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 
                                     isExit = false;
 
-                                    worker().getRtcEngine().setClientRole(Constants.CLIENT_ROLE_AUDIENCE, "");
+                                    worker().getRtcEngine().setClientRole(Constants.CLIENT_ROLE_AUDIENCE);
 
                                     if (!TextUtils.isEmpty(meetingHostJoinTraceId)) {
                                         HashMap<String, Object> params = new HashMap<String, Object>();

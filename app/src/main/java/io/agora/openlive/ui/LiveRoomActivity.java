@@ -182,7 +182,12 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
         mGridVideoViewContainer.initViewContainer(getApplicationContext(), config().mUid, mUidsList); // first is now full view
         worker().preview(true, surfaceV, config().mUid);
 
-        worker().joinChannel(agora.getChannelKey(), channelName, config().mUid);
+
+        if ("true".equals(agora.getIsTest())) {
+            worker().joinChannel(null, channelName, config().mUid);
+        } else {
+            worker().joinChannel(agora.getToken(), channelName, config().mUid);
+        }
 
         agoraAPI = AgoraAPIOnlySignal.getInstance(this, agora.getAppID());
         agoraAPI.callbackSet(new AgoraAPI.CallBack() {
