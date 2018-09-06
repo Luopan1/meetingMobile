@@ -70,9 +70,13 @@ public class ApiClient {
 
     private static Map<String, String> getCommonHead() {
         Map<String, String> params = new HashMap<>();
-        params.put("Authorization", TextUtils.isEmpty(Preferences.getToken()) ? "" : "Token " + Preferences.getToken());
         params.put("Content-Type", "application/json; charset=UTF-8");
-        params.put("DeviceUuid", Installation.id(BaseApplication.getInstance()));
+        if (!TextUtils.isEmpty(Preferences.getToken())) {
+            params.put("Authorization", "Token " + Preferences.getToken());
+        }
+        if (!TextUtils.isEmpty(Installation.id(BaseApplication.getInstance()))) {
+            params.put("DeviceUuid", Installation.id(BaseApplication.getInstance()));
+        }
         params.put("User-Agent", "HRZY_HOME"
                 + "_"
                 + BuildConfig.APPLICATION_ID
