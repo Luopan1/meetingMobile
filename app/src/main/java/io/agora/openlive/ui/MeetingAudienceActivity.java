@@ -308,6 +308,8 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 
                         audienceNameText.setText(value);
 
+                        audienceLayout.setVisibility(View.VISIBLE);
+
                         SurfaceView remoteSurfaceView = RtcEngine.CreateRendererView(getApplicationContext());
                         remoteSurfaceView.setZOrderOnTop(true);
                         remoteSurfaceView.setZOrderMediaOverlay(true);
@@ -662,8 +664,9 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                     if (BuildConfig.DEBUG) {
                         Toast.makeText(MeetingAudienceActivity.this, "连麦观众" + uid + "进入了，去获取连麦观众的名字", Toast.LENGTH_SHORT).show();
                     }
-
+                    isExit = false;
                     agoraAPI.getUserAttr("" + uid, "uname");
+
                 }
             }
         });
@@ -700,7 +703,13 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                             audienceTipsText.setVisibility(View.VISIBLE);
                             audienceLayout.setVisibility(View.GONE);
                             isExit = true;
+                        } else {
+                            Toast.makeText(MeetingAudienceActivity.this, "is me", Toast.LENGTH_SHORT).show();
+                            audienceLayout.setVisibility(View.GONE);
                         }
+                    } else {
+                        Toast.makeText(MeetingAudienceActivity.this, "is exit", Toast.LENGTH_SHORT).show();
+                        audienceLayout.setVisibility(View.GONE);
                     }
                 }
             }
