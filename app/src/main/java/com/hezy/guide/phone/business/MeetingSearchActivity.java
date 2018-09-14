@@ -235,7 +235,8 @@ public class MeetingSearchActivity extends BasicActivity {
             MeetingJoin meetingJoin = meetingJoinBucket.getData();
             Map<String, String> params = new HashMap<String, String>();
             params.put("channel", meetingJoin.getMeeting().getId());
-            params.put("uid", UIDUtil.generatorUID(Preferences.getUserId()));
+            params.put("account", UIDUtil.generatorUID(Preferences.getUserId()));
+            params.put("role", "Publisher");
             apiClient.getAgoraKey(mContext, params, getAgoraCallback(meetingJoin));
         }
 

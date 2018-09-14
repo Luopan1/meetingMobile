@@ -168,10 +168,10 @@ public class OnCallActivity extends BaseDataBindingActivity<OnCallActivityBindin
                     public void onSuccess(BaseErrorBean entity) {
                         Log.d("start receive", entity.toString());
                         RxBus.sendMessage(new CallEvent(true, tvSocketId));
-
                         Map<String, String> params = new HashMap<String, String>();
                         params.put("channel", channelId);
-                        params.put("uid", UIDUtil.generatorUID(Preferences.getUserId()));
+                        params.put("account", UIDUtil.generatorUID(Preferences.getUserId()));
+                        params.put("role", "Publisher");
                         ApiClient.getInstance().getAgoraKey(OnCallActivity.this, params, new AgoraCallback());
                     }
 
