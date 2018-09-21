@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import io.agora.rtc.IRtcEngineEventHandler;
 
@@ -20,7 +21,7 @@ public class MyEngineEventHandler {
 
     private final Context mContext;
 
-    private final ConcurrentHashMap<AGEventHandler, Integer> mEventHandlerList = new ConcurrentHashMap<>();
+    private final ConcurrentMap<AGEventHandler, Integer> mEventHandlerList = new ConcurrentHashMap();
 
     public void addEventHandler(AGEventHandler handler) {
         this.mEventHandlerList.put(handler, 0);
