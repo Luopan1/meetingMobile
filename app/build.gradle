@@ -1,22 +1,22 @@
 apply plugin: 'com.android.application'
 
-def getDate() {
+def static getDate() {
     def date = new Date()
     def formattedDate = date.format('yyyyMMdd')
     return formattedDate
 }
 
-def getGitCommitId() {
+def static getGitCommitId() {
     def cmd = 'git rev-parse --short HEAD'
     return cmd.execute().text.trim().toString()
 }
 
-def getGitBranch() {
+def static getGitBranch() {
     def cmd = 'git symbolic-ref --short -q HEAD'
     return cmd.execute().text.trim().toString()
 }
 
-def getGitLog() {
+def static getGitLog() {
     def cmd = 'git log -1 --pretty=oneline'
     return cmd.execute().text.trim().toString()
 }

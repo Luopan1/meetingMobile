@@ -2,12 +2,14 @@ package io.agora.openlive.model;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.SurfaceView;
 
 import com.hezy.guide.phone.R;
@@ -212,8 +214,8 @@ public class WorkerThread extends Thread {
                 mRtcEngine = RtcEngine.create(mContext, appId, mEngineEventHandler.mRtcEventHandler);
                 mRtcEngine.setChannelProfile(Constants.CHANNEL_PROFILE_LIVE_BROADCASTING);
                 mRtcEngine.enableVideo();
-                mRtcEngine.setLogFile("/sdcard/agora-live-mobile.log");
-                mRtcEngine.enableDualStreamMode(true);
+                Log.v("log_file_path", Environment.getExternalStorageDirectory().getPath());
+                mRtcEngine.setLogFile(Environment.getExternalStorageDirectory().getPath() + "/mobile_expostor.log");
             } catch (Exception e) {
                 e.printStackTrace();
             }

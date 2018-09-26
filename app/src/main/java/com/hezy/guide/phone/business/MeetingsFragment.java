@@ -206,7 +206,6 @@ public class MeetingsFragment extends BaseFragment {
         return new OkHttpCallback<Bucket<Agora>>() {
 
             @Override
-
             public void onSuccess(Bucket<Agora> agoraBucket) {
                 dialog.dismiss();
                 Intent intent = new Intent(mContext, MeetingInitActivity.class);
