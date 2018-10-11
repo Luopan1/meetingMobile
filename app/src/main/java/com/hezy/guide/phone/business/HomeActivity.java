@@ -69,6 +69,7 @@ public class HomeActivity extends BasicActivity implements View.OnClickListener 
     private Subscription subscription;
 
     private PhoneReceiver phoneReceiver;
+    private IntentFilter intentFilter;
 
     @Override
     public String getStatisticsTag() {
@@ -163,7 +164,7 @@ public class HomeActivity extends BasicActivity implements View.OnClickListener 
         viewPager.setAdapter(mHomePagerAdapter);
 
         phoneReceiver = new PhoneReceiver();
-        IntentFilter intentFilter = new IntentFilter();
+        intentFilter = new IntentFilter();
         intentFilter.addAction("android.intent.action.PHONE_STATE");
         intentFilter.addAction("android.intent.action.NEW_OUTGOING_CALL");
         registerReceiver(phoneReceiver, intentFilter);
@@ -182,6 +183,9 @@ public class HomeActivity extends BasicActivity implements View.OnClickListener 
     @Override
     protected void onRestart() {
         super.onRestart();
+
+        registerReceiver(phoneReceiver, intentFilter);
+
         if (TextUtils.isEmpty(Preferences.getToken())) {
             startActivity(new Intent(this, WXEntryActivity.class));
             finish();
@@ -350,9 +354,15 @@ public class HomeActivity extends BasicActivity implements View.OnClickListener 
     }
 
     @Override
-    public void onDestroy() {
+    protected void onStop() {
+        super.onStop();
 
         unregisterReceiver(phoneReceiver);
+
+    }
+
+    @Override
+    public void onDestroy() {
 
         subscription.unsubscribe();
         super.onDestroy();

@@ -31,6 +31,7 @@ import com.hezy.guide.phone.utils.OkHttpCallback;
 import com.hezy.guide.phone.utils.UIDUtil;
 import com.tendcloud.tenddata.TCAgent;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,6 +94,9 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
         agora = intent.getParcelableExtra("agora");
         meetingJoin = intent.getParcelableExtra("meeting");
 
+        config().mUid = Integer.parseInt(UIDUtil.generatorUID(Preferences.getUserId()));
+        Log.v("uid--->", "" + config().mUid);
+
         channelName = meetingJoin.getMeeting().getId();
 
         broadcasterLayout = (FrameLayout) findViewById(R.id.broadcaster_view);
@@ -137,81 +141,20 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
             }
         });
 
-        micButton = (Button) findViewById(R.id.waiter);
-        micButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (!TextUtils.isEmpty(broadcastId)) {
-                    if (request) {
-                        request = false;
-                        micButton.setText("我要发言");
-                        micButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_meeting_signup, 0, 0, 0);
-                        try {
-                            JSONObject jsonObject = new JSONObject();
-                            jsonObject.put("request", false);
-                            int uid = Integer.parseInt(UIDUtil.generatorUID(Preferences.getUserId()));
-                            jsonObject.put("uid", uid);
-                            if (TextUtils.isEmpty(Preferences.getAreaInfo())) {
-                                jsonObject.put("uname", "店员-" + Preferences.getUserName());
-                            } else {
-                                jsonObject.put("uname", "店员-" + Preferences.getAreaInfo() + "-" + Preferences.getUserName());
-                            }
-                            agoraAPI.messageInstantSend(broadcastId, 0, jsonObject.toString(), "");
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    } else {
-                        request = true;
-                        micButton.setText("放弃发言");
-                        micButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_meeting_signup_giveup, 0, 0, 0);
-                        try {
-                            JSONObject jsonObject = new JSONObject();
-                            jsonObject.put("request", true);
-                            int uid = Integer.parseInt(UIDUtil.generatorUID(Preferences.getUserId()));
-                            jsonObject.put("uid", uid);
-                            if (TextUtils.isEmpty(Preferences.getAreaInfo())) {
-                                jsonObject.put("uname", "店员-" +  Preferences.getUserName());
-                            } else {
-                                jsonObject.put("uname", "店员-" + Preferences.getAreaInfo() + Preferences.getUserName());
-                            }
-                            agoraAPI.messageInstantSend(broadcastId, 0, jsonObject.toString(), "");
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                } else {
-                    Toast.makeText(MeetingAudienceActivity.this, "请先等待主持人加入", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-
-        exitButton = (Button) findViewById(R.id.exit);
-        exitButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        micButton = findViewById(R.id.waiter);
+        micButton.setOnClickListener(view -> {
+            if (!TextUtils.isEmpty(broadcastId)) {
                 if (request) {
-//                    try {
-//                        JSONObject jsonObject = new JSONObject();
-//                        jsonObject.put("online", false);
-//                        int uid = Integer.parseInt(UIDUtil.generatorUID(Preferences.getUserId()));
-//                        jsonObject.put("uid", uid);
-//                        if (TextUtils.isEmpty(Preferences.getAreaInfo())) {
-//                            jsonObject.put("uname", "店员-" + Preferences.getUserName());
-//                        } else {
-//                            jsonObject.put("uname", "店员-" + Preferences.getAreaInfo() + "-" + Preferences.getUserName());
-//                        }
-//                        agoraAPI.messageInstantSend(broadcastId, 0, jsonObject.toString(), "");
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
-//                    }
+                    request = false;
+                    micButton.setText("我要发言");
+                    micButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_meeting_signup, 0, 0, 0);
                     try {
                         JSONObject jsonObject = new JSONObject();
-                        jsonObject.put("online", false);
                         jsonObject.put("request", false);
-                        int uid = Integer.parseInt(UIDUtil.generatorUID(Preferences.getUserId()));
+                        int uid = config().mUid;
                         jsonObject.put("uid", uid);
                         if (TextUtils.isEmpty(Preferences.getAreaInfo())) {
-                            jsonObject.put("uname", "店员-" + "-"+ Preferences.getUserName());
+                            jsonObject.put("uname", "店员-" + Preferences.getUserName());
                         } else {
                             jsonObject.put("uname", "店员-" + Preferences.getAreaInfo() + "-" + Preferences.getUserName());
                         }
@@ -219,14 +162,64 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+                } else {
+                    request = true;
+                    micButton.setText("放弃发言");
+                    micButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_meeting_signup_giveup, 0, 0, 0);
+                    try {
+                        JSONObject jsonObject = new JSONObject();
+                        jsonObject.put("request", true);
+                        int uid = config().mUid;
+                        jsonObject.put("uid", uid);
+                        if (TextUtils.isEmpty(Preferences.getAreaInfo())) {
+                            jsonObject.put("uname", "店员-" +  Preferences.getUserName());
+                        } else {
+                            jsonObject.put("uname", "店员-" + Preferences.getAreaInfo() + Preferences.getUserName());
+                        }
+                        agoraAPI.messageInstantSend(broadcastId, 0, jsonObject.toString(), "");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
-                showDialog(1, "确定退出会议？", "取消", "确定", null);
+            } else {
+                Toast.makeText(MeetingAudienceActivity.this, "请先等待主持人加入", Toast.LENGTH_SHORT).show();
             }
         });
 
-        config().mUid = Integer.parseInt(UIDUtil.generatorUID(Preferences.getUserId()));
-
-        System.out.println("uid--->" + config().mUid);
+        exitButton = findViewById(R.id.exit);
+        exitButton.setOnClickListener(view -> {
+            if (request) {
+                try {
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("online", false);
+                    int uid = config().mUid;
+                    jsonObject.put("uid", uid);
+                    if (TextUtils.isEmpty(Preferences.getAreaInfo())) {
+                        jsonObject.put("uname", "店员-" + Preferences.getUserName());
+                    } else {
+                        jsonObject.put("uname", "店员-" + Preferences.getAreaInfo() + "-" + Preferences.getUserName());
+                    }
+                    agoraAPI.messageInstantSend(broadcastId, 0, jsonObject.toString(), "");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                try {
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("request", false);
+                    int uid = config().mUid;
+                    jsonObject.put("uid", uid);
+                    if (TextUtils.isEmpty(Preferences.getAreaInfo())) {
+                        jsonObject.put("uname", "店员-" + "-"+ Preferences.getUserName());
+                    } else {
+                        jsonObject.put("uname", "店员-" + Preferences.getAreaInfo() + "-" + Preferences.getUserName());
+                    }
+                    agoraAPI.messageInstantSend(broadcastId, 0, jsonObject.toString(), "");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            showDialog(1, "确定退出会议？", "取消", "确定", null);
+        });
 
         doConfigEngine(Constants.CLIENT_ROLE_AUDIENCE);
 
@@ -243,14 +236,22 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
             public void onLoginSuccess(int uid, int fd) {
                 super.onLoginSuccess(uid, fd);
                 if (BuildConfig.DEBUG) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(MeetingAudienceActivity.this, "观众登陆信令系统成功", Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                    runOnUiThread(() -> Toast.makeText(MeetingAudienceActivity.this, "观众登陆信令系统成功", Toast.LENGTH_SHORT).show());
                 }
-                agoraAPI.setAttr("role", "1");
+                try {
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("role", 1);
+                    jsonObject.put("uid", config().mUid);
+                    if (TextUtils.isEmpty(Preferences.getAreaInfo())) {
+                        jsonObject.put("uname", "讲解员-" + Preferences.getUserName());
+                    } else {
+                        jsonObject.put("uname", "讲解员-" + Preferences.getAreaInfo() + "-" + Preferences.getUserName());
+                    }
+                    Log.v("setAttr", config().mUid + "---" + jsonObject.toString());
+                    agoraAPI.setAttr("audience", jsonObject.toString());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
                 agoraAPI.channelJoin(channelName);
             }
 
@@ -268,33 +269,20 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
             }
 
             @Override
+            public void onLogout(int ecode) {
+                super.onLogout(ecode);
+                if (BuildConfig.DEBUG) {
+                    runOnUiThread(() -> Toast.makeText(MeetingAudienceActivity.this, "观众登出信令系统成功" + ecode, Toast.LENGTH_SHORT).show());
+                }
+            }
+
+            @Override
             public void onChannelJoined(String channelID) {
                 super.onChannelJoined(channelID);
                 if (BuildConfig.DEBUG) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(MeetingAudienceActivity.this, "观众登陆信令频道成功", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                }
-                agoraAPI.setAttr("role", "1");
-                try {
-                    JSONObject jsonObject = new JSONObject();
-                    jsonObject.put("online", true);
-                    int uid = Integer.parseInt(UIDUtil.generatorUID(Preferences.getUserId()));
-                    jsonObject.put("uid", uid);
-                    if (TextUtils.isEmpty(Preferences.getAreaInfo())) {
-                        jsonObject.put("uname", "讲解员-" + Preferences.getUserName());
-                    } else {
-                        jsonObject.put("uname", "讲解员-" + Preferences.getAreaInfo() + "-" + Preferences.getUserName());
-                    }
-                    agoraAPI.messageInstantSend(broadcastId, 0, jsonObject.toString(), "");
-                } catch (Exception e) {
-                    e.printStackTrace();
+                    runOnUiThread(() -> Toast.makeText(MeetingAudienceActivity.this, "观众登陆信令频道成功", Toast.LENGTH_SHORT).show());
                 }
                 agoraAPI.channelQueryUserNum(channelName);
-
             }
 
             @Override
@@ -349,6 +337,12 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 
                     }
                 });
+            }
+
+            @Override
+            public void onUserAttrAllResult(String account, String value) {
+                super.onUserAttrAllResult(account, value);
+
             }
 
             @Override
@@ -567,7 +561,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                         try {
                             JSONObject jsonObject = new JSONObject();
                             jsonObject.put("request", false);
-                            int uid = Integer.parseInt(UIDUtil.generatorUID(Preferences.getUserId()));
+                            int uid = config().mUid;
                             jsonObject.put("uid", uid);
                             if (TextUtils.isEmpty(Preferences.getAreaInfo())) {
                                 jsonObject.put("uname", "店员-" +  Preferences.getUserName());
@@ -628,22 +622,26 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 
     @Override
     public void onJoinChannelSuccess(final String channel, final int uid, final int elapsed) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (isFinishing()) {
-                    return;
-                }
-                worker().getEngineConfig().mUid = uid;
-                System.out.println("uid--->8192171" + uid);
-                agoraAPI.login(agora.getAppID(), "" + uid, agora.getSignalingKey(), 0, "");
-
-                HashMap<String, Object> params = new HashMap<String, Object>();
-                params.put("status", 1);
-                params.put("type", 2);
-                params.put("meetingId", meetingJoin.getMeeting().getId());
-                ApiClient.getInstance().meetingJoinStats(TAG, meetingJoinStatsCallback, params);
+        runOnUiThread(() -> {
+            if (isFinishing()) {
+                return;
             }
+            config().mUid = uid;
+            channelName = channel;
+            Log.v("onJoinChannelSuccess", "channel--->" + channel);
+            Log.v("onJoinChannelSuccess", "uid--->" + uid);
+
+            if ("true".equals(agora.getIsTest())) {
+                agoraAPI.login(agora.getAppID(), "" + uid, "noneed_token", 0, "");
+            } else {
+                agoraAPI.login(agora.getAppID(), "" + uid, agora.getSignalingKey(), 0, "");
+            }
+
+            HashMap<String, Object> params = new HashMap<String, Object>();
+            params.put("status", 1);
+            params.put("type", 2);
+            params.put("meetingId", meetingJoin.getMeeting().getId());
+            ApiClient.getInstance().meetingJoinStats(TAG, meetingJoinStatsCallback, params);
         });
     }
 

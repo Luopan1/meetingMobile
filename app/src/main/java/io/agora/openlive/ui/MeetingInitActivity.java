@@ -54,7 +54,9 @@ public class MeetingInitActivity extends BaseActivity {
         setContentView(R.layout.activity_main_openlive);
 
         mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        mAudioManager.requestAudioFocus(onAudioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
+        if (mAudioManager != null) {
+            mAudioManager.requestAudioFocus(onAudioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
+        }
 
     }
 
@@ -102,5 +104,4 @@ public class MeetingInitActivity extends BaseActivity {
         startActivity(intent);
         finish();
     }
-
 }
