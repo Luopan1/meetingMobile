@@ -190,8 +190,23 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
             @Override
             public void onClick(View view) {
                 if (request) {
+//                    try {
+//                        JSONObject jsonObject = new JSONObject();
+//                        jsonObject.put("online", false);
+//                        int uid = Integer.parseInt(UIDUtil.generatorUID(Preferences.getUserId()));
+//                        jsonObject.put("uid", uid);
+//                        if (TextUtils.isEmpty(Preferences.getAreaInfo())) {
+//                            jsonObject.put("uname", "店员-" + Preferences.getUserName());
+//                        } else {
+//                            jsonObject.put("uname", "店员-" + Preferences.getAreaInfo() + "-" + Preferences.getUserName());
+//                        }
+//                        agoraAPI.messageInstantSend(broadcastId, 0, jsonObject.toString(), "");
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
                     try {
                         JSONObject jsonObject = new JSONObject();
+                        jsonObject.put("online", false);
                         jsonObject.put("request", false);
                         int uid = Integer.parseInt(UIDUtil.generatorUID(Preferences.getUserId()));
                         jsonObject.put("uid", uid);
@@ -262,6 +277,21 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                             Toast.makeText(MeetingAudienceActivity.this, "观众登陆信令频道成功", Toast.LENGTH_SHORT).show();
                         }
                     });
+                }
+                agoraAPI.setAttr("role", "1");
+                try {
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("online", true);
+                    int uid = Integer.parseInt(UIDUtil.generatorUID(Preferences.getUserId()));
+                    jsonObject.put("uid", uid);
+                    if (TextUtils.isEmpty(Preferences.getAreaInfo())) {
+                        jsonObject.put("uname", "讲解员-" + Preferences.getUserName());
+                    } else {
+                        jsonObject.put("uname", "讲解员-" + Preferences.getAreaInfo() + "-" + Preferences.getUserName());
+                    }
+                    agoraAPI.messageInstantSend(broadcastId, 0, jsonObject.toString(), "");
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
                 agoraAPI.channelQueryUserNum(channelName);
 
