@@ -128,6 +128,21 @@
             android:configChanges="keyboard|keyboardHidden|navigation|orientation|screenSize|fontScale"
             android:screenOrientation="landscape"
             android:theme="@style/FullscreenTheme" />
+        <activity android:name=".business.LinkEntryActivity"
+            android:screenOrientation="landscape"
+            android:theme="@style/FullscreenTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="com.hezy.guide.phone"
+                    android:pathPrefix="/meeting"
+                    android:scheme="app" />
+            </intent-filter>
+        </activity>
 
         <receiver android:name=".receiver.PhoneReceiver" >
             <intent-filter>

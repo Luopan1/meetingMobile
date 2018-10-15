@@ -142,11 +142,7 @@ public class MeetingsFragment extends BaseFragment {
             public void onClick(View v) {
                 dialog.dismiss();
                 if (!TextUtils.isEmpty(codeEdit.getText())) {
-                    HashMap<String, Object> params = new HashMap<String, Object>();
-                    params.put("clientUid", UIDUtil.generatorUID(Preferences.getUserId()));
-                    params.put("meetingId", meeting.getId());
-                    params.put("token", codeEdit.getText().toString());
-                    apiClient.verifyRole(TAG, verifyRoleCallback(meeting, codeEdit.getText().toString()), params);
+                    enterMeeting(codeEdit.getText().toString(), meeting);
                 } else {
                     codeEdit.setError("会议加入码不能为空");
                 }
@@ -161,6 +157,20 @@ public class MeetingsFragment extends BaseFragment {
         dialog = new Dialog(mContext, R.style.CustomDialog);
         dialog.setContentView(view);
         dialog.show();
+    }
+
+    /**
+     * 进入会议直播间
+     *
+     * @param joinCode 会议加入码
+     * @param meeting  会议
+     */
+    private void enterMeeting(String joinCode, Meeting meeting) {
+        HashMap<String, Object> params = new HashMap<String, Object>();
+        params.put("clientUid", UIDUtil.generatorUID(Preferences.getUserId()));
+        params.put("meetingId", meeting.getId());
+        params.put("token", joinCode);
+        apiClient.verifyRole(TAG, verifyRoleCallback(meeting, joinCode), params);
     }
 
     private OkHttpCallback verifyRoleCallback(final Meeting meeting, final String token) {

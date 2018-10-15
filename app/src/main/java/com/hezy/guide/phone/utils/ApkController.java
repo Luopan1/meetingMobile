@@ -23,7 +23,7 @@ import java.util.List;
 
 /**
  * 描述: app安装操作
- * 
+ *
  */
 public class ApkController {
 
@@ -316,28 +316,33 @@ public class ApkController {
 
 	/**
 	 * 通过应用包名获取本机对应应用的版本名称
-	 * 
+	 *
 	 * @param context
-	 * @param pagageName
+	 * @param packageName
 	 * @return
 	 */
-	public static int getVersionCodeByPagageName(Context context,
-			String pagageName) {
+	public static int getVersionCodeByPagageName(Context context, String packageName) {
 		int versionCode = -1;
+
+		PackageInfo packageInfo = checkAPKIsInstalled(context, packageName);
+		return packageInfo!=null ? packageInfo.versionCode : versionCode;
+	}
+
+    /**
+     * 根据包名检测Apk是否安装
+     * @param context
+     * @param packageName 检测的包名
+     * @return 如存在，返回PackageInfo信息，如不存在，返回null
+     */
+	public static PackageInfo checkAPKIsInstalled(Context context, String packageName) {
 		PackageManager packageManager = context.getPackageManager();
 		List<PackageInfo> packages = packageManager.getInstalledPackages(0);
 		for (int i = 0; i < packages.size(); i++) {
 			PackageInfo packageInfo = packages.get(i);
-			if (pagageName.equals(packageInfo.packageName)) {
-				versionCode = packageInfo.versionCode;
-				break;
+			if (packageName.equals(packageInfo.packageName)) {
+				return packageInfo;
 			}
-			// appInfo.setVersionName(packageInfo.versionName);
-			// appInfo.setVersionCode(packageInfo.versionCode);
-			// appInfo.setAppIcon(packageInfo.applicationInfo
-			// .loadIcon(packageManager));
 		}
-		return versionCode;
-
+		return null;
 	}
 }
