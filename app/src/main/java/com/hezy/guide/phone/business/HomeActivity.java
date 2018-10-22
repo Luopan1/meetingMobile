@@ -93,11 +93,9 @@ public class HomeActivity extends BasicActivity implements View.OnClickListener 
         });
 
         initView();
-
 //        versionCheck();
-
+        initData();
         registerDevice();
-
     }
 
     private void initView(){
@@ -169,6 +167,10 @@ public class HomeActivity extends BasicActivity implements View.OnClickListener 
         intentFilter.addAction("android.intent.action.NEW_OUTGOING_CALL");
         registerReceiver(phoneReceiver, intentFilter);
 
+    }
+
+    private void initData(){
+        meetingRadio.setChecked(true);
     }
 
     @Override
