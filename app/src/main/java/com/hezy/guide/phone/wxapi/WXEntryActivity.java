@@ -21,7 +21,8 @@ import com.hezy.guide.phone.ApiClient;
 import com.hezy.guide.phone.BuildConfig;
 import com.hezy.guide.phone.R;
 import com.hezy.guide.phone.business.HomeActivity;
-import com.hezy.guide.phone.business.UserinfoActivity;
+import com.hezy.guide.phone.business.PhoneRegisterActivity;
+import com.hezy.guide.phone.business.UserInfoActivity;
 import com.hezy.guide.phone.entities.FinishWX;
 import com.hezy.guide.phone.entities.LoginWechat;
 import com.hezy.guide.phone.entities.User;
@@ -34,7 +35,6 @@ import com.hezy.guide.phone.utils.DeviceUtil;
 import com.hezy.guide.phone.utils.Installation;
 import com.hezy.guide.phone.utils.Login.LoginHelper;
 import com.hezy.guide.phone.utils.OkHttpCallback;
-import com.hezy.guide.phone.utils.Permission;
 import com.hezy.guide.phone.utils.RxBus;
 import com.hezy.guide.phone.utils.ToastUtils;
 import com.hezy.guide.phone.utils.statistics.ZYAgent;
@@ -110,7 +110,7 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_activity);
 
-        if (EasyPermissions.hasPermissions(this, perms)){
+        if (EasyPermissions.hasPermissions(this, perms)) {
             initView();
         } else {
             EasyPermissions.requestPermissions(this, "请授予必要的权限", 0, perms);
@@ -137,19 +137,22 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
                         Toast.makeText(WXEntryActivity.this, "用户数据为空", Toast.LENGTH_SHORT).show();
                         return;
                     }
-                    User user = entity.getData().getUser();
-                    LoginHelper.savaUser(user);
 
                     Wechat wechat = entity.getData().getWechat();
                     if (wechat != null) {
                         LoginHelper.savaWeChat(wechat);
                     }
 
-                    if (Preferences.isUserinfoEmpty()) {
-                        UserinfoActivity.actionStart(WXEntryActivity.this, true);
-                        return;
+                    //验证用户是否存在
+                    User user = entity.getData().getUser();
+                    if (!TextUtils.isEmpty(user.getMobile())) {
+                        //用户手机不为空，持久化用户数据，直接进入主程序
+                        LoginHelper.savaUser(user);
+                        startActivity(new Intent(WXEntryActivity.this, HomeActivity.class));
+                    } else {
+                        //用户手机为空，进入手机注册页面
+                        startActivity(new Intent(WXEntryActivity.this, PhoneRegisterActivity.class));
                     }
-                    startActivity(new Intent(WXEntryActivity.this, HomeActivity.class));
                     finish();
                 }
             });
@@ -278,25 +281,25 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
             case BaseResp.ErrCode.ERR_OK:
                 result = "登录成功";
                 if (baseResp.getType() == 1) {
-                    ZYAgent.onEvent(WXEntryActivity.this,"微信按钮 登录成功");
+                    ZYAgent.onEvent(WXEntryActivity.this, "微信按钮 登录成功");
                     final SendAuth.Resp sendResp = ((SendAuth.Resp) baseResp);
                     String code = sendResp.code;
                     requestWechatLogin(sendResp.code, sendResp.state);
-                    ZYAgent.onEvent(WXEntryActivity.this,"请求微信登录");
+                    ZYAgent.onEvent(WXEntryActivity.this, "请求微信登录");
                 }
                 break;
             case BaseResp.ErrCode.ERR_AUTH_DENIED:
-                ZYAgent.onEvent(WXEntryActivity.this,"微信按钮 用户拒绝授权");
+                ZYAgent.onEvent(WXEntryActivity.this, "微信按钮 用户拒绝授权");
                 result = "用户拒绝授权";
                 cancelDialog();
                 break;
             case BaseResp.ErrCode.ERR_USER_CANCEL:
-                ZYAgent.onEvent(WXEntryActivity.this,"微信按钮 用户取消");
+                ZYAgent.onEvent(WXEntryActivity.this, "微信按钮 用户取消");
                 result = "用户取消";
                 cancelDialog();
                 break;
             default:
-                ZYAgent.onEvent(WXEntryActivity.this,"微信按钮 失败");
+                ZYAgent.onEvent(WXEntryActivity.this, "微信按钮 失败");
                 result = "失败";
                 cancelDialog();
                 break;
@@ -313,7 +316,7 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
 
             @Override
             public void onSuccess(BaseBean<LoginWechat> entity) {
-                ZYAgent.onEvent(WXEntryActivity.this,"请求微信登录回调 成功");
+                ZYAgent.onEvent(WXEntryActivity.this, "请求微信登录回调 成功");
                 if (entity.getData() == null) {
                     return;
                 }
@@ -326,15 +329,13 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
                     LoginHelper.savaUser(user);
 
                     if (Preferences.isUserinfoEmpty()) {
-                        UserinfoActivity.actionStart(WXEntryActivity.this, true);
+                        UserInfoActivity.actionStart(WXEntryActivity.this, true);
                     } else {
                         startActivity(new Intent(WXEntryActivity.this, HomeActivity.class));
                     }
                     RxBus.sendMessage(new FinishWX());
                     finish();
                 }
-
-
             }
 
             @Override
@@ -347,7 +348,7 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
     private ProgressDialog progressDialog;
 
     protected void showDialog(String message) {
-        if(progressDialog == null){
+        if (progressDialog == null) {
             progressDialog = new ProgressDialog(this);
             progressDialog.setMessage(message);
             progressDialog.setCancelable(true);

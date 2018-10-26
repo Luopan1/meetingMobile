@@ -30,6 +30,7 @@ public class User {
     private String delFlag;
     private String name;
     private String mobile;
+    //地址
     private String address;
     private String photo;
     private String signature;
@@ -43,7 +44,76 @@ public class User {
     private String areaId;
     private String areaInfo;
     private String areaName;
+    //客户信息id
     private String customId;
+    //客户信息
+    private String customName;
+    private int source;
+    //是否是海尔员工验证 0:验证不通过 1:验证通过
+    private int auditStatus;
+    private String postTypeId;
+    private String postTypeName;
+    //网格信息id
+    private String gridId;
+    //网格信息
+    private String gridName;
+    private String shopPhoto;
+
+    public String getShopPhoto() {
+        return shopPhoto;
+    }
+
+    public void setShopPhoto(String shopPhoto) {
+        this.shopPhoto = shopPhoto;
+    }
+
+    public int getSource() {
+        return source;
+    }
+
+    public void setSource(int source) {
+        this.source = source;
+    }
+
+    public String getCustomName() {
+        return customName;
+    }
+
+    public void setCustomName(String customName) {
+        this.customName = customName;
+    }
+
+    public int getAuditStatus() {
+        return auditStatus;
+    }
+
+    public void setAuditStatus(int auditStatus) {
+        this.auditStatus = auditStatus;
+    }
+
+    public String getPostTypeId() {
+        return postTypeId;
+    }
+
+    public void setPostTypeId(String postTypeId) {
+        this.postTypeId = postTypeId;
+    }
+
+    public String getGridId() {
+        return gridId;
+    }
+
+    public void setGridId(String gridId) {
+        this.gridId = gridId;
+    }
+
+    public String getGridName() {
+        return gridName;
+    }
+
+    public void setGridName(String gridName) {
+        this.gridName = gridName;
+    }
 
     public String getId() {
         return id;
@@ -197,6 +267,14 @@ public class User {
         this.customId = customId;
     }
 
+    public String getPostTypeName() {
+        return postTypeName;
+    }
+
+    public void setPostTypeName(String postTypeName) {
+        this.postTypeName = postTypeName;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -219,6 +297,14 @@ public class User {
                 ", areaInfo='" + areaInfo + '\'' +
                 ", areaName='" + areaName + '\'' +
                 ", customId='" + customId + '\'' +
+                ", source=" + source +
+                ", customName=" + customName + '\'' +
+                ", auditStatus=" + auditStatus +
+                ", postTypeId=" + postTypeId + '\'' +
+                ", postTypeName=" + postTypeName + '\'' +
+                ", gridId=" + gridId + '\'' +
+                ", gridName=" + gridName + '\'' +
+                ", shopPhoto=" + shopPhoto + '\'' +
                 '}';
     }
 }

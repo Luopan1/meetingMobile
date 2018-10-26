@@ -37,6 +37,7 @@
     <color name="text_gray_909090">#909090</color>
     <color name="bg_gray_909090">#909090</color>
     <color name="text_yellow_ff9c00">#ff9c00</color>
+    <color name="purple_B07EDA">#B07EDA</color>
 
 
     <!--下载相关颜色-->
@@ -75,8 +76,8 @@
 
     <color name="red_9e3603">#9e3606</color>
 
-
-
+    <color name="bg_login_FF1E128B">#FF1E128B</color>
+    <color name="bg_login_FF9147B2">#FF9147B2</color>
 
 
 </resources>

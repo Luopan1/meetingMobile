@@ -4,13 +4,12 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 
-import com.hezy.guide.phone.BaseApplication;
+import com.hezy.guide.phone.business.HomeActivity;
+import com.hezy.guide.phone.business.UserInfoActivity;
 import com.hezy.guide.phone.entities.User;
 import com.hezy.guide.phone.entities.Wechat;
 import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.service.WSService;
-import com.hezy.guide.phone.business.HomeActivity;
-import com.hezy.guide.phone.business.UserinfoActivity;
 import com.hezy.guide.phone.utils.Logger;
 import com.hezy.guide.phone.utils.statistics.ZYAgent;
 import com.hezy.guide.phone.wxapi.WXEntryActivity;
@@ -22,15 +21,16 @@ import com.hezy.guide.phone.wxapi.WXEntryActivity;
  */
 
 public class LoginHelper {
-    public static final String TAG ="LoginHelper";
-    public static final String LOGIN_TYPE="login_type";
-    public static final int LOGIN_TYPE_EXIT=1;
-    public static final int LOGIN_TYPE_LOGOUT=2;
-    public static  boolean mIsLogout=false;
+    public static final String TAG = "LoginHelper";
+    public static final String LOGIN_TYPE = "login_type";
+    public static final int LOGIN_TYPE_EXIT = 1;
+    public static final int LOGIN_TYPE_LOGOUT = 2;
+    public static boolean mIsLogout = false;
 
 
     /**
      * 非mainTabActivity页面调用
+     *
      * @param activity
      */
     public static void exit(Activity activity) {
@@ -45,10 +45,11 @@ public class LoginHelper {
 
     /**
      * 退出登录-退出到主页activity
+     *
      * @param activity
      */
     public static void logout(Activity activity) {
-        Logger.d(TAG,activity.getClass().getSimpleName());
+        Logger.d(TAG, activity.getClass().getSimpleName());
 //        if(activity instanceof MainTabActivity){
 //
 //        }else{
@@ -57,9 +58,9 @@ public class LoginHelper {
         logoutCustom(activity);
 
         Intent intent;
-        if(activity instanceof WXEntryActivity || (activity instanceof UserinfoActivity && UserinfoActivity.isFirst)){
+        if (activity instanceof WXEntryActivity || (activity instanceof UserInfoActivity && UserInfoActivity.isFirst)) {
             intent = new Intent(activity, WXEntryActivity.class);
-        }else{
+        } else {
             intent = new Intent(activity, HomeActivity.class);
         }
         intent.putExtra(LOGIN_TYPE, LOGIN_TYPE_LOGOUT);
@@ -74,8 +75,8 @@ public class LoginHelper {
     /**
      * 退出登录-全局调用
      */
-    public static void logout(){
-        if(Preferences.isLogin()){
+    public static void logout() {
+        if (Preferences.isLogin()) {
 //            Activity currentActivity = BaseApplication.getInstance().getCurrentActivity();
 //            if(currentActivity !=null){
 //                LoginHelper.logout(currentActivity);
@@ -90,16 +91,22 @@ public class LoginHelper {
 
     /**
      * 退出登录-本应用自己业务相关,本地用户数据,服务
+     *
      * @param context
      */
     public static void logoutCustom(Context context) {
-        ZYAgent.onEvent(context,"退出登录");
-        ZYAgent.onEvent(context,"退出登录 连接服务 请求停止");
+        ZYAgent.onEvent(context, "退出登录");
+        ZYAgent.onEvent(context, "退出登录 连接服务 请求停止");
         Preferences.clear();
         WSService.stopService(context);
     }
 
-    public static void savaUser(User user){
+    /**
+     * 用户信息本地持久化存储
+     *
+     * @param user
+     */
+    public static void savaUser(User user) {
         Preferences.setToken(user.getToken());
         Preferences.setUserId(user.getId());
         Preferences.setUserName(user.getName());
@@ -112,7 +119,7 @@ public class LoginHelper {
         Preferences.setAreaName(user.getAreaName());
     }
 
-    public static void savaWeChat(Wechat wechat){
+    public static void savaWeChat(Wechat wechat) {
         Preferences.setWeiXinHead(wechat.getHeadimgurl());
     }
 

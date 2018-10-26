@@ -200,7 +200,7 @@ public class HomeActivity extends BasicActivity implements View.OnClickListener 
             case R.id.state:
                 if (Preferences.isUserinfoEmpty()) {
                     showToast("请先填写姓名,电话,地址,照片");
-                    UserinfoActivity.actionStart(this);
+                    UserInfoActivity.actionStart(this);
                     return;
                 }
                 new ActionSheetDialog(mContext).builder()//
@@ -220,8 +220,6 @@ public class HomeActivity extends BasicActivity implements View.OnClickListener 
                                         }else{
                                             ZYAgent.onEvent(mContext,"在线按钮,当前在线,,无效操作");
                                         }
-
-
                                     }
                                 })
                         .addSheetItem("离线", ActionSheetDialog.SheetItemColor.Blue,//

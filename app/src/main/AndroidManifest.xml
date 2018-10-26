@@ -66,48 +66,55 @@
         <!--主页-->
         <activity
             android:name=".business.HomeActivity"
-            android:theme="@style/NoTitle"
             android:alwaysRetainTaskState="true"
             android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"
             android:screenOrientation="portrait"
+            android:theme="@style/NoTitle"
             android:windowSoftInputMode="adjustPan" />
 
-        <activity android:name=".business.MeetingSearchActivity"
-            android:screenOrientation="portrait"
-            android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"/>
+        <activity
+            android:name=".business.MeetingSearchActivity"
+            android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"
+            android:screenOrientation="portrait" />
 
-        <activity android:name=".business.OnCallActivity"
+        <activity
+            android:name=".business.OnCallActivity"
+            android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait"
-            android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"/>
+            android:screenOrientation="portrait" />
 
-        <activity android:name=".business.UserinfoActivity"
-            android:screenOrientation="portrait"
-            android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"/>
+        <activity
+            android:name=".business.UserInfoActivity"
+            android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"
+            android:screenOrientation="portrait" />
 
-        <activity android:name=".business.DistrictActivity"
-            android:screenOrientation="portrait"
-            android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"/>
+        <activity
+            android:name=".business.DistrictActivity"
+            android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"
+            android:screenOrientation="portrait" />
 
-        <activity android:name=".business.ReplyReviewActivity"
-            android:screenOrientation="portrait"
-            android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"/>
+        <activity
+            android:name=".business.ReplyReviewActivity"
+            android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"
+            android:screenOrientation="portrait" />
 
-        <activity android:name=".business.SettingActivity"
-            android:screenOrientation="portrait"
-            android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale" />
+        <activity
+            android:name=".business.SettingActivity"
+            android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"
+            android:screenOrientation="portrait" />
 
-        <activity android:name="io.agora.openlive.ui.MainActivity"
+        <activity
+            android:name="io.agora.openlive.ui.MainActivity"
+            android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"
             android:launchMode="singleInstance"
             android:screenOrientation="landscape"
-            android:theme="@style/FullscreenTheme"
-            android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale" />
+            android:theme="@style/FullscreenTheme" />
 
-        <activity android:name="io.agora.openlive.ui.LiveRoomActivity"
+        <activity
+            android:name="io.agora.openlive.ui.LiveRoomActivity"
             android:configChanges="keyboard|keyboardHidden|navigation|orientation|screenSize|fontScale"
             android:screenOrientation="landscape"
-            android:theme="@style/FullscreenTheme">
-        </activity>
+            android:theme="@style/FullscreenTheme"></activity>
 
         <activity
             android:name="io.agora.openlive.ui.MeetingInitActivity"
@@ -116,19 +123,20 @@
             android:theme="@style/FullscreenTheme" />
         <activity
             android:name="io.agora.openlive.ui.MeetingBroadcastActivity"
-            android:launchMode="singleTask"
             android:configChanges="keyboard|keyboardHidden|navigation|orientation|screenSize|fontScale"
+            android:launchMode="singleTask"
             android:screenOrientation="landscape"
             android:theme="@style/FullscreenTheme" />
 
 
         <activity
             android:name="io.agora.openlive.ui.MeetingAudienceActivity"
-            android:launchMode="singleTask"
             android:configChanges="keyboard|keyboardHidden|navigation|orientation|screenSize|fontScale"
+            android:launchMode="singleTask"
             android:screenOrientation="landscape"
             android:theme="@style/FullscreenTheme" />
-        <activity android:name=".business.LinkEntryActivity"
+        <activity
+            android:name=".business.LinkEntryActivity"
             android:screenOrientation="landscape"
             android:theme="@style/FullscreenTheme">
             <intent-filter>
@@ -144,7 +152,29 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".receiver.PhoneReceiver" >
+        <activity
+            android:name=".business.PhoneRegisterActivity"
+            android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"
+            android:screenOrientation="portrait"
+            android:theme="@style/NoTitle"
+            android:windowSoftInputMode="adjustPan" />
+
+        <activity
+            android:name=".business.PostTypeActivity"
+            android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".business.GridActivity"
+            android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".business.CustomActivity"
+            android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"
+            android:screenOrientation="portrait" />
+
+        <receiver android:name=".receiver.PhoneReceiver">
             <intent-filter>
                 <!-- 获取来电广播 -->
                 <action android:name="android.intent.action.PHONE_STATE" />
@@ -158,7 +188,8 @@
         <!--服务结束-->
 
         <!-- TD统计 开始-->
-        <service android:name="com.talkingdata.sdk.TDAntiCheatingService"
+        <service
+            android:name="com.talkingdata.sdk.TDAntiCheatingService"
             android:process="com.talkingdata.sdk.TDAntiCheatingService">  <!--用户质量评估Service可以配置在主进程或者单独进程-->
             <intent-filter>
                 <action android:name="com.talkingdata.sdk.TDAntiCheatingService" />
@@ -166,8 +197,12 @@
         </service>
 
         <!-- TD统计 使用build配置-->
-        <meta-data  android:name="TD_APP_ID" android:value="${TD_APP_ID}" />
-        <meta-data android:name="TD_CHANNEL_ID"  android:value="${TD_CHANNEL_ID}" />
+        <meta-data
+            android:name="TD_APP_ID"
+            android:value="${TD_APP_ID}" />
+        <meta-data
+            android:name="TD_CHANNEL_ID"
+            android:value="${TD_CHANNEL_ID}" />
         <!-- TD统计 结束-->
 
     </application>

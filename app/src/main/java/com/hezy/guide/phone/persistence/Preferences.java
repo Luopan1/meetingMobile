@@ -20,10 +20,17 @@ public class Preferences {
     private static final String PREFERENCE_USER_MOBILE = "u_mobile";
     private static final String PREFERENCE_USER_ADDRESS = "u_address";
     private static final String PREFERENCE_USER_DISTRICT = "u_district";
+    private static final String PREFERENCE_USER_DISTRICT_ID = "u_district_id";
     private static final String PREFERENCE_USER_PHOTO = "u_photo";
     private static final String PREFERENCE_USER_SIGNATURE = "u_signature";
     private static final String PREFERENCE_USER_AREA_INFO = "u_area_info";
     private static final String PREFERENCE_USER_AREA_NAME = "u_area_name";
+    private static final String PREFERENCE_USER_POST_TYPE = "u_post_type";
+    private static final String PREFERENCE_USER_POST_TYPE_ID = "u_post_type_id";
+    private static final String PREFERENCE_USER_GRID = "u_grid";
+    private static final String PREFERENCE_USER_GRID_ID = "u_grid_id";
+    private static final String PREFERENCE_USER_CUSTOM = "u_custom";
+    private static final String PREFERENCE_USER_CUSTOM_ID = "u_custom_id";
     private static final String PREFERENCE_USER_RANK = "u_rank";
 
     private static final String PREFERENCE_STUDENT_ID = "s_id";
@@ -68,7 +75,7 @@ public class Preferences {
         return getPreferences().getInt(PREFERENCE_USER_RANK, 0);
     }
 
-    public static void setUserRank(int  rank) {
+    public static void setUserRank(int rank) {
         SharedPreferences.Editor editor = getPreferences().edit();
         editor.putInt(PREFERENCE_USER_RANK, rank);
         if (!editor.commit()) {
@@ -92,10 +99,12 @@ public class Preferences {
         }
     }
 
+    //获取用户名
     public static String getUserName() {
         return getPreferences().getString(PREFERENCE_USER_NAME, "");
     }
 
+    //设置用户名
     public static void setUserName(String userName) {
         SharedPreferences.Editor editor = getPreferences().edit();
         editor.putString(PREFERENCE_USER_NAME, userName);
@@ -106,10 +115,12 @@ public class Preferences {
         }
     }
 
+    //获取用户地理位置
     public static String getUserAddress() {
         return getPreferences().getString(PREFERENCE_USER_ADDRESS, "");
     }
 
+    //设置用户地理位置
     public static void setUserAddress(String userName) {
         SharedPreferences.Editor editor = getPreferences().edit();
         editor.putString(PREFERENCE_USER_ADDRESS, userName);
@@ -120,10 +131,12 @@ public class Preferences {
         }
     }
 
+    //获取用户所属中心（大区）
     public static String getUserDistrict() {
         return getPreferences().getString(PREFERENCE_USER_DISTRICT, "");
     }
 
+    //设置用户所属中心（大区）
     public static void setUserDistrict(String district) {
         SharedPreferences.Editor editor = getPreferences().edit();
         editor.putString(PREFERENCE_USER_DISTRICT, district);
@@ -131,6 +144,118 @@ public class Preferences {
             Log.d(tag, "User district save failure");
         } else {
             Log.d(tag, "User address save success");
+        }
+    }
+
+    //获取用户所属中心ID（大区）
+    public static String getUserDistrictId() {
+        return getPreferences().getString(PREFERENCE_USER_DISTRICT_ID, "");
+    }
+
+    //设置用户所属中心ID（大区）
+    public static void setUserDistrictId(String districtId) {
+        SharedPreferences.Editor editor = getPreferences().edit();
+        editor.putString(PREFERENCE_USER_DISTRICT_ID, districtId);
+        if (!editor.commit()) {
+            Log.d(tag, "User district id save failure");
+        } else {
+            Log.d(tag, "User district id save success");
+        }
+    }
+
+    //获取用户类型
+    public static String getUserPostType() {
+        return getPreferences().getString(PREFERENCE_USER_POST_TYPE, "");
+    }
+
+    //设置用户类型
+    public static void setUserPostType(String postType) {
+        SharedPreferences.Editor editor = getPreferences().edit();
+        editor.putString(PREFERENCE_USER_POST_TYPE, postType);
+        if (!editor.commit()) {
+            Log.d(tag, "User postType save failure");
+        } else {
+            Log.d(tag, "User postType save success");
+        }
+    }
+
+    //获取用户类型id
+    public static String getUserPostTypeId() {
+        return getPreferences().getString(PREFERENCE_USER_POST_TYPE_ID, "");
+    }
+
+    //设置用户类型id
+    public static void setUserPostTypeId(String postType) {
+        SharedPreferences.Editor editor = getPreferences().edit();
+        editor.putString(PREFERENCE_USER_POST_TYPE_ID, postType);
+        if (!editor.commit()) {
+            Log.d(tag, "User postType id save failure");
+        } else {
+            Log.d(tag, "User postType id save success");
+        }
+    }
+
+    //获取用户网格
+    public static String getUserGrid() {
+        return getPreferences().getString(PREFERENCE_USER_GRID, "");
+    }
+
+    //设置用户网格
+    public static void setUserGrid(String grid) {
+        SharedPreferences.Editor editor = getPreferences().edit();
+        editor.putString(PREFERENCE_USER_GRID, grid);
+        if (!editor.commit()) {
+            Log.d(tag, "User grid save failure");
+        } else {
+            Log.d(tag, "User grid save success");
+        }
+    }
+
+    //获取用户网格id
+    public static String getUserGridId() {
+        return getPreferences().getString(PREFERENCE_USER_GRID_ID, "");
+    }
+
+    //设置用户网格id
+    public static void setUserGridId(String grid) {
+        SharedPreferences.Editor editor = getPreferences().edit();
+        editor.putString(PREFERENCE_USER_GRID_ID, grid);
+        if (!editor.commit()) {
+            Log.d(tag, "User grid id save failure");
+        } else {
+            Log.d(tag, "User grid id save success");
+        }
+    }
+
+    //获取客户
+    public static String getUserCustom() {
+        return getPreferences().getString(PREFERENCE_USER_CUSTOM, "");
+    }
+
+    //设置客户
+    public static void setUserCustom(String custom) {
+        SharedPreferences.Editor editor = getPreferences().edit();
+        editor.putString(PREFERENCE_USER_CUSTOM, custom);
+        if (!editor.commit()) {
+            Log.d(tag, "User custom save failure");
+        } else {
+            Log.d(tag, "User custom save success");
+        }
+    }
+
+    //获取客户id
+    public static String getUserCustomId() {
+        return getPreferences().getString(PREFERENCE_USER_CUSTOM_ID, "");
+    }
+
+    //设置客户id
+    public static void setUserCustomId(String custom) {
+        SharedPreferences.Editor editor = getPreferences().edit();
+        editor.putString(PREFERENCE_USER_CUSTOM_ID, custom);
+        if (!editor.commit()) {
+            Log.d(tag, "User custom id save failure");
+        } else {
+            Log.d(tag, "User custom id save success");
         }
     }
 
@@ -148,7 +273,7 @@ public class Preferences {
         }
     }
 
-    public static void setAreaName(String areaName){
+    public static void setAreaName(String areaName) {
         SharedPreferences.Editor editor = getPreferences().edit();
         editor.putString(PREFERENCE_USER_AREA_NAME, areaName);
         if (!editor.commit()) {
@@ -158,11 +283,11 @@ public class Preferences {
         }
     }
 
-    public static String getAreaName(){
+    public static String getAreaName() {
         return getPreferences().getString(PREFERENCE_USER_AREA_NAME, null);
     }
 
-    public static void setAreaInfo(String areaInfo){
+    public static void setAreaInfo(String areaInfo) {
         SharedPreferences.Editor editor = getPreferences().edit();
         editor.putString(PREFERENCE_USER_AREA_INFO, areaInfo);
         if (!editor.commit()) {
@@ -172,7 +297,7 @@ public class Preferences {
         }
     }
 
-    public static String getAreaInfo(){
+    public static String getAreaInfo() {
         return getPreferences().getString(PREFERENCE_USER_AREA_INFO, null);
     }
 
@@ -289,11 +414,14 @@ public class Preferences {
 
     /**
      * 没有设置完用户信息
+     *
      * @return
      */
-    public static boolean isUserinfoEmpty(){
-        return (TextUtils.isEmpty(Preferences.getUserMobile()) || TextUtils.isEmpty(Preferences.getUserPhoto())
-                || TextUtils.isEmpty(Preferences.getUserName()) || TextUtils.isEmpty(Preferences.getUserAddress())
+    public static boolean isUserinfoEmpty() {
+        return (TextUtils.isEmpty(Preferences.getUserMobile())
+                || TextUtils.isEmpty(Preferences.getUserPhoto())
+                || TextUtils.isEmpty(Preferences.getUserName())
+                || TextUtils.isEmpty(Preferences.getUserAddress())
                 || TextUtils.isEmpty(Preferences.getUserDistrict()));
     }
 

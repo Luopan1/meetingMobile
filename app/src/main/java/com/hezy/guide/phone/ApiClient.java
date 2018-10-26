@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
+import com.hezy.guide.phone.entities.LoginWithPhoneNumber;
 import com.hezy.guide.phone.entities.RankInfo;
 import com.hezy.guide.phone.entities.RecordData;
 import com.hezy.guide.phone.entities.RecordTotal;
@@ -30,6 +31,8 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import okhttp3.OkHttpClient;
 
 import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
 import static com.hezy.guide.phone.utils.ToastUtils.showToast;
@@ -90,15 +93,15 @@ public class ApiClient {
         return params;
     }
 
-    public void expostorOnlineStats(Object tag, OkHttpCallback callback, Map<String, Object> values){
+    public void expostorOnlineStats(Object tag, OkHttpCallback callback, Map<String, Object> values) {
         okHttpUtil.postJson(API_DOMAIN_NAME + "/osg/app/user/expostor/online/stats", getCommonHead(), JSON.toJSONString(values), callback, tag);
     }
 
-    public void meetingJoinStats(Object tag, OkHttpCallback callback, Map<String, Object> values){
+    public void meetingJoinStats(Object tag, OkHttpCallback callback, Map<String, Object> values) {
         okHttpUtil.postJson(API_DOMAIN_NAME + "/osg/app/meeting/join/stats", getCommonHead(), JSON.toJSONString(values), callback, tag);
     }
 
-    public void meetingHostStats(Object tag, OkHttpCallback callback, Map<String, Object> values){
+    public void meetingHostStats(Object tag, OkHttpCallback callback, Map<String, Object> values) {
         okHttpUtil.postJson(API_DOMAIN_NAME + "/osg/app/meeting/host/stats", getCommonHead(), JSON.toJSONString(values), callback, tag);
     }
 
@@ -107,18 +110,18 @@ public class ApiClient {
     }
 
     public void getAllMeeting(Object tag, String meetingName, OkHttpCallback callback) {
-        if(TextUtils.isEmpty(meetingName)) {
+        if (TextUtils.isEmpty(meetingName)) {
             okHttpUtil.get(API_DOMAIN_NAME + "/osg/app/meeting/list", getCommonHead(), null, callback);
         } else {
             okHttpUtil.get(API_DOMAIN_NAME + "/osg/app/meeting/list?title=" + meetingName, getCommonHead(), null, callback);
         }
     }
 
-    public void verifyRole(Object tag, OkHttpCallback callback, Map<String, Object> values){
+    public void verifyRole(Object tag, OkHttpCallback callback, Map<String, Object> values) {
         okHttpUtil.postJson(API_DOMAIN_NAME + "/osg/app/meeting/verify", getCommonHead(), JSON.toJSONString(values), callback, tag);
     }
 
-    public void joinMeeting(Object tag, OkHttpCallback callback, Map<String, Object> values){
+    public void joinMeeting(Object tag, OkHttpCallback callback, Map<String, Object> values) {
         okHttpUtil.postJson(API_DOMAIN_NAME + "/osg/app/meeting/join", getCommonHead(), JSON.toJSONString(values), callback, tag);
     }
 
@@ -126,7 +129,7 @@ public class ApiClient {
         okHttpUtil.get(API_DOMAIN_NAME + "/osg/app/meeting/" + meetingId, getCommonHead(), null, callback);
     }
 
-    public void finishMeeting(Object tag, String meetingId, int attendance, OkHttpCallback callback){
+    public void finishMeeting(Object tag, String meetingId, int attendance, OkHttpCallback callback) {
         okHttpUtil.postJson(API_DOMAIN_NAME + "/osg/app/meeting/" + meetingId + "/end?attendance=" + attendance, getCommonHead(), null, callback, tag);
     }
 
@@ -140,7 +143,8 @@ public class ApiClient {
         okHttpUtil.get(API_DOMAIN_NAME_YOYOTU + "/dz/app/config", null, null, callback);
     }
 
-    public void districts(OkHttpCallback callback, String parentId){
+    //获取大区（中心）接口
+    public void districts(OkHttpCallback callback, String parentId) {
         okHttpUtil.get(API_DOMAIN_NAME + "/osg/app/user/district?parentId=" + parentId, getCommonHead(), null, callback);
     }
 
@@ -346,4 +350,46 @@ public class ApiClient {
 
     }
 
+    /**
+     * 手机号携带验证码进行用户信息校验
+     *
+     * @param tag
+     * @param params
+     * @param callback
+     */
+    public void requestLoginWithPhoneNumber(Object tag, Map<String, String> params, OkHttpCallback callback) {
+        okHttpUtil.postJson(API_DOMAIN_NAME + "/osg/app/user/mobile/auth", getCommonHead(), JSON.toJSONString(params), callback, tag);
+    }
+
+    /**
+     * 获取用户类型接口
+     *
+     * @param tag
+     * @param callback
+     */
+    public void requestPostType(Object tag, OkHttpCallback callback) {
+        okHttpUtil.get(API_DOMAIN_NAME + "/osg/app/user/post/type", tag, callback);
+    }
+
+    /**
+     * 获取用户网格接口
+     *
+     * @param tag
+     * @param params
+     * @param callback
+     */
+    public void requestGrid(Object tag, Map<String, String> params, OkHttpCallback callback) {
+        okHttpUtil.get(API_DOMAIN_NAME + "/osg/app/user/area/grid", params, tag, callback);
+    }
+
+    /**
+     * 获取用户接口
+     *
+     * @param tag
+     * @param params
+     * @param callback
+     */
+    public void requestCustom(Object tag, Map<String, String> params, OkHttpCallback callback) {
+        okHttpUtil.get(API_DOMAIN_NAME + "/osg/app/user/area/custom", params, tag, callback);
+    }
 }

@@ -22,6 +22,7 @@ public class DistrictActivity extends BasicActivity {
     private ImageView backImage;
     private ListView listView, listView1;
     private DistrictAdapter districtAdapter, districtAdapter1;
+    private boolean selected = false;
 
     @Override
     public String getStatisticsTag() {
@@ -72,10 +73,11 @@ public class DistrictActivity extends BasicActivity {
             listView1.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    selected = true;
                     District district = (District) districtAdapter1.getItem(i);
 
                     Intent intent = new Intent();
-                    intent.putExtra("district", district);
+                    intent.putExtra(UserInfoActivity.KEY_USERINFO_DISTRICT, district);
                     setResult(RESULT_OK, intent);
                     finish();
                 }
@@ -83,4 +85,16 @@ public class DistrictActivity extends BasicActivity {
         }
     };
 
+    @Override
+    public void finish() {
+        if (!selected) {
+            Intent intent = new Intent();
+            District district = new District();
+            district.setId("7d8a40b5255845699f948c0b220b6a64");
+            district.setName("总部");
+            intent.putExtra(UserInfoActivity.KEY_USERINFO_DISTRICT, district);
+            setResult(RESULT_OK, intent);
+        }
+        super.finish();
+    }
 }
