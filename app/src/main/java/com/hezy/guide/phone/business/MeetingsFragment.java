@@ -41,7 +41,10 @@ public class MeetingsFragment extends BaseFragment {
     private RecyclerView recyclerView;
     private LinearLayoutManager mLayoutManager;
     private MeetingAdapter meetingAdapter;
-    private TextView emptyText;
+    private TextView emptyText, tv_meeting_public, tv_meeting_private;
+    private final int TYPE_PUBLIC_MEETING = 0;
+    private final int TYPE_PRIVATE_MEETING = 1;
+    private int currentMeetingListPageIndex = TYPE_PUBLIC_MEETING;
 
     @Override
     public String getStatisticsTag() {
@@ -68,7 +71,14 @@ public class MeetingsFragment extends BaseFragment {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                onMyVisible();
+                switch (currentMeetingListPageIndex) {
+                    case TYPE_PUBLIC_MEETING:
+                        showPublicMeeting();
+                        break;
+                    case TYPE_PRIVATE_MEETING:
+                        showPrivateMeeting();
+                        break;
+                }
             }
         });
 
@@ -88,19 +98,70 @@ public class MeetingsFragment extends BaseFragment {
         recyclerView.setHasFixedSize(true);
 //        recyclerView.addItemDecoration(new DividerItemDecoration(mContext,DividerItemDecoration.VERTICAL));
         emptyText = view.findViewById(R.id.emptyView);
+        tv_meeting_public = view.findViewById(R.id.tv_meeting_public);
+        tv_meeting_private = view.findViewById(R.id.tv_meeting_private);
+        tv_meeting_public.setOnClickListener(tvMeetingOnClickListener);
+        tv_meeting_private.setOnClickListener(tvMeetingOnClickListener);
 
         return view;
+    }
+
+    private View.OnClickListener tvMeetingOnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()) {
+                case R.id.tv_meeting_public:
+                    showMeeting(TYPE_PUBLIC_MEETING);
+                    break;
+                case R.id.tv_meeting_private:
+                    showMeeting(TYPE_PRIVATE_MEETING);
+                    break;
+            }
+        }
+    };
+
+    private void showMeeting(int type) {
+        switch (type) {
+            case TYPE_PUBLIC_MEETING:
+                showPublicMeeting();
+                break;
+            case TYPE_PRIVATE_MEETING:
+                showPrivateMeeting();
+                break;
+        }
+    }
+
+    private void showPublicMeeting() {
+        showPublicMeetingView();
+        currentMeetingListPageIndex = TYPE_PUBLIC_MEETING;
+        requestMeetings(null, TYPE_PUBLIC_MEETING);
+    }
+
+    private void showPrivateMeeting() {
+        showPrivateMeetingView();
+        currentMeetingListPageIndex = TYPE_PRIVATE_MEETING;
+        requestMeetings(null, TYPE_PRIVATE_MEETING);
+    }
+
+    private void showPublicMeetingView() {
+        tv_meeting_public.setTextSize(12);
+        tv_meeting_private.setTextSize(9);
+    }
+
+    private void showPrivateMeetingView() {
+        tv_meeting_public.setTextSize(9);
+        tv_meeting_private.setTextSize(12);
     }
 
     @Override
     public void onMyVisible() {
         super.onMyVisible();
-        requestMeetings(null);
+        showPublicMeeting();
     }
 
-    public void requestMeetings(String title) {
+    public void requestMeetings(String title, int type) {
         swipeRefreshLayout.setRefreshing(true);
-        apiClient.getAllMeeting(TAG, title, meetingsCallback);
+        apiClient.getAllMeeting(TAG, title, type, meetingsCallback);
     }
 
     private OkHttpCallback meetingsCallback = new OkHttpCallback<BaseArrayBean<Meeting>>() {
@@ -231,5 +292,4 @@ public class MeetingsFragment extends BaseFragment {
 
         };
     }
-
 }

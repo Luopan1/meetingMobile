@@ -46,6 +46,9 @@ public class MeetingSearchActivity extends BasicActivity {
     private MeetingAdapter meetingAdapter;
     private TextView emptyText;
 
+    private final int TYPE_PUBLIC_MEETING = 0;
+    private final int TYPE_PRIVATE_MEETING = 1;
+
     @Override
     public String getStatisticsTag() {
         return "会议搜索列表";
@@ -145,7 +148,7 @@ public class MeetingSearchActivity extends BasicActivity {
 
     public void requestMeetings(String title) {
         swipeRefreshLayout.setRefreshing(true);
-        apiClient.getAllMeeting(TAG, title, meetingsCallback);
+        apiClient.getAllMeeting(TAG, title, TYPE_PUBLIC_MEETING, meetingsCallback);
     }
 
     private OkHttpCallback meetingsCallback = new OkHttpCallback<BaseArrayBean<Meeting>>() {

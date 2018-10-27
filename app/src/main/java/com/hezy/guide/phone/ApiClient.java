@@ -6,7 +6,6 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
-import com.hezy.guide.phone.entities.LoginWithPhoneNumber;
 import com.hezy.guide.phone.entities.RankInfo;
 import com.hezy.guide.phone.entities.RecordData;
 import com.hezy.guide.phone.entities.RecordTotal;
@@ -31,8 +30,6 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import okhttp3.OkHttpClient;
 
 import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
 import static com.hezy.guide.phone.utils.ToastUtils.showToast;
@@ -109,12 +106,13 @@ public class ApiClient {
         okHttpUtil.get(API_DOMAIN_NAME + "/osg/app/meeting/all?title=" + meetingName, getCommonHead(), null, callback);
     }
 
-    public void getAllMeeting(Object tag, String meetingName, OkHttpCallback callback) {
-        if (TextUtils.isEmpty(meetingName)) {
-            okHttpUtil.get(API_DOMAIN_NAME + "/osg/app/meeting/list", getCommonHead(), null, callback);
-        } else {
-            okHttpUtil.get(API_DOMAIN_NAME + "/osg/app/meeting/list?title=" + meetingName, getCommonHead(), null, callback);
-        }
+    public void getAllMeeting(Object tag, String meetingName, int type, OkHttpCallback callback) {
+        String url = API_DOMAIN_NAME + "/osg/app/meeting/list";
+        url += "?type=" + type;
+
+        if (!TextUtils.isEmpty(meetingName))
+            url += "&title=" + meetingName;
+        okHttpUtil.get(url, getCommonHead(), null, callback);
     }
 
     public void verifyRole(Object tag, OkHttpCallback callback, Map<String, Object> values) {
