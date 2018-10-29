@@ -7,7 +7,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/my_px_160"
-        android:background="@color/purple_811fcd">
+        android:background="@drawable/bg_gradient_vertical_color">
 
         <ImageView
             android:id="@+id/mIvLeft"

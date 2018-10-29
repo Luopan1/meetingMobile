@@ -502,10 +502,14 @@ public class UserInfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
             ToastUtils.showToast("请设置一张图片");
             return;
         }
-        if (TextUtils.isEmpty(mBinding.edtUserInfoName.getText().toString().trim())) {
+
+        String userName = mBinding.edtUserInfoName.getText().toString().trim();
+        if (TextUtils.isEmpty(userName)) {
             ToastUtils.showToast("请输入姓名");
             return;
         }
+        Preferences.setUserName(userName);
+
         if (TextUtils.isEmpty(mBinding.edtUserInfoPostType.getText().toString().trim())) {
             ToastUtils.showToast("请选择用户类型");
             return;

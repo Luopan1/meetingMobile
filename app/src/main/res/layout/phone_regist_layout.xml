@@ -6,7 +6,7 @@
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/bg_login_color"
+        android:background="@drawable/bg_gradient_vertical_color"
         android:orientation="vertical"
         tools:context=".business.PhoneRegisterActivity">
 

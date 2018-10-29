@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical"
-    android:background="@drawable/bg_login_color">
+    android:background="@drawable/bg_gradient_vertical_color">
 
     <ImageView
         android:layout_width="@dimen/my_px_350"

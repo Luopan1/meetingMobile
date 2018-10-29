@@ -17,7 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/my_px_160"
         android:layout_alignParentBottom="true"
-        android:background="@color/purple_811fcd"
+        android:background="@drawable/bg_gradient_vertical_color"
         android:orientation="horizontal">
 
         <TextView
@@ -25,7 +25,7 @@
             android:layout_width="@dimen/my_px_250"
             android:layout_height="@dimen/my_px_250"
             android:layout_gravity="bottom"
-            android:background="@drawable/home_state_bg_shape"
+            android:background="@drawable/bg_connection_status_color"
             android:drawableTop="@mipmap/ic_offline"
             android:gravity="center"
             android:paddingTop="@dimen/my_px_20"
@@ -51,7 +51,7 @@
                 android:drawablePadding="@dimen/my_px_10"
                 android:drawableTop="@drawable/home_tab_log_selector"
                 android:paddingTop="@dimen/my_px_14"
-                android:text="记录" />
+                android:text="日志" />
 
             <RadioButton
                 android:id="@+id/meeting_radio"

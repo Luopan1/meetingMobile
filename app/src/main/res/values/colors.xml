@@ -76,8 +76,13 @@
 
     <color name="red_9e3603">#9e3606</color>
 
-    <color name="bg_login_FF1E128B">#FF1E128B</color>
-    <color name="bg_login_FF9147B2">#FF9147B2</color>
+    <color name="bg_start_color_FF1E128B">#FF1E128B</color>
+    <color name="bg_end_color_FF9147B2">#FF9147B2</color>
+
+    <color name="bg_meeting_start_tag">#ff3023ae</color>
+    <color name="bg_meeting_end_tag">#ffc86dd7</color>
+    <color name="bg_meeting_solid">#fff62c64</color>
+
 
 
 </resources>

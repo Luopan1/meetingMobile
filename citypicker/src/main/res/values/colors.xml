@@ -12,4 +12,7 @@
     <color name="gray_deep">#5c5c5c</color>
     <color name="alpha_gray">#CC646464</color>
     <color name="theme_gray">#646464</color>
+
+    <color name="bg_start_color_FF1E128B">#FF1E128B</color>
+    <color name="bg_end_color_FF9147B2">#FF9147B2</color>
 </resources>
