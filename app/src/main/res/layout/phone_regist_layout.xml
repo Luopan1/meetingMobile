@@ -38,7 +38,6 @@
             android:hint="请输入手机号"
             android:inputType="phone"
             android:maxLength="11"
-            android:text="15901177524"
             android:textColor="@color/white"
             android:textSize="12sp"
             android:theme="@style/WhiteEdittext"
