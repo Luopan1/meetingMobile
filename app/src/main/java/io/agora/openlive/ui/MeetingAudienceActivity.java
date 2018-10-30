@@ -692,6 +692,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                     JSONObject jsonObject = new JSONObject();
                     jsonObject.put("request", false);
                     jsonObject.put("uid", config().mUid);
+                    jsonObject.put("calling", calling);
                     if (TextUtils.isEmpty(Preferences.getAreaInfo())) {
                         jsonObject.put("uname", "讲解员-" + Preferences.getUserName());
                     } else {

@@ -392,7 +392,7 @@ public class ApiClient {
     }
 
     public void meetingMaterial(Object tag, OkHttpCallback callback, String materialsId){
-        okHttpUtil.get(API_DOMAIN_NAME + "/osg/app/meeting/materials/" + materialsId, tag,  callback);
+        okHttpUtil.get(API_DOMAIN_NAME + "/osg/app/meeting/materials/" + materialsId, getCommonHead(), null, callback);
     }
 
 }
