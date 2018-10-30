@@ -333,12 +333,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
             public void onError(final String name, final int ecode, final String desc) {
                 super.onError(name, ecode, desc);
                 if (BuildConfig.DEBUG) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(MeetingBroadcastActivity.this, "name: " + name + "ecode: " + ecode + "desc: " + desc, Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                    runOnUiThread(() -> Toast.makeText(MeetingBroadcastActivity.this, "name: " + name + "ecode: " + ecode + "desc: " + desc, Toast.LENGTH_SHORT).show());
                 }
             }
 
