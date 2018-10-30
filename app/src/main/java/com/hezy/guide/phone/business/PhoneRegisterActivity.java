@@ -31,7 +31,7 @@ import rx.functions.Action1;
 
 
 /**
- * 手机注册页面
+ * 手机绑定页面
  * @author Dongce
  * create time: 2018/10/22
  */
@@ -186,7 +186,6 @@ public class PhoneRegisterActivity extends BaseDataBindingActivity<PhoneRegistLa
                 startActivity(new Intent(PhoneRegisterActivity.this, HomeActivity.class));
             } else {
                 //未认证过，不是海尔员工
-                Preferences.setUserMobile(mBinding.edtPhoneNumber.getText().toString().trim());
                 UserInfoActivity.actionStart(PhoneRegisterActivity.this, true);
             }
             finish();
