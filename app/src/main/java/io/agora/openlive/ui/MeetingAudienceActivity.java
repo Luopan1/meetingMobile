@@ -118,6 +118,8 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
         broadcastNameText.setText("主持人：" + meetingJoin.getHostUser().getHostUserName());
         broadcasterSmallLayout = findViewById(R.id.broadcaster_small_layout);
         docImage = findViewById(R.id.doc_image);
+        pageText = findViewById(R.id.page);
+        roleTagText = findViewById(R.id.role_tag);
 
         audienceLayout = findViewById(R.id.audience_layout);
         audienceView = findViewById(R.id.audience_view);
