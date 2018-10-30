@@ -390,4 +390,9 @@ public class ApiClient {
     public void requestCustom(Object tag, Map<String, String> params, OkHttpCallback callback) {
         okHttpUtil.get(API_DOMAIN_NAME + "/osg/app/user/area/custom", params, tag, callback);
     }
+
+    public void meetingMaterial(Object tag, OkHttpCallback callback, String materialsId){
+        okHttpUtil.get(API_DOMAIN_NAME + "/osg/app/meeting/materials/" + materialsId, tag,  callback);
+    }
+
 }

@@ -15,6 +15,7 @@
     <color name="transparent_75_white">#ACFFFFFF</color>
 
     <color name="transparent_20_black">#33000000</color>
+    <color name="transparent_60_black">#a8000000</color>
     <color name="transparent_80_black">#cc000000</color>
 
     <color name="dark_gray">#FF55585A</color>
@@ -73,6 +74,7 @@
     <color name="c_fffc00">#fffc00</color>
     <color name="c_d8d8d8">#d8d8d8</color>
     <color name="c_434343">#434343</color>
+    <color name="c_ff8600">#ff8600</color>
 
     <color name="red_9e3603">#9e3606</color>
 
