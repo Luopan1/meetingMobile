@@ -65,9 +65,9 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
     private int memberCount;
 
     private FrameLayout broadcasterLayout, audienceView, audienceLayout;
-    private TextView broadcastNameText, broadcastTipsText, countText, audienceNameText, audienceTipsText;
-    private Button waiterButton, exitButton, stopButton;
-
+    private TextView broadcastNameText, broadcastTipsText, audienceNameText, audienceTipsText;
+    private Button waiterButton, stopButton;
+    private TextView exitButton;
     private AgoraAPIOnlySignal agoraAPI;
 
     @Override
@@ -100,17 +100,16 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
         meetingJoin = intent.getParcelableExtra("meeting");
         channelName = meetingJoin.getMeeting().getId();
 
-        broadcastTipsText = (TextView) findViewById(R.id.broadcast_tips);
-        audienceNameText = (TextView) findViewById(R.id.audience_name);
-        broadcastNameText = (TextView) findViewById(R.id.broadcaster);
+        broadcastTipsText = findViewById(R.id.broadcast_tips);
+        audienceNameText = findViewById(R.id.audience_name);
+        broadcastNameText = findViewById(R.id.broadcaster);
         broadcastNameText.setText("主持人：" + meetingJoin.getHostUser().getHostUserName());
-        broadcasterLayout = (FrameLayout) findViewById(R.id.broadcaster_view);
-        audienceTipsText = (TextView) findViewById(R.id.audience_tips);
-        audienceLayout = (FrameLayout) findViewById(R.id.audience_layout);
-        audienceView = (FrameLayout) findViewById(R.id.audience_view);
-        countText = (TextView) findViewById(R.id.online_count);
+        broadcasterLayout = findViewById(R.id.broadcaster_view);
+        audienceTipsText = findViewById(R.id.audience_tips);
+        audienceLayout = findViewById(R.id.audience_layout);
+        audienceView = findViewById(R.id.audience_view);
 
-        waiterButton = (Button) findViewById(R.id.waiter);
+        waiterButton = findViewById(R.id.waiter);
         waiterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -120,15 +119,15 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
             }
         });
 
-        exitButton = (Button) findViewById(R.id.exit);
+        exitButton = findViewById(R.id.exit);
         exitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showDialog(1, "结束会议？", "取消", "确定", null);
+                showDialog(1, "确定结束会议吗？", "暂时离开", "结束会议", null);
             }
         });
 
-        stopButton = (Button) findViewById(R.id.stop_audience);
+        stopButton = findViewById(R.id.stop_audience);
         stopButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -189,7 +188,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                 super.onChannelJoined(channelID);
                 
                 agoraAPI.setAttr("role", "0");
-                agoraAPI.channelQueryUserNum(channelName);
+//                agoraAPI.channelQueryUserNum(channelName);
 
             }
 
@@ -199,28 +198,28 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
 
             }
 
-            @Override
-            public void onChannelQueryUserNumResult(String channelID, int ecode, final int num) {
-                super.onChannelQueryUserNumResult(channelID, ecode, num);
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        memberCount = num;
-                        countText.setText("在线人数：" + num);
-                    }
-                });
-            }
+//            @Override
+//            public void onChannelQueryUserNumResult(String channelID, int ecode, final int num) {
+//                super.onChannelQueryUserNumResult(channelID, ecode, num);
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        memberCount = num;
+//                        countText.setText("在线人数：" + num);
+//                    }
+//                });
+//            }
 
             @Override
             public void onChannelUserJoined(String account, int uid) {
                 super.onChannelUserJoined(account, uid);
-                agoraAPI.channelQueryUserNum(channelName);
+//                agoraAPI.channelQueryUserNum(channelName);
             }
 
             @Override
             public void onChannelUserLeaved(String account, int uid) {
                 super.onChannelUserLeaved(account, uid);
-                agoraAPI.channelQueryUserNum(channelName);
+//                agoraAPI.channelQueryUserNum(channelName);
             }
 
             @Override
@@ -267,7 +266,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                                     waiterButton.setText("等待发言（" + audiences.size() + "）");
 
                                     if (audienceAdapter != null) {
-                                        audienceAdapter.setDate(audiences);
+                                        audienceAdapter.setData(audiences);
                                     }
 //                                    Toast.makeText(MeetingBroadcastActivity.this, audience.getUname() + "请求发言", Toast.LENGTH_SHORT).show();
                                 } else {
@@ -278,7 +277,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                                     waiterButton.setText("等待发言（" + audiences.size() + "）");
 
                                     if (audienceAdapter != null) {
-                                        audienceAdapter.setDate(audiences);
+                                        audienceAdapter.setData(audiences);
                                     }
 //                                    Toast.makeText(MeetingBroadcastActivity.this, audience.getUname() + "取消了请求发言", Toast.LENGTH_SHORT).show();
                                 }
@@ -334,7 +333,15 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
             public void onClick(View view) {
                 dialog.cancel();
                 if (type == 1) {
+                    doLeaveChannel();
+                    if (agoraAPI.getStatus() == 2) {
 
+                        agoraAPI.channelDelAttr(channelName, "doc_index");
+                        agoraAPI.channelDelAttr(channelName, "material_id");
+
+                        agoraAPI.logout();
+                    }
+                    finish();
                 } else if (type == 2) {
                     try {
                         audienceNameText.setTag(audience);
@@ -469,7 +476,9 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
             }
 
             doLeaveChannel();
-            agoraAPI.logout();
+            if (agoraAPI.getStatus() == 2) {
+                agoraAPI.logout();
+            }
             finish();
         }
 
@@ -602,7 +611,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                                 audiences.remove(newAudience);
                             }
                             if (audienceAdapter != null) {
-                                audienceAdapter.setDate(audiences);
+                                audienceAdapter.setData(audiences);
                             }
                             waiterButton.setText("等待发言（" + audiences.size() + "）");
                             stopButton.setVisibility(View.VISIBLE);
@@ -719,17 +728,22 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
         }
     }
 
+
+
+
     @Override
     protected void onStop() {
         super.onStop();
         doLeaveChannel();
-        agoraAPI.logout();
+        if (agoraAPI.getStatus() == 2) {
+            agoraAPI.logout();
+        }
         finish();
     }
 
     @Override
     public void onBackPressed() {
-        showDialog(1, "结束会议？", "取消", "确定", null);
+        showDialog(1, "确定结束会议吗？", "暂时离开", "结束会议", null);
     }
 
     @Override
@@ -738,7 +752,15 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
 
         TCAgent.onPageEnd(this, "MeetingAudienceActivity");
 
-        agoraAPI.logout();
+
+        if (agoraAPI.getStatus() == 2) {
+
+            agoraAPI.channelDelAttr(channelName, "doc_index");
+            agoraAPI.channelDelAttr(channelName, "material_id");
+
+            agoraAPI.logout();
+        }
+        agoraAPI.destroy();
 
         BaseApplication.getInstance().deInitWorkerThread();
     }

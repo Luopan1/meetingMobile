@@ -15,6 +15,10 @@ public class Audience implements Entity, Parcelable {
 
     private String uname;
 
+    private boolean handsUp;
+
+    private boolean calling;
+
     public int getUid() {
         return uid;
     }
@@ -31,7 +35,22 @@ public class Audience implements Entity, Parcelable {
         this.uname = uname;
     }
 
-//    @Override
+    public boolean isHandsUp() {
+        return handsUp;
+    }
+
+    public void setHandsUp(boolean handsUp) {
+        this.handsUp = handsUp;
+    }
+
+    public boolean isCalling() {
+        return calling;
+    }
+
+    public void setCalling(boolean calling) {
+        this.calling = calling;
+    }
+    //    @Override
 //    public String toString() {
 //        return "Audience{" +
 //                "uid='" + uid + '\'' +
@@ -55,7 +74,6 @@ public class Audience implements Entity, Parcelable {
 
     @Override
     public int hashCode() {
-
         return Objects.hash(uid, uname);
     }
 
@@ -68,6 +86,8 @@ public class Audience implements Entity, Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(this.uid);
         dest.writeString(this.uname);
+        dest.writeByte(this.handsUp ? (byte) 1 : (byte) 0);
+        dest.writeByte(this.calling ? (byte) 1 : (byte) 0);
     }
 
     public Audience() {
@@ -76,6 +96,8 @@ public class Audience implements Entity, Parcelable {
     protected Audience(Parcel in) {
         this.uid = in.readInt();
         this.uname = in.readString();
+        this.handsUp = in.readByte() != 0;
+        this.calling = in.readByte() != 0;
     }
 
     public static final Creator<Audience> CREATOR = new Creator<Audience>() {
