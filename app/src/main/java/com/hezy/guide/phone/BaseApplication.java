@@ -6,8 +6,8 @@ import com.hezy.guide.phone.entities.StaticResource;
 import com.hezy.guide.phone.entities.base.BaseBean;
 import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.utils.Logger;
-import com.hezy.guide.phone.utils.OkHttpCallback;
 import com.tencent.bugly.crashreport.CrashReport;
+import com.hezy.guide.phone.utils.OkHttpCallback;
 import com.tendcloud.tenddata.TCAgent;
 
 import java.net.URISyntaxException;
