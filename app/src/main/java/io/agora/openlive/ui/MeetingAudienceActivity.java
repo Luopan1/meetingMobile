@@ -258,6 +258,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                         JSONObject jsonObject = new JSONObject();
                         jsonObject.put("request", request);
                         jsonObject.put("uid", config().mUid);
+                        jsonObject.put("calling", calling);
                         if (TextUtils.isEmpty(Preferences.getAreaInfo())) {
                             jsonObject.put("uname", "讲解员-" + Preferences.getUserName());
                         } else {
@@ -768,9 +769,9 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
             Log.v("onJoinChannelSuccess", "uid--->" + uid);
 
             if ("true".equals(agora.getIsTest())) {
-                agoraAPI.login(agora.getAppID(), "" + uid, "noneed_token", 0, "");
+                agoraAPI.login2(agora.getAppID(), "" + uid, "noneed_token", 0, "", 10, 3);
             } else {
-                agoraAPI.login(agora.getAppID(), "" + uid, agora.getSignalingKey(), 0, "");
+                agoraAPI.login2(agora.getAppID(), "" + uid, agora.getSignalingKey(), 0, "", 10, 3);
             }
 
             HashMap<String, Object> params = new HashMap<String, Object>();
