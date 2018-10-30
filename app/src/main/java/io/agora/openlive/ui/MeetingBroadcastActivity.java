@@ -15,6 +15,8 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -68,11 +70,14 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
     private String channelName;
     private int memberCount;
 
+    private boolean isMuted = false;
+
     private FrameLayout broadcasterLayout, audienceView, audienceLayout;
     private TextView broadcastNameText, broadcastTipsText, audienceNameText, audienceTipsText;
     private Button waiterButton, stopButton;
     private TextView exitButton;
     private AgoraAPIOnlySignal agoraAPI;
+    private ImageButton muteButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,6 +117,17 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
         audienceTipsText = findViewById(R.id.audience_tips);
         audienceLayout = findViewById(R.id.audience_layout);
         audienceView = findViewById(R.id.audience_view);
+        muteButton = findViewById(R.id.mute_audio);
+        muteButton.setOnClickListener(v -> {
+            if (!isMuted) {
+                isMuted = true;
+                muteButton.setImageResource(R.drawable.ic_muted);
+            } else {
+                isMuted = false;
+                muteButton.setImageResource(R.drawable.ic_unmuted);
+            }
+            rtcEngine().muteLocalAudioStream(isMuted);
+        });
 
         waiterButton = findViewById(R.id.waiter);
         waiterButton.setOnClickListener(view -> {
@@ -124,12 +140,9 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
         exitButton.setOnClickListener(view -> showDialog(1, "确定结束会议吗？", "暂时离开", "结束会议", null));
 
         stopButton = findViewById(R.id.stop_audience);
-        stopButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Audience audience = (Audience) audienceNameText.getTag();
-                showDialog(3, "结束" + audience.getUname() + "的发言？", "取消", "确定", audience);
-            }
+        stopButton.setOnClickListener(view -> {
+            Audience audience = (Audience) audienceNameText.getTag();
+            showDialog(3, "结束" + audience.getUname() + "的发言？", "取消", "确定", audience);
         });
 
         config().mUid = Integer.parseInt(UIDUtil.generatorUID(Preferences.getUserId()));

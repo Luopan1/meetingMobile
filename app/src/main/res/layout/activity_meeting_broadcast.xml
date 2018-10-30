@@ -190,12 +190,20 @@
             android:background="@drawable/bg_meeting_button_selector"
             android:drawableLeft="@drawable/ic_meeting_end_speech"
             android:drawablePadding="3dp"
+            android:layout_marginRight="15dp"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:text="终止发言"
             android:textColor="@color/white"
             android:textSize="14sp"
             android:visibility="gone" />
+
+        <ImageButton
+            android:id="@+id/mute_audio"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:background="@drawable/bg_meeting_mute_selector"
+            android:src="@drawable/ic_unmuted"/>
 
     </LinearLayout>
 
