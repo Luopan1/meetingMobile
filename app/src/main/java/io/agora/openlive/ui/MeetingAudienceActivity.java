@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -82,6 +83,8 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_meeting_audience);
         TCAgent.onEvent(this, "进入会议直播界面");
+
+        registerReceiver(homeKeyEventReceiver, new IntentFilter(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
 
     }
 
