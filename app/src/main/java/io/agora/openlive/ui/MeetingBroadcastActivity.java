@@ -114,22 +114,14 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
         audienceView = findViewById(R.id.audience_view);
 
         waiterButton = findViewById(R.id.waiter);
-        waiterButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (audiences.size() > 0) {
-                    showAlertDialog();
-                }
+        waiterButton.setOnClickListener(view -> {
+            if (audiences.size() > 0) {
+                showAlertDialog();
             }
         });
 
         exitButton = findViewById(R.id.exit);
-        exitButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showDialog(1, "确定结束会议吗？", "暂时离开", "结束会议", null);
-            }
-        });
+        exitButton.setOnClickListener(view -> showDialog(1, "确定结束会议吗？", "暂时离开", "结束会议", null));
 
         stopButton = findViewById(R.id.stop_audience);
         stopButton.setOnClickListener(new View.OnClickListener() {
@@ -163,81 +155,94 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
             @Override
             public void onLoginSuccess(int uid, int fd) {
                 super.onLoginSuccess(uid, fd);
-                if (BuildConfig.DEBUG) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(MeetingBroadcastActivity.this, "信令系统登陆成功", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                }
-                agoraAPI.channelJoin(channelName);
+                runOnUiThread(() -> {
+                    if (BuildConfig.DEBUG) {
+                        runOnUiThread(() -> Toast.makeText(MeetingBroadcastActivity.this, "信令系统登陆成功", Toast.LENGTH_SHORT).show());
+                    }
+                    agoraAPI.channelJoin(channelName);
+                });
+
             }
 
             @Override
             public void onLoginFailed(final int ecode) {
                 super.onLoginFailed(ecode);
-                if (BuildConfig.DEBUG) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(MeetingBroadcastActivity.this, "信令系统登陆失败" + ecode, Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                }
+                runOnUiThread(() -> {
+                    if (BuildConfig.DEBUG) {
+                        Toast.makeText(MeetingBroadcastActivity.this, "信令系统登陆失败" + ecode, Toast.LENGTH_SHORT).show();
+                    }
+                });
+
             }
 
             @Override
             public void onChannelJoined(String channelID) {
                 super.onChannelJoined(channelID);
-                
-                agoraAPI.setAttr("role", "0");
-//                agoraAPI.channelQueryUserNum(channelName);
-
+                runOnUiThread(() -> {
+                    if (BuildConfig.DEBUG) {
+                        Toast.makeText(MeetingBroadcastActivity.this, "加入信令频道成功", Toast.LENGTH_SHORT).show();
+                    }
+                    agoraAPI.channelQueryUserNum(channelName);
+                });
             }
 
             @Override
             public void onChannelJoinFailed(String channelID, int ecode) {
                 super.onChannelJoinFailed(channelID, ecode);
-
+                runOnUiThread(() -> {
+                    if (BuildConfig.DEBUG) {
+                        Toast.makeText(MeetingBroadcastActivity.this, "加入信令频道失败", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
 
-//            @Override
-//            public void onChannelQueryUserNumResult(String channelID, int ecode, final int num) {
-//                super.onChannelQueryUserNumResult(channelID, ecode, num);
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        memberCount = num;
-//                        countText.setText("在线人数：" + num);
-//                    }
-//                });
-//            }
+            @Override
+            public void onLogout(int ecode) {
+                super.onLogout(ecode);
+                runOnUiThread(() -> {
+                    if (BuildConfig.DEBUG) {
+                        Toast.makeText(MeetingBroadcastActivity.this, "退出信令频道成功", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+
+            @Override
+            public void onChannelQueryUserNumResult(String channelID, int ecode, int num) {
+                super.onChannelQueryUserNumResult(channelID, ecode, num);
+                runOnUiThread(() -> {
+                    memberCount = num;
+                });
+            }
 
             @Override
             public void onChannelUserJoined(String account, int uid) {
                 super.onChannelUserJoined(account, uid);
-//                agoraAPI.channelQueryUserNum(channelName);
+                runOnUiThread(() -> {
+                    agoraAPI.channelQueryUserNum(channelName);
+                });
             }
 
             @Override
             public void onChannelUserLeaved(String account, int uid) {
                 super.onChannelUserLeaved(account, uid);
-//                agoraAPI.channelQueryUserNum(channelName);
-                if (BuildConfig.DEBUG) {
-                    Toast.makeText(MeetingBroadcastActivity.this, account + "退出信令频道", Toast.LENGTH_SHORT).show();
-                }
-                audienceHashMap.remove(account);
-                Iterator iter = audienceHashMap.entrySet().iterator();
-                audiences.clear();
-                while (iter.hasNext()) {
-                    Map.Entry entry = (Map.Entry) iter.next();
-                    audiences.add((Audience) entry.getValue());
-                }
-                if (audienceAdapter != null) {
-                    audienceAdapter.setData(audiences);
-                }
-                waiterButton.setText("参会人（" + audiences.size() + "）");
+                runOnUiThread(() -> {
+                    if (BuildConfig.DEBUG) {
+                        Toast.makeText(MeetingBroadcastActivity.this, account + "退出信令频道", Toast.LENGTH_SHORT).show();
+                    }
+                    agoraAPI.channelQueryUserNum(channelName);
+
+                    audienceHashMap.remove(account);
+                    Iterator iter = audienceHashMap.entrySet().iterator();
+                    audiences.clear();
+                    while (iter.hasNext()) {
+                        Map.Entry entry = (Map.Entry) iter.next();
+                        audiences.add((Audience) entry.getValue());
+                    }
+                    if (audienceAdapter != null) {
+                        audienceAdapter.setData(audiences);
+                    }
+                    waiterButton.setText("参会人（" + audiences.size() + "）");
+                });
             }
 
             @Override
@@ -271,12 +276,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
             public void onMessageSendSuccess(String messageID) {
                 super.onMessageSendSuccess(messageID);
                 if (BuildConfig.DEBUG) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(MeetingBroadcastActivity.this, "发送成功", Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                    runOnUiThread(() -> Toast.makeText(MeetingBroadcastActivity.this, messageID + "-发送成功", Toast.LENGTH_SHORT).show());
                 }
             }
 
@@ -284,55 +284,47 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
             public void onMessageSendError(String messageID, int ecode) {
                 super.onMessageSendError(messageID, ecode);
                 if (BuildConfig.DEBUG) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(MeetingBroadcastActivity.this, "发送失败", Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                    runOnUiThread(() -> Toast.makeText(MeetingBroadcastActivity.this, messageID + "-发送失败", Toast.LENGTH_SHORT).show());
                 }
             }
 
             @Override
             public void onMessageInstantReceive(final String account, final int uid, final String msg) {
                 super.onMessageInstantReceive(account, uid, msg);
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            JSONObject jsonObject = new JSONObject(msg);
-                            if (jsonObject.has("request")) {
-                                boolean request = jsonObject.getBoolean("request");
-                                Audience audience = JSON.parseObject(jsonObject.toString(), Audience.class);
-                                audience.setHandsUp(request);
-                                if (audience.isCalling()) {
-                                    currentAudience = audience;
-                                    audienceNameText.setTag(currentAudience);
-                                }
-                                audienceHashMap.put("" + audience.getUid(), audience);
-
-                                Toast.makeText(MeetingBroadcastActivity.this, "" + audience.isCalling(), Toast.LENGTH_SHORT).show();
-
-                                Iterator iter = audienceHashMap.entrySet().iterator();
-                                audiences.clear();
-                                while (iter.hasNext()) {
-                                    Map.Entry entry = (Map.Entry) iter.next();
-                                    audiences.add((Audience) entry.getValue());
-                                }
-                                if (audienceAdapter != null) {
-                                    audienceAdapter.setData(audiences);
-                                }
-                                waiterButton.setText("参会人（" + audiences.size() + "）");
+                runOnUiThread(() -> {
+                    try {
+                        JSONObject jsonObject = new JSONObject(msg);
+                        if (jsonObject.has("request")) {
+                            boolean request = jsonObject.getBoolean("request");
+                            Audience audience = JSON.parseObject(jsonObject.toString(), Audience.class);
+                            audience.setHandsUp(request);
+                            if (audience.isCalling()) {
+                                currentAudience = audience;
+                                audienceNameText.setTag(currentAudience);
                             }
-                            if (jsonObject.has("finish")) {
-                                boolean finish = jsonObject.getBoolean("finish");
-                                if (finish) {
-                                    stopButton.setVisibility(View.GONE);
-                                }
+                            audienceHashMap.put("" + audience.getUid(), audience);
+
+                            Toast.makeText(MeetingBroadcastActivity.this, "" + audience.isCalling(), Toast.LENGTH_SHORT).show();
+
+                            Iterator iter = audienceHashMap.entrySet().iterator();
+                            audiences.clear();
+                            while (iter.hasNext()) {
+                                Map.Entry entry = (Map.Entry) iter.next();
+                                audiences.add((Audience) entry.getValue());
                             }
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                            if (audienceAdapter != null) {
+                                audienceAdapter.setData(audiences);
+                            }
+                            waiterButton.setText("参会人（" + audiences.size() + "）");
                         }
+                        if (jsonObject.has("finish")) {
+                            boolean finish = jsonObject.getBoolean("finish");
+                            if (finish) {
+                                stopButton.setVisibility(View.GONE);
+                            }
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
                 });
             }
@@ -365,130 +357,124 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
 
     private void showDialog(final int type, final String title, final String leftText, final String rightText, final Audience audience) {
         View view = View.inflate(this, R.layout.dialog_selector, null);
-        TextView titleText = (TextView) view.findViewById(R.id.title);
+        TextView titleText = view.findViewById(R.id.title);
         titleText.setText(title);
 
-        Button leftButton = (Button) view.findViewById(R.id.left);
+        Button leftButton = view.findViewById(R.id.left);
         leftButton.setText(leftText);
-        leftButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.cancel();
-                if (type == 1) {
-                    doLeaveChannel();
-                    if (agoraAPI.getStatus() == 2) {
+        leftButton.setOnClickListener(view12 -> {
+            dialog.cancel();
+            if (type == 1) {
+                doLeaveChannel();
+                if (agoraAPI.getStatus() == 2) {
 
-                        agoraAPI.channelDelAttr(channelName, "doc_index");
-                        agoraAPI.channelDelAttr(channelName, "material_id");
+                    agoraAPI.channelDelAttr(channelName, "doc_index");
+                    agoraAPI.channelDelAttr(channelName, "material_id");
 
-                        agoraAPI.logout();
-                    }
-                    finish();
-                } else if (type == 2) {
-                    try {
-                        audience.setCalling(true);
-                        audienceNameText.setTag(audience);
-                        audienceNameText.setText(audience.getUname());
+                    agoraAPI.logout();
+                }
+                finish();
+            } else if (type == 2) {
+                try {
+                    audience.setCalling(true);
+                    audienceNameText.setTag(audience);
+                    audienceNameText.setText(audience.getUname());
 
-                        JSONObject jsonObject = new JSONObject();
-                        jsonObject.put("response", true);
-                        jsonObject.put("name", audience.getUname());
-                        agoraAPI.messageInstantSend("" + audience.getUid(), 0, jsonObject.toString(), "");
-                        Log.v("audience info--->", audience.getUid() + "---" + audience.getUname());
-                        stopButton.setVisibility(View.VISIBLE);
-                        currentAudience = audience;
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                } else if (type == 3) {
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("response", true);
+                    jsonObject.put("name", audience.getUname());
+                    agoraAPI.messageInstantSend("" + audience.getUid(), 0, jsonObject.toString(), "");
+                    Log.v("audience info--->", audience.getUid() + "---" + audience.getUname());
+                    stopButton.setVisibility(View.VISIBLE);
+                    currentAudience = audience;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else if (type == 3) {
 
-                } else if (type == 4) {
+            } else if (type == 4) {
 
-                } else if (type == 5) {
-                    try {
-                        audience.setCalling(true);
-                        audienceNameText.setTag(audience);
-                        audienceNameText.setText(audience.getUname());
+            } else if (type == 5) {
+                try {
+                    audience.setCalling(true);
+                    audienceNameText.setTag(audience);
+                    audienceNameText.setText(audience.getUname());
 
-                        JSONObject jsonObject = new JSONObject();
-                        jsonObject.put("response", true);
-                        jsonObject.put("name", audience.getUname());
-                        agoraAPI.messageInstantSend("" + audience.getUid(), 0, jsonObject.toString(), "");
-                        Log.v("audience info--->", audience.getUid() + "---" + audience.getUname());
-                        stopButton.setVisibility(View.VISIBLE);
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("response", true);
+                    jsonObject.put("name", audience.getUname());
+                    agoraAPI.messageInstantSend("" + audience.getUid(), 0, jsonObject.toString(), "");
+                    Log.v("audience info--->", audience.getUid() + "---" + audience.getUname());
+                    stopButton.setVisibility(View.VISIBLE);
 
-                        currentAudience = audience;
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    currentAudience = audience;
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         });
 
-        Button rightButton = (Button) view.findViewById(R.id.right);
+        Button rightButton = view.findViewById(R.id.right);
         rightButton.setText(rightText);
-        rightButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.cancel();
-                if (type == 1) {
-                    ApiClient.getInstance().finishMeeting(TAG, meetingJoin.getMeeting().getId(), memberCount, finishMeetingCallback);
-                } else if (type == 2) {
-                    try {
-                        audience.setCalling(false);
-                        audience.setHandsUp(false);
-                        JSONObject jsonObject = new JSONObject();
-                        jsonObject.put("response", false);
-                        agoraAPI.messageInstantSend("" + audience.getUid(), 0, jsonObject.toString(), "");
-                        Log.v("audience info--->", audience.getUid() + "---" + audience.getUname());
+        rightButton.setOnClickListener(view1 -> {
+            dialog.cancel();
+            if (type == 1) {
+                ApiClient.getInstance().finishMeeting(TAG, meetingJoin.getMeeting().getId(), memberCount, finishMeetingCallback);
+            } else if (type == 2) {
+                try {
+                    audience.setCalling(false);
+                    audience.setHandsUp(false);
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("response", false);
+                    agoraAPI.messageInstantSend("" + audience.getUid(), 0, jsonObject.toString(), "");
+                    Log.v("audience info--->", audience.getUid() + "---" + audience.getUname());
 
-                        stopButton.setVisibility(View.GONE);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                } else if (type == 3) {
-                    try {
-                        audience.setCalling(false);
-                        audienceHashMap.put("" + audience.getUid(), audience);
-                        Iterator iter = audienceHashMap.entrySet().iterator();
-                        audiences.clear();
-                        while (iter.hasNext()) {
-                            Map.Entry entry = (Map.Entry) iter.next();
-                            audiences.add((Audience) entry.getValue());
-                        }
-                        if (audienceAdapter != null) {
-                            audienceAdapter.setData(audiences);
-                        }
-                        waiterButton.setText("参会人（" + audiences.size() + "）");
-
-                        JSONObject jsonObject = new JSONObject();
-                        jsonObject.put("finish", true);
-                        agoraAPI.messageInstantSend("" + audience.getUid(), 0, jsonObject.toString(), "");
-
-                        stopButton.setVisibility(View.GONE);
-
-                        audienceNameText.setText("");
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                } else if (type == 4) {
-                    currentAudience.setCalling(false);
-                    currentAudience.setHandsUp(false);
-                    newAudience = audience;
-                    try {
-                        JSONObject jsonObject = new JSONObject();
-                        jsonObject.put("finish", true);
-                        agoraAPI.messageInstantSend("" + currentAudience.getUid(), 0, jsonObject.toString(), "");
-
-                        stopButton.setVisibility(View.GONE);
-
-                        audienceNameText.setText("");
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                } else if (type == 5) {
-
+                    stopButton.setVisibility(View.GONE);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+            } else if (type == 3) {
+                try {
+                    audience.setCalling(false);
+                    audienceHashMap.put("" + audience.getUid(), audience);
+                    Iterator iter = audienceHashMap.entrySet().iterator();
+                    audiences.clear();
+                    while (iter.hasNext()) {
+                        Map.Entry entry = (Map.Entry) iter.next();
+                        audiences.add((Audience) entry.getValue());
+                    }
+                    if (audienceAdapter != null) {
+                        audienceAdapter.setData(audiences);
+                    }
+                    waiterButton.setText("参会人（" + audiences.size() + "）");
+
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("finish", true);
+                    agoraAPI.messageInstantSend("" + audience.getUid(), 0, jsonObject.toString(), "");
+
+                    stopButton.setVisibility(View.GONE);
+
+                    audienceNameText.setText("");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else if (type == 4) {
+                currentAudience.setCalling(false);
+                currentAudience.setHandsUp(false);
+                newAudience = audience;
+                try {
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("finish", true);
+                    agoraAPI.messageInstantSend("" + currentAudience.getUid(), 0, jsonObject.toString(), "");
+
+                    stopButton.setVisibility(View.GONE);
+
+                    audienceNameText.setText("");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else if (type == 5) {
+
             }
         });
 
@@ -541,31 +527,6 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
         alertDialog = builder.create();
         alertDialog.show();
     }
-
-//    private void showAlertDialog() {
-//        View view = View.inflate(this, R.layout.dialog_audience_list, null);
-//        ListView listView = view.findViewById(R.id.list_view);
-//        if (audienceAdapter == null) {
-//            audienceAdapter = new AudienceAdapter(this, audiences);
-//        }
-//        listView.setAdapter(audienceAdapter);
-//        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-//                Audience audience = (Audience) audienceAdapter.getItem(i);
-//                if (audienceView.getChildCount() > 0) {
-//                    showDialog(4, "中断当前" + currentAudience.getUname() + "的连麦，连接" + audience.getUname() + "的连麦", "取消", "确定", audience);
-//                } else {
-//                    showDialog(2, audience.getUname() + "请求连麦", "接受", "拒绝", audience);
-//                }
-//                alertDialog.cancel();
-//            }
-//        });
-//        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.MyDialog);
-//        builder.setView(view);
-//        alertDialog = builder.create();
-//        alertDialog.show();
-//    }
 
     private OkHttpCallback finishMeetingCallback = new OkHttpCallback<Bucket<Meeting>>() {
         @Override
@@ -623,25 +584,22 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
 
     @Override
     public void onJoinChannelSuccess(final String channel, final int uid, final int elapsed) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (isFinishing()) {
-                    return;
-                }
-                worker().getEngineConfig().mUid = uid;
-                if ("true".equals(agora.getIsTest())) {
-                    agoraAPI.login2(agora.getAppID(), "" + uid, "noneed_token", 0, "", 10, 3);
-                } else {
-                    agoraAPI.login2(agora.getAppID(), "" + uid, agora.getSignalingKey(), 0, "", 10, 3);
-                }
-
-                HashMap<String, Object> params = new HashMap<String, Object>();
-                params.put("status", 1);
-                params.put("type", 2);
-                params.put("meetingId", meetingJoin.getMeeting().getId());
-                ApiClient.getInstance().meetingJoinStats(TAG, meetingJoinStatsCallback, params);
+        runOnUiThread(() -> {
+            if (isFinishing()) {
+                return;
             }
+            worker().getEngineConfig().mUid = uid;
+            if ("true".equals(agora.getIsTest())) {
+                agoraAPI.login2(agora.getAppID(), "" + uid, "noneed_token", 0, "", 10, 3);
+            } else {
+                agoraAPI.login2(agora.getAppID(), "" + uid, agora.getSignalingKey(), 0, "", 10, 3);
+            }
+
+            HashMap<String, Object> params = new HashMap<String, Object>();
+            params.put("status", 1);
+            params.put("type", 2);
+            params.put("meetingId", meetingJoin.getMeeting().getId());
+            ApiClient.getInstance().meetingJoinStats(TAG, meetingJoinStatsCallback, params);
         });
     }
 
@@ -665,25 +623,22 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
     }
 
     private void doRenderRemoteUi(final int uid) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (isFinishing()) {
-                    return;
-                }
-                if (BuildConfig.DEBUG)
-                    Toast.makeText(MeetingBroadcastActivity.this,  "观众" + uid + "进入了", Toast.LENGTH_SHORT).show();
-                if (audienceView.getChildCount() > 0) {
-                    audienceView.removeAllViews();
-                }
-                SurfaceView remoteSurfaceView = RtcEngine.CreateRendererView(getApplicationContext());
-                remoteSurfaceView.setZOrderOnTop(true);
-                remoteSurfaceView.setZOrderMediaOverlay(true);
-                rtcEngine().setupRemoteVideo(new VideoCanvas(remoteSurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, uid));
-                audienceView.addView(remoteSurfaceView);
-                audienceTipsText.setVisibility(View.GONE);
-                audienceLayout.setVisibility(View.VISIBLE);
+        runOnUiThread(() -> {
+            if (isFinishing()) {
+                return;
             }
+            if (BuildConfig.DEBUG)
+                Toast.makeText(MeetingBroadcastActivity.this,  "观众" + uid + "进入了", Toast.LENGTH_SHORT).show();
+            if (audienceView.getChildCount() > 0) {
+                audienceView.removeAllViews();
+            }
+            SurfaceView remoteSurfaceView = RtcEngine.CreateRendererView(getApplicationContext());
+            remoteSurfaceView.setZOrderOnTop(true);
+            remoteSurfaceView.setZOrderMediaOverlay(true);
+            rtcEngine().setupRemoteVideo(new VideoCanvas(remoteSurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, uid));
+            audienceView.addView(remoteSurfaceView);
+            audienceTipsText.setVisibility(View.GONE);
+            audienceLayout.setVisibility(View.VISIBLE);
         });
     }
 
@@ -694,46 +649,44 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
     }
 
     private void doRemoveRemoteUi(final int uid) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (isFinishing()) {
-                    return;
-                }
-                if (BuildConfig.DEBUG)
-                    Toast.makeText(MeetingBroadcastActivity.this,  uid + "退出了", Toast.LENGTH_SHORT).show();
-                if (currentAudience != null && uid == currentAudience.getUid()) {
-                    audienceView.removeAllViews();
-                    audienceTipsText.setVisibility(View.VISIBLE);
-                    audienceNameText.setText("");
-                    audienceLayout.setVisibility(View.GONE);
+        runOnUiThread(() -> {
+            if (isFinishing()) {
+                return;
+            }
+            if (BuildConfig.DEBUG){
+                Toast.makeText(MeetingBroadcastActivity.this,  uid + "退出了", Toast.LENGTH_SHORT).show();
+            }
+            if (currentAudience != null && uid == currentAudience.getUid()) {
+                audienceView.removeAllViews();
+                audienceTipsText.setVisibility(View.VISIBLE);
+                audienceNameText.setText("");
+                audienceLayout.setVisibility(View.GONE);
 
-                    if (newAudience != null) {
-                        try {
-                            audienceNameText.setTag(newAudience);
-                            audienceNameText.setText(newAudience.getUname());
+                if (newAudience != null) {
+                    try {
+                        audienceNameText.setTag(newAudience);
+                        audienceNameText.setText(newAudience.getUname());
 
-                            JSONObject jsonObject = new JSONObject();
-                            jsonObject.put("response", true);
-                            jsonObject.put("name", newAudience.getUname());
-                            agoraAPI.messageInstantSend("" + newAudience.getUid(), 0, jsonObject.toString(), "");
+                        JSONObject jsonObject = new JSONObject();
+                        jsonObject.put("response", true);
+                        jsonObject.put("name", newAudience.getUname());
+                        agoraAPI.messageInstantSend("" + newAudience.getUid(), 0, jsonObject.toString(), "");
 
-                            if (audiences.contains(newAudience)) {
-                                audiences.remove(newAudience);
-                            }
-                            if (audienceAdapter != null) {
-                                audienceAdapter.setData(audiences);
-                            }
-                            waiterButton.setText("等待发言（" + audiences.size() + "）");
-                            stopButton.setVisibility(View.VISIBLE);
-
-                            currentAudience = newAudience;
-                            newAudience = null;
-
-                            audienceLayout.setVisibility(View.VISIBLE);
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                        if (audiences.contains(newAudience)) {
+                            audiences.remove(newAudience);
                         }
+                        if (audienceAdapter != null) {
+                            audienceAdapter.setData(audiences);
+                        }
+                        waiterButton.setText("参会人（" + audiences.size() + "）");
+                        stopButton.setVisibility(View.VISIBLE);
+
+                        currentAudience = newAudience;
+                        newAudience = null;
+
+                        audienceLayout.setVisibility(View.VISIBLE);
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
                 }
             }
@@ -742,57 +695,36 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
 
     @Override
     public void onConnectionLost() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(MeetingBroadcastActivity.this, "网络连接断开，请检查网络连接", Toast.LENGTH_SHORT).show();
-                finish();
-            }
+        runOnUiThread(() -> {
+            Toast.makeText(MeetingBroadcastActivity.this, "网络连接断开，请检查网络连接", Toast.LENGTH_SHORT).show();
+            finish();
         });
     }
 
     @Override
     public void onConnectionInterrupted() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(MeetingBroadcastActivity.this, "网络连接不佳，视频将会有卡顿，可尝试降低分辨率", Toast.LENGTH_SHORT).show();
-            }
-        });
+        runOnUiThread(() -> Toast.makeText(MeetingBroadcastActivity.this, "网络连接不佳，视频将会有卡顿，可尝试降低分辨率", Toast.LENGTH_SHORT).show());
     }
 
     @Override
     public void onUserMuteVideo(final int uid, final boolean muted) {
         if (BuildConfig.DEBUG) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(MeetingBroadcastActivity.this, uid + " 的视频被暂停了 " + muted, Toast.LENGTH_SHORT).show();
-                }
-            });
+            runOnUiThread(() -> Toast.makeText(MeetingBroadcastActivity.this, uid + " 的视频被暂停了 " + muted, Toast.LENGTH_SHORT).show());
         }
     }
 
     @Override
     public void onLastmileQuality(final int quality) {
         if (BuildConfig.DEBUG) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(MeetingBroadcastActivity.this, "本地网络质量报告：" + showNetQuality(quality), Toast.LENGTH_SHORT).show();
-                }
-            });
+            runOnUiThread(() -> Toast.makeText(MeetingBroadcastActivity.this, "本地网络质量报告：" + showNetQuality(quality), Toast.LENGTH_SHORT).show());
         }
     }
 
     @Override
     public void onNetworkQuality(int uid, int txQuality, int rxQuality) {
         if (BuildConfig.DEBUG) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
+            runOnUiThread(() -> {
 //                    Toast.makeText(MeetingBroadcastActivity.this, "用户" + uid + "的\n上行网络质量：" + showNetQuality(txQuality) + "\n下行网络质量：" + showNetQuality(rxQuality), Toast.LENGTH_SHORT).show();
-                }
             });
         }
     }
