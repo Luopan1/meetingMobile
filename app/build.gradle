@@ -48,7 +48,7 @@ android {
         targetSdkVersion 27
         versionName "1.0.7"
         versionCode 16777223
-        testInstrumentationRunner "android.support.bg_connection_status_color.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
         //默认编译赋值
         buildConfigField "String", "GIT_BRANCH", '"' + getGitBranch() + '"'
@@ -126,7 +126,7 @@ dependencies {
     implementation project(':IosDialog')
     //城市选择
     implementation project(path: ':citypicker')
-    androidTestImplementation('com.android.support.bg_connection_status_color.espresso:espresso-core:2.2.2', {
+    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     testImplementation 'junit:junit:4.12'

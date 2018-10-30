@@ -4,9 +4,9 @@
 
     <gradient
         android:angle="90.0"
-        android:startColor="@color/calling_name_color"
-        android:centerColor="@color/calling_name_color"
-        android:endColor="@color/calling_name_color"/>
+        android:startColor="@color/dialog_okbtn_normal"
+        android:centerColor="@color/dialog_okbtn_normal"
+        android:endColor="@color/dialog_okbtn_normal"/>
     <corners
         android:radius="40dp" />
 

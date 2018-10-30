@@ -45,14 +45,15 @@
             android:paddingRight="36dp"
             android:paddingBottom="10dp"
             android:text="@string/cancel"
+            android:layout_marginRight="16dp"
             android:textColor="@color/white"
-            android:textSize="14sp" />
+            android:textSize="14sp"
+            android:layout_marginEnd="16dp" />
 
         <Button
             android:id="@+id/confirm"
             android:layout_width="100dp"
             android:layout_height="38.33dp"
-            android:layout_marginRight="16dp"
             android:background="@drawable/bg_button_dialog_selector"
             android:paddingLeft="36dp"
             android:paddingTop="10dp"

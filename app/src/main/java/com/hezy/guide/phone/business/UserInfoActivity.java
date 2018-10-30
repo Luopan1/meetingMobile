@@ -9,7 +9,9 @@ import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.TextureView;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.adorkable.iosdialog.ActionSheetDialog;
@@ -164,12 +166,29 @@ public class UserInfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
     protected void initListener() {
         mBinding.btnUserInfoSave.setOnClickListener(this);
         mBinding.imgUserInfoHead.setOnClickListener(this);
+        mBinding.edtUserInfoName.setOnFocusChangeListener(edtUserInfoNameFocusChangeListener);
         mBinding.edtUserInfoPostType.setOnTouchListener(onTouchListener);
         mBinding.edtUserInfoDistrict.setOnTouchListener(onTouchListener);
         mBinding.edtUserInfoGrid.setOnTouchListener(onTouchListener);
         mBinding.edtUserInfoCustom.setOnTouchListener(onTouchListener);
         mBinding.edtUserInfoAddress.setOnTouchListener(onTouchListener);
     }
+
+    private View.OnFocusChangeListener edtUserInfoNameFocusChangeListener = new View.OnFocusChangeListener() {
+        @Override
+        public void onFocusChange(View v, boolean hasFocus) {
+            String userName = ((EditText)v).getText().toString().trim();
+            if (!hasFocus && !TextUtils.isEmpty(userName)){
+                Map<String, String> params = new HashMap<>();
+                params.put("name", userName);
+                ApiClient.getInstance().requestUserExpostor(this, params, new OkHttpCallback<BaseErrorBean>() {
+                    @Override
+                    public void onSuccess(BaseErrorBean entity) {
+                    }
+                });
+            }
+        }
+    };
 
     private View.OnTouchListener onTouchListener = new View.OnTouchListener() {
 
