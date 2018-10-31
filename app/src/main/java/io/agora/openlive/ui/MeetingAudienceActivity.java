@@ -789,11 +789,12 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                     Toast.makeText(MeetingAudienceActivity.this, "主持人" + broadcastId + "---" + uid + meetingJoin.getHostUser().getHostUserName() + "进入了", Toast.LENGTH_SHORT).show();
                 }
 
+                broadcasterLayout.setVisibility(View.VISIBLE);
                 remoteSurfaceView = RtcEngine.CreateRendererView(getApplicationContext());
                 remoteSurfaceView.setZOrderOnTop(false);
                 remoteSurfaceView.setZOrderMediaOverlay(false);
                 rtcEngine().setupRemoteVideo(new VideoCanvas(remoteSurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, uid));
-
+                broadcasterLayout.removeAllViews();
                 broadcasterLayout.addView(remoteSurfaceView);
             } else {
                 if (BuildConfig.DEBUG) {
