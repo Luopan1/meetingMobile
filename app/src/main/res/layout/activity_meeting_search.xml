@@ -120,7 +120,7 @@
                 android:layout_marginTop="100dp"
                 android:gravity="center_horizontal"
                 android:drawablePadding="8dp"
-                android:drawableTop="@mipmap/ic_home_record_none"
+                android:drawableTop="@drawable/ic_home_record_none"
                 android:text="没有搜索到该会议哦"
                 android:textColor="@color/text_gray_909090"
                 android:textSize="15sp"

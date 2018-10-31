@@ -30,13 +30,6 @@
             android:text="受邀会议"
             android:theme="@style/MeetingTypeUnFocus" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="会议列表"
-            android:textColor="@color/white"
-            android:textSize="@dimen/my_sp_48" />
     </RelativeLayout>
 
     <android.support.v4.widget.SwipeRefreshLayout
@@ -89,10 +82,10 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="100dp"
-                android:drawableTop="@mipmap/ic_home_record_none"
+                android:drawableTop="@drawable/ic_home_record_none"
                 android:drawablePadding="8dp"
                 android:gravity="center_horizontal"
-                android:text="暂时还没有会议哦"
+                android:text="暂时没有会议"
                 android:textColor="@color/text_gray_909090"
                 android:textSize="15sp"
                 android:visibility="gone" />
