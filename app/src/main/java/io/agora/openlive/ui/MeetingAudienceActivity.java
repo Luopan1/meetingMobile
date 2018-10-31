@@ -39,6 +39,7 @@ import com.hezy.guide.phone.utils.UIDUtil;
 import com.squareup.picasso.Picasso;
 import com.tendcloud.tenddata.TCAgent;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -360,7 +361,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                             boolean result = jsonObject.getBoolean("response");
                             if (result) {
                                 if (BuildConfig.DEBUG) {
-                                    Toast.makeText(MeetingAudienceActivity.this, "接受连麦", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(MeetingAudienceActivity.this, "主持人和我连麦", Toast.LENGTH_SHORT).show();
                                 }
 
                                 audienceLayout.setVisibility(View.VISIBLE);
@@ -373,6 +374,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 
                                 String audienceName = jsonObject.getString("name");
                                 audienceNameText.setText(audienceName);
+
                                 Audience audience = new Audience();
                                 audience.setUid(config().mUid);
                                 audience.setUname(audienceName);
@@ -385,29 +387,26 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 
                                 agoraAPI.setAttr("uname", audienceName);
 
+                                worker().getRtcEngine().setClientRole(Constants.CLIENT_ROLE_BROADCASTER);
+
                                 try {
                                     JSONObject onlineObject = new JSONObject();
                                     onlineObject.put("request", request);
                                     onlineObject.put("uid", config().mUid);
                                     onlineObject.put("calling", calling);
-                                    if (TextUtils.isEmpty(Preferences.getAreaInfo())) {
-                                        onlineObject.put("uname", "讲解员-" + Preferences.getUserName());
-                                    } else {
-                                        onlineObject.put("uname", "讲解员-" + Preferences.getAreaInfo() + Preferences.getUserName());
-                                    }
+                                    onlineObject.put("uname", "讲解员-" + (TextUtils.isEmpty(Preferences.getAreaInfo()) ? Preferences.getUserName() : Preferences.getAreaInfo() + Preferences.getUserName()));
                                     agoraAPI.messageInstantSend(broadcastId, 0, onlineObject.toString(), "");
-                                } catch (Exception e) {
+                                } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
 
-                                worker().getRtcEngine().setClientRole(Constants.CLIENT_ROLE_BROADCASTER);
                                 HashMap<String, Object> params = new HashMap<String, Object>();
                                 params.put("status", 1);
                                 params.put("meetingId", meetingJoin.getMeeting().getId());
                                 ApiClient.getInstance().meetingHostStats(TAG, meetingHostJoinTraceCallback, params);
                             } else {
                                 if (BuildConfig.DEBUG) {
-                                    Toast.makeText(MeetingAudienceActivity.this, "拒绝连麦", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(MeetingAudienceActivity.this, "主持人拒绝和我连麦", Toast.LENGTH_SHORT).show();
                                 }
                                 stopTalkButton.setVisibility(View.GONE);
                                 requestTalkButton.setVisibility(View.VISIBLE);
@@ -441,11 +440,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                                     onlineObject.put("request", request);
                                     onlineObject.put("uid", config().mUid);
                                     onlineObject.put("calling", calling);
-                                    if (TextUtils.isEmpty(Preferences.getAreaInfo())) {
-                                        onlineObject.put("uname", "讲解员-" + Preferences.getUserName());
-                                    } else {
-                                        onlineObject.put("uname", "讲解员-" + Preferences.getAreaInfo() + Preferences.getUserName());
-                                    }
+                                    onlineObject.put("uname", "讲解员-" + (TextUtils.isEmpty(Preferences.getAreaInfo()) ? Preferences.getUserName() : Preferences.getAreaInfo() + Preferences.getUserName()));
                                     agoraAPI.messageInstantSend(broadcastId, 0, onlineObject.toString(), "");
                                 } catch (Exception e) {
                                     e.printStackTrace();

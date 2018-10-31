@@ -72,7 +72,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
 
     private boolean isMuted = false;
 
-    private FrameLayout broadcasterLayout, audienceView, audienceLayout;
+    private FrameLayout broadcasterLayout, broadcastSmallLayout, broadcasterSmallView, audienceView, audienceLayout;
     private TextView broadcastNameText, broadcastTipsText, audienceNameText;
     private Button waiterButton, stopButton;
     private TextView exitButton;
@@ -114,8 +114,13 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
         broadcastNameText = findViewById(R.id.broadcaster);
         broadcastNameText.setText("主持人：" + meetingJoin.getHostUser().getHostUserName());
         broadcasterLayout = findViewById(R.id.broadcaster_view);
+
+        broadcastSmallLayout = findViewById(R.id.broadcaster_small_layout);
+        broadcasterSmallView = findViewById(R.id.broadcaster_small_view);
+
         audienceLayout = findViewById(R.id.audience_layout);
         audienceView = findViewById(R.id.audience_view);
+
         muteButton = findViewById(R.id.mute_audio);
         muteButton.setOnClickListener(v -> {
             if (!isMuted) {
@@ -154,6 +159,8 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
         localSurfaceView.setZOrderMediaOverlay(false);
         broadcasterLayout.addView(localSurfaceView);
         worker().preview(true, localSurfaceView, config().mUid);
+
+        broadcastTipsText.setVisibility(View.GONE);
 
         if ("true".equals(agora.getIsTest())) {
             worker().joinChannel(null, channelName, config().mUid);
@@ -230,7 +237,9 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
             public void onChannelUserJoined(String account, int uid) {
                 super.onChannelUserJoined(account, uid);
                 runOnUiThread(() -> {
-                    agoraAPI.channelQueryUserNum(channelName);
+                    if (agoraAPI.getStatus() == 2) {
+                        agoraAPI.channelQueryUserNum(channelName);
+                    }
                 });
             }
 
@@ -241,7 +250,9 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                     if (BuildConfig.DEBUG) {
                         Toast.makeText(MeetingBroadcastActivity.this, account + "退出信令频道", Toast.LENGTH_SHORT).show();
                     }
-                    agoraAPI.channelQueryUserNum(channelName);
+                    if (agoraAPI.getStatus() == 2) {
+                        agoraAPI.channelQueryUserNum(channelName);
+                    }
 
                     audienceHashMap.remove(account);
                     Iterator iter = audienceHashMap.entrySet().iterator();
@@ -634,17 +645,18 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
             if (isFinishing()) {
                 return;
             }
-            if (BuildConfig.DEBUG)
+            if (BuildConfig.DEBUG){
                 Toast.makeText(MeetingBroadcastActivity.this,  "观众" + uid + "进入了", Toast.LENGTH_SHORT).show();
-            if (audienceView.getChildCount() > 0) {
-                audienceView.removeAllViews();
             }
+
+            audienceLayout.setVisibility(View.VISIBLE);
+            audienceView.removeAllViews();
+
             SurfaceView remoteSurfaceView = RtcEngine.CreateRendererView(getApplicationContext());
             remoteSurfaceView.setZOrderOnTop(true);
             remoteSurfaceView.setZOrderMediaOverlay(true);
             rtcEngine().setupRemoteVideo(new VideoCanvas(remoteSurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, uid));
             audienceView.addView(remoteSurfaceView);
-            audienceLayout.setVisibility(View.VISIBLE);
         });
     }
 
