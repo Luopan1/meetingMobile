@@ -9,7 +9,6 @@ import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MotionEvent;
-import android.view.TextureView;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -183,6 +182,7 @@ public class UserInfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
 
     /**
      * 保存用户数据
+     *
      * @param userName
      */
     private void saveUserName(String userName) {

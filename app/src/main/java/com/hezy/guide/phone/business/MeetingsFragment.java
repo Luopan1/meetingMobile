@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.widget.TextViewCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -144,13 +145,13 @@ public class MeetingsFragment extends BaseFragment {
     }
 
     private void showPublicMeetingView() {
-        tv_meeting_public.setTextSize(12);
-        tv_meeting_private.setTextSize(9);
+        TextViewCompat.setTextAppearance(tv_meeting_public, R.style.MeetingTypeFocus);
+        TextViewCompat.setTextAppearance(tv_meeting_private, R.style.MeetingTypeUnFocus);
     }
 
     private void showPrivateMeetingView() {
-        tv_meeting_public.setTextSize(9);
-        tv_meeting_private.setTextSize(12);
+        TextViewCompat.setTextAppearance(tv_meeting_public, R.style.MeetingTypeUnFocus);
+        TextViewCompat.setTextAppearance(tv_meeting_private, R.style.MeetingTypeFocus);
     }
 
     @Override
