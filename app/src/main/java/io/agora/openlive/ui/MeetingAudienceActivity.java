@@ -135,31 +135,6 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
         stopTalkButton.setOnClickListener(view -> {
             showDialog(2, "确定终止发言吗？", "取消", "确定", null);
         });
-        stopTalkButton.setOnClickListener(view -> {
-            worker().getRtcEngine().setClientRole(Constants.CLIENT_ROLE_AUDIENCE);
-            audienceView.removeAllViews();
-            audienceNameText.setText("");
-            stopTalkButton.setVisibility(View.GONE);
-            requestTalkButton.setVisibility(View.VISIBLE);
-            audienceTipsText.setVisibility(View.VISIBLE);
-            audienceLayout.setVisibility(View.GONE);
-            try {
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("finish", true);
-                agoraAPI.messageInstantSend(broadcastId, 0, jsonObject.toString(), "");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            if (!TextUtils.isEmpty(meetingHostJoinTraceId)) {
-                HashMap<String, Object> params = new HashMap<String, Object>();
-                params.put("meetingHostJoinTraceId", meetingHostJoinTraceId);
-                params.put("status", 2);
-                params.put("meetingId", meetingJoin.getMeeting().getId());
-                ApiClient.getInstance().meetingHostStats(TAG, meetingHostJoinTraceCallback, params);
-            }
-
-        });
 
         requestTalkButton = findViewById(R.id.request_talk);
         requestTalkButton.setOnClickListener(view -> {
