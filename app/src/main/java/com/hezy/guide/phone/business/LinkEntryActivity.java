@@ -137,6 +137,8 @@ public class LinkEntryActivity extends AppCompatActivity {
                     "joinMeetingCallback errorCode=" +
                             errorCode +
                             " exception=" + exception.getMessage());
+            ToastUtils.showToast(exception.getMessage());
+            finish();
         }
 
     };
