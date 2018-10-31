@@ -15,6 +15,7 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -63,11 +64,12 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
     private Agora agora;
     private String broadcastId;
 
-    private FrameLayout broadcasterLayout, broadcasterSmallLayout, audienceView, audienceLayout;
-    private TextView broadcastNameText, broadcastTipsText, countText, audienceNameText, audienceTipsText;
+    private FrameLayout broadcasterLayout, broadcasterSmallLayout, broadcasterSmallView, audienceLayout, audienceView;
+    private TextView broadcastNameText, broadcastTipsText, countText, audienceNameText;
     private Button requestTalkButton, stopTalkButton;
-    private TextView exitButton, pageText, roleTagText;
+    private TextView exitButton, pageText;
     private ImageView docImage;
+    private ImageButton fullScreenButton;
 
     private Material currentMaterial;
     private MeetingMaterialsPublish currentMaterialPublish;
@@ -120,13 +122,19 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
         broadcastNameText = findViewById(R.id.broadcaster);
         broadcastNameText.setText("主持人：" + meetingJoin.getHostUser().getHostUserName());
         broadcasterSmallLayout = findViewById(R.id.broadcaster_small_layout);
+        broadcasterSmallView = findViewById(R.id.broadcaster_small_view);
         docImage = findViewById(R.id.doc_image);
         pageText = findViewById(R.id.page);
-        roleTagText = findViewById(R.id.role_tag);
+        fullScreenButton = findViewById(R.id.full_screen);
+        fullScreenButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
 
         audienceLayout = findViewById(R.id.audience_layout);
         audienceView = findViewById(R.id.audience_view);
-        audienceTipsText = findViewById(R.id.audience_tips);
         audienceNameText = findViewById(R.id.audience_name);
 
         countText = findViewById(R.id.online_count);
@@ -300,15 +308,14 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                         Toast.makeText(MeetingAudienceActivity.this, "获取用户" + account + "的属性" + name + "的值为" + value, Toast.LENGTH_SHORT).show();
                     }
 
-                    audienceNameText.setText(value);
-
                     audienceLayout.setVisibility(View.VISIBLE);
+
+                    audienceNameText.setText(value);
 
                     SurfaceView remoteSurfaceView = RtcEngine.CreateRendererView(getApplicationContext());
                     remoteSurfaceView.setZOrderOnTop(true);
                     remoteSurfaceView.setZOrderMediaOverlay(true);
                     rtcEngine().setupRemoteVideo(new VideoCanvas(remoteSurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, Integer.parseInt(account)));
-                    audienceTipsText.setVisibility(View.GONE);
                     audienceView.addView(remoteSurfaceView);
 
                 });
@@ -370,7 +377,6 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                                 audience.setUid(config().mUid);
                                 audience.setUname(audienceName);
                                 audienceNameText.setTag(audience);
-                                audienceTipsText.setVisibility(View.GONE);
 
                                 stopTalkButton.setVisibility(View.VISIBLE);
                                 requestTalkButton.setVisibility(View.GONE);
@@ -405,7 +411,6 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                                 }
                                 stopTalkButton.setVisibility(View.GONE);
                                 requestTalkButton.setVisibility(View.VISIBLE);
-                                audienceTipsText.setVisibility(View.VISIBLE);
                             }
                             request = false;
                             requestTalkButton.setText("我要发言");
@@ -416,8 +421,6 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                             if (finish) {
                                 audienceView.removeAllViews();
                                 audienceNameText.setText("");
-                                audienceTipsText.setVisibility(View.VISIBLE);
-                                audienceTipsText.setText("等待参会人连麦");
                                 audienceLayout.setVisibility(View.GONE);
 
                                 requestTalkButton.setVisibility(View.VISIBLE);
@@ -534,9 +537,8 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                                 Toast.makeText(MeetingAudienceActivity.this, "收到主持人端doc_index的时候material为null", Toast.LENGTH_SHORT).show();
                             }
                         } else {
-                            broadcasterSmallLayout.removeAllViews();
-                            broadcasterSmallLayout.setVisibility(View.INVISIBLE);
-                            roleTagText.setVisibility(View.GONE);
+                            broadcasterSmallView.removeAllViews();
+                            broadcasterSmallLayout.setVisibility(View.GONE);
 
                             pageText.setVisibility(View.GONE);
                             docImage.setVisibility(View.GONE);
@@ -580,9 +582,8 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                 broadcasterLayout.setVisibility(View.GONE);
 
                 broadcasterSmallLayout.setVisibility(View.VISIBLE);
-                broadcasterSmallLayout.removeAllViews();
-                broadcasterSmallLayout.addView(remoteSurfaceView);
-                roleTagText.setVisibility(View.VISIBLE);
+                broadcasterSmallView.removeAllViews();
+                broadcasterSmallView.addView(remoteSurfaceView);
                 Log.v("while", "while loop.............");
                 break;
             }
@@ -658,7 +659,6 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                 audienceNameText.setText("");
                 stopTalkButton.setVisibility(View.GONE);
                 requestTalkButton.setVisibility(View.VISIBLE);
-                audienceTipsText.setVisibility(View.VISIBLE);
                 try {
                     JSONObject jsonObject = new JSONObject();
                     jsonObject.put("finish", true);
@@ -837,7 +837,6 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                     if (uid != config().mUid) {
                         audienceView.removeAllViews();
                         audienceNameText.setText("");
-                        audienceTipsText.setVisibility(View.VISIBLE);
                         audienceLayout.setVisibility(View.GONE);
                         isExit = true;
                     } else {
@@ -976,7 +975,6 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                     audienceNameText.setText("");
                     stopTalkButton.setVisibility(View.GONE);
                     requestTalkButton.setVisibility(View.VISIBLE);
-                    audienceTipsText.setVisibility(View.VISIBLE);
 
                     if (request) {
                         request = false;

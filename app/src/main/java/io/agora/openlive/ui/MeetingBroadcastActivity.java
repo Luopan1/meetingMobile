@@ -73,7 +73,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
     private boolean isMuted = false;
 
     private FrameLayout broadcasterLayout, audienceView, audienceLayout;
-    private TextView broadcastNameText, broadcastTipsText, audienceNameText, audienceTipsText;
+    private TextView broadcastNameText, broadcastTipsText, audienceNameText;
     private Button waiterButton, stopButton;
     private TextView exitButton;
     private AgoraAPIOnlySignal agoraAPI;
@@ -114,7 +114,6 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
         broadcastNameText = findViewById(R.id.broadcaster);
         broadcastNameText.setText("主持人：" + meetingJoin.getHostUser().getHostUserName());
         broadcasterLayout = findViewById(R.id.broadcaster_view);
-        audienceTipsText = findViewById(R.id.audience_tips);
         audienceLayout = findViewById(R.id.audience_layout);
         audienceView = findViewById(R.id.audience_view);
         muteButton = findViewById(R.id.mute_audio);
@@ -645,7 +644,6 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
             remoteSurfaceView.setZOrderMediaOverlay(true);
             rtcEngine().setupRemoteVideo(new VideoCanvas(remoteSurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, uid));
             audienceView.addView(remoteSurfaceView);
-            audienceTipsText.setVisibility(View.GONE);
             audienceLayout.setVisibility(View.VISIBLE);
         });
     }
@@ -666,7 +664,6 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
             }
             if (currentAudience != null && uid == currentAudience.getUid()) {
                 audienceView.removeAllViews();
-                audienceTipsText.setVisibility(View.VISIBLE);
                 audienceNameText.setText("");
                 audienceLayout.setVisibility(View.GONE);
 
