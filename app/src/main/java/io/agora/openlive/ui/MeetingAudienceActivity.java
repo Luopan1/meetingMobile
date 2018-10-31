@@ -739,9 +739,9 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
             Log.v("onJoinChannelSuccess", "uid--->" + uid);
 
             if ("true".equals(agora.getIsTest())) {
-                agoraAPI.login2(agora.getAppID(), "" + uid, "noneed_token", 0, "", 10, 3);
+                agoraAPI.login2(agora.getAppID(), "" + uid, "noneed_token", 0, "", 30, 3);
             } else {
-                agoraAPI.login2(agora.getAppID(), "" + uid, agora.getSignalingKey(), 0, "", 10, 3);
+                agoraAPI.login2(agora.getAppID(), "" + uid, agora.getSignalingKey(), 0, "", 30, 3);
             }
 
             HashMap<String, Object> params = new HashMap<String, Object>();
