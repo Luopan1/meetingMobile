@@ -662,13 +662,13 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
             if (type == 1) {
                 if (request) {
                     request = false;
-                    try {
-                        JSONObject jsonObject = new JSONObject();
-                        jsonObject.put("finish", true);
-                        agoraAPI.messageInstantSend(broadcastId, 0, jsonObject.toString(), "");
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                }
+                try {
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("finish", true);
+                    agoraAPI.messageInstantSend(broadcastId, 0, jsonObject.toString(), "");
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
                 calling = false;
                 agoraAPI.channelLeave(channelName);

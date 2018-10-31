@@ -81,6 +81,12 @@
             android:id="@+id/online_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="2dp"
+            android:paddingBottom="2dp"
+            android:background="@drawable/bg_online_count"
             android:text="在线人数：0"
             android:textColor="@color/white"
             android:textSize="14sp" />

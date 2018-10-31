@@ -130,23 +130,13 @@
             android:id="@+id/audience_layout"
             android:layout_width="209dp"
             android:layout_height="117dp"
-            android:background="@android:color/black"
             android:visibility="visible">
 
             <FrameLayout
                 android:id="@+id/audience_view"
                 android:layout_width="209dp"
                 android:layout_height="117dp"
-                android:background="@color/black"/>
-
-            <TextView
-                android:id="@+id/audience_tips"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="等待参会人连麦"
-                android:textColor="@color/white"
-                android:textSize="14sp" />
+                android:visibility="gone"/>
 
             <TextView
                 android:id="@+id/audience_name"
