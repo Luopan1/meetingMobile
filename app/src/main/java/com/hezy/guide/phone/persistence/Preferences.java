@@ -227,6 +227,18 @@ public class Preferences {
         }
     }
 
+    //移除网格信息、网格信息ID
+    public static void removeUserGridInfo(){
+        SharedPreferences.Editor editor = getPreferences().edit();
+        editor.remove(PREFERENCE_USER_GRID);
+        editor.remove(PREFERENCE_USER_GRID_ID);
+        if (!editor.commit()) {
+            Log.d(tag, "User grid info remove failure");
+        } else {
+            Log.d(tag, "User grid info remove success");
+        }
+    }
+
     //获取客户
     public static String getUserCustom() {
         return getPreferences().getString(PREFERENCE_USER_CUSTOM, "");
@@ -256,6 +268,18 @@ public class Preferences {
             Log.d(tag, "User custom id save failure");
         } else {
             Log.d(tag, "User custom id save success");
+        }
+    }
+
+    //移除客户信息、客户信息ID
+    public static void removeUserCustomInfo(){
+        SharedPreferences.Editor editor = getPreferences().edit();
+        editor.remove(PREFERENCE_USER_CUSTOM);
+        editor.remove(PREFERENCE_USER_CUSTOM_ID);
+        if (!editor.commit()) {
+            Log.d(tag, "User custom info remove failure");
+        } else {
+            Log.d(tag, "User custom info remove success");
         }
     }
 

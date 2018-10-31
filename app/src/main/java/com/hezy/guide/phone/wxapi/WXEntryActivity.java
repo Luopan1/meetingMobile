@@ -329,7 +329,7 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
                     LoginHelper.savaUser(user);
 
                     if (Preferences.isUserinfoEmpty()) {
-                        UserInfoActivity.actionStart(WXEntryActivity.this, true);
+                        startActivity(new Intent(WXEntryActivity.this, PhoneRegisterActivity.class));
                     } else {
                         startActivity(new Intent(WXEntryActivity.this, HomeActivity.class));
                     }

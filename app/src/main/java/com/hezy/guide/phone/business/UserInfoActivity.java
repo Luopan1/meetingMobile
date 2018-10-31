@@ -78,9 +78,6 @@ public class UserInfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
 
     public static boolean isFirst;
 
-    //总部对应的ID
-    private final String ID_DISTRICT = "7d8a40b5255845699f948c0b220b6a64";
-
     public static final int CODE_USERINFO_DISTRICT = 0x100;
     public static final int CODE_USERINFO_POSTTYPE = 0x101;
     public static final int CODE_USERINFO_GRID = 0x102;
@@ -177,18 +174,27 @@ public class UserInfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
     private View.OnFocusChangeListener edtUserInfoNameFocusChangeListener = new View.OnFocusChangeListener() {
         @Override
         public void onFocusChange(View v, boolean hasFocus) {
-            String userName = ((EditText)v).getText().toString().trim();
-            if (!hasFocus && !TextUtils.isEmpty(userName)){
-                Map<String, String> params = new HashMap<>();
-                params.put("name", userName);
-                ApiClient.getInstance().requestUserExpostor(this, params, new OkHttpCallback<BaseErrorBean>() {
-                    @Override
-                    public void onSuccess(BaseErrorBean entity) {
-                    }
-                });
+            String userName = ((EditText) v).getText().toString().trim();
+            if (!hasFocus && !TextUtils.isEmpty(userName)) {
+                saveUserName(userName);
             }
         }
     };
+
+    /**
+     * 保存用户数据
+     * @param userName
+     */
+    private void saveUserName(String userName) {
+        Preferences.setUserName(userName);
+        Map<String, String> params = new HashMap<>();
+        params.put("name", userName);
+        ApiClient.getInstance().requestUserExpostor(this, params, new OkHttpCallback<BaseErrorBean>() {
+            @Override
+            public void onSuccess(BaseErrorBean entity) {
+            }
+        });
+    }
 
     private View.OnTouchListener onTouchListener = new View.OnTouchListener() {
 
@@ -289,7 +295,6 @@ public class UserInfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
                 break;
             case R.id.btnUserInfoSave:
                 save();
-                RxBus.sendMessage(new UserUpdateEvent());
                 break;
         }
     }
@@ -351,33 +356,44 @@ public class UserInfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
             } else if (requestCode == CODE_USERINFO_DISTRICT) {
                 //设置大区、中心
                 District district = data.getParcelableExtra(KEY_USERINFO_DISTRICT);
-                mBinding.edtUserInfoDistrict.setText(district.getName());
-                Preferences.setUserDistrict(district.getName());
-                Preferences.setUserDistrictId(district.getId());
+                String districtId = district.getId();
+                String districtName = district.getName();
+
+                mBinding.edtUserInfoDistrict.setText(districtName);
+                Preferences.setUserDistrict(districtName);
+                Preferences.setUserDistrictId(districtId);
 
                 Map<String, String> params = new HashMap<>();
-                params.put("areaId", district.getId());
+                params.put("areaId", districtId);
                 ApiClient.getInstance().requestUserExpostor(this, params, new OkHttpCallback<BaseErrorBean>() {
                     @Override
                     public void onSuccess(BaseErrorBean entity) {
-                        showToast("设置机构成功");
+                        showToast("设置大区成功");
                     }
                 });
             } else if (requestCode == CODE_USERINFO_POSTTYPE) {
                 //用户类型
                 PostType postType = data.getParcelableExtra(KEY_USERINFO_POSTTYPE);
-                mBinding.edtUserInfoPostType.setText(postType.getName());
-                Preferences.setUserPostType(postType.getName());
-                Preferences.setUserPostTypeId(postType.getId());
+                String postTypeId = postType.getId();
+                String postTypeName = postType.getName();
+                if ("4".equals(postTypeId)) {
+                    showPostTypeIs4();
+                } else if ("10".equals(postTypeId)) {
+                    showPostTypeIs10();
+                } else {
+                    showAllInfoEditText();
+                }
+                mBinding.edtUserInfoPostType.setText(postTypeName);
+                Preferences.setUserPostType(postTypeName);
+                Preferences.setUserPostTypeId(postTypeId);
 
                 Map<String, String> params = new HashMap<>();
-                params.put("postTypeId", postType.getId());
+                params.put("postTypeId", postTypeId);
                 ApiClient.getInstance().requestUserExpostor(this, params, new OkHttpCallback<BaseErrorBean>() {
                     @Override
                     public void onSuccess(BaseErrorBean entity) {
                         showToast("设置用户类型成功");
                     }
-
                 });
 
             } else if (requestCode == CODE_USERINFO_GRID) {
@@ -527,7 +543,7 @@ public class UserInfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
             ToastUtils.showToast("请输入姓名");
             return;
         }
-        Preferences.setUserName(userName);
+        saveUserName(userName);
 
         if (TextUtils.isEmpty(mBinding.edtUserInfoPostType.getText().toString().trim())) {
             ToastUtils.showToast("请选择用户类型");
@@ -546,6 +562,39 @@ public class UserInfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
             startActivity(new Intent(UserInfoActivity.this, HomeActivity.class));
         }
         finish();
+        RxBus.sendMessage(new UserUpdateEvent());
+    }
+
+    /**
+     * 用户类型为4-网格主，不提交客户信息，提交网格信息
+     */
+    private void showPostTypeIs4() {
+        mBinding.edtUserInfoCustom.setVisibility(View.GONE);
+        mBinding.imgEdtUserInfoCustom.setVisibility(View.GONE);
+        mBinding.edtUserInfoGrid.setVisibility(View.VISIBLE);
+        mBinding.imgEdtUserInfoGrid.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * 大区中心为总部
+     * 且用户类型为10-推广经理
+     * 不提交客户信息，网格信息
+     */
+    private void showPostTypeIs10() {
+        mBinding.edtUserInfoCustom.setVisibility(View.GONE);
+        mBinding.imgEdtUserInfoCustom.setVisibility(View.GONE);
+        mBinding.edtUserInfoGrid.setVisibility(View.GONE);
+        mBinding.imgEdtUserInfoGrid.setVisibility(View.GONE);
+    }
+
+    /**
+     * 显示客户信息，网格信息
+     */
+    private void showAllInfoEditText() {
+        mBinding.edtUserInfoCustom.setVisibility(View.VISIBLE);
+        mBinding.imgEdtUserInfoCustom.setVisibility(View.VISIBLE);
+        mBinding.edtUserInfoGrid.setVisibility(View.VISIBLE);
+        mBinding.imgEdtUserInfoGrid.setVisibility(View.VISIBLE);
     }
 
     @Override
