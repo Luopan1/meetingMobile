@@ -23,7 +23,7 @@
             android:layout_gravity="center"
             android:text="等待主持人进入..."
             android:textColor="@color/white"
-            android:textSize="@dimen/my_sp_30" />
+            android:textSize="16sp" />
 
         <ImageView
             android:id="@+id/doc_image"
