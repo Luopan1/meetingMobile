@@ -21,7 +21,7 @@
         android:id="@+id/list_view"
         android:layout_width="513dp"
         android:layout_height="236dp"
-        android:dividerHeight="0dp"
+        android:dividerHeight="10dp"
         android:divider="@color/transparent"
         android:layout_marginBottom="16dp"
         android:layout_marginTop="16dp" />
