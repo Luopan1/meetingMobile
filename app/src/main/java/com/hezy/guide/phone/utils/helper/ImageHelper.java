@@ -14,6 +14,7 @@ import com.hezy.guide.phone.utils.HalfType;
 import com.hezy.guide.phone.utils.Logger;
 import com.hezy.guide.phone.utils.RoundCornerTransform;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.RequestCreator;
 
 /**
  * Created by wufan on 2017/7/26.
@@ -113,7 +114,14 @@ public class ImageHelper {
 //            int round_px = DensityUtil.dip2px(getContext(), round_dp);
             Logger.i(TAG,"loadImageDpIdRound "+url);
             System.out.println("processed image url is " + url);
-            Picasso.with(getContext()).load(url).transform(new RoundCornerTransform(round_dp, 0, HalfType.ALL)).into(imageView);
+            Picasso picasso = Picasso.with(getContext());
+            RequestCreator load;
+            if (TextUtils.isEmpty(url)){
+                load = picasso.load(R.drawable.uinfo_head);
+            }else {
+                load = picasso.load(url);
+            }
+            load.transform(new RoundCornerTransform(round_dp, 0, HalfType.ALL)).into(imageView);
 //        }
     }
 
