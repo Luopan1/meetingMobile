@@ -511,21 +511,14 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
     AlertDialog alertDialog;
     AudienceAdapter audienceAdapter;
 
-
-    private void showAlertDialog() {
-        View view = View.inflate(this, R.layout.dialog_audience_list, null);
-        ListView listView = view.findViewById(R.id.list_view);
-        if (audienceAdapter == null) {
-            audienceAdapter = new AudienceAdapter(this, audiences);
-        }
-        listView.setAdapter(audienceAdapter);
-        listView.setOnItemClickListener((adapterView, view1, i, l) -> {
-            Audience audience = (Audience) audienceAdapter.getItem(i);
+    private AudienceAdapter.OnAudienceButtonClickListener listener = new AudienceAdapter.OnAudienceButtonClickListener() {
+        @Override
+        public void onTalkButtonClick(Audience audience) {
             if (audienceView.getChildCount() > 0) {
                 if (!audience.isCalling()) {
                     showDialog(4, "中断当前" + currentAudience.getUname() + "的连麦，连接" + audience.getUname() + "的连麦", "取消", "确定", audience);
                 } else {
-                    Toast.makeText(this, "正在与当前参会人连麦中", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MeetingBroadcastActivity.this, "正在与当前参会人连麦中", Toast.LENGTH_SHORT).show();
                 }
             } else {
                 if (!audience.isCalling()) {
@@ -535,14 +528,30 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                         showDialog(5, "确定与" + audience.getUname() + "连麦", "确定", "取消", audience);
                     }
                 } else {
-                    Toast.makeText(this, "正在与当前参会人连麦中", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MeetingBroadcastActivity.this, "正在与当前参会人连麦中", Toast.LENGTH_SHORT).show();
                 }
             }
             alertDialog.cancel();
-        });
+        }
+    };
+
+    private void showAlertDialog() {
+        View view = View.inflate(this, R.layout.dialog_audience_list, null);
+        ListView listView = view.findViewById(R.id.list_view);
+        if (audienceAdapter == null) {
+            audienceAdapter = new AudienceAdapter(this, audiences, listener);
+        }
+        listView.setAdapter(audienceAdapter);
         AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.MyDialog);
         builder.setView(view);
         alertDialog = builder.create();
+
+        Window dialogWindow = alertDialog.getWindow();
+        WindowManager.LayoutParams lp = dialogWindow.getAttributes();
+        lp.width = 1000;
+        lp.height = 600;
+        dialogWindow.setAttributes(lp);
+
         alertDialog.show();
     }
 
@@ -657,6 +666,8 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
             remoteSurfaceView.setZOrderMediaOverlay(true);
             rtcEngine().setupRemoteVideo(new VideoCanvas(remoteSurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, uid));
             audienceView.addView(remoteSurfaceView);
+
+            stopButton.setVisibility(View.VISIBLE);
         });
     }
 

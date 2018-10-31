@@ -25,10 +25,12 @@ public class AudienceAdapter extends BaseAdapter {
     private Context context;
     private LayoutInflater inflater;
     private ArrayList<Audience> audiences;
+    private OnAudienceButtonClickListener listener;
 
-    public AudienceAdapter(Context context, ArrayList<Audience> audiences) {
+    public AudienceAdapter(Context context, ArrayList<Audience> audiences, OnAudienceButtonClickListener listener) {
         this.context = context;
         this.audiences = audiences;
+        this.listener = listener;
         inflater = LayoutInflater.from(context);
     }
 
@@ -70,7 +72,7 @@ public class AudienceAdapter extends BaseAdapter {
         if (audience.isHandsUp()) {
             viewHolder.handsupImage.setVisibility(View.VISIBLE);
         } else {
-            viewHolder.handsupImage.setVisibility(View.GONE);
+            viewHolder.handsupImage.setVisibility(View.INVISIBLE);
         }
 
         if (audience.isCalling()) {
@@ -79,16 +81,12 @@ public class AudienceAdapter extends BaseAdapter {
         } else {
             viewHolder.callingText.setVisibility(View.GONE);
             viewHolder.talkButton.setVisibility(View.VISIBLE);
+            viewHolder.talkButton.setOnClickListener(v -> {
+                if (listener != null) {
+                    listener.onTalkButtonClick(audience);
+                }
+            });
         }
-//        viewHolder.audienceLayout.setOnFocusChangeListener((view, b) -> {
-//            if (b) {
-//                viewHolder.talkButton.setVisibility(View.VISIBLE);
-//                viewHolder.checkButton.setVisibility(View.VISIBLE);
-//            } else {
-//                viewHolder.talkButton.setVisibility(View.GONE);
-//                viewHolder.checkButton.setVisibility(View.GONE);
-//            }
-//        });
 
         return convertView;
     }
@@ -103,6 +101,12 @@ public class AudienceAdapter extends BaseAdapter {
     public void setData(ArrayList<Audience> audiences){
         this.audiences = audiences;
         notifyDataSetChanged();
+    }
+
+    public interface OnAudienceButtonClickListener {
+
+        public void onTalkButtonClick(Audience audience);
+
     }
 
 }

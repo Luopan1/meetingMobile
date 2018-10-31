@@ -2,10 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/stop_audience"
-    android:layout_width="@dimen/my_px_700"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/bg_audience_selector"
-    android:descendantFocusability="blocksDescendants"
+    android:background="@drawable/bg_audience"
     android:orientation="horizontal">
 
     <ImageView
@@ -25,7 +24,7 @@
         android:maxLines="1"
         android:padding="12dp"
         android:textColor="@color/white"
-        android:textSize="@dimen/my_sp_30"
+        android:textSize="14sp"
         tools:text="1. 唐姗姗" />
 
     <TextView
@@ -38,19 +37,19 @@
         android:text="连麦中..."
         android:layout_marginRight="16dp"
         android:textColor="@color/c_6BD500"
-        android:textSize="@dimen/my_sp_30"
+        android:textSize="12sp"
         android:visibility="gone"/>
 
     <Button
         android:id="@+id/talk"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical"
         android:background="@drawable/bg_talk_selector"
         android:focusable="true"
-        android:padding="12dp"
         android:text="马上连麦"
         android:textColor="@color/c_f62c64"
-        android:textSize="@dimen/my_sp_30"
+        android:textSize="14sp"
         android:visibility="visible" />
 
     <Button

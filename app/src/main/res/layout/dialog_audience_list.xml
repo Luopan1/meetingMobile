@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/bg_meeting_dialog"
     android:gravity="center"
@@ -15,12 +15,14 @@
         android:gravity="center_horizontal"
         android:text="选择连麦人"
         android:textColor="@color/c_d8d8d8"
-        android:textSize="18sp" />
+        android:textSize="14sp" />
 
     <ListView
         android:id="@+id/list_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="513dp"
+        android:layout_height="236dp"
+        android:dividerHeight="0dp"
+        android:divider="@color/transparent"
         android:layout_marginBottom="16dp"
         android:layout_marginTop="16dp" />
 

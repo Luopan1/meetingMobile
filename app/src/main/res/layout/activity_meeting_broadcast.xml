@@ -173,7 +173,7 @@
             android:drawablePadding="3dp"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
-            android:text="等待发言（0）"
+            android:text="参会人（0）"
             android:textColor="@color/white"
             android:textSize="14sp" />
 
