@@ -383,6 +383,13 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
         leftButton.setOnClickListener(view12 -> {
             dialog.cancel();
             if (type == 1) {
+                try {
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("finish", true);
+                    agoraAPI.messageInstantSend("" + audience.getUid(), 0, jsonObject.toString(), "");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 doLeaveChannel();
                 if (agoraAPI.getStatus() == 2) {
 
@@ -413,19 +420,19 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
             } else if (type == 4) {
 
             } else if (type == 5) {
-                try {
-                    audience.setCalling(true);
-                    audienceNameText.setTag(audience);
-                    audienceNameText.setText(audience.getUname());
+                audience.setCalling(true);
+                audienceNameText.setTag(audience);
+                audienceNameText.setText(audience.getUname());
 
+                stopButton.setVisibility(View.VISIBLE);
+
+                currentAudience = audience;
+
+                try {
                     JSONObject jsonObject = new JSONObject();
                     jsonObject.put("response", true);
                     jsonObject.put("name", audience.getUname());
                     agoraAPI.messageInstantSend("" + audience.getUid(), 0, jsonObject.toString(), "");
-                    Log.v("audience info--->", audience.getUid() + "---" + audience.getUname());
-                    stopButton.setVisibility(View.VISIBLE);
-
-                    currentAudience = audience;
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

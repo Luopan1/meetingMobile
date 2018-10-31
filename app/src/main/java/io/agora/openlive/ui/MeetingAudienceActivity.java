@@ -361,7 +361,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                             boolean result = jsonObject.getBoolean("response");
                             if (result) {
                                 if (BuildConfig.DEBUG) {
-                                    Toast.makeText(MeetingAudienceActivity.this, "主持人和我连麦", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(MeetingAudienceActivity.this, "主持人要和我连麦", Toast.LENGTH_SHORT).show();
                                 }
 
                                 audienceLayout.setVisibility(View.VISIBLE);
@@ -375,17 +375,17 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                                 String audienceName = jsonObject.getString("name");
                                 audienceNameText.setText(audienceName);
 
-                                Audience audience = new Audience();
-                                audience.setUid(config().mUid);
-                                audience.setUname(audienceName);
-                                audienceNameText.setTag(audience);
+//                                Audience audience = new Audience();
+//                                audience.setUid(config().mUid);
+//                                audience.setUname(audienceName);
+//                                audienceNameText.setTag(audience);
 
                                 stopTalkButton.setVisibility(View.VISIBLE);
                                 requestTalkButton.setVisibility(View.GONE);
 
                                 calling = true;
 
-                                agoraAPI.setAttr("uname", audienceName);
+//                                agoraAPI.setAttr("uname", audienceName);
 
                                 worker().getRtcEngine().setClientRole(Constants.CLIENT_ROLE_BROADCASTER);
 

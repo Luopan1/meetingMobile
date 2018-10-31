@@ -11,9 +11,9 @@
         android:id="@+id/handsup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
         android:layout_gravity="center_vertical"
-        android:src="@drawable/ic_meeting_handsup"/>
+        android:layout_marginLeft="8dp"
+        android:src="@drawable/ic_meeting_handsup" />
 
     <TextView
         android:id="@+id/audience_name"
@@ -31,14 +31,14 @@
         android:id="@+id/calling"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginRight="16dp"
         android:drawableLeft="@drawable/ic_calling"
         android:drawablePadding="8dp"
-        android:layout_gravity="center_vertical"
         android:text="连麦中..."
-        android:layout_marginRight="16dp"
         android:textColor="@color/c_6BD500"
         android:textSize="12sp"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
     <Button
         android:id="@+id/talk"

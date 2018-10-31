@@ -67,7 +67,7 @@ public class AudienceAdapter extends BaseAdapter {
         }
 
         Audience audience = audiences.get(position);
-        viewHolder.nameText.setText((position + 1) + " " + audience.getUname());
+        viewHolder.nameText.setText((position + 1) + ". " + audience.getUname());
 
         if (audience.isHandsUp()) {
             viewHolder.handsupImage.setVisibility(View.VISIBLE);
