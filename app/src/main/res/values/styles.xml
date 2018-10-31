@@ -81,7 +81,21 @@
     </style>
 
     <style name="WhiteEdittext">
-        <item name="android:colorControlNormal">@color/white</item>
+        <item name="android:textSize">@dimen/my_px_43</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textColorHint">@color/purple_B07EDA</item>
     </style>
+
+    <style name="MeetingTypeUnFocus">
+        <item name="android:textColor">@color/meeting_type_unfocus</item>
+        <item name="android:textSize">@dimen/my_sp_40</item>
+    </style>
+
+    <style name="MeetingTypeFocus">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/my_sp_52</item>
+    </style>
+
 
 </resources>

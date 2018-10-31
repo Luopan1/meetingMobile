@@ -32,6 +32,7 @@ import rx.functions.Action1;
 
 /**
  * 手机绑定页面
+ *
  * @author Dongce
  * create time: 2018/10/22
  */
@@ -126,8 +127,8 @@ public class PhoneRegisterActivity extends BaseDataBindingActivity<PhoneRegistLa
                     @Override
                     public void onFailure(int errorCode, BaseException exception) {
                         super.onFailure(errorCode, exception);
-                        String errorMsg = "获取验证码失败，错误码：" + errorCode + "，错误信息：" + exception.getMessage();
-                        ZYAgent.onEvent(PhoneRegisterActivity.this, errorMsg);
+                        String errorMsg = "错误信息：" + exception.getMessage();
+                        ZYAgent.onEvent(PhoneRegisterActivity.this, "获取验证码失败，错误码：" + errorCode + "，" + errorMsg);
                         countDownTimer.cancel();
                         notificationHandler.sendEmptyMessage(SHOW_VERIFICATION_BTN);
                         mBinding.btnPhoneRequestVerificationCode.setText("获取验证码");
@@ -174,7 +175,9 @@ public class PhoneRegisterActivity extends BaseDataBindingActivity<PhoneRegistLa
                 return;
             }
             if (entity.getErrcode() != 0) {
-                ToastUtils.showToast("用户登陆请求失败，错误码：" + entity.getErrcode());
+                String errMsg = "用户登陆请求失败";
+                ToastUtils.showToast(errMsg);
+                ZYAgent.onEvent(PhoneRegisterActivity.this, errMsg + "，错误码：" + entity.getErrcode());
                 return;
             }
             LoginWithPhoneNumber loginWithPhoneNumber = entity.getData();
@@ -194,8 +197,8 @@ public class PhoneRegisterActivity extends BaseDataBindingActivity<PhoneRegistLa
         @Override
         public void onFailure(int errorCode, BaseException exception) {
             super.onFailure(errorCode, exception);
-            String errorMsg = "错误码：" + errorCode + "，错误信息：" + exception.getMessage();
-            ZYAgent.onEvent(PhoneRegisterActivity.this, errorMsg);
+            String errorMsg = "错误信息：" + exception.getMessage();
+            ZYAgent.onEvent(PhoneRegisterActivity.this, "错误码：" + errorCode + "，" + errorMsg);
             ToastUtils.showToast(errorMsg);
         }
 
