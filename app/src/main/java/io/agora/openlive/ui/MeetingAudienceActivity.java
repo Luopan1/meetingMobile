@@ -28,6 +28,7 @@ import com.hezy.guide.phone.R;
 import com.hezy.guide.phone.entities.Agora;
 import com.hezy.guide.phone.entities.Audience;
 import com.hezy.guide.phone.entities.Bucket;
+import com.hezy.guide.phone.entities.HostUser;
 import com.hezy.guide.phone.entities.Material;
 import com.hezy.guide.phone.entities.Meeting;
 import com.hezy.guide.phone.entities.MeetingHostingStats;
@@ -579,12 +580,11 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
     }
 
     private OkHttpCallback joinMeetingCallback(int uid){
-        return new OkHttpCallback<Bucket<MeetingJoin>>() {
+        return new OkHttpCallback<Bucket<HostUser>>() {
 
             @Override
-            public void onSuccess(Bucket<MeetingJoin> meetingJoinBucket) {
-                meetingJoin = meetingJoinBucket.getData();
-                meetingJoin.setMeeting(meeting);
+            public void onSuccess(Bucket<HostUser> meetingJoinBucket) {
+                meetingJoin.setHostUser(meetingJoinBucket.getData());
                 if (uid != 0) {
                     if (uid == Integer.parseInt(meetingJoin.getHostUser().getClientUid())) {
                         if (BuildConfig.DEBUG) {
