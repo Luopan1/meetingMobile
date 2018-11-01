@@ -29,6 +29,7 @@ import com.hezy.guide.phone.entities.Agora;
 import com.hezy.guide.phone.entities.Audience;
 import com.hezy.guide.phone.entities.Bucket;
 import com.hezy.guide.phone.entities.Material;
+import com.hezy.guide.phone.entities.Meeting;
 import com.hezy.guide.phone.entities.MeetingHostingStats;
 import com.hezy.guide.phone.entities.MeetingJoin;
 import com.hezy.guide.phone.entities.MeetingJoinStats;
@@ -61,6 +62,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
     private final String TAG = MeetingAudienceActivity.class.getSimpleName();
 
     private MeetingJoin meetingJoin;
+    private Meeting meeting;
     private Agora agora;
     private String broadcastId;
 
@@ -112,6 +114,9 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
         Intent intent = getIntent();
         agora = intent.getParcelableExtra("agora");
         meetingJoin = intent.getParcelableExtra("meeting");
+        meeting = meetingJoin.getMeeting();
+
+        ApiClient.getInstance().getMeetingHost(TAG, meeting.getId(), joinMeetingCallback(0));
 
         config().mUid = Integer.parseInt(UIDUtil.generatorUID(Preferences.getUserId()));
         Log.v("uid--->", "" + config().mUid);
@@ -573,6 +578,48 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 
     }
 
+    private OkHttpCallback joinMeetingCallback(int uid){
+        return new OkHttpCallback<Bucket<MeetingJoin>>() {
+
+            @Override
+            public void onSuccess(Bucket<MeetingJoin> meetingJoinBucket) {
+                meetingJoin = meetingJoinBucket.getData();
+                meetingJoin.setMeeting(meeting);
+                if (uid != 0) {
+                    if (uid == Integer.parseInt(meetingJoin.getHostUser().getClientUid())) {
+                        if (BuildConfig.DEBUG) {
+                            Toast.makeText(MeetingAudienceActivity.this, "主持人" + broadcastId + "---" + uid + meetingJoin.getHostUser().getHostUserName() + "进入了", Toast.LENGTH_SHORT).show();
+                        }
+
+                        broadcastId = String.valueOf(uid);
+                        broadcastTipsText.setVisibility(View.GONE);
+                        broadcastNameText.setText("主持人：" + meetingJoin.getHostUser().getHostUserName());
+
+                        broadcasterLayout.setVisibility(View.VISIBLE);
+                        remoteBroadcasterSurfaceView = RtcEngine.CreateRendererView(getApplicationContext());
+                        remoteBroadcasterSurfaceView.setZOrderOnTop(false);
+                        remoteBroadcasterSurfaceView.setZOrderMediaOverlay(false);
+                        rtcEngine().setupRemoteVideo(new VideoCanvas(remoteBroadcasterSurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, uid));
+                        broadcasterLayout.removeAllViews();
+                        broadcasterLayout.addView(remoteBroadcasterSurfaceView);
+                    } else {
+                        if (BuildConfig.DEBUG) {
+                            Toast.makeText(MeetingAudienceActivity.this, "连麦观众" + uid + "进入了，去获取连麦观众的名字", Toast.LENGTH_SHORT).show();
+                        }
+                        isExit = false;
+                        agoraAPI.getUserAttr(String.valueOf(uid), "uname"); // 获取名为 uid 的用户的 uname 属性值。结果通过 ICallBack 类的 onUserAttrResult 回调返回
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(int errorCode, BaseException exception) {
+                super.onFailure(errorCode, exception);
+                Toast.makeText(MeetingAudienceActivity.this, exception.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        };
+    }
+
     private OkHttpCallback meetingMaterialCallback = new OkHttpCallback<Bucket<Material>>() {
 
         @Override
@@ -787,32 +834,8 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
             if (isFinishing()) {
                 return;
             }
+            ApiClient.getInstance().getMeetingHost(TAG, meeting.getId(), joinMeetingCallback(uid));
 
-            TCAgent.onEvent(MeetingAudienceActivity.this, "讲解员进入当前通话");
-
-            if (uid == Integer.parseInt(meetingJoin.getHostUser().getClientUid())) {
-                if (BuildConfig.DEBUG) {
-                    Toast.makeText(MeetingAudienceActivity.this, "主持人" + broadcastId + "---" + uid + meetingJoin.getHostUser().getHostUserName() + "进入了", Toast.LENGTH_SHORT).show();
-                }
-
-                broadcastId = String.valueOf(uid);
-                broadcastTipsText.setVisibility(View.GONE);
-                broadcastNameText.setText("主持人：" + meetingJoin.getHostUser().getHostUserName());
-
-                broadcasterLayout.setVisibility(View.VISIBLE);
-                remoteBroadcasterSurfaceView = RtcEngine.CreateRendererView(getApplicationContext());
-                remoteBroadcasterSurfaceView.setZOrderOnTop(false);
-                remoteBroadcasterSurfaceView.setZOrderMediaOverlay(false);
-                rtcEngine().setupRemoteVideo(new VideoCanvas(remoteBroadcasterSurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, uid));
-                broadcasterLayout.removeAllViews();
-                broadcasterLayout.addView(remoteBroadcasterSurfaceView);
-            } else {
-                if (BuildConfig.DEBUG) {
-                    Toast.makeText(MeetingAudienceActivity.this, "连麦观众" + uid + "进入了，去获取连麦观众的名字", Toast.LENGTH_SHORT).show();
-                }
-                isExit = false;
-                agoraAPI.getUserAttr(String.valueOf(uid), "uname"); // 获取名为 uid 的用户的 uname 属性值。结果通过 ICallBack 类的 onUserAttrResult 回调返回
-            }
         });
     }
 
