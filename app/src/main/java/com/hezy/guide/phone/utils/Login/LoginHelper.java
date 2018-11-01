@@ -117,6 +117,12 @@ public class LoginHelper {
         Preferences.setUserRank(user.getRank());
         Preferences.setUserDistrict(user.getAreaName());
         Preferences.setAreaName(user.getAreaName());
+        Preferences.setUserPostTypeId(user.getPostTypeId());
+        Preferences.setUserPostType(user.getPostTypeName());
+        Preferences.setUserGridId(user.getGridId());
+        Preferences.setUserGrid(user.getGridName());
+        Preferences.setUserCustomId(user.getCustomId());
+        Preferences.setUserCustom(user.getCustomName());
     }
 
     public static void savaWeChat(Wechat wechat) {

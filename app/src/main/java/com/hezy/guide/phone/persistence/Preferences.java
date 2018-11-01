@@ -259,7 +259,7 @@ public class Preferences {
     }
 
     //移除网格信息、网格信息ID
-    public static void removeUserGridInfo(){
+    public static void removeUserGridInfo() {
         SharedPreferences.Editor editor = getPreferences().edit();
         editor.remove(PREFERENCE_USER_GRID);
         editor.remove(PREFERENCE_USER_GRID_ID);
@@ -303,7 +303,7 @@ public class Preferences {
     }
 
     //移除客户信息、客户信息ID
-    public static void removeUserCustomInfo(){
+    public static void removeUserCustomInfo() {
         SharedPreferences.Editor editor = getPreferences().edit();
         editor.remove(PREFERENCE_USER_CUSTOM);
         editor.remove(PREFERENCE_USER_CUSTOM_ID);
@@ -473,10 +473,9 @@ public class Preferences {
      * @return
      */
     public static boolean isUserinfoEmpty() {
-        return (TextUtils.isEmpty(Preferences.getUserPhoto())
-                || TextUtils.isEmpty(Preferences.getUserName())
-                || TextUtils.isEmpty(Preferences.getUserAddress())
-                || TextUtils.isEmpty(Preferences.getUserDistrict()));
+        return (TextUtils.isEmpty(Preferences.getUserName())
+                || TextUtils.isEmpty(Preferences.getUserDistrict())
+                || TextUtils.isEmpty(Preferences.getUserPostType()));
     }
 
 }
