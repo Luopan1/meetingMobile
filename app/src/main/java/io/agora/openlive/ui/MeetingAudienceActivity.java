@@ -158,7 +158,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                         jsonObject.put("uid", config().mUid);
                         jsonObject.put("calling", calling);
                         jsonObject.put("auditStatus", Preferences.getUserAuditStatus());
-                        jsonObject.put("postTypeName", Preferences.getUserPostTypeName());
+                        jsonObject.put("postTypeName", Preferences.getUserPostType());
                         jsonObject.put("uname", TextUtils.isEmpty(Preferences.getAreaInfo()) ? "讲解员-" + Preferences.getUserName() : "讲解员-" + Preferences.getAreaInfo() + "-" + Preferences.getUserName());
                         agoraAPI.messageInstantSend(broadcastId, 0, jsonObject.toString(), "");
                     } catch (Exception e) {
@@ -174,7 +174,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                         jsonObject.put("uid", config().mUid);
                         jsonObject.put("calling", calling);
                         jsonObject.put("auditStatus", Preferences.getUserAuditStatus());
-                        jsonObject.put("postTypeName", Preferences.getUserPostTypeName());
+                        jsonObject.put("postTypeName", Preferences.getUserPostType());
                         jsonObject.put("uname", TextUtils.isEmpty(Preferences.getAreaInfo()) ? "讲解员-" + Preferences.getUserName() : "讲解员-" + Preferences.getAreaInfo() + "-" + Preferences.getUserName());
                         agoraAPI.messageInstantSend(broadcastId, 0, jsonObject.toString(), "");
                     } catch (Exception e) {
@@ -240,7 +240,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                         jsonObject.put("uid", config().mUid);
                         jsonObject.put("calling", calling);
                         jsonObject.put("auditStatus", Preferences.getUserAuditStatus());
-                        jsonObject.put("postTypeName", Preferences.getUserPostTypeName());
+                        jsonObject.put("postTypeName", Preferences.getUserPostType());
                         jsonObject.put("uname", TextUtils.isEmpty(Preferences.getAreaInfo()) ? "讲解员-" + Preferences.getUserName() : "讲解员-" + Preferences.getAreaInfo() + "-" + Preferences.getUserName());
                         agoraAPI.messageInstantSend(broadcastId, 0, jsonObject.toString(), "");
                     } catch (Exception e) {
@@ -277,7 +277,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                         jsonObject.put("uid", config().mUid);
                         jsonObject.put("calling", calling);
                         jsonObject.put("auditStatus", Preferences.getUserAuditStatus());
-                        jsonObject.put("postTypeName", Preferences.getUserPostTypeName());
+                        jsonObject.put("postTypeName", Preferences.getUserPostType());
                         jsonObject.put("uname", TextUtils.isEmpty(Preferences.getAreaInfo()) ? "讲解员-" + Preferences.getUserName() : "讲解员-" + Preferences.getAreaInfo() + "-" + Preferences.getUserName());
                         agoraAPI.messageInstantSend(broadcastId, 0, jsonObject.toString(), "");
                     } catch (Exception e) {
@@ -387,7 +387,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                                     jsonObject1.put("uid", config().mUid);
                                     jsonObject1.put("calling", calling);
                                     jsonObject1.put("auditStatus", Preferences.getUserAuditStatus());
-                                    jsonObject1.put("postTypeName", Preferences.getUserPostTypeName());
+                                    jsonObject1.put("postTypeName", Preferences.getUserPostType());
                                     jsonObject1.put("uname", TextUtils.isEmpty(Preferences.getAreaInfo()) ? "讲解员-" + Preferences.getUserName() : "讲解员-" + Preferences.getAreaInfo() + "-" + Preferences.getUserName());
                                     agoraAPI.messageInstantSend(broadcastId, 0, jsonObject1.toString(), "");
                                 } catch (Exception e) {
@@ -435,7 +435,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                                     jsonObject2.put("uid", config().mUid);
                                     jsonObject2.put("calling", calling);
                                     jsonObject2.put("auditStatus", Preferences.getUserAuditStatus());
-                                    jsonObject2.put("postTypeName", Preferences.getUserPostTypeName());
+                                    jsonObject2.put("postTypeName", Preferences.getUserPostType());
                                     jsonObject2.put("uname", TextUtils.isEmpty(Preferences.getAreaInfo()) ? "讲解员-" + Preferences.getUserName() : "讲解员-" + Preferences.getAreaInfo() + "-" + Preferences.getUserName());
                                     agoraAPI.messageInstantSend(broadcastId, 0, jsonObject2.toString(), "");
                                 } catch (Exception e) {
@@ -664,7 +664,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                     jsonObject.put("uid", config().mUid);
                     jsonObject.put("calling", calling);
                     jsonObject.put("auditStatus", Preferences.getUserAuditStatus());
-                    jsonObject.put("postTypeName", Preferences.getUserPostTypeName());
+                    jsonObject.put("postTypeName", Preferences.getUserPostType());
                     jsonObject.put("uname", TextUtils.isEmpty(Preferences.getAreaInfo()) ? "讲解员-" + Preferences.getUserName() : "讲解员-" + Preferences.getAreaInfo() + "-" + Preferences.getUserName());
                     agoraAPI.messageInstantSend(broadcastId, 0, jsonObject.toString(), "");
                 } catch (Exception e) {

@@ -33,7 +33,6 @@ public class Preferences {
     private static final String PREFERENCE_USER_CUSTOM_ID = "u_custom_id";
     private static final String PREFERENCE_USER_RANK = "u_rank";
     private static final String PREFERENCE_USER_AUDIT_STATUS = "u_audit_status";
-    private static final String PREFERENCE_USER_POST_TYPE_NAME = "u_post_type_name";
 
 
     private static final String PREFERENCE_STUDENT_ID = "s_id";
@@ -99,20 +98,6 @@ public class Preferences {
             Log.d(tag, "User AuditStatus save failure");
         } else {
             Log.d(tag, "User AuditStatus save success");
-        }
-    }
-
-    public static String getUserPostTypeName() {
-        return getPreferences().getString(PREFERENCE_USER_POST_TYPE_NAME, "");
-    }
-
-    public static void setUserPostTypeName(String postTypeName) {
-        SharedPreferences.Editor editor = getPreferences().edit();
-        editor.putString(PREFERENCE_USER_POST_TYPE_NAME, postTypeName);
-        if (!editor.commit()) {
-            Log.d(tag, "User postTypeName save failure");
-        } else {
-            Log.d(tag, "User postTypeName save success");
         }
     }
 
