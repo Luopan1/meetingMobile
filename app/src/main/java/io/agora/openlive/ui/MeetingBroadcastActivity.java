@@ -407,7 +407,6 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
 
                     JSONObject jsonObject = new JSONObject();
                     jsonObject.put("response", true);
-                    jsonObject.put("name", audience.getUname());
                     agoraAPI.messageInstantSend("" + audience.getUid(), 0, jsonObject.toString(), "");
                     Log.v("audience info--->", audience.getUid() + "---" + audience.getUname());
                     stopButton.setVisibility(View.VISIBLE);
@@ -431,7 +430,6 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                 try {
                     JSONObject jsonObject = new JSONObject();
                     jsonObject.put("response", true);
-                    jsonObject.put("name", audience.getUname());
                     agoraAPI.messageInstantSend("" + audience.getUid(), 0, jsonObject.toString(), "");
                 } catch (Exception e) {
                     e.printStackTrace();

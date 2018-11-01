@@ -39,7 +39,6 @@ import com.hezy.guide.phone.utils.UIDUtil;
 import com.squareup.picasso.Picasso;
 import com.tendcloud.tenddata.TCAgent;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,6 +78,8 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 
     private String channelName;
 
+    private SurfaceView remoteBroadcasterSurfaceView;
+
     private AgoraAPIOnlySignal agoraAPI;
 
     @Override
@@ -104,6 +105,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
     }
 
     private boolean request = false;
+    private boolean isFullScreen = false;
 
     @Override
     protected void initUIandEvent() {
@@ -127,10 +129,19 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
         docImage = findViewById(R.id.doc_image);
         pageText = findViewById(R.id.page);
         fullScreenButton = findViewById(R.id.full_screen);
-        fullScreenButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
+        fullScreenButton.setOnClickListener(v -> {
+            if (!isFullScreen) {
+                audienceLayout.setVisibility(View.GONE);
+                requestTalkButton.setVisibility(View.GONE);
+                stopTalkButton.setVisibility(View.GONE);
+                broadcasterSmallLayout.setVisibility(View.GONE);
+                isFullScreen = true;
+            } else {
+                audienceLayout.setVisibility(View.VISIBLE);
+                requestTalkButton.setVisibility(View.VISIBLE);
+                stopTalkButton.setVisibility(View.VISIBLE);
+                broadcasterSmallLayout.setVisibility(View.VISIBLE);
+                isFullScreen = false;
             }
         });
 
@@ -298,19 +309,19 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                 super.onUserAttrResult(account, name, value);
                 runOnUiThread(() -> {
                     if (BuildConfig.DEBUG) {
-                        Toast.makeText(MeetingAudienceActivity.this, "获取用户" + account + "的属性" + name + "的值为" + value, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MeetingAudienceActivity.this, "获取到用户" + account + "的属性" + name + "的值为" + value, Toast.LENGTH_SHORT).show();
                     }
 
                     audienceLayout.setVisibility(View.VISIBLE);
 
                     audienceNameText.setText(value);
 
-                    SurfaceView remoteSurfaceView = RtcEngine.CreateRendererView(getApplicationContext());
-                    remoteSurfaceView.setZOrderOnTop(true);
-                    remoteSurfaceView.setZOrderMediaOverlay(true);
-                    rtcEngine().setupRemoteVideo(new VideoCanvas(remoteSurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, Integer.parseInt(account)));
-                    audienceView.addView(remoteSurfaceView);
-
+                    audienceView.removeAllViews();
+                    SurfaceView remoteAudienceSurfaceView = RtcEngine.CreateRendererView(getApplicationContext());
+                    remoteAudienceSurfaceView.setZOrderOnTop(true);
+                    remoteAudienceSurfaceView.setZOrderMediaOverlay(true);
+                    rtcEngine().setupRemoteVideo(new VideoCanvas(remoteAudienceSurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, Integer.parseInt(account)));
+                    audienceView.addView(remoteAudienceSurfaceView);
                 });
             }
 
@@ -351,7 +362,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                         JSONObject jsonObject = new JSONObject(msg);
                         if (jsonObject.has("response")) {
                             boolean result = jsonObject.getBoolean("response");
-                            if (result) {
+                            if (result) { // 连麦成功
                                 if (BuildConfig.DEBUG) {
                                     Toast.makeText(MeetingAudienceActivity.this, "主持人要和我连麦", Toast.LENGTH_SHORT).show();
                                 }
@@ -364,20 +375,20 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                                 rtcEngine().setupLocalVideo(new VideoCanvas(localSurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, config().mUid));
                                 audienceView.addView(localSurfaceView);
 
-                                String audienceName = jsonObject.getString("name");
+                                String audienceName = TextUtils.isEmpty(Preferences.getAreaInfo()) ? "讲解员-" + Preferences.getUserName() : "讲解员-" + Preferences.getAreaInfo() + "-" + Preferences.getUserName();
                                 audienceNameText.setText(audienceName);
+
+                                agoraAPI.setAttr("uname", audienceName); // 设置当前登录用户的相关属性值。
+
+                                stopTalkButton.setVisibility(View.VISIBLE);
+                                requestTalkButton.setVisibility(View.GONE);
 
 //                                Audience audience = new Audience();
 //                                audience.setUid(config().mUid);
 //                                audience.setUname(audienceName);
 //                                audienceNameText.setTag(audience);
 
-                                stopTalkButton.setVisibility(View.VISIBLE);
-                                requestTalkButton.setVisibility(View.GONE);
-
                                 calling = true;
-
-//                                agoraAPI.setAttr("uname", audienceName);
 
                                 worker().getRtcEngine().setClientRole(Constants.CLIENT_ROLE_BROADCASTER);
 
@@ -385,7 +396,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                                     JSONObject jsonObject1 = new JSONObject();
                                     jsonObject1.put("request", request);
                                     jsonObject1.put("uid", config().mUid);
-                                    jsonObject1.put("calling", calling);
+                                    jsonObject1.put("calling", true);
                                     jsonObject1.put("auditStatus", Preferences.getUserAuditStatus());
                                     jsonObject1.put("postTypeName", Preferences.getUserPostType());
                                     jsonObject1.put("uname", TextUtils.isEmpty(Preferences.getAreaInfo()) ? "讲解员-" + Preferences.getUserName() : "讲解员-" + Preferences.getAreaInfo() + "-" + Preferences.getUserName());
@@ -534,8 +545,10 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                             pageText.setVisibility(View.GONE);
                             docImage.setVisibility(View.GONE);
 
+                            fullScreenButton.setVisibility(View.VISIBLE);
+
                             broadcasterLayout.setVisibility(View.VISIBLE);
-                            broadcasterLayout.addView(remoteSurfaceView);
+                            broadcasterLayout.addView(remoteBroadcasterSurfaceView);
                         }
                     }
                 });
@@ -552,7 +565,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
             @Override
             public void onLog(String txt) {
                 super.onLog(txt);
-                Log.v("信令audience", txt);
+                Log.v("audience信令", txt);
             }
         });
 
@@ -568,13 +581,13 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 
             currentMaterialPublish = currentMaterial.getMeetingMaterialsPublishList().get(doc_index);
 
-            while (remoteSurfaceView != null) {
-                broadcasterLayout.removeView(remoteSurfaceView);
+            while (remoteBroadcasterSurfaceView != null) {
+                broadcasterLayout.removeView(remoteBroadcasterSurfaceView);
                 broadcasterLayout.setVisibility(View.GONE);
 
                 broadcasterSmallLayout.setVisibility(View.VISIBLE);
                 broadcasterSmallView.removeAllViews();
-                broadcasterSmallView.addView(remoteSurfaceView);
+                broadcasterSmallView.addView(remoteBroadcasterSurfaceView);
                 Log.v("while", "while loop.............");
                 break;
             }
@@ -583,6 +596,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
             docImage.setVisibility(View.VISIBLE);
             Picasso.with(MeetingAudienceActivity.this).load(currentMaterialPublish.getUrl()).into(docImage);
 
+            fullScreenButton.setVisibility(View.VISIBLE);
         }
 
         @Override
@@ -765,8 +779,6 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
         doRenderRemoteUi(uid);
     }
 
-    private SurfaceView remoteSurfaceView;
-
     private void doRenderRemoteUi(final int uid) {
         runOnUiThread(() -> {
             if (isFinishing()) {
@@ -774,29 +786,29 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
             }
 
             TCAgent.onEvent(MeetingAudienceActivity.this, "讲解员进入当前通话");
-            if (uid == Integer.parseInt(meetingJoin.getHostUser().getClientUid())) {
-                broadcastId = String.valueOf(uid);
-                broadcastTipsText.setVisibility(View.GONE);
-                broadcastNameText.setText("主持人：" + meetingJoin.getHostUser().getHostUserName());
 
+            if (uid == Integer.parseInt(meetingJoin.getHostUser().getClientUid())) {
                 if (BuildConfig.DEBUG) {
                     Toast.makeText(MeetingAudienceActivity.this, "主持人" + broadcastId + "---" + uid + meetingJoin.getHostUser().getHostUserName() + "进入了", Toast.LENGTH_SHORT).show();
                 }
 
+                broadcastId = String.valueOf(uid);
+                broadcastTipsText.setVisibility(View.GONE);
+                broadcastNameText.setText("主持人：" + meetingJoin.getHostUser().getHostUserName());
+
                 broadcasterLayout.setVisibility(View.VISIBLE);
-                remoteSurfaceView = RtcEngine.CreateRendererView(getApplicationContext());
-                remoteSurfaceView.setZOrderOnTop(false);
-                remoteSurfaceView.setZOrderMediaOverlay(false);
-                rtcEngine().setupRemoteVideo(new VideoCanvas(remoteSurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, uid));
+                remoteBroadcasterSurfaceView = RtcEngine.CreateRendererView(getApplicationContext());
+                remoteBroadcasterSurfaceView.setZOrderOnTop(false);
+                remoteBroadcasterSurfaceView.setZOrderMediaOverlay(false);
+                rtcEngine().setupRemoteVideo(new VideoCanvas(remoteBroadcasterSurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, uid));
                 broadcasterLayout.removeAllViews();
-                broadcasterLayout.addView(remoteSurfaceView);
+                broadcasterLayout.addView(remoteBroadcasterSurfaceView);
             } else {
                 if (BuildConfig.DEBUG) {
                     Toast.makeText(MeetingAudienceActivity.this, "连麦观众" + uid + "进入了，去获取连麦观众的名字", Toast.LENGTH_SHORT).show();
                 }
                 isExit = false;
-                agoraAPI.getUserAttr("" + uid, "uname");
-
+                agoraAPI.getUserAttr(String.valueOf(uid), "uname"); // 获取名为 uid 的用户的 uname 属性值。结果通过 ICallBack 类的 onUserAttrResult 回调返回
             }
         });
     }
