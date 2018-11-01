@@ -67,7 +67,7 @@ public class LinkEntryActivity extends AppCompatActivity {
              */
             String joinCode = h5Uri.getQueryParameter("j");
             String meetingId = h5Uri.getQueryParameter("m");
-            TCAgent.onEvent(this, TCTAG, "H5跳转进Activity接收数据：joinCode=" + joinCode + " meetingId=" + meetingId);
+            TCAgent.onEvent(this, TCTAG, "H5跳转进加入会议Activity，接收数据：joinCode=" + joinCode + " meetingId=" + meetingId);
 
             getMeetingInfo(joinCode, meetingId);
         }

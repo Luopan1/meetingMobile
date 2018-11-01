@@ -129,6 +129,9 @@ public class UserInfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
         if (!TextUtils.isEmpty(Preferences.getUserPhoto())) {
             Picasso.with(BaseApplication.getInstance()).load(Preferences.getUserPhoto()).into(mBinding.imgUserInfoHead);
         }
+
+        String postTypeId = Preferences.getUserPostTypeId();
+        checkPostType(postTypeId);
     }
 
     private void hideEditTextFocus() {
@@ -376,13 +379,7 @@ public class UserInfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
                 PostType postType = data.getParcelableExtra(KEY_USERINFO_POSTTYPE);
                 String postTypeId = postType.getId();
                 String postTypeName = postType.getName();
-                if ("4".equals(postTypeId)) {
-                    showPostTypeIs4();
-                } else if ("10".equals(postTypeId)) {
-                    showPostTypeIs10();
-                } else {
-                    showAllInfoEditText();
-                }
+                checkPostType(postTypeId);
                 mBinding.edtUserInfoPostType.setText(postTypeName);
                 Preferences.setUserPostType(postTypeName);
                 Preferences.setUserPostTypeId(postTypeId);
@@ -429,6 +426,20 @@ public class UserInfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
 
                 });
             }
+        }
+    }
+
+    /**
+     * 检测PostTypeID类型
+     * @param postTypeId
+     */
+    private void checkPostType(String postTypeId) {
+        if ("4".equals(postTypeId)) {
+            showPostTypeIs4();
+        } else if ("10".equals(postTypeId)) {
+            showPostTypeIs10();
+        } else {
+            showAllInfoEditText();
         }
     }
 
@@ -588,13 +599,13 @@ public class UserInfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
     }
 
     /**
-     * 显示客户信息，网格信息
+     * 除用户类型为4、10以外，显示客户信息，不显示网格信息
      */
     private void showAllInfoEditText() {
         mBinding.edtUserInfoCustom.setVisibility(View.VISIBLE);
         mBinding.imgEdtUserInfoCustom.setVisibility(View.VISIBLE);
-        mBinding.edtUserInfoGrid.setVisibility(View.VISIBLE);
-        mBinding.imgEdtUserInfoGrid.setVisibility(View.VISIBLE);
+        mBinding.edtUserInfoGrid.setVisibility(View.GONE);
+        mBinding.imgEdtUserInfoGrid.setVisibility(View.GONE);
     }
 
     @Override
