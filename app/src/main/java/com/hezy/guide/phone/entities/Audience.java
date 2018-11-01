@@ -15,9 +15,29 @@ public class Audience implements Entity, Parcelable {
 
     private String uname;
 
+    private int auditStatus; // 1.已认证
+
+    private String postTypeName;
+
     private boolean handsUp;
 
     private boolean calling;
+
+    public int getAuditStatus() {
+        return auditStatus;
+    }
+
+    public void setAuditStatus(int auditStatus) {
+        this.auditStatus = auditStatus;
+    }
+
+    public String getPostTypeName() {
+        return postTypeName;
+    }
+
+    public void setPostTypeName(String postTypeName) {
+        this.postTypeName = postTypeName;
+    }
 
     public int getUid() {
         return uid;
@@ -69,12 +89,17 @@ public class Audience implements Entity, Parcelable {
         if (o == null || getClass() != o.getClass()) return false;
         Audience audience = (Audience) o;
         return uid == audience.uid &&
-                Objects.equals(uname, audience.uname);
+                auditStatus == audience.auditStatus &&
+                handsUp == audience.handsUp &&
+                calling == audience.calling &&
+                Objects.equals(uname, audience.uname) &&
+                Objects.equals(postTypeName, audience.postTypeName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(uid, uname);
+
+        return Objects.hash(uid, uname, auditStatus, postTypeName, handsUp, calling);
     }
 
     @Override
@@ -86,6 +111,8 @@ public class Audience implements Entity, Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(this.uid);
         dest.writeString(this.uname);
+        dest.writeInt(this.auditStatus);
+        dest.writeString(this.postTypeName);
         dest.writeByte(this.handsUp ? (byte) 1 : (byte) 0);
         dest.writeByte(this.calling ? (byte) 1 : (byte) 0);
     }
@@ -96,6 +123,8 @@ public class Audience implements Entity, Parcelable {
     protected Audience(Parcel in) {
         this.uid = in.readInt();
         this.uname = in.readString();
+        this.auditStatus = in.readInt();
+        this.postTypeName = in.readString();
         this.handsUp = in.readByte() != 0;
         this.calling = in.readByte() != 0;
     }

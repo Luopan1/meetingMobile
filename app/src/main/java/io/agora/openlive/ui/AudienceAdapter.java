@@ -1,6 +1,7 @@
 package io.agora.openlive.ui;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,6 +62,8 @@ public class AudienceAdapter extends BaseAdapter {
             viewHolder.checkButton = convertView.findViewById(R.id.check);
             viewHolder.handsupImage = convertView.findViewById(R.id.handsup);
             viewHolder.callingText = convertView.findViewById(R.id.calling);
+            viewHolder.auditStatusImage = convertView.findViewById(R.id.auditStatus);
+            viewHolder.postTypeNameText = convertView.findViewById(R.id.postTypeName);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
@@ -68,6 +71,19 @@ public class AudienceAdapter extends BaseAdapter {
 
         Audience audience = audiences.get(position);
         viewHolder.nameText.setText((position + 1) + ". " + audience.getUname());
+
+        if (audience.getAuditStatus() == 1) {
+            viewHolder.auditStatusImage.setVisibility(View.VISIBLE);
+        } else {
+            viewHolder.auditStatusImage.setVisibility(View.GONE);
+        }
+
+        if (!TextUtils.isEmpty(audience.getPostTypeName())) {
+            viewHolder.postTypeNameText.setText(audience.getPostTypeName());
+            viewHolder.postTypeNameText.setVisibility(View.VISIBLE);
+        } else {
+            viewHolder.postTypeNameText.setVisibility(View.GONE);
+        }
 
         if (audience.isHandsUp()) {
             viewHolder.handsupImage.setVisibility(View.VISIBLE);
@@ -93,8 +109,8 @@ public class AudienceAdapter extends BaseAdapter {
 
     class ViewHolder {
         LinearLayout audienceLayout;
-        ImageView handsupImage;
-        TextView nameText, callingText;
+        ImageView handsupImage, auditStatusImage;
+        TextView nameText, callingText, postTypeNameText;
         Button talkButton, checkButton;
     }
 

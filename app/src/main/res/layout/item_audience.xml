@@ -7,6 +7,7 @@
     android:background="@drawable/bg_audience"
     android:orientation="horizontal">
 
+
     <ImageView
         android:id="@+id/handsup"
         android:layout_width="wrap_content"
@@ -26,6 +27,35 @@
         android:textColor="@color/white"
         android:textSize="14sp"
         tools:text="1. 唐姗姗" />
+
+    <TextView
+        android:id="@+id/postTypeName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:background="@drawable/bg_post_type"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp"
+        android:paddingRight="10dp"
+        android:paddingLeft="10dp"
+        android:layout_marginRight="6dp"
+        tools:text="乡镇客户（伞下）"
+        android:textColor="@color/c_fff000"
+        android:textSize="12sp" />
+
+    <ImageView
+        android:id="@+id/auditStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginRight="16dp"
+        android:src="@drawable/ic_audit_status" />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1.0" />
 
     <TextView
         android:id="@+id/calling"
