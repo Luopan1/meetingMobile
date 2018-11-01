@@ -128,7 +128,7 @@ public class ApiClient {
     }
 
     public void getMeetingHost(Object tag, String meetingId, OkHttpCallback callback) {
-        okHttpUtil.get(API_DOMAIN_NAME + "/osg/app/meeting/" + meetingId + "/host", getCommonHead(), tag, callback);
+        okHttpUtil.get(API_DOMAIN_NAME + "/osg/app/meeting/" + meetingId + "/host", getCommonHead(), null, callback);
     }
 
     public void finishMeeting(Object tag, String meetingId, int attendance, OkHttpCallback callback) {
