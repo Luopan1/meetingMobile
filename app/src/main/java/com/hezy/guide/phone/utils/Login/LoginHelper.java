@@ -123,6 +123,7 @@ public class LoginHelper {
         Preferences.setUserGrid(user.getGridName());
         Preferences.setUserCustomId(user.getCustomId());
         Preferences.setUserCustom(user.getCustomName());
+        Preferences.setUserAuditStatus(user.getAuditStatus());
     }
 
     public static void savaWeChat(Wechat wechat) {
