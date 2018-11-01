@@ -131,12 +131,14 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
         fullScreenButton = findViewById(R.id.full_screen);
         fullScreenButton.setOnClickListener(v -> {
             if (!isFullScreen) {
+                fullScreenButton.setImageResource(R.drawable.ic_full_screened);
                 audienceLayout.setVisibility(View.GONE);
                 requestTalkButton.setVisibility(View.GONE);
                 stopTalkButton.setVisibility(View.GONE);
                 broadcasterSmallLayout.setVisibility(View.GONE);
                 isFullScreen = true;
             } else {
+                fullScreenButton.setImageResource(R.drawable.ic_full_screen);
                 audienceLayout.setVisibility(View.VISIBLE);
                 requestTalkButton.setVisibility(View.VISIBLE);
                 stopTalkButton.setVisibility(View.VISIBLE);
@@ -369,6 +371,8 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 
                                 audienceLayout.setVisibility(View.VISIBLE);
 
+                                audienceView.removeAllViews();
+
                                 SurfaceView localSurfaceView = RtcEngine.CreateRendererView(getApplicationContext());
                                 localSurfaceView.setZOrderOnTop(true);
                                 localSurfaceView.setZOrderMediaOverlay(true);
@@ -383,10 +387,10 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                                 stopTalkButton.setVisibility(View.VISIBLE);
                                 requestTalkButton.setVisibility(View.GONE);
 
-//                                Audience audience = new Audience();
-//                                audience.setUid(config().mUid);
-//                                audience.setUname(audienceName);
-//                                audienceNameText.setTag(audience);
+                                Audience audience = new Audience();
+                                audience.setUid(config().mUid);
+                                audience.setUname(audienceName);
+                                audienceNameText.setTag(audience);
 
                                 calling = true;
 
@@ -660,8 +664,9 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
             } else if (type == 2) {
                 calling = false;
                 worker().getRtcEngine().setClientRole(Constants.CLIENT_ROLE_AUDIENCE);
-                audienceLayout.removeAllViews();
+                audienceView.removeAllViews();
                 audienceNameText.setText("");
+                audienceLayout.setVisibility(View.GONE);
                 stopTalkButton.setVisibility(View.GONE);
                 requestTalkButton.setVisibility(View.VISIBLE);
                 try {
@@ -973,8 +978,9 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                     // 点击 Home键
                     Toast.makeText(getApplicationContext(), "您点击了Home键", Toast.LENGTH_SHORT).show();
                     worker().getRtcEngine().setClientRole(Constants.CLIENT_ROLE_AUDIENCE);
-                    audienceLayout.removeAllViews();
+                    audienceView.removeAllViews();
                     audienceNameText.setText("");
+                    audienceLayout.setVisibility(View.GONE);
                     stopTalkButton.setVisibility(View.GONE);
                     requestTalkButton.setVisibility(View.VISIBLE);
 

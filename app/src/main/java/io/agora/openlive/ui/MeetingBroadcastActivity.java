@@ -72,12 +72,15 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
 
     private boolean isMuted = false;
 
+    private boolean isFullScreen = false;
+
     private FrameLayout broadcasterLayout, broadcastSmallLayout, broadcasterSmallView, audienceView, audienceLayout;
     private TextView broadcastNameText, broadcastTipsText, audienceNameText;
     private Button waiterButton, stopButton;
     private TextView exitButton;
     private AgoraAPIOnlySignal agoraAPI;
     private ImageButton muteButton;
+    private ImageButton fullScreenButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,6 +124,28 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
         audienceLayout = findViewById(R.id.audience_layout);
         audienceView = findViewById(R.id.audience_view);
 
+        fullScreenButton = findViewById(R.id.full_screen);
+        fullScreenButton.setOnClickListener(v -> {
+            if (!isFullScreen) {
+                fullScreenButton.setImageResource(R.drawable.ic_full_screened);
+                audienceLayout.setVisibility(View.GONE);
+                broadcastSmallLayout.setVisibility(View.GONE);
+                muteButton.setVisibility(View.GONE);
+                waiterButton.setVisibility(View.GONE);
+                exitButton.setVisibility(View.GONE);
+                stopButton.setVisibility(View.GONE);
+                isFullScreen = true;
+            } else {
+                fullScreenButton.setImageResource(R.drawable.ic_full_screen);
+                audienceLayout.setVisibility(View.VISIBLE);
+                broadcastSmallLayout.setVisibility(View.VISIBLE);
+                muteButton.setVisibility(View.VISIBLE);
+                waiterButton.setVisibility(View.VISIBLE);
+                exitButton.setVisibility(View.VISIBLE);
+                stopButton.setVisibility(View.VISIBLE);
+                isFullScreen = false;
+            }
+        });
         muteButton = findViewById(R.id.mute_audio);
         muteButton.setOnClickListener(v -> {
             if (!isMuted) {
