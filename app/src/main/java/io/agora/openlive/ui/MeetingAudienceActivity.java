@@ -88,8 +88,6 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
         setContentView(R.layout.activity_meeting_audience);
         TCAgent.onEvent(this, "进入会议直播界面");
 
-        registerReceiver(homeKeyEventReceiver, new IntentFilter(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
-
     }
 
     @Override
@@ -959,52 +957,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
         super.onDestroy();
         TCAgent.onPageEnd(this, "MeetingAudienceActivity");
 
-        unregisterReceiver(homeKeyEventReceiver);
-
         BaseApplication.getInstance().deInitWorkerThread();
     }
-
-    private BroadcastReceiver homeKeyEventReceiver = new BroadcastReceiver() {
-        String REASON = "reason";
-        String HOMEKEY = "homekey";
-        String RECENTAPPS = "recentapps";
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if (Intent.ACTION_CLOSE_SYSTEM_DIALOGS.equals(action) || Intent.ACTION_SHUTDOWN.equals(action)) {
-                String reason = intent.getStringExtra(REASON);
-                if (TextUtils.equals(reason, HOMEKEY)) {
-                    // 点击 Home键
-                    Toast.makeText(getApplicationContext(), "您点击了Home键", Toast.LENGTH_SHORT).show();
-                    worker().getRtcEngine().setClientRole(Constants.CLIENT_ROLE_AUDIENCE);
-                    audienceView.removeAllViews();
-                    audienceNameText.setText("");
-                    audienceLayout.setVisibility(View.GONE);
-                    stopTalkButton.setVisibility(View.GONE);
-                    requestTalkButton.setVisibility(View.VISIBLE);
-
-                    if (request) {
-                        request = false;
-                        try {
-                            JSONObject jsonObject = new JSONObject();
-                            jsonObject.put("finish", true);
-                            agoraAPI.messageInstantSend(broadcastId, 0, jsonObject.toString(), "");
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    agoraAPI.channelLeave(channelName);
-                    if (agoraAPI.getStatus() == 2) {
-                        agoraAPI.logout();
-                    }
-                    finish();
-                } else if (TextUtils.equals(reason, RECENTAPPS)) {
-                    // 点击 菜单键
-                    Toast.makeText(getApplicationContext(), "您点击了菜单键", Toast.LENGTH_SHORT).show();
-                }
-            }
-        }
-    };
 
 }
