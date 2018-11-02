@@ -309,18 +309,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                 runOnUiThread(() -> {
                     Log.v("onChannelUserJoined", "观众" + account + "加入房间了---" + meetingJoin.getHostUser().getClientUid());
                     if (account.equals(meetingJoin.getHostUser().getClientUid())) {
-                        try {
-                            JSONObject jsonObject = new JSONObject();
-                            jsonObject.put("request", request);
-                            jsonObject.put("uid", config().mUid);
-                            jsonObject.put("uname", audienceName);
-                            jsonObject.put("calling", calling);
-                            jsonObject.put("auditStatus", Preferences.getUserAuditStatus());
-                            jsonObject.put("postTypeName", Preferences.getUserPostType());
-                            agoraAPI.messageInstantSend(account, 0, jsonObject.toString(), "");
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                        agoraAPI.queryUserStatus(account);
                     }
                     agoraAPI.channelQueryUserNum(channelName);
                 });
