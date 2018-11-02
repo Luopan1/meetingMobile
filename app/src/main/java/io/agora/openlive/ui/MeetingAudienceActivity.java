@@ -81,6 +81,8 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 
     private String channelName;
 
+    private String audienceName;
+
     private SurfaceView remoteBroadcasterSurfaceView;
 
     private AgoraAPIOnlySignal agoraAPI;
@@ -123,6 +125,8 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
         Log.v("uid--->", "" + config().mUid);
 
         channelName = meetingJoin.getMeeting().getId();
+
+        audienceName = (TextUtils.isEmpty(Preferences.getAreaName()) ? Preferences.getAreaName() : "") + (TextUtils.isEmpty(Preferences.getUserCustom()) ? Preferences.getUserCustom() : "") + Preferences.getUserName();
 
         broadcasterLayout = findViewById(R.id.broadcaster_view);
         broadcastTipsText = findViewById(R.id.broadcast_tips);
@@ -173,10 +177,10 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                         JSONObject jsonObject = new JSONObject();
                         jsonObject.put("request", request);
                         jsonObject.put("uid", config().mUid);
+                        jsonObject.put("uname", audienceName);
                         jsonObject.put("calling", calling);
                         jsonObject.put("auditStatus", Preferences.getUserAuditStatus());
                         jsonObject.put("postTypeName", Preferences.getUserPostType());
-                        jsonObject.put("uname", TextUtils.isEmpty(Preferences.getAreaInfo()) ? "讲解员-" + Preferences.getUserName() : "讲解员-" + Preferences.getAreaInfo() + "-" + Preferences.getUserName());
                         agoraAPI.messageInstantSend(broadcastId, 0, jsonObject.toString(), "");
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -189,10 +193,10 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                         JSONObject jsonObject = new JSONObject();
                         jsonObject.put("request", request);
                         jsonObject.put("uid", config().mUid);
+                        jsonObject.put("uname", audienceName);
                         jsonObject.put("calling", calling);
                         jsonObject.put("auditStatus", Preferences.getUserAuditStatus());
                         jsonObject.put("postTypeName", Preferences.getUserPostType());
-                        jsonObject.put("uname", TextUtils.isEmpty(Preferences.getAreaInfo()) ? "讲解员-" + Preferences.getUserName() : "讲解员-" + Preferences.getAreaInfo() + "-" + Preferences.getUserName());
                         agoraAPI.messageInstantSend(broadcastId, 0, jsonObject.toString(), "");
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -251,20 +255,28 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                     if (BuildConfig.DEBUG) {
                         Toast.makeText(MeetingAudienceActivity.this, "观众登陆信令频道成功", Toast.LENGTH_SHORT).show();
                     }
+                    agoraAPI.queryUserStatus(meetingJoin.getHostUser().getClientUid());
+                    agoraAPI.channelQueryUserNum(channelName);
+                });
+            }
+
+            @Override
+            public void onQueryUserStatusResult(String name, String status) {
+                super.onQueryUserStatusResult(name, status);
+                if (name.equals(meetingJoin.getHostUser().getClientUid()) && "1".equals(status)) {
                     try {
                         JSONObject jsonObject = new JSONObject();
                         jsonObject.put("request", request);
                         jsonObject.put("uid", config().mUid);
+                        jsonObject.put("uname", audienceName);
                         jsonObject.put("calling", calling);
                         jsonObject.put("auditStatus", Preferences.getUserAuditStatus());
                         jsonObject.put("postTypeName", Preferences.getUserPostType());
-                        jsonObject.put("uname", TextUtils.isEmpty(Preferences.getAreaInfo()) ? "讲解员-" + Preferences.getUserName() : "讲解员-" + Preferences.getAreaInfo() + "-" + Preferences.getUserName());
-                        agoraAPI.messageInstantSend(broadcastId, 0, jsonObject.toString(), "");
+                        agoraAPI.messageInstantSend(name, 0, jsonObject.toString(), "");
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    agoraAPI.channelQueryUserNum(channelName);
-                });
+                }
             }
 
             @Override
@@ -286,22 +298,24 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
             @Override
             public void onChannelUserJoined(String account, int uid) {
                 super.onChannelUserJoined(account, uid);
-                Log.v("onChannelUserJoined", "观众" + account + "加入房间了---" + meetingJoin.getHostUser().getClientUid());
-                if (account.equals(meetingJoin.getHostUser().getClientUid())) { // 讲解员异常退出后重新进入
-                    try {
-                        JSONObject jsonObject = new JSONObject();
-                        jsonObject.put("request", request);
-                        jsonObject.put("uid", config().mUid);
-                        jsonObject.put("calling", calling);
-                        jsonObject.put("auditStatus", Preferences.getUserAuditStatus());
-                        jsonObject.put("postTypeName", Preferences.getUserPostType());
-                        jsonObject.put("uname", TextUtils.isEmpty(Preferences.getAreaInfo()) ? "讲解员-" + Preferences.getUserName() : "讲解员-" + Preferences.getAreaInfo() + "-" + Preferences.getUserName());
-                        agoraAPI.messageInstantSend(broadcastId, 0, jsonObject.toString(), "");
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                runOnUiThread(() -> {
+                    Log.v("onChannelUserJoined", "观众" + account + "加入房间了---" + meetingJoin.getHostUser().getClientUid());
+                    if (account.equals(meetingJoin.getHostUser().getClientUid())) {
+                        try {
+                            JSONObject jsonObject = new JSONObject();
+                            jsonObject.put("request", request);
+                            jsonObject.put("uid", config().mUid);
+                            jsonObject.put("uname", audienceName);
+                            jsonObject.put("calling", calling);
+                            jsonObject.put("auditStatus", Preferences.getUserAuditStatus());
+                            jsonObject.put("postTypeName", Preferences.getUserPostType());
+                            agoraAPI.messageInstantSend(account, 0, jsonObject.toString(), "");
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
-                }
-                agoraAPI.channelQueryUserNum(channelName);
+                    agoraAPI.channelQueryUserNum(channelName);
+                });
             }
 
             @Override
@@ -383,7 +397,6 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                                 rtcEngine().setupLocalVideo(new VideoCanvas(localSurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, config().mUid));
                                 audienceView.addView(localSurfaceView);
 
-                                String audienceName = TextUtils.isEmpty(Preferences.getAreaInfo()) ? "讲解员-" + Preferences.getUserName() : "讲解员-" + Preferences.getAreaInfo() + "-" + Preferences.getUserName();
                                 audienceNameText.setText(audienceName);
 
                                 agoraAPI.setAttr("uname", audienceName); // 设置当前登录用户的相关属性值。
@@ -404,10 +417,10 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                                     JSONObject jsonObject1 = new JSONObject();
                                     jsonObject1.put("request", request);
                                     jsonObject1.put("uid", config().mUid);
+                                    jsonObject.put("uname", audienceName);
                                     jsonObject1.put("calling", true);
                                     jsonObject1.put("auditStatus", Preferences.getUserAuditStatus());
                                     jsonObject1.put("postTypeName", Preferences.getUserPostType());
-                                    jsonObject1.put("uname", TextUtils.isEmpty(Preferences.getAreaInfo()) ? "讲解员-" + Preferences.getUserName() : "讲解员-" + Preferences.getAreaInfo() + "-" + Preferences.getUserName());
                                     agoraAPI.messageInstantSend(broadcastId, 0, jsonObject1.toString(), "");
                                 } catch (Exception e) {
                                     e.printStackTrace();
@@ -452,10 +465,10 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                                     JSONObject jsonObject2 = new JSONObject();
                                     jsonObject2.put("request", request);
                                     jsonObject2.put("uid", config().mUid);
+                                    jsonObject.put("uname", audienceName);
                                     jsonObject2.put("calling", calling);
                                     jsonObject2.put("auditStatus", Preferences.getUserAuditStatus());
                                     jsonObject2.put("postTypeName", Preferences.getUserPostType());
-                                    jsonObject2.put("uname", TextUtils.isEmpty(Preferences.getAreaInfo()) ? "讲解员-" + Preferences.getUserName() : "讲解员-" + Preferences.getAreaInfo() + "-" + Preferences.getUserName());
                                     agoraAPI.messageInstantSend(broadcastId, 0, jsonObject2.toString(), "");
                                 } catch (Exception e) {
                                     e.printStackTrace();
@@ -587,11 +600,12 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                 meetingJoin.setHostUser(meetingJoinBucket.getData());
                 if (uid != 0) {
                     if (uid == Integer.parseInt(meetingJoin.getHostUser().getClientUid())) {
+                        broadcastId = String.valueOf(uid);
+
                         if (BuildConfig.DEBUG) {
                             Toast.makeText(MeetingAudienceActivity.this, "主持人" + broadcastId + "---" + uid + meetingJoin.getHostUser().getHostUserName() + "进入了", Toast.LENGTH_SHORT).show();
                         }
 
-                        broadcastId = String.valueOf(uid);
                         broadcastTipsText.setVisibility(View.GONE);
                         broadcastNameText.setText("主持人：" + meetingJoin.getHostUser().getHostUserName());
 
@@ -726,10 +740,10 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                     JSONObject jsonObject = new JSONObject();
                     jsonObject.put("request", request);
                     jsonObject.put("uid", config().mUid);
+                    jsonObject.put("uname", audienceName);
                     jsonObject.put("calling", calling);
                     jsonObject.put("auditStatus", Preferences.getUserAuditStatus());
                     jsonObject.put("postTypeName", Preferences.getUserPostType());
-                    jsonObject.put("uname", TextUtils.isEmpty(Preferences.getAreaInfo()) ? "讲解员-" + Preferences.getUserName() : "讲解员-" + Preferences.getAreaInfo() + "-" + Preferences.getUserName());
                     agoraAPI.messageInstantSend(broadcastId, 0, jsonObject.toString(), "");
                 } catch (Exception e) {
                     e.printStackTrace();
