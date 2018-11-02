@@ -856,9 +856,6 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
         }
     }
 
-
-
-
     @Override
     protected void onStop() {
         super.onStop();
