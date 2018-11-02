@@ -859,11 +859,11 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
     @Override
     protected void onStop() {
         super.onStop();
-        doLeaveChannel();
-        if (agoraAPI.getStatus() == 2) {
-            agoraAPI.logout();
-        }
-        finish();
+//        doLeaveChannel();
+//        if (agoraAPI.getStatus() == 2) {
+//            agoraAPI.logout();
+//        }
+//        finish();
     }
 
     @Override
