@@ -294,6 +294,9 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                         Map.Entry entry = (Map.Entry) iter.next();
                         audiences.add((Audience) entry.getValue());
                     }
+                    if (audienceCountText != null) {
+                        audienceCountText.setText("所有参会人 (" + audiences.size() + ")");
+                    }
                     if (audienceAdapter != null) {
                         audienceAdapter.setData(audiences);
                     }
@@ -316,6 +319,9 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                             while (iter.hasNext()) {
                                 Map.Entry entry = (Map.Entry) iter.next();
                                 audiences.add((Audience) entry.getValue());
+                            }
+                            if (audienceCountText != null) {
+                                audienceCountText.setText("所有参会人 (" + audiences.size() + ")");
                             }
                             if (audienceAdapter != null) {
                                 audienceAdapter.setData(audiences);
@@ -367,6 +373,9 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                             while (iter.hasNext()) {
                                 Map.Entry entry = (Map.Entry) iter.next();
                                 audiences.add((Audience) entry.getValue());
+                            }
+                            if (audienceCountText != null) {
+                                audienceCountText.setText("所有参会人 (" + audiences.size() + ")");
                             }
                             if (audienceAdapter != null) {
                                 audienceAdapter.setData(audiences);
@@ -499,6 +508,9 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                         Map.Entry entry = (Map.Entry) iter.next();
                         audiences.add((Audience) entry.getValue());
                     }
+                    if (audienceCountText != null) {
+                        audienceCountText.setText("所有参会人 (" + audiences.size() + ")");
+                    }
                     if (audienceAdapter != null) {
                         audienceAdapter.setData(audiences);
                     }
@@ -573,8 +585,12 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
         }
     };
 
+    private TextView audienceCountText;
+
     private void showAlertDialog() {
         View view = View.inflate(this, R.layout.dialog_audience_list, null);
+        audienceCountText = view.findViewById(R.id.audience_count);
+        audienceCountText.setText("所有参会人 (" + audiences.size() + ")");
         ListView listView = view.findViewById(R.id.list_view);
         if (audienceAdapter == null) {
             audienceAdapter = new AudienceAdapter(this, audiences, listener);
@@ -740,6 +756,9 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
 
                         if (audiences.contains(newAudience)) {
                             audiences.remove(newAudience);
+                        }
+                        if (audienceCountText != null) {
+                            audienceCountText.setText("所有参会人 (" + audiences.size() + ")");
                         }
                         if (audienceAdapter != null) {
                             audienceAdapter.setData(audiences);
