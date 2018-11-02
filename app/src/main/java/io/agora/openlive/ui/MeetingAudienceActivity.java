@@ -126,7 +126,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 
         channelName = meetingJoin.getMeeting().getId();
 
-        audienceName = (TextUtils.isEmpty(Preferences.getAreaName()) ? Preferences.getAreaName() : "") + (TextUtils.isEmpty(Preferences.getUserCustom()) ? Preferences.getUserCustom() : "") + Preferences.getUserName();
+        audienceName = (TextUtils.isEmpty(Preferences.getAreaName()) ? "" : Preferences.getAreaName()) + "-" + (TextUtils.isEmpty(Preferences.getUserCustom()) ? "" : Preferences.getUserCustom()) + "-" + Preferences.getUserName();
 
         broadcasterLayout = findViewById(R.id.broadcaster_view);
         broadcastTipsText = findViewById(R.id.broadcast_tips);

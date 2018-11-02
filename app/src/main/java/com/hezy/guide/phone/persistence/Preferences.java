@@ -317,9 +317,9 @@ public class Preferences {
         SharedPreferences.Editor editor = getPreferences().edit();
         editor.putString(PREFERENCE_USER_AREA_NAME, areaName);
         if (!editor.commit()) {
-            Log.d(tag, "User Address save failure");
+            Log.d(tag, "User areaname save failure");
         } else {
-            Log.d(tag, "User Address save success");
+            Log.d(tag, "User areaname save success");
         }
     }
 
