@@ -20,7 +20,7 @@
     <ListView
         android:id="@+id/list_view"
         android:layout_width="513dp"
-        android:layout_height="236dp"
+        android:layout_height="wrap_content"
         android:dividerHeight="10dp"
         android:divider="@color/transparent"
         android:layout_marginBottom="16dp"

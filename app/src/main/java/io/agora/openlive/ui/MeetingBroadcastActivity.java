@@ -128,8 +128,12 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
         fullScreenButton.setOnClickListener(v -> {
             if (!isFullScreen) {
                 fullScreenButton.setImageResource(R.drawable.ic_full_screened);
-                audienceLayout.setVisibility(View.GONE);
-                broadcastSmallLayout.setVisibility(View.GONE);
+                if (audienceView.getChildCount() > 0) {
+                    audienceLayout.setVisibility(View.GONE);
+                }
+                if (broadcasterSmallView.getChildCount() > 0) {
+                    broadcastSmallLayout.setVisibility(View.GONE);
+                }
                 muteButton.setVisibility(View.GONE);
                 waiterButton.setVisibility(View.GONE);
                 exitButton.setVisibility(View.GONE);
@@ -137,8 +141,12 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                 isFullScreen = true;
             } else {
                 fullScreenButton.setImageResource(R.drawable.ic_full_screen);
-                audienceLayout.setVisibility(View.VISIBLE);
-                broadcastSmallLayout.setVisibility(View.VISIBLE);
+                if (audienceView.getChildCount() > 0) {
+                    audienceLayout.setVisibility(View.VISIBLE);
+                }
+                if (broadcasterSmallView.getChildCount() > 0) {
+                    broadcastSmallLayout.setVisibility(View.VISIBLE);
+                }
                 muteButton.setVisibility(View.VISIBLE);
                 waiterButton.setVisibility(View.VISIBLE);
                 exitButton.setVisibility(View.VISIBLE);

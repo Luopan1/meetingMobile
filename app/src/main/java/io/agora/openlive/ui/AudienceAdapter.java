@@ -15,6 +15,8 @@ import com.hezy.guide.phone.R;
 import com.hezy.guide.phone.entities.Audience;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 
 /**
@@ -116,6 +118,15 @@ public class AudienceAdapter extends BaseAdapter {
 
     public void setData(ArrayList<Audience> audiences){
         this.audiences = audiences;
+        Collections.sort(this.audiences, (o1, o2) -> {
+            if(o1.isHandsUp() && !o2.isHandsUp()){
+                return -1;
+            } else if(!o1.isHandsUp() && o2.isHandsUp()){
+                return 1;
+            } else {
+                return 0;
+            }
+        });
         notifyDataSetChanged();
     }
 

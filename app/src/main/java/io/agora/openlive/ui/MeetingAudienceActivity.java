@@ -140,17 +140,25 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
         fullScreenButton.setOnClickListener(v -> {
             if (!isFullScreen) {
                 fullScreenButton.setImageResource(R.drawable.ic_full_screened);
-                audienceLayout.setVisibility(View.GONE);
+                if (audienceView.getChildCount() > 0) {
+                    audienceLayout.setVisibility(View.GONE);
+                }
                 requestTalkButton.setVisibility(View.GONE);
-                stopTalkButton.setVisibility(View.GONE);
-                broadcasterSmallLayout.setVisibility(View.GONE);
+                if (broadcasterSmallView.getChildCount() > 0) {
+                    broadcasterSmallLayout.setVisibility(View.GONE);
+                    stopTalkButton.setVisibility(View.GONE);
+                }
                 isFullScreen = true;
             } else {
                 fullScreenButton.setImageResource(R.drawable.ic_full_screen);
-                audienceLayout.setVisibility(View.VISIBLE);
+                if (audienceView.getChildCount() > 0) {
+                    audienceLayout.setVisibility(View.VISIBLE);
+                    stopTalkButton.setVisibility(View.VISIBLE);
+                }
                 requestTalkButton.setVisibility(View.VISIBLE);
-                stopTalkButton.setVisibility(View.VISIBLE);
-                broadcasterSmallLayout.setVisibility(View.VISIBLE);
+                if (broadcasterSmallView.getChildCount() > 0) {
+                    broadcasterSmallLayout.setVisibility(View.VISIBLE);
+                }
                 isFullScreen = false;
             }
         });
@@ -417,7 +425,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                                     JSONObject jsonObject1 = new JSONObject();
                                     jsonObject1.put("request", request);
                                     jsonObject1.put("uid", config().mUid);
-                                    jsonObject.put("uname", audienceName);
+                                    jsonObject1.put("uname", audienceName);
                                     jsonObject1.put("calling", true);
                                     jsonObject1.put("auditStatus", Preferences.getUserAuditStatus());
                                     jsonObject1.put("postTypeName", Preferences.getUserPostType());
@@ -465,7 +473,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                                     JSONObject jsonObject2 = new JSONObject();
                                     jsonObject2.put("request", request);
                                     jsonObject2.put("uid", config().mUid);
-                                    jsonObject.put("uname", audienceName);
+                                    jsonObject2.put("uname", audienceName);
                                     jsonObject2.put("calling", calling);
                                     jsonObject2.put("auditStatus", Preferences.getUserAuditStatus());
                                     jsonObject2.put("postTypeName", Preferences.getUserPostType());
