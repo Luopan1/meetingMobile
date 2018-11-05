@@ -77,7 +77,7 @@ public class AudienceAdapter extends BaseAdapter {
         if (audience.getAuditStatus() == 1) {
             viewHolder.auditStatusImage.setVisibility(View.VISIBLE);
         } else {
-            viewHolder.auditStatusImage.setVisibility(View.GONE);
+            viewHolder.auditStatusImage.setVisibility(View.INVISIBLE);
         }
 
         if (!TextUtils.isEmpty(audience.getPostTypeName())) {
