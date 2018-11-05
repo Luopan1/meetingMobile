@@ -857,16 +857,6 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
-//        doLeaveChannel();
-//        if (agoraAPI.getStatus() == 2) {
-//            agoraAPI.logout();
-//        }
-//        finish();
-    }
-
-    @Override
     public void onBackPressed() {
         showDialog(1, "确定结束会议吗？", "暂时离开", "结束会议", null);
     }

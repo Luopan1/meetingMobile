@@ -74,6 +74,8 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
     private ImageView docImage;
     private ImageButton fullScreenButton;
 
+    private boolean isDocShow = false;
+
     private Material currentMaterial;
     private MeetingMaterialsPublish currentMaterialPublish;
     private int doc_index = 0;
@@ -508,6 +510,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                         if (jsonObject.has("material_id")) {
                             String materialId = jsonObject.getString("material_id");
                             if (currentMaterial != null && !materialId.equals(currentMaterial.getId())) {
+                                isDocShow = true;
                                 ApiClient.getInstance().meetingMaterial(TAG, meetingMaterialCallback, materialId);
                             }
                         }
@@ -538,6 +541,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                 runOnUiThread(() -> {
                     if ("material_id".equals(name)) {
                         if (!TextUtils.isEmpty(value)) {
+                            isDocShow = true;
                             ApiClient.getInstance().meetingMaterial(TAG, meetingMaterialCallback, value);
                         } else {
                             Toast.makeText(MeetingAudienceActivity.this, "收到主持人端发的material_id值为null", Toast.LENGTH_SHORT).show();
@@ -606,13 +610,20 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                         broadcastTipsText.setVisibility(View.GONE);
                         broadcastNameText.setText("主持人：" + meetingJoin.getHostUser().getHostUserName());
 
-                        broadcasterLayout.setVisibility(View.VISIBLE);
                         remoteBroadcasterSurfaceView = RtcEngine.CreateRendererView(getApplicationContext());
                         remoteBroadcasterSurfaceView.setZOrderOnTop(false);
                         remoteBroadcasterSurfaceView.setZOrderMediaOverlay(false);
                         rtcEngine().setupRemoteVideo(new VideoCanvas(remoteBroadcasterSurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, uid));
-                        broadcasterLayout.removeAllViews();
-                        broadcasterLayout.addView(remoteBroadcasterSurfaceView);
+
+                        if (isDocShow) {
+                            broadcasterSmallLayout.setVisibility(View.VISIBLE);
+                            broadcasterSmallView.removeAllViews();
+                            broadcasterSmallView.addView(remoteBroadcasterSurfaceView);
+                        } else {
+                            broadcasterLayout.setVisibility(View.VISIBLE);
+                            broadcasterLayout.removeAllViews();
+                            broadcasterLayout.addView(remoteBroadcasterSurfaceView);
+                        }
                     } else {
                         if (BuildConfig.DEBUG) {
                             Toast.makeText(MeetingAudienceActivity.this, "连麦观众" + uid + "进入了，去获取连麦观众的名字", Toast.LENGTH_SHORT).show();

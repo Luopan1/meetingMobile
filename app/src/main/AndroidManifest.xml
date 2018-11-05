@@ -56,6 +56,7 @@
         <!--微信登录页面-->
         <activity
             android:name=".wxapi.WXEntryActivity"
+            android:alwaysRetainTaskState="true"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -124,15 +125,14 @@
         <activity
             android:name="io.agora.openlive.ui.MeetingBroadcastActivity"
             android:configChanges="keyboard|keyboardHidden|navigation|orientation|screenSize|fontScale"
-            android:launchMode="singleTask"
+            android:launchMode="standard"
             android:screenOrientation="landscape"
             android:theme="@style/FullscreenTheme" />
-
 
         <activity
             android:name="io.agora.openlive.ui.MeetingAudienceActivity"
             android:configChanges="keyboard|keyboardHidden|navigation|orientation|screenSize|fontScale"
-            android:launchMode="singleTask"
+            android:launchMode="standard"
             android:screenOrientation="landscape"
             android:theme="@style/FullscreenTheme" />
         <activity
