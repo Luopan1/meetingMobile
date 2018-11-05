@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/stop_audience"
-    android:layout_width="match_parent"
+    android:layout_width="580dp"
     android:layout_height="wrap_content"
     android:background="@drawable/bg_audience"
     android:orientation="horizontal">
@@ -17,8 +17,11 @@
 
     <TextView
         android:id="@+id/audience_name"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_weight="1.0"
+        android:layout_gravity="center_vertical"
+        android:layout_marginRight="10dp"
         android:maxWidth="360dp"
         android:ellipsize="end"
         android:maxLines="1"
@@ -26,12 +29,6 @@
         android:textColor="@color/white"
         android:textSize="14sp"
         tools:text="1. 唐姗姗唐姗姗唐姗姗唐姗姗唐姗姗唐姗姗唐姗姗唐姗姗唐姗姗唐姗姗唐姗姗唐姗姗唐姗姗唐姗姗唐姗姗唐姗姗唐姗姗唐姗姗唐姗姗唐姗姗" />
-
-    <View
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:layout_gravity="center_vertical"
-        android:layout_weight="1.0" />
 
     <TextView
         android:id="@+id/postTypeName"
