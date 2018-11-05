@@ -310,9 +310,9 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                 super.onChannelUserJoined(account, uid);
                 runOnUiThread(() -> {
                     Log.v("onChannelUserJoined", "观众" + account + "加入房间了---" + meetingJoin.getHostUser().getClientUid());
-                    if (account.equals(meetingJoin.getHostUser().getClientUid())) {
-                        agoraAPI.queryUserStatus(account);
-                    }
+
+                    ApiClient.getInstance().getMeetingHost(TAG, meeting.getId(), joinMeetingCallback(uid));
+
                     agoraAPI.channelQueryUserNum(channelName);
                 });
             }
@@ -523,7 +523,6 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                                 currentMaterialPublish = currentMaterial.getMeetingMaterialsPublishList().get(doc_index);
                                 pageText.setText("第" + currentMaterialPublish.getPriority() + "/" + currentMaterial.getMeetingMaterialsPublishList().size() + "页");
                                 Picasso.with(MeetingAudienceActivity.this).load(currentMaterialPublish.getUrl()).into(docImage);
-
                             } else {
                                 Toast.makeText(MeetingAudienceActivity.this, "收到主持人端doc_index的时候material为null", Toast.LENGTH_SHORT).show();
                             }
@@ -558,9 +557,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                                 pageText.setText("第" + currentMaterialPublish.getPriority() + "/" + currentMaterial.getMeetingMaterialsPublishList().size() + "页");
                                 Picasso.with(MeetingAudienceActivity.this).load(currentMaterialPublish.getUrl()).into(docImage);
                             } else {
-                                isDocShow = true;
-                                ApiClient.getInstance().meetingMaterial(TAG, meetingMaterialCallback, value);
-//                                Toast.makeText(MeetingAudienceActivity.this, "收到主持人端doc_index的时候material为null", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(MeetingAudienceActivity.this, "收到主持人端doc_index的时候material为null", Toast.LENGTH_SHORT).show();
                             }
                         } else {
                             broadcasterSmallView.removeAllViews();
@@ -569,12 +566,17 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                             pageText.setVisibility(View.GONE);
                             docImage.setVisibility(View.GONE);
 
-                            isDocShow = false;
+                            currentMaterial = null;
+                            currentMaterialPublish = null;
 
-                            fullScreenButton.setVisibility(View.VISIBLE);
+                            isDocShow = false;
 
                             broadcasterLayout.setVisibility(View.VISIBLE);
                             broadcasterLayout.addView(remoteBroadcasterSurfaceView);
+
+                            if (audienceView.getChildCount() == 0) {
+                                fullScreenButton.setVisibility(View.GONE);
+                            }
                         }
                     }
                 });
@@ -606,6 +608,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                 if (uid != 0) {
                     if (uid == Integer.parseInt(meetingJoin.getHostUser().getClientUid())) {
                         broadcastId = String.valueOf(uid);
+                        agoraAPI.queryUserStatus(broadcastId);
 
                         if (BuildConfig.DEBUG) {
                             Toast.makeText(MeetingAudienceActivity.this, "主持人" + broadcastId + "---" + uid + meetingJoin.getHostUser().getHostUserName() + "进入了", Toast.LENGTH_SHORT).show();
@@ -623,6 +626,8 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                             broadcasterSmallLayout.setVisibility(View.VISIBLE);
                             broadcasterSmallView.removeAllViews();
                             broadcasterSmallView.addView(remoteBroadcasterSurfaceView);
+
+                            fullScreenButton.setVisibility(View.VISIBLE);
                         } else {
                             broadcasterLayout.setVisibility(View.VISIBLE);
                             broadcasterLayout.removeAllViews();
@@ -893,12 +898,21 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                         audienceNameText.setText("");
                         audienceLayout.setVisibility(View.GONE);
                         isExit = true;
+                        if (!isDocShow) {
+                            fullScreenButton.setVisibility(View.GONE);
+                        }
                     } else {
                         Toast.makeText(MeetingAudienceActivity.this, "is me", Toast.LENGTH_SHORT).show();
+                        if (!isDocShow) {
+                            fullScreenButton.setVisibility(View.GONE);
+                        }
                         audienceLayout.setVisibility(View.GONE);
                     }
                 } else {
                     Toast.makeText(MeetingAudienceActivity.this, "is exit", Toast.LENGTH_SHORT).show();
+                    if (!isDocShow) {
+                        fullScreenButton.setVisibility(View.GONE);
+                    }
                     audienceLayout.setVisibility(View.GONE);
                 }
             }
