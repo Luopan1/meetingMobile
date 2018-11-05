@@ -72,7 +72,7 @@ public class AudienceAdapter extends BaseAdapter {
         }
 
         Audience audience = audiences.get(position);
-        viewHolder.nameText.setText((position + 1) + ". " + audience.getUname() + "唐姗姗唐姗姗唐姗姗唐姗姗唐姗姗唐姗姗唐姗姗唐姗姗唐姗姗唐姗姗唐姗姗唐姗姗");
+        viewHolder.nameText.setText((position + 1) + ". " + audience.getUname());
 
         if (audience.getAuditStatus() == 1) {
             viewHolder.auditStatusImage.setVisibility(View.VISIBLE);
