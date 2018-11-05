@@ -179,7 +179,11 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
         stopButton = findViewById(R.id.stop_audience);
         stopButton.setOnClickListener(view -> {
             Audience audience = (Audience) audienceNameText.getTag();
-            showDialog(3, "结束" + audience.getUname() + "的发言？", "取消", "确定", audience);
+            if (audience != null) {
+                showDialog(3, "结束" + audience.getUname() + "的发言？", "取消", "确定", audience);
+            } else {
+                Toast.makeText(this, "当前没有连麦的参会人", Toast.LENGTH_SHORT).show();
+            }
         });
 
         config().mUid = Integer.parseInt(UIDUtil.generatorUID(Preferences.getUserId()));
