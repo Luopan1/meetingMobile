@@ -558,7 +558,9 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                                 pageText.setText("第" + currentMaterialPublish.getPriority() + "/" + currentMaterial.getMeetingMaterialsPublishList().size() + "页");
                                 Picasso.with(MeetingAudienceActivity.this).load(currentMaterialPublish.getUrl()).into(docImage);
                             } else {
-                                Toast.makeText(MeetingAudienceActivity.this, "收到主持人端doc_index的时候material为null", Toast.LENGTH_SHORT).show();
+                                isDocShow = true;
+                                ApiClient.getInstance().meetingMaterial(TAG, meetingMaterialCallback, value);
+//                                Toast.makeText(MeetingAudienceActivity.this, "收到主持人端doc_index的时候material为null", Toast.LENGTH_SHORT).show();
                             }
                         } else {
                             broadcasterSmallView.removeAllViews();
@@ -566,6 +568,8 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 
                             pageText.setVisibility(View.GONE);
                             docImage.setVisibility(View.GONE);
+
+                            isDocShow = false;
 
                             fullScreenButton.setVisibility(View.VISIBLE);
 
