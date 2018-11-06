@@ -85,7 +85,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 
     private String audienceName;
 
-    private SurfaceView remoteBroadcasterSurfaceView;
+    private SurfaceView remoteBroadcasterSurfaceView, remoteAudienceSurfaceView, localSurfaceView;
 
     private AgoraAPIOnlySignal agoraAPI;
 
@@ -143,6 +143,8 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
             if (!isFullScreen) {
                 fullScreenButton.setImageResource(R.drawable.ic_full_screened);
                 if (audienceView.getChildCount() > 0) {
+                    stopTalkButton.setVisibility(View.GONE);
+                    audienceView.removeAllViews();
                     audienceLayout.setVisibility(View.GONE);
                 }
                 requestTalkButton.setVisibility(View.GONE);
@@ -153,11 +155,21 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                 isFullScreen = true;
             } else {
                 fullScreenButton.setImageResource(R.drawable.ic_full_screen);
-                if (audienceView.getChildCount() > 0) {
+                if (localSurfaceView != null || remoteAudienceSurfaceView != null) {
                     audienceLayout.setVisibility(View.VISIBLE);
-                    stopTalkButton.setVisibility(View.VISIBLE);
+                    if (localSurfaceView != null) {
+                        audienceView.addView(localSurfaceView);
+                        stopTalkButton.setVisibility(View.VISIBLE);
+                        requestTalkButton.setVisibility(View.GONE);
+                    }
+                    if (remoteAudienceSurfaceView != null) {
+                        audienceView.addView(remoteAudienceSurfaceView);
+                        requestTalkButton.setVisibility(View.VISIBLE);
+                        stopTalkButton.setVisibility(View.GONE);
+                    }
+                } else {
+                    requestTalkButton.setVisibility(View.VISIBLE);
                 }
-                requestTalkButton.setVisibility(View.VISIBLE);
                 if (broadcasterSmallView.getChildCount() > 0) {
                     broadcasterSmallLayout.setVisibility(View.VISIBLE);
                 }
@@ -331,12 +343,15 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                         Toast.makeText(MeetingAudienceActivity.this, "获取到用户" + account + "的属性" + name + "的值为" + value, Toast.LENGTH_SHORT).show();
                     }
 
+                    fullScreenButton.setVisibility(View.VISIBLE);
+
                     audienceLayout.setVisibility(View.VISIBLE);
 
                     audienceNameText.setText(value);
 
+                    localSurfaceView = null;
                     audienceView.removeAllViews();
-                    SurfaceView remoteAudienceSurfaceView = RtcEngine.CreateRendererView(getApplicationContext());
+                    remoteAudienceSurfaceView = RtcEngine.CreateRendererView(getApplicationContext());
                     remoteAudienceSurfaceView.setZOrderOnTop(true);
                     remoteAudienceSurfaceView.setZOrderMediaOverlay(true);
                     rtcEngine().setupRemoteVideo(new VideoCanvas(remoteAudienceSurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, Integer.parseInt(account)));
@@ -386,11 +401,15 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                                     Toast.makeText(MeetingAudienceActivity.this, "主持人要和我连麦", Toast.LENGTH_SHORT).show();
                                 }
 
+                                fullScreenButton.setVisibility(View.VISIBLE);
+
                                 audienceLayout.setVisibility(View.VISIBLE);
 
                                 audienceView.removeAllViews();
 
-                                SurfaceView localSurfaceView = RtcEngine.CreateRendererView(getApplicationContext());
+                                remoteAudienceSurfaceView = null;
+
+                                localSurfaceView = RtcEngine.CreateRendererView(getApplicationContext());
                                 localSurfaceView.setZOrderOnTop(true);
                                 localSurfaceView.setZOrderMediaOverlay(true);
                                 rtcEngine().setupLocalVideo(new VideoCanvas(localSurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, config().mUid));
@@ -447,6 +466,9 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                                 audienceNameText.setText("");
                                 audienceLayout.setVisibility(View.GONE);
 
+                                if (!isDocShow) {
+                                    fullScreenButton.setVisibility(View.GONE);
+                                }
                                 requestTalkButton.setVisibility(View.VISIBLE);
                                 stopTalkButton.setVisibility(View.GONE);
 
@@ -894,6 +916,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                 broadcastTipsText.setText("等待主持人进入...");
                 broadcastTipsText.setVisibility(View.VISIBLE);
                 broadcastNameText.setText("");
+                remoteBroadcasterSurfaceView = null;
             } else {
                 if (BuildConfig.DEBUG)
                     Toast.makeText(MeetingAudienceActivity.this, "连麦观众" + uid + "退出了" + config().mUid, Toast.LENGTH_SHORT).show();
@@ -907,6 +930,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                         if (!isDocShow) {
                             fullScreenButton.setVisibility(View.GONE);
                         }
+                        remoteAudienceSurfaceView = null;
                     } else {
                         Toast.makeText(MeetingAudienceActivity.this, "is me", Toast.LENGTH_SHORT).show();
                         if (!isDocShow) {
