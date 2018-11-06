@@ -12,11 +12,9 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -76,11 +74,12 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
 
     private FrameLayout broadcasterLayout, broadcastSmallLayout, broadcasterSmallView, audienceView, audienceLayout;
     private TextView broadcastNameText, broadcastTipsText, audienceNameText;
-    private Button waiterButton, stopButton;
+    private Button audiencesButton, stopButton;
     private TextView exitButton;
     private AgoraAPIOnlySignal agoraAPI;
     private ImageButton muteButton;
     private ImageButton fullScreenButton;
+    private SurfaceView remoteAudienceSurfaceView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,29 +127,24 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
         fullScreenButton.setOnClickListener(v -> {
             if (!isFullScreen) {
                 fullScreenButton.setImageResource(R.drawable.ic_full_screened);
-                if (audienceView.getChildCount() > 0) {
+                if (remoteAudienceSurfaceView != null) {
+                    audienceView.removeView(remoteAudienceSurfaceView);
                     audienceLayout.setVisibility(View.GONE);
-                }
-                if (broadcasterSmallView.getChildCount() > 0) {
-                    broadcastSmallLayout.setVisibility(View.GONE);
+                    stopButton.setVisibility(View.GONE);
                 }
                 muteButton.setVisibility(View.GONE);
-                waiterButton.setVisibility(View.GONE);
-                exitButton.setVisibility(View.GONE);
-                stopButton.setVisibility(View.GONE);
+                audiencesButton.setVisibility(View.GONE);
                 isFullScreen = true;
             } else {
                 fullScreenButton.setImageResource(R.drawable.ic_full_screen);
-                if (audienceView.getChildCount() > 0) {
+                if (remoteAudienceSurfaceView != null) {
                     audienceLayout.setVisibility(View.VISIBLE);
-                }
-                if (broadcasterSmallView.getChildCount() > 0) {
-                    broadcastSmallLayout.setVisibility(View.VISIBLE);
+                    audienceView.removeAllViews();
+                    audienceView.addView(remoteAudienceSurfaceView);
+                    stopButton.setVisibility(View.VISIBLE);
                 }
                 muteButton.setVisibility(View.VISIBLE);
-                waiterButton.setVisibility(View.VISIBLE);
-                exitButton.setVisibility(View.VISIBLE);
-                stopButton.setVisibility(View.VISIBLE);
+                audiencesButton.setVisibility(View.VISIBLE);
                 isFullScreen = false;
             }
         });
@@ -166,8 +160,8 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
             rtcEngine().muteLocalAudioStream(isMuted);
         });
 
-        waiterButton = findViewById(R.id.waiter);
-        waiterButton.setOnClickListener(view -> {
+        audiencesButton = findViewById(R.id.waiter);
+        audiencesButton.setOnClickListener(view -> {
             if (audiences.size() > 0) {
                 showAlertDialog();
             }
@@ -304,7 +298,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                     if (audienceAdapter != null) {
                         audienceAdapter.setData(audiences);
                     }
-                    waiterButton.setText("参会人（" + audiences.size() + "）");
+                    audiencesButton.setText("参会人（" + audiences.size() + "）");
                 });
             }
 
@@ -330,7 +324,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                             if (audienceAdapter != null) {
                                 audienceAdapter.setData(audiences);
                             }
-                            waiterButton.setText("参会人（" + audiences.size() + "）");
+                            audiencesButton.setText("参会人（" + audiences.size() + "）");
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -384,7 +378,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                             if (audienceAdapter != null) {
                                 audienceAdapter.setData(audiences);
                             }
-                            waiterButton.setText("参会人（" + audiences.size() + "）");
+                            audiencesButton.setText("参会人（" + audiences.size() + "）");
                         }
                         if (jsonObject.has("finish")) {
                             boolean finish = jsonObject.getBoolean("finish");
@@ -518,7 +512,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                     if (audienceAdapter != null) {
                         audienceAdapter.setData(audiences);
                     }
-                    waiterButton.setText("参会人（" + audiences.size() + "）");
+                    audiencesButton.setText("参会人（" + audiences.size() + "）");
 
                     JSONObject jsonObject = new JSONObject();
                     jsonObject.put("finish", true);
@@ -716,14 +710,15 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                 Toast.makeText(MeetingBroadcastActivity.this,  "观众" + uid + "进入了", Toast.LENGTH_SHORT).show();
             }
 
+            fullScreenButton.setVisibility(View.VISIBLE);
             audienceLayout.setVisibility(View.VISIBLE);
             audienceView.removeAllViews();
 
-            SurfaceView remoteSurfaceView = RtcEngine.CreateRendererView(getApplicationContext());
-            remoteSurfaceView.setZOrderOnTop(true);
-            remoteSurfaceView.setZOrderMediaOverlay(true);
-            rtcEngine().setupRemoteVideo(new VideoCanvas(remoteSurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, uid));
-            audienceView.addView(remoteSurfaceView);
+            remoteAudienceSurfaceView = RtcEngine.CreateRendererView(getApplicationContext());
+            remoteAudienceSurfaceView.setZOrderOnTop(true);
+            remoteAudienceSurfaceView.setZOrderMediaOverlay(true);
+            rtcEngine().setupRemoteVideo(new VideoCanvas(remoteAudienceSurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, uid));
+            audienceView.addView(remoteAudienceSurfaceView);
 
             stopButton.setVisibility(View.VISIBLE);
         });
@@ -748,6 +743,10 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                 audienceNameText.setText("");
                 audienceLayout.setVisibility(View.GONE);
 
+                fullScreenButton.setVisibility(View.GONE);
+
+                remoteAudienceSurfaceView = null;
+
                 if (newAudience != null) {
                     try {
                         audienceNameText.setTag(newAudience);
@@ -767,7 +766,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                         if (audienceAdapter != null) {
                             audienceAdapter.setData(audiences);
                         }
-                        waiterButton.setText("参会人（" + audiences.size() + "）");
+                        audiencesButton.setText("参会人（" + audiences.size() + "）");
                         stopButton.setVisibility(View.VISIBLE);
 
                         currentAudience = newAudience;

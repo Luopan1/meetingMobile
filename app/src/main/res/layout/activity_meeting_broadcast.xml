@@ -204,6 +204,7 @@
             android:id="@+id/full_screen"
             android:layout_width="35dp"
             android:layout_height="35dp"
+            android:visibility="gone"
             android:background="@drawable/bg_meeting_mute_selector"
             android:src="@drawable/ic_full_screen" />
 
