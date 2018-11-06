@@ -158,11 +158,13 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                 if (localSurfaceView != null || remoteAudienceSurfaceView != null) {
                     audienceLayout.setVisibility(View.VISIBLE);
                     if (localSurfaceView != null) {
+                        audienceView.removeAllViews();
                         audienceView.addView(localSurfaceView);
                         stopTalkButton.setVisibility(View.VISIBLE);
                         requestTalkButton.setVisibility(View.GONE);
                     }
                     if (remoteAudienceSurfaceView != null) {
+                        audienceView.removeAllViews();
                         audienceView.addView(remoteAudienceSurfaceView);
                         requestTalkButton.setVisibility(View.VISIBLE);
                         stopTalkButton.setVisibility(View.GONE);
