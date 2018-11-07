@@ -606,6 +606,8 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
         ListView listView = view.findViewById(R.id.list_view);
         if (audienceAdapter == null) {
             audienceAdapter = new AudienceAdapter(this, audiences, listener);
+        } else {
+            audienceAdapter.setData(audiences);
         }
         listView.setAdapter(audienceAdapter);
         AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.MyDialog);
