@@ -604,8 +604,15 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                                 broadcasterLayout.addView(remoteBroadcasterSurfaceView);
                             }
 
-                            if (audienceView.getChildCount() == 0) {
-                                fullScreenButton.setVisibility(View.GONE);
+                            if (remoteAudienceSurfaceView != null) {
+                                if (isFullScreen) {
+                                    audienceLayout.setVisibility(View.GONE);
+                                } else {
+                                    audienceLayout.setVisibility(View.VISIBLE);
+                                }
+                                fullScreenButton.setVisibility(View.VISIBLE);
+                                audienceView.removeAllViews();
+                                audienceView.addView(remoteAudienceSurfaceView);
                             }
                         }
                     }
@@ -695,7 +702,11 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                 broadcasterLayout.removeView(remoteBroadcasterSurfaceView);
                 broadcasterLayout.setVisibility(View.GONE);
 
-                broadcasterSmallLayout.setVisibility(View.VISIBLE);
+                if (isFullScreen) {
+                    broadcasterSmallLayout.setVisibility(View.GONE);
+                } else {
+                    broadcasterSmallLayout.setVisibility(View.VISIBLE);
+                }
                 broadcasterSmallView.removeAllViews();
                 broadcasterSmallView.addView(remoteBroadcasterSurfaceView);
                 Log.v("while", "while loop.............");
