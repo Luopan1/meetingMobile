@@ -786,6 +786,9 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                 audienceLayout.setVisibility(View.GONE);
                 stopTalkButton.setVisibility(View.GONE);
                 requestTalkButton.setVisibility(View.VISIBLE);
+                if (!isDocShow) {
+                    fullScreenButton.setVisibility(View.GONE);
+                }
                 try {
                     JSONObject jsonObject = new JSONObject();
                     jsonObject.put("finish", true);
