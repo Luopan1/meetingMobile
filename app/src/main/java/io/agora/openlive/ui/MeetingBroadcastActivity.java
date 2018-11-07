@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -584,11 +585,24 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
     };
 
     private TextView audienceCountText;
+    EditText searchEdit;
+    Button searchButton;
 
     private void showAlertDialog() {
         View view = View.inflate(this, R.layout.dialog_audience_list, null);
         audienceCountText = view.findViewById(R.id.audience_count);
         audienceCountText.setText("所有参会人 (" + audiences.size() + ")");
+        searchEdit = view.findViewById(R.id.search_edit);
+        searchButton = view.findViewById(R.id.search_button);
+        searchButton.setOnClickListener((view1) -> {
+            if (TextUtils.isEmpty(searchEdit.getText())) {
+                Toast.makeText(this, "请输入搜索关键词", Toast.LENGTH_SHORT).show();
+            } else {
+                if (audienceAdapter != null) {
+                    audienceAdapter.setData(searchAudiences(audiences, searchEdit.getText().toString()));
+                }
+            }
+        });
         ListView listView = view.findViewById(R.id.list_view);
         if (audienceAdapter == null) {
             audienceAdapter = new AudienceAdapter(this, audiences, listener);
@@ -605,6 +619,16 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
         dialogWindow.setAttributes(lp);
 
         alertDialog.show();
+    }
+
+    private ArrayList<Audience> searchAudiences(ArrayList<Audience> audiences, String keyword){
+        ArrayList<Audience> audienceArrayList = new ArrayList<>();
+        for (Audience audience: audiences) {
+            if (audience.getUname().contains(keyword)) {
+                audienceArrayList.add(audience);
+            }
+        }
+        return audienceArrayList;
     }
 
     private OkHttpCallback finishMeetingCallback = new OkHttpCallback<Bucket<Meeting>>() {

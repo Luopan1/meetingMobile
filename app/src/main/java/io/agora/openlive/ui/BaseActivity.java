@@ -139,7 +139,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     protected RtcEngine rtcEngine() {
-        return ((BaseApplication) getApplication()).getWorkerThread().getRtcEngine();
+        return worker().getRtcEngine();
     }
 
     protected final WorkerThread worker() {
@@ -147,11 +147,11 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     protected final EngineConfig config() {
-        return ((BaseApplication) getApplication()).getWorkerThread().getEngineConfig();
+        return worker().getEngineConfig();
     }
 
     protected final MyEngineEventHandler event() {
-        return ((BaseApplication) getApplication()).getWorkerThread().eventHandler();
+        return worker().eventHandler();
     }
 
     public final void showLongToast(final String msg) {
