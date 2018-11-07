@@ -942,19 +942,21 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                         isExit = true;
                         if (!isDocShow) {
                             fullScreenButton.setVisibility(View.GONE);
+                            requestTalkButton.setVisibility(View.VISIBLE);
                         }
                         remoteAudienceSurfaceView = null;
                     } else {
-                        Toast.makeText(MeetingAudienceActivity.this, "is me", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MeetingAudienceActivity.this, "audience is me", Toast.LENGTH_SHORT).show();
                         if (!isDocShow) {
                             fullScreenButton.setVisibility(View.GONE);
                         }
                         audienceLayout.setVisibility(View.GONE);
                     }
                 } else {
-                    Toast.makeText(MeetingAudienceActivity.this, "is exit", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MeetingAudienceActivity.this, "other audience is exit", Toast.LENGTH_SHORT).show();
                     if (!isDocShow) {
                         fullScreenButton.setVisibility(View.GONE);
+                        requestTalkButton.setVisibility(View.VISIBLE);
                     }
                     audienceLayout.setVisibility(View.GONE);
                 }
