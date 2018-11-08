@@ -548,6 +548,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                                 pageText.setText("第" + currentMaterialPublish.getPriority() + "/" + currentMaterial.getMeetingMaterialsPublishList().size() + "页");
                                 Picasso.with(MeetingAudienceActivity.this).load(currentMaterialPublish.getUrl()).into(docImage);
                             } else {
+                                if (BuildConfig.DEBUG)
                                 Toast.makeText(MeetingAudienceActivity.this, "收到主持人端doc_index的时候material为null", Toast.LENGTH_SHORT).show();
                             }
                         }
@@ -567,6 +568,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                             isDocShow = true;
                             ApiClient.getInstance().meetingMaterial(TAG, meetingMaterialCallback, value);
                         } else {
+                            if (BuildConfig.DEBUG)
                             Toast.makeText(MeetingAudienceActivity.this, "收到主持人端发的material_id值为null", Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -581,6 +583,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                                 pageText.setText("第" + currentMaterialPublish.getPriority() + "/" + currentMaterial.getMeetingMaterialsPublishList().size() + "页");
                                 Picasso.with(MeetingAudienceActivity.this).load(currentMaterialPublish.getUrl()).into(docImage);
                             } else {
+                                if (BuildConfig.DEBUG)
                                 Toast.makeText(MeetingAudienceActivity.this, "收到主持人端doc_index的时候material为null", Toast.LENGTH_SHORT).show();
                             }
                         } else {
@@ -949,6 +952,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                         }
                         remoteAudienceSurfaceView = null;
                     } else {
+                        if (BuildConfig.DEBUG)
                         Toast.makeText(MeetingAudienceActivity.this, "audience is me", Toast.LENGTH_SHORT).show();
                         if (!isDocShow) {
                             fullScreenButton.setVisibility(View.GONE);
@@ -956,6 +960,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                         audienceLayout.setVisibility(View.GONE);
                     }
                 } else {
+                    if (BuildConfig.DEBUG)
                     Toast.makeText(MeetingAudienceActivity.this, "other audience is exit", Toast.LENGTH_SHORT).show();
                     if (!isDocShow) {
                         fullScreenButton.setVisibility(View.GONE);
@@ -970,7 +975,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
     @Override
     public void onConnectionLost() {
         runOnUiThread(() -> {
-            Toast.makeText(MeetingAudienceActivity.this, "agor网络连接断开，请检查网络连接", Toast.LENGTH_SHORT).show();
+            Toast.makeText(MeetingAudienceActivity.this, "声网服务器网络连接断开，请检查网络连接", Toast.LENGTH_SHORT).show();
             finish();
         });
     }

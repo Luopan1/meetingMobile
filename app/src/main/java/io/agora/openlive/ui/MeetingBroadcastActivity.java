@@ -365,6 +365,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                             }
                             audienceHashMap.put("" + audience.getUid(), audience);
 
+                            if (BuildConfig.DEBUG)
                             Toast.makeText(MeetingBroadcastActivity.this, "" + audience.isCalling(), Toast.LENGTH_SHORT).show();
 
                             Iterator iter = audienceHashMap.entrySet().iterator();
@@ -433,6 +434,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                         e.printStackTrace();
                     }
                 } else {
+                    if (BuildConfig.DEBUG)
                     Toast.makeText(this, "当前没有连麦人", Toast.LENGTH_SHORT).show();
                 }
                 doLeaveChannel();
