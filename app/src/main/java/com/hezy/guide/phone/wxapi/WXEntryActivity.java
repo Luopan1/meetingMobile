@@ -328,11 +328,15 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
                 } else {
                     LoginHelper.savaUser(user);
 
-                    if (Preferences.isUserinfoEmpty()) {
+                    if (TextUtils.isEmpty(user.getMobile())) {
                         startActivity(new Intent(WXEntryActivity.this, PhoneRegisterActivity.class));
+                    } else if (Preferences.isUserinfoEmpty()) {
+                        boolean userIsAuthByZY = user.getAuditStatus() == 1;
+                        UserInfoActivity.actionStart(WXEntryActivity.this, userIsAuthByZY);
                     } else {
                         startActivity(new Intent(WXEntryActivity.this, HomeActivity.class));
                     }
+
                     RxBus.sendMessage(new FinishWX());
                     finish();
                 }

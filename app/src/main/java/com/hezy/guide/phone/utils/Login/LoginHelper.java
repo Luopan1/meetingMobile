@@ -94,7 +94,7 @@ public class LoginHelper {
      *
      * @param context
      */
-    public static void logoutCustom(Context context) {
+    private static void logoutCustom(Context context) {
         ZYAgent.onEvent(context, "退出登录");
         ZYAgent.onEvent(context, "退出登录 连接服务 请求停止");
         Preferences.clear();

@@ -112,7 +112,7 @@ public class PhoneRegisterActivity extends BaseDataBindingActivity<PhoneRegistLa
                 }
                 if (phoneNumber.equals(Preferences.getUserMobile())) {
                     showToast("当前手机号已设置成功");
-                    return;
+//                    return;
                 }
 
                 countDownTimer.start();
