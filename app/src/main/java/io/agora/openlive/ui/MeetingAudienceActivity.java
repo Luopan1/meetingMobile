@@ -784,11 +784,13 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
             } else if (type == 2) {
                 calling = false;
                 worker().getRtcEngine().setClientRole(Constants.CLIENT_ROLE_AUDIENCE);
+
                 audienceView.removeAllViews();
                 audienceNameText.setText("");
                 audienceLayout.setVisibility(View.GONE);
                 stopTalkButton.setVisibility(View.GONE);
                 requestTalkButton.setVisibility(View.VISIBLE);
+                localSurfaceView = null;
                 if (!isDocShow) {
                     fullScreenButton.setVisibility(View.GONE);
                 }
