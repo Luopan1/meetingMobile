@@ -569,9 +569,7 @@ public class UserInfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
             return;
         }
 
-        if (isFirst) {
-            startActivity(new Intent(UserInfoActivity.this, HomeActivity.class));
-        }
+        startActivity(new Intent(UserInfoActivity.this, HomeActivity.class));
         finish();
         RxBus.sendMessage(new UserUpdateEvent());
     }
