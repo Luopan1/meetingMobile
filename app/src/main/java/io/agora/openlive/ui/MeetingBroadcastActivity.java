@@ -424,12 +424,16 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
         leftButton.setOnClickListener(view12 -> {
             dialog.cancel();
             if (type == 1) {
-                try {
-                    JSONObject jsonObject = new JSONObject();
-                    jsonObject.put("finish", true);
-                    agoraAPI.messageInstantSend("" + audience.getUid(), 0, jsonObject.toString(), "");
-                } catch (Exception e) {
-                    e.printStackTrace();
+                if (currentAudience != null) {
+                    try {
+                        JSONObject jsonObject = new JSONObject();
+                        jsonObject.put("finish", true);
+                        agoraAPI.messageInstantSend("" + currentAudience.getUid(), 0, jsonObject.toString(), "");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    Toast.makeText(this, "当前没有连麦人", Toast.LENGTH_SHORT).show();
                 }
                 doLeaveChannel();
                 if (agoraAPI.getStatus() == 2) {
