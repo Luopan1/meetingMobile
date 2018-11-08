@@ -149,8 +149,8 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
                     if (TextUtils.isEmpty(user.getMobile())) {
                         startActivity(new Intent(WXEntryActivity.this, PhoneRegisterActivity.class));
                     } else if (Preferences.isUserinfoEmpty()) {
-                        boolean userIsAuthByZY = user.getAuditStatus() == 1;
-                        UserInfoActivity.actionStart(WXEntryActivity.this, userIsAuthByZY);
+                        boolean isUserAuthByHEZY = user.getAuditStatus() == 1;
+                        UserInfoActivity.actionStart(WXEntryActivity.this, true, isUserAuthByHEZY);
                     } else {
                         startActivity(new Intent(WXEntryActivity.this, HomeActivity.class));
                     }
@@ -333,8 +333,8 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
                     if (TextUtils.isEmpty(user.getMobile())) {
                         startActivity(new Intent(WXEntryActivity.this, PhoneRegisterActivity.class));
                     } else if (Preferences.isUserinfoEmpty()) {
-                        boolean userIsAuthByZY = user.getAuditStatus() == 1;
-                        UserInfoActivity.actionStart(WXEntryActivity.this, userIsAuthByZY);
+                        boolean isUserAuthByHEZY = user.getAuditStatus() == 1;
+                        UserInfoActivity.actionStart(WXEntryActivity.this, true, isUserAuthByHEZY);
                     } else {
                         startActivity(new Intent(WXEntryActivity.this, HomeActivity.class));
                     }

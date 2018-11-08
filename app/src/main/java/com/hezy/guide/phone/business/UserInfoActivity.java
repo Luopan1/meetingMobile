@@ -76,6 +76,7 @@ public class UserInfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
     private String imagePath;
 
     public static boolean isFirst;
+    private static boolean userIsAuthByHEZY;
 
     public static final int CODE_USERINFO_DISTRICT = 0x100;
     public static final int CODE_USERINFO_POSTTYPE = 0x101;
@@ -88,20 +89,22 @@ public class UserInfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
     public static final String KEY_USERINFO_GRID = "key_grid";
     public static final String KEY_USERINFO_CUSTOM = "key_custom";
 
-    public static void actionStart(Context context) {
-        Intent intent = new Intent(context, UserInfoActivity.class);
-        context.startActivity(intent);
-    }
+//    public static void actionStart(Context context) {
+//        Intent intent = new Intent(context, UserInfoActivity.class);
+//        context.startActivity(intent);
+//    }
 
-    public static void actionStart(Context context, boolean isFirst) {
+    public static void actionStart(Context context, boolean isFirst, boolean userIsAuthByHEZY) {
         Intent intent = new Intent(context, UserInfoActivity.class);
         intent.putExtra("isFirst", isFirst);
+        intent.putExtra("userIsAuthByHEZY", userIsAuthByHEZY);
         context.startActivity(intent);
     }
 
     @Override
     protected void initExtraIntent() {
         isFirst = getIntent().getBooleanExtra("isFirst", false);
+        userIsAuthByHEZY = getIntent().getBooleanExtra("userIsAuthByHEZY", false);
     }
 
     @Override
@@ -431,6 +434,7 @@ public class UserInfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
 
     /**
      * 检测PostTypeID类型
+     *
      * @param postTypeId
      */
     private void checkPostType(String postTypeId) {
@@ -569,7 +573,8 @@ public class UserInfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
             return;
         }
 
-        startActivity(new Intent(UserInfoActivity.this, HomeActivity.class));
+        if (isFirst)
+            startActivity(new Intent(UserInfoActivity.this, HomeActivity.class));
         finish();
         RxBus.sendMessage(new UserUpdateEvent());
     }

@@ -189,7 +189,8 @@ public class PhoneRegisterActivity extends BaseDataBindingActivity<PhoneRegistLa
                 startActivity(new Intent(PhoneRegisterActivity.this, HomeActivity.class));
             } else {
                 //未认证过，不是海尔员工
-                UserInfoActivity.actionStart(PhoneRegisterActivity.this, true);
+                boolean isUserAuthByHEZY = Preferences.getUserAuditStatus() == 1;
+                UserInfoActivity.actionStart(PhoneRegisterActivity.this, true, isUserAuthByHEZY);
             }
             finish();
         }

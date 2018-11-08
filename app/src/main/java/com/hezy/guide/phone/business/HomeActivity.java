@@ -98,7 +98,7 @@ public class HomeActivity extends BasicActivity implements View.OnClickListener 
         registerDevice();
     }
 
-    private void initView(){
+    private void initView() {
         viewPager = findViewById(R.id.view_pager);
         bottomLayout = findViewById(R.id.bottom_layout);
         stateText = findViewById(R.id.state);
@@ -109,7 +109,7 @@ public class HomeActivity extends BasicActivity implements View.OnClickListener 
 
         stateText.setOnClickListener(this);
 
-        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener(){
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
                 switch (i) {
@@ -169,7 +169,7 @@ public class HomeActivity extends BasicActivity implements View.OnClickListener 
 
     }
 
-    private void initData(){
+    private void initData() {
         meetingRadio.setChecked(true);
     }
 
@@ -200,7 +200,9 @@ public class HomeActivity extends BasicActivity implements View.OnClickListener 
             case R.id.state:
                 if (Preferences.isUserinfoEmpty()) {
                     showToast("请先填写姓名,电话,地址,照片");
-                    UserInfoActivity.actionStart(this);
+
+                    boolean isUserAuthByHEZY = Preferences.getUserAuditStatus() == 1;
+                    UserInfoActivity.actionStart(this, false, isUserAuthByHEZY);
                     return;
                 }
                 new ActionSheetDialog(mContext).builder()//
@@ -210,15 +212,15 @@ public class HomeActivity extends BasicActivity implements View.OnClickListener 
                                 new ActionSheetDialog.OnSheetItemClickListener() {//
                                     @Override
                                     public void onClick(int which) {
-                                        ZYAgent.onEvent(mContext,"在线按钮");
+                                        ZYAgent.onEvent(mContext, "在线按钮");
 
                                         if (!WSService.isOnline()) {
                                             //当前状态离线,可切换在线
-                                            ZYAgent.onEvent(mContext,"在线按钮,当前离线,切换到在线");
+                                            ZYAgent.onEvent(mContext, "在线按钮,当前离线,切换到在线");
                                             Log.i(TAG, "当前状态离线,可切换在线");
                                             RxBus.sendMessage(new SetUserStateEvent(true));
-                                        }else{
-                                            ZYAgent.onEvent(mContext,"在线按钮,当前在线,,无效操作");
+                                        } else {
+                                            ZYAgent.onEvent(mContext, "在线按钮,当前在线,,无效操作");
                                         }
                                     }
                                 })
@@ -226,16 +228,16 @@ public class HomeActivity extends BasicActivity implements View.OnClickListener 
                                 new ActionSheetDialog.OnSheetItemClickListener() {//
                                     @Override
                                     public void onClick(int which) {
-                                        ZYAgent.onEvent(mContext,"离线按钮");
+                                        ZYAgent.onEvent(mContext, "离线按钮");
                                         if (WSService.isOnline()) {
                                             //当前状态在线,可切换离线
                                             Log.i(TAG, "当前状态在线,可切换离线");
-                                            ZYAgent.onEvent(mContext,"离线按钮,当前在线,切换到离线");
+                                            ZYAgent.onEvent(mContext, "离线按钮,当前在线,切换到离线");
                                             RxBus.sendMessage(new SetUserStateEvent(false));
 //                                            WSService.SOCKET_ONLINE =false;
 //                                            setState(false);
-                                        }else{
-                                            ZYAgent.onEvent(mContext,"离线按钮,当前离线,无效操作");
+                                        } else {
+                                            ZYAgent.onEvent(mContext, "离线按钮,当前离线,无效操作");
                                         }
                                     }
                                 }).show();
@@ -247,11 +249,11 @@ public class HomeActivity extends BasicActivity implements View.OnClickListener 
     private void setState(boolean isOnline) {
         if (isOnline) {
             stateText.setText("在线");
-            stateText.setCompoundDrawablesWithIntrinsicBounds(0,R.mipmap.ic_online,0,0);
+            stateText.setCompoundDrawablesWithIntrinsicBounds(0, R.mipmap.ic_online, 0, 0);
             stateText.setTextColor(getResources().getColor(R.color.text_yellow_fff000));
         } else {
             stateText.setText("离线");
-            stateText.setCompoundDrawablesWithIntrinsicBounds(0,R.mipmap.ic_offline,0,0);
+            stateText.setCompoundDrawablesWithIntrinsicBounds(0, R.mipmap.ic_offline, 0, 0);
             stateText.setTextColor(getResources().getColor(R.color.text_gray_c784fb));
         }
     }
@@ -334,8 +336,8 @@ public class HomeActivity extends BasicActivity implements View.OnClickListener 
     };
 
 
-
     private long mExitTime = 0;
+
     @Override
     public void onBackPressed() {
         if ((System.currentTimeMillis() - mExitTime) > 2000) {
@@ -347,7 +349,7 @@ public class HomeActivity extends BasicActivity implements View.OnClickListener 
     }
 
     private void quit() {
-        ZYAgent.onEvent(getApplicationContext(),"返回退出应用 连接服务 请求停止");
+        ZYAgent.onEvent(getApplicationContext(), "返回退出应用 连接服务 请求停止");
         WSService.stopService(this);
         finish();
         System.exit(0);

@@ -65,10 +65,10 @@ public class ReviewAdapter extends BaseRecyclerAdapter<RecordData.PageDataEntity
                 if (o instanceof ReplyReviewEvent) {
                     ReplyReviewEvent event = (ReplyReviewEvent) o;
                     RecordData.PageDataEntity changeBean = event.getBean();
-                    if(bean!=null && changeBean!=null && changeBean.getId().equals(bean.getId()) ){
+                    if (bean != null && changeBean != null && changeBean.getId().equals(bean.getId())) {
                         bean.setReplyRating(changeBean.getReplyRating());
                         notifyDataSetChanged();
-                    }else if(o instanceof UserUpdateEvent){
+                    } else if (o instanceof UserUpdateEvent) {
                         notifyDataSetChanged();
                     }
 
@@ -94,9 +94,9 @@ public class ReviewAdapter extends BaseRecyclerAdapter<RecordData.PageDataEntity
     public int getItemViewType(int position) {
         if (position == 0) {
             return ITEM_TYPE.ME.ordinal();
-        } else if(position == 1 && super.getItemCount() == 0) {
+        } else if (position == 1 && super.getItemCount() == 0) {
             return ITEM_TYPE.EMPTY.ordinal();
-        }else{
+        } else {
             return ITEM_TYPE.REVIEW.ordinal();
         }
     }
@@ -104,11 +104,11 @@ public class ReviewAdapter extends BaseRecyclerAdapter<RecordData.PageDataEntity
     @Override
     public int getItemCount() {
         //如果数据为空+2,多个me和空.
-        return super.getItemCount() ==0 ?  super.getItemCount() + 2 : super.getItemCount()+1;
+        return super.getItemCount() == 0 ? super.getItemCount() + 2 : super.getItemCount() + 1;
     }
 
     private int getRealPosotion(int position) {
-        return super.getItemCount() == 0 ?  position - 2 : position - 1;
+        return super.getItemCount() == 0 ? position - 2 : position - 1;
     }
 
     @Override
@@ -117,7 +117,7 @@ public class ReviewAdapter extends BaseRecyclerAdapter<RecordData.PageDataEntity
             return new MeViewHolder(mInflater.inflate(R.layout.me_item, parent, false), this);
         } else if (viewType == ITEM_TYPE.REVIEW.ordinal()) {
             return new ViewHolder(mInflater.inflate(R.layout.review_item, parent, false), this);
-        }else{
+        } else {
             return new EmptyViewHolder(mInflater.inflate(R.layout.empty_item, parent, false));
         }
 
@@ -167,9 +167,9 @@ public class ReviewAdapter extends BaseRecyclerAdapter<RecordData.PageDataEntity
                 }
 
 
-                if(mRankInfo.getRatingFrequency() ==0 || mRankInfo.getServiceFrequency()==0){
-                    meHolder.mTvReviewRate.setText("评价率 -" );
-                }else{
+                if (mRankInfo.getRatingFrequency() == 0 || mRankInfo.getServiceFrequency() == 0) {
+                    meHolder.mTvReviewRate.setText("评价率 -");
+                } else {
                     String percentStr = StringUtils.percent(mRankInfo.getRatingFrequency(), mRankInfo.getServiceFrequency());
                     meHolder.mTvReviewRate.setText("评价率 " + percentStr);
                 }
@@ -183,10 +183,10 @@ public class ReviewAdapter extends BaseRecyclerAdapter<RecordData.PageDataEntity
             System.out.println("time " + time);
             ViewHolder holder = (ViewHolder) viewHolder;
 
-            if(position == getItemCount() - 1){
+            if (position == getItemCount() - 1) {
                 //最后一条隐藏分界线
                 holder.mViewDivider.setVisibility(View.GONE);
-            }else{
+            } else {
                 holder.mViewDivider.setVisibility(View.VISIBLE);
             }
 
@@ -354,7 +354,8 @@ public class ReviewAdapter extends BaseRecyclerAdapter<RecordData.PageDataEntity
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.mIvHead:
-                UserInfoActivity.actionStart(mContext);
+                boolean isUserAuthByHEZY = Preferences.getUserAuditStatus() == 1;
+                UserInfoActivity.actionStart(mContext, false, isUserAuthByHEZY);
                 break;
             case R.id.mIvSetting:
                 mContext.startActivity(new Intent(mContext, SettingActivity.class));
@@ -363,7 +364,7 @@ public class ReviewAdapter extends BaseRecyclerAdapter<RecordData.PageDataEntity
                 bean = (RecordData.PageDataEntity) v.getTag(R.id.tag_bean);
 //                ToastUtils.showToast("点击");
                 ReplyReviewActivity.actionStart(mContext, bean);
-                ZYAgent.onEvent(mContext,"用户评论,点击回复");
+                ZYAgent.onEvent(mContext, "用户评论,点击回复");
                 break;
             default:
                 break;
