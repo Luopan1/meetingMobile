@@ -145,14 +145,16 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
 
                     //验证用户是否存在
                     User user = entity.getData().getUser();
-                    if (!TextUtils.isEmpty(user.getMobile())) {
-                        //用户手机不为空，持久化用户数据，直接进入主程序
-                        LoginHelper.savaUser(user);
-                        startActivity(new Intent(WXEntryActivity.this, HomeActivity.class));
-                    } else {
-                        //用户手机为空，进入手机注册页面
+
+                    if (TextUtils.isEmpty(user.getMobile())) {
                         startActivity(new Intent(WXEntryActivity.this, PhoneRegisterActivity.class));
+                    } else if (Preferences.isUserinfoEmpty()) {
+                        boolean userIsAuthByZY = user.getAuditStatus() == 1;
+                        UserInfoActivity.actionStart(WXEntryActivity.this, userIsAuthByZY);
+                    } else {
+                        startActivity(new Intent(WXEntryActivity.this, HomeActivity.class));
                     }
+
                     finish();
                 }
             });
