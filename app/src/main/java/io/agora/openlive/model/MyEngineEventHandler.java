@@ -87,6 +87,12 @@ public class MyEngineEventHandler {
         public void onError(int err) {
             super.onError(err);
             log.debug("onError " + err);
+
+            Iterator<AGEventHandler> it = mEventHandlerList.keySet().iterator();
+            while (it.hasNext()) {
+                AGEventHandler handler = it.next();
+                handler.onError(err);
+            }
         }
 
         @Override
@@ -106,6 +112,12 @@ public class MyEngineEventHandler {
 
         public void onWarning(int warn) {
             log.debug("onWarning " + warn);
+
+            Iterator<AGEventHandler> it = mEventHandlerList.keySet().iterator();
+            while (it.hasNext()) {
+                AGEventHandler handler = it.next();
+                handler.onWarning(warn);
+            }
         }
     };
 
