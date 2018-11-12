@@ -433,19 +433,6 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 
                                 worker().getRtcEngine().setClientRole(Constants.CLIENT_ROLE_BROADCASTER);
 
-                                try {
-                                    JSONObject jsonObject1 = new JSONObject();
-                                    jsonObject1.put("request", request);
-                                    jsonObject1.put("uid", config().mUid);
-                                    jsonObject1.put("uname", audienceName);
-                                    jsonObject1.put("calling", true);
-                                    jsonObject1.put("auditStatus", Preferences.getUserAuditStatus());
-                                    jsonObject1.put("postTypeName", Preferences.getUserPostType());
-                                    agoraAPI.messageInstantSend(broadcastId, 0, jsonObject1.toString(), "");
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-
                                 HashMap<String, Object> params = new HashMap<String, Object>();
                                 params.put("status", 1);
                                 params.put("meetingId", meetingJoin.getMeeting().getId());
