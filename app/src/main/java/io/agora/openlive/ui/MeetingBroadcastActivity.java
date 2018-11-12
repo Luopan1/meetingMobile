@@ -610,7 +610,9 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
             } else {
                 if (audienceView.getChildCount() > 0) {
                     if (!audience.isCalling()) {
-                        showDialog(4, "中断当前" + currentAudience.getUname() + "的连麦，连接" + audience.getUname() + "的连麦", "取消", "确定", audience);
+                        if (currentAudience != null) {
+                            showDialog(4, "中断当前" + currentAudience.getUname() + "的连麦，连接" + audience.getUname() + "的连麦", "取消", "确定", audience);
+                        }
                     } else {
                         Toast.makeText(MeetingBroadcastActivity.this, "正在与当前参会人连麦中", Toast.LENGTH_SHORT).show();
                     }
@@ -631,8 +633,8 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
     };
 
     private TextView audienceCountText;
-    EditText searchEdit;
-    Button searchButton;
+    private EditText searchEdit;
+    private Button searchButton;
     private boolean isConnecting = false;
 
     private void showAlertDialog() {
