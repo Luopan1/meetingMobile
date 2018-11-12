@@ -605,24 +605,28 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
     private AudienceAdapter.OnAudienceButtonClickListener listener = new AudienceAdapter.OnAudienceButtonClickListener() {
         @Override
         public void onTalkButtonClick(Audience audience) {
-            if (audienceView.getChildCount() > 0) {
-                if (!audience.isCalling()) {
-                    showDialog(4, "中断当前" + currentAudience.getUname() + "的连麦，连接" + audience.getUname() + "的连麦", "取消", "确定", audience);
-                } else {
-                    Toast.makeText(MeetingBroadcastActivity.this, "正在与当前参会人连麦中", Toast.LENGTH_SHORT).show();
-                }
+            if (isConnecting) {
+                Toast.makeText(MeetingBroadcastActivity.this, "暂时无法切换连麦，请10秒后尝试", Toast.LENGTH_SHORT).show();
             } else {
-                if (!audience.isCalling()) {
-                    if (audience.isHandsUp()) {
-                        showDialog(2, audience.getUname() + "请求连麦", "接受", "拒绝", audience);
+                if (audienceView.getChildCount() > 0) {
+                    if (!audience.isCalling()) {
+                        showDialog(4, "中断当前" + currentAudience.getUname() + "的连麦，连接" + audience.getUname() + "的连麦", "取消", "确定", audience);
                     } else {
-                        showDialog(5, "确定与" + audience.getUname() + "连麦", "确定", "取消", audience);
+                        Toast.makeText(MeetingBroadcastActivity.this, "正在与当前参会人连麦中", Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Toast.makeText(MeetingBroadcastActivity.this, "正在与当前参会人连麦中", Toast.LENGTH_SHORT).show();
+                    if (!audience.isCalling()) {
+                        if (audience.isHandsUp()) {
+                            showDialog(2, audience.getUname() + "请求连麦", "接受", "拒绝", audience);
+                        } else {
+                            showDialog(5, "确定与" + audience.getUname() + "连麦", "确定", "取消", audience);
+                        }
+                    } else {
+                        Toast.makeText(MeetingBroadcastActivity.this, "正在与当前参会人连麦中", Toast.LENGTH_SHORT).show();
+                    }
                 }
+                alertDialog.cancel();
             }
-            alertDialog.cancel();
         }
     };
 
