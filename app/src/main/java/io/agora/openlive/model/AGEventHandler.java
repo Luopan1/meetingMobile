@@ -17,5 +17,7 @@ public interface AGEventHandler {
 
     void onNetworkQuality(int uid, int txQuality, int rxQuality);
 
+    void onWarning(int warn);
+
     void onError(int err);
 }

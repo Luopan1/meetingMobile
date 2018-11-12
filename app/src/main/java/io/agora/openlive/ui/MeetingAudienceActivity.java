@@ -1010,6 +1010,11 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
         }
     }
 
+    @Override
+    public void onWarning(int warn) {
+        runOnUiThread(() -> Toast.makeText(MeetingAudienceActivity.this, "警告：" + warn, Toast.LENGTH_SHORT).show());
+    }
+
     private String showNetQuality(int quality) {
         String lastmileQuality;
         switch (quality) {
@@ -1042,9 +1047,11 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 
     @Override
     public void onError(final int err) {
-        if (BuildConfig.DEBUG) {
-            runOnUiThread(() -> Toast.makeText(MeetingAudienceActivity.this, "发生错误的错误码：" + err, Toast.LENGTH_SHORT).show());
-        }
+        runOnUiThread(() -> Toast.makeText(MeetingAudienceActivity.this, "发生错误的错误码：" + err, Toast.LENGTH_SHORT).show());
+
+//        if (BuildConfig.DEBUG) {
+//            runOnUiThread(() -> Toast.makeText(MeetingAudienceActivity.this, "发生错误的错误码：" + err, Toast.LENGTH_SHORT).show());
+//        }
     }
 
     @Override
