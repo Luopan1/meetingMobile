@@ -465,6 +465,11 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
     }
 
     @Override
+    public void onWarning(int warn) {
+
+    }
+
+    @Override
     public void onError(int err) {
 
     }
