@@ -93,8 +93,13 @@ public class AudienceAdapter extends BaseAdapter {
             viewHolder.handsupImage.setVisibility(View.INVISIBLE);
         }
 
-        if (audience.isCalling()) {
+        if (audience.getCallStatus() == 2) {
             viewHolder.callingText.setVisibility(View.VISIBLE);
+            viewHolder.callingText.setText("连麦中...");
+            viewHolder.talkButton.setVisibility(View.GONE);
+        } else if (audience.getCallStatus() == 1) {
+            viewHolder.callingText.setVisibility(View.VISIBLE);
+            viewHolder.callingText.setText("正在连麦...");
             viewHolder.talkButton.setVisibility(View.GONE);
         } else {
             viewHolder.callingText.setVisibility(View.GONE);
@@ -105,7 +110,6 @@ public class AudienceAdapter extends BaseAdapter {
                 }
             });
         }
-
         return convertView;
     }
 
