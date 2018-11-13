@@ -77,7 +77,7 @@ android {
     }
 
     buildTypes {
-        release { // debug模式
+        debug { // debug模式
             signingConfig signingConfigs.config
             buildConfigField "boolean", "IS_DEBUG_LOG", "true"  //显示LOG
             buildConfigField "boolean", "IS_DEBUG_TOAST", "true"  //显示LOG的TOAST
@@ -94,7 +94,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
 
-        debug {
+        release {
             signingConfig signingConfigs.config
             buildConfigField "boolean", "IS_DEBUG_LOG", "false"  //显示LOG
             buildConfigField "boolean", "IS_DEBUG_TOAST", "false"  //显示LOG的TOAST
