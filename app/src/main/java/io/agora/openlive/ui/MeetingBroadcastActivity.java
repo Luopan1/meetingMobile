@@ -745,9 +745,11 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
             if (currentAudience == null) {
                 currentAudience = audienceHashMap.get(uid);
             }
-            currentAudience.setCallStatus(2);
-            audienceHashMap.put(currentAudience.getUid(), currentAudience);
-            updateAudienceList();
+            if (currentAudience != null) {
+                currentAudience.setCallStatus(2);
+                audienceHashMap.put(currentAudience.getUid(), currentAudience);
+                updateAudienceList();
+            }
         });
     }
 
