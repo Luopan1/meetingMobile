@@ -491,7 +491,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
 
                 stopButton.setVisibility(View.GONE);
 
-                audienceLayout.removeAllViews();
+                audienceView.removeAllViews();
                 audienceNameText.setText("");
 
                 currentAudience = null;
@@ -511,7 +511,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                 connectingHandler.sendEmptyMessageDelayed(0, 10000);
                 stopButton.setVisibility(View.GONE);
 
-                audienceLayout.removeAllViews();
+                audienceView.removeAllViews();
                 audienceNameText.setText("");
 
                 currentAudience.setCallStatus(0);
@@ -725,13 +725,13 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                 return;
             }
             if (BuildConfig.DEBUG){
-                Toast.makeText(MeetingBroadcastActivity.this,  "观众" + uid + "进入了", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MeetingBroadcastActivity.this, "参会人" + uid + "的视频流进入", Toast.LENGTH_SHORT).show();
             }
 
             fullScreenButton.setVisibility(View.VISIBLE);
             audienceLayout.setVisibility(View.VISIBLE);
-            audienceView.removeAllViews();
 
+            audienceView.removeAllViews();
             remoteAudienceSurfaceView = RtcEngine.CreateRendererView(getApplicationContext());
             remoteAudienceSurfaceView.setZOrderOnTop(true);
             remoteAudienceSurfaceView.setZOrderMediaOverlay(true);
@@ -787,6 +787,8 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
             audienceLayout.setVisibility(View.GONE);
 
             fullScreenButton.setVisibility(View.GONE);
+            audiencesButton.setVisibility(View.VISIBLE);
+
             remoteAudienceSurfaceView = null;
 
             if (newAudience != null) {
@@ -796,7 +798,6 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                 stopButton.setVisibility(View.VISIBLE);
 
                 currentAudience = newAudience;
-                newAudience = null;
 
                 audienceLayout.setVisibility(View.VISIBLE);
                 try {
@@ -806,6 +807,10 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+
+                newAudience = null;
+            } else {
+                currentAudience = null;
             }
         });
     }
