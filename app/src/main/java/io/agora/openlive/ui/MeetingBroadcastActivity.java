@@ -317,20 +317,8 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                         agoraAPI.channelQueryUserNum(channelName);
                     }
 
-                    audienceHashMap.remove(account);
-                    Iterator iter = audienceHashMap.entrySet().iterator();
-                    audiences.clear();
-                    while (iter.hasNext()) {
-                        Map.Entry entry = (Map.Entry) iter.next();
-                        audiences.add((Audience) entry.getValue());
-                    }
-                    if (audienceCountText != null) {
-                        audienceCountText.setText("所有参会人 (" + audiences.size() + ")");
-                    }
-                    if (audienceAdapter != null) {
-                        audienceAdapter.setData(audiences);
-                    }
-                    audiencesButton.setText("参会人（" + audiences.size() + "）");
+                    audienceHashMap.remove(Integer.parseInt(account));
+                    updateAudienceList();
                 });
             }
 
@@ -344,19 +332,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                             JSONObject jsonObject = new JSONObject(value);
                             Audience audience = JSON.parseObject(jsonObject.toString(), Audience.class);
                             audienceHashMap.put(Integer.parseInt(account), audience);
-                            Iterator iter = audienceHashMap.entrySet().iterator();
-                            audiences.clear();
-                            while (iter.hasNext()) {
-                                Map.Entry entry = (Map.Entry) iter.next();
-                                audiences.add((Audience) entry.getValue());
-                            }
-                            if (audienceCountText != null) {
-                                audienceCountText.setText("所有参会人 (" + audiences.size() + ")");
-                            }
-                            if (audienceAdapter != null) {
-                                audienceAdapter.setData(audiences);
-                            }
-                            audiencesButton.setText("参会人（" + audiences.size() + "）");
+                            updateAudienceList();
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -474,10 +450,6 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            } else if (type == 3) {
-
-            } else if (type == 4) {
-
             } else if (type == 5) {
                 isConnecting = true;
                 connectingHandler.sendEmptyMessageDelayed(0, 10000);
@@ -521,6 +493,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
 
                 audienceLayout.removeAllViews();
                 audienceNameText.setText("");
+
                 currentAudience = null;
                 try {
                     JSONObject jsonObject = new JSONObject();
@@ -555,8 +528,6 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
-            } else if (type == 5) {
 
             }
         });
