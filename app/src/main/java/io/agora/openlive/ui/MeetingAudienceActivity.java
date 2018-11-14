@@ -453,6 +453,8 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                                 audienceNameText.setText("");
                                 audienceLayout.setVisibility(View.GONE);
 
+                                localSurfaceView = null;
+
                                 if (!isDocShow) {
                                     fullScreenButton.setVisibility(View.GONE);
                                 }
@@ -520,7 +522,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                                         } else {
                                             broadcasterSmallLayout.setVisibility(View.VISIBLE);
                                         }
-                                        if (broadcasterSmallLayout.getChildCount() == 0) {
+                                        if (broadcasterSmallView.getChildCount() == 0) {
                                             broadcasterSmallView.removeAllViews();
                                             broadcasterSmallView.addView(remoteBroadcasterSurfaceView);
                                         }
@@ -583,7 +585,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                                                 } else {
                                                     broadcasterSmallLayout.setVisibility(View.VISIBLE);
                                                 }
-                                                if (broadcasterSmallLayout.getChildCount() == 0) {
+                                                if (broadcasterSmallView.getChildCount() == 0) {
                                                     broadcasterSmallView.removeAllViews();
                                                     broadcasterSmallView.addView(remoteBroadcasterSurfaceView);
                                                 }
@@ -632,6 +634,8 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                                 fullScreenButton.setVisibility(View.VISIBLE);
                                 audienceView.removeAllViews();
                                 audienceView.addView(remoteAudienceSurfaceView);
+                            } else {
+                                fullScreenButton.setVisibility(View.GONE);
                             }
                         }
                     }
@@ -743,7 +747,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                 } else {
                     broadcasterSmallLayout.setVisibility(View.VISIBLE);
                 }
-                if (broadcasterSmallLayout.getChildCount() == 0) {
+                if (broadcasterSmallView.getChildCount() == 0) {
                     broadcasterSmallView.removeAllViews();
                     broadcasterSmallView.addView(remoteBroadcasterSurfaceView);
                 }
