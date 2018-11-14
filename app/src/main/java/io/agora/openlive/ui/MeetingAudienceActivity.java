@@ -626,7 +626,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
             }
         });
 
-        startMeetingCamera();
+//        startMeetingCamera();
     }
 
     private void startMeetingCamera() {
