@@ -1,6 +1,7 @@
 package com.hezy.guide.phone.persistence;
 
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
@@ -370,7 +371,8 @@ public class Preferences {
     }
 
     public static SharedPreferences getPreferences() {
-        return PreferenceManager.getDefaultSharedPreferences(BaseApplication.getInstance());
+//        return PreferenceManager.getDefaultSharedPreferences(BaseApplication.getInstance());
+        return BaseApplication.getInstance().getSharedPreferences("remote", Context.MODE_MULTI_PROCESS);
     }
 
     public static void clear() {

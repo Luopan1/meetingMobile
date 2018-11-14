@@ -46,8 +46,8 @@ android {
         applicationId "com.hezy.guide.phone"
         minSdkVersion 16
         targetSdkVersion 27
-        versionName "1.1.0"
-        versionCode 16781312
+        versionName "1.1.1"
+        versionCode 16781313
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
         //默认编译赋值
