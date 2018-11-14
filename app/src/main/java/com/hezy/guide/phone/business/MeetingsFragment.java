@@ -1,7 +1,10 @@
 package com.hezy.guide.phone.business;
 
+import android.Manifest;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -55,6 +58,20 @@ public class MeetingsFragment extends BaseFragment {
     public MeetingAdapter.OnItemClickListener onItemClickListener = new MeetingAdapter.OnItemClickListener() {
         @Override
         public void onItemClick(View view, Meeting meeting) {
+            if (Build.VERSION.SDK_INT >= 23) {
+                //视频会议拍照功能
+                int REQUEST_CODE_CONTACT = 101;
+                String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Manifest.permission.CAMERA};
+                //验证是否许可权限
+                for (String str : permissions) {
+                    if (getActivity().checkSelfPermission(str) != PackageManager.PERMISSION_GRANTED) {
+                        //申请权限
+                        getActivity().requestPermissions(permissions, REQUEST_CODE_CONTACT);
+                        return;
+                    }
+                }
+            }
             initDialog(meeting);
         }
     };
