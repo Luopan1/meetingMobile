@@ -15,13 +15,13 @@ public class Audience implements Entity, Parcelable {
 
     private String uname;
 
-    private int auditStatus; // 1.已认证
-
     private String postTypeName;
 
-    private boolean handsUp;
+    private int auditStatus; // 1.已认证
 
-    private boolean calling;
+    private int callStatus; // 0-未通话，1-连接中，2-正在通话
+
+    private boolean handsUp; // true-申请发言，false-未申请发言
 
     public int getAuditStatus() {
         return auditStatus;
@@ -63,13 +63,14 @@ public class Audience implements Entity, Parcelable {
         this.handsUp = handsUp;
     }
 
-    public boolean isCalling() {
-        return calling;
+    public int getCallStatus() {
+        return callStatus;
     }
 
-    public void setCalling(boolean calling) {
-        this.calling = calling;
+    public void setCallStatus(int callStatus) {
+        this.callStatus = callStatus;
     }
+
     //    @Override
 //    public String toString() {
 //        return "Audience{" +
@@ -91,7 +92,7 @@ public class Audience implements Entity, Parcelable {
         return uid == audience.uid &&
                 auditStatus == audience.auditStatus &&
                 handsUp == audience.handsUp &&
-                calling == audience.calling &&
+                callStatus == audience.callStatus &&
                 Objects.equals(uname, audience.uname) &&
                 Objects.equals(postTypeName, audience.postTypeName);
     }
@@ -99,7 +100,7 @@ public class Audience implements Entity, Parcelable {
     @Override
     public int hashCode() {
 
-        return Objects.hash(uid, uname, auditStatus, postTypeName, handsUp, calling);
+        return Objects.hash(uid, uname, auditStatus, postTypeName, handsUp, callStatus);
     }
 
     @Override
@@ -114,7 +115,7 @@ public class Audience implements Entity, Parcelable {
         dest.writeInt(this.auditStatus);
         dest.writeString(this.postTypeName);
         dest.writeByte(this.handsUp ? (byte) 1 : (byte) 0);
-        dest.writeByte(this.calling ? (byte) 1 : (byte) 0);
+        dest.writeInt(this.callStatus);
     }
 
     public Audience() {
@@ -126,7 +127,7 @@ public class Audience implements Entity, Parcelable {
         this.auditStatus = in.readInt();
         this.postTypeName = in.readString();
         this.handsUp = in.readByte() != 0;
-        this.calling = in.readByte() != 0;
+        this.callStatus = in.readInt();
     }
 
     public static final Creator<Audience> CREATOR = new Creator<Audience>() {
