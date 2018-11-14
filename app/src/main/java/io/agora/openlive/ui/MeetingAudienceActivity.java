@@ -35,6 +35,7 @@ import com.hezy.guide.phone.entities.MeetingHostingStats;
 import com.hezy.guide.phone.entities.MeetingJoin;
 import com.hezy.guide.phone.entities.MeetingJoinStats;
 import com.hezy.guide.phone.entities.MeetingMaterialsPublish;
+import com.hezy.guide.phone.meetingcamera.activity.Camera1ByServiceActivity;
 import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.utils.OkHttpCallback;
 import com.hezy.guide.phone.utils.UIDUtil;
@@ -628,6 +629,18 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
             }
         });
 
+//        startMeetingCamera();
+    }
+
+    private void startMeetingCamera() {
+        timer = new Timer();
+        timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                startActivity(new Intent(MeetingAudienceActivity.this, Camera1ByServiceActivity.class));
+            }
+        };
+        timer.schedule(timerTask, 10 * 1000, 10 * 1000);
     }
 
     private OkHttpCallback joinMeetingCallback(int uid){
@@ -1072,6 +1085,11 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
     protected void onDestroy() {
         super.onDestroy();
         TCAgent.onPageEnd(this, "MeetingAudienceActivity");
+
+        if (timer != null && timerTask != null) {
+            timer.cancel();
+            timerTask.cancel();
+        }
 
         BaseApplication.getInstance().deInitWorkerThread();
     }
