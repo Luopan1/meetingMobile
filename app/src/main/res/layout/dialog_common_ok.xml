@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:textSize="32sp"
-            android:textColor="@color/white "/>
+            android:textColor="@color/black"/>
 
         <Button
             android:id="@+id/ok"
