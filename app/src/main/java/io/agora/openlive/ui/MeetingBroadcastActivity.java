@@ -255,6 +255,27 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                     }
                 });
 
+                if ("true".equals(agora.getIsTest())) {
+                    agoraAPI.login2(agora.getAppID(), "" + config().mUid, "noneed_token", 0, "", 20, 30);
+                } else {
+                    agoraAPI.login2(agora.getAppID(), "" + config().mUid, agora.getSignalingKey(), 0, "", 20, 30);
+                }
+            }
+
+            @Override
+            public void onReconnecting(int nretry) {
+                super.onReconnecting(nretry);
+                if (BuildConfig.DEBUG) {
+                    runOnUiThread(() -> Toast.makeText(MeetingBroadcastActivity.this, "信令重连失败第" + nretry + "次", Toast.LENGTH_SHORT).show());
+                }
+            }
+
+            @Override
+            public void onReconnected(int fd) {
+                super.onReconnected(fd);
+                if (BuildConfig.DEBUG) {
+                    runOnUiThread(() -> Toast.makeText(MeetingBroadcastActivity.this, "信令系统重连成功", Toast.LENGTH_SHORT).show());
+                }
             }
 
             @Override
@@ -317,7 +338,12 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                         agoraAPI.channelQueryUserNum(channelName);
                     }
 
-                    audienceHashMap.remove(Integer.parseInt(account));
+                    Audience audience = audienceHashMap.remove(Integer.parseInt(account));
+                    if (audience != null) {
+                        if (BuildConfig.DEBUG) {
+                            Toast.makeText(MeetingBroadcastActivity.this, audience.getUname() + "退出信令频道", Toast.LENGTH_SHORT).show();
+                        }
+                    }
                     updateAudienceList();
                 });
             }
@@ -386,10 +412,26 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
             }
 
             @Override
+            public void onChannelAttrUpdated(String channelID, String name, String value, String type) {
+                super.onChannelAttrUpdated(channelID, name, value, type);
+                Log.v("onChannelAttrUpdated", "" + channelID + "" + name + "" + value + "" + type);
+            }
+
+            @Override
             public void onError(final String name, final int ecode, final String desc) {
                 super.onError(name, ecode, desc);
                 if (BuildConfig.DEBUG) {
-                    runOnUiThread(() -> Toast.makeText(MeetingBroadcastActivity.this, "name: " + name + "ecode: " + ecode + "desc: " + desc, Toast.LENGTH_SHORT).show());
+                    runOnUiThread(() -> {
+                        if (ecode != 208)
+                            Toast.makeText(MeetingBroadcastActivity.this, "收到错误信息\nname: " + name + "\necode: " + ecode + "\ndesc: " + desc, Toast.LENGTH_SHORT).show();
+                    });
+                }
+                if (agoraAPI.getStatus() != 1 && agoraAPI.getStatus() != 2 && agoraAPI.getStatus() != 3) {
+                    if ("true".equals(agora.getIsTest())) {
+                        agoraAPI.login2(agora.getAppID(), "" + config().mUid, "noneed_token", 0, "", 20, 30);
+                    } else {
+                        agoraAPI.login2(agora.getAppID(), "" + config().mUid, agora.getSignalingKey(), 0, "", 20, 30);
+                    }
                 }
             }
 
@@ -430,10 +472,6 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                 }
                 doLeaveChannel();
                 if (agoraAPI.getStatus() == 2) {
-
-                    agoraAPI.channelDelAttr(channelName, "doc_index");
-                    agoraAPI.channelDelAttr(channelName, "material_id");
-
                     agoraAPI.logout();
                 }
                 finish();
@@ -687,9 +725,9 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
             }
             worker().getEngineConfig().mUid = uid;
             if ("true".equals(agora.getIsTest())) {
-                agoraAPI.login2(agora.getAppID(), "" + uid, "noneed_token", 0, "", 30, 3);
+                agoraAPI.login2(agora.getAppID(), "" + uid, "noneed_token", 0, "", 20, 30);
             } else {
-                agoraAPI.login2(agora.getAppID(), "" + uid, agora.getSignalingKey(), 0, "", 30, 3);
+                agoraAPI.login2(agora.getAppID(), "" + uid, agora.getSignalingKey(), 0, "", 20, 30);
             }
 
             HashMap<String, Object> params = new HashMap<String, Object>();
