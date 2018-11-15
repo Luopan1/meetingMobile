@@ -1,4 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.hezy.guide.phone">
 
     <supports-screens
@@ -173,6 +174,8 @@
             android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"
             android:screenOrientation="portrait" />
 
+        <activity android:name=".business.UpdateActivity"/>
+
         <receiver android:name=".receiver.PhoneReceiver">
             <intent-filter>
                 <!-- 获取来电广播 -->
@@ -185,7 +188,16 @@
         <!--服务开始-->
         <service android:name=".service.WSService" />
         <!--服务结束-->
-
+        <provider
+            android:authorities="com.hezy.guide.phone.fileprovider"
+            android:name="android.support.v4.content.FileProvider"
+            android:grantUriPermissions="true"
+            android:exported="false">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                tools:replace="android:resource"
+                android:resource="@xml/filepaths"/>
+        </provider>
         <!-- TD统计 开始-->
         <service
             android:name="com.talkingdata.sdk.TDAntiCheatingService"
@@ -203,6 +215,7 @@
             android:name="TD_CHANNEL_ID"
             android:value="${TD_CHANNEL_ID}" />
         <!-- TD统计 结束-->
+
 
     </application>
 

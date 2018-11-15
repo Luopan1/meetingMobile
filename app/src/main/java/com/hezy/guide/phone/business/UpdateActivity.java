@@ -9,9 +9,11 @@ import android.content.IntentFilter;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.support.v4.content.FileProvider;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -40,6 +42,7 @@ public class UpdateActivity extends BasicActivity {
 
     private static final String MIME_TYPE = "application/vnd.android.package-archive";
     private static final int MIN_SIZE = 100;
+    private boolean downComplete = false;
 
     public class CompleteReceiver extends BroadcastReceiver {
         @Override
@@ -47,12 +50,12 @@ public class UpdateActivity extends BasicActivity {
             String action = intent.getAction();
             if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
                 long completeDownloadId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
-
                 final Uri uriForDownloadedFile = downloadManager.getUriForDownloadedFile(completeDownloadId);
                 Log.d("uri", "" + uriForDownloadedFile);
 
                 if (uriForDownloadedFile != null) {
-                    installApk(uriForDownloadedFile);
+                    downComplete = true;
+                    installApk();
                 } else {
                     finish();
                 }
@@ -60,17 +63,7 @@ public class UpdateActivity extends BasicActivity {
         }
 
         //安装apk
-        protected void installApk(Uri uri) {
-            String fileName = uri.getPath();
-            if (!TextUtils.isEmpty(fileName)) {
-                Log.i("filepath--->", fileName);
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.setDataAndType(Uri.fromFile(new File(fileName)), MIME_TYPE);
-                startActivity(intent);
-            }
-            finish();
-        }
+
     }
 
     private CompleteReceiver completeReceiver;
@@ -106,6 +99,10 @@ public class UpdateActivity extends BasicActivity {
         downloadObserver = new DownloadChangeObserver(null);
         getContentResolver().registerContentObserver(CONTENT_URI, true, downloadObserver);
 
+        if (isFileExist("/storage/emulated/0/Download/GuideTV.apk")) {
+
+            deleteFileApk("/storage/emulated/0/Download/GuideTV.apk");
+        }
         if (checkStorageIsAvailable()) {
             if (!CheckNetWorkStatus.isNetworkAvailable(this)) {
                 showNetworkDialog();
@@ -115,6 +112,109 @@ public class UpdateActivity extends BasicActivity {
         } else {
             Toast.makeText(this, "存储信息获取失败", Toast.LENGTH_SHORT).show();
         }
+
+
+    }
+
+    private boolean isFileExist(String path) {
+        if (path != null) {
+            File file = new File(path);
+            if (file.isFile() && file.exists()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void deleteFileApk(String path) {
+        if (path != null) {
+            File file = new File(path);
+            if (file.isFile() && file.exists()) {
+                file.delete();
+            }
+        }
+    }
+
+    protected void installApk() {
+//            String fileName = uri.getPath();
+//            String filePath = (fileName+"/"+"GuideTV.apk");
+        String filePath = "/storage/emulated/0/Download/GuideTV.apk";
+        Intent intent = new Intent();
+        Log.e("tag", "安装地址---》" + filePath);
+
+        Uri uri = null;
+        if (Build.VERSION.SDK_INT >= 24) {
+            intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            uri = FileProvider.getUriForFile(getApplicationContext(), "com.hezy.guide.phone.fileprovider", new File(filePath));
+            intent.setDataAndType(uri, "application/vnd.android.package-archive");
+        } else {
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.setAction(Intent.ACTION_VIEW);
+            intent.setDataAndType(Uri.parse("file://" + filePath), "application/vnd.android.package-archive");
+        }
+        startActivity(intent);
+//            finish();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(dialog == null ||(dialog !=null && !dialog.isShowing())){
+            if (downComplete) {
+                installApk();
+            }
+        }
+
+    }
+
+    private void showExitDialog(final Version version) {
+
+        dialog = new Dialog(UpdateActivity.this, R.style.MyDialog);
+        View view = View.inflate(this, R.layout.dialog_selector, null);
+        final TextView titleText = (TextView) view.findViewById(R.id.title);
+
+        if (version.getImportance() == 4) {
+            titleText.setText("确定中断升级并退出应用？");
+        } else {
+            titleText.setText("确定中断升级？");
+        }
+
+        Button okBtn = (Button) view.findViewById(R.id.left);
+        okBtn.setText("取消");
+        okBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                if (version.getImportance() == 4) {
+//                    finish();
+//                } else {
+//                    if (Preferences.isLogin()) {
+//                        startActivity(new Intent(UpdateActivity.this, HomeActivity.class));
+//                    } else {
+//                        startActivity(new Intent(UpdateActivity.this, WXEntryActivity.class));
+//                    }
+//                }
+//                downloadManager.remove(downloadId);
+
+                if (downComplete) {
+                    installApk();
+                }
+                dialog.dismiss();
+            }
+        });
+
+        Button cancelBtn = (Button) view.findViewById(R.id.right);
+        cancelBtn.setText("确定");
+        cancelBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                dialog.dismiss();
+                finish();
+                dialog.dismiss();
+            }
+        });
+        dialog.setCancelable(false);
+        dialog.setContentView(view);
+        dialog.show();
     }
 
     private boolean checkStorageIsAvailable() {
@@ -154,6 +254,7 @@ public class UpdateActivity extends BasicActivity {
     }
 
     private MyDialog mNetworkDialog;
+
     private void showNetworkDialog() {
         MyDialog.Builder builder = new MyDialog.Builder(this);
         builder.setMessage("未检测到网络连接，请先设置网络");
@@ -276,44 +377,5 @@ public class UpdateActivity extends BasicActivity {
 
     private Dialog dialog;
 
-    private void showExitDialog(final Version version) {
-        dialog = new Dialog(UpdateActivity.this, R.style.CustomDialog);
-        View view = View.inflate(this, R.layout.dialog_cancle_delete, null);
-        final TextView titleText = (TextView) view.findViewById(R.id.textView3);
-
-        if (version.getImportance() == 4) {
-            titleText.setText("确定中断升级并退出应用？");
-        } else {
-            titleText.setText("确定中断升级？");
-        }
-
-        Button okBtn = (Button) view.findViewById(R.id.upload);
-        okBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (version.getImportance() == 4) {
-                    finish();
-                } else {
-                    if (Preferences.isLogin()) {
-                        startActivity(new Intent(UpdateActivity.this, HomeActivity.class));
-                    } else {
-                        startActivity(new Intent(UpdateActivity.this, WXEntryActivity.class));
-                    }
-                }
-                downloadManager.remove(downloadId);
-                dialog.dismiss();
-            }
-        });
-
-        Button cancelBtn = (Button) view.findViewById(R.id.cancel);
-        cancelBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-        dialog.setContentView(view);
-        dialog.show();
-    }
 
 }

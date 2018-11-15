@@ -94,6 +94,11 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 
     private AgoraAPIOnlySignal agoraAPI;
 
+    private static final String DOC_INFO = "doc_info";
+    private static final String CALLING_AUDIENCE = "calling_audience";
+
+    private int currentAudienceId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -362,16 +367,25 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                     fullScreenButton.setVisibility(View.VISIBLE);
 
                     audienceLayout.setVisibility(View.VISIBLE);
-
                     audienceNameText.setText(value);
 
-                    localSurfaceView = null;
-                    audienceView.removeAllViews();
-                    remoteAudienceSurfaceView = RtcEngine.CreateRendererView(getApplicationContext());
-                    remoteAudienceSurfaceView.setZOrderOnTop(true);
-                    remoteAudienceSurfaceView.setZOrderMediaOverlay(true);
-                    rtcEngine().setupRemoteVideo(new VideoCanvas(remoteAudienceSurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, Integer.parseInt(account)));
-                    audienceView.addView(remoteAudienceSurfaceView);
+                    if (config().mUid == Integer.parseInt(account)) {
+                        remoteAudienceSurfaceView= null;
+                        audienceView.removeAllViews();
+                        localSurfaceView = RtcEngine.CreateRendererView(getApplicationContext());
+                        localSurfaceView.setZOrderOnTop(true);
+                        localSurfaceView.setZOrderMediaOverlay(true);
+                        rtcEngine().setupLocalVideo(new VideoCanvas(localSurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, Integer.parseInt(account)));
+                        audienceView.addView(localSurfaceView);
+                    } else {
+                        localSurfaceView = null;
+                        audienceView.removeAllViews();
+                        remoteAudienceSurfaceView = RtcEngine.CreateRendererView(getApplicationContext());
+                        remoteAudienceSurfaceView.setZOrderOnTop(true);
+                        remoteAudienceSurfaceView.setZOrderMediaOverlay(true);
+                        rtcEngine().setupRemoteVideo(new VideoCanvas(remoteAudienceSurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, Integer.parseInt(account)));
+                        audienceView.addView(remoteAudienceSurfaceView);
+                    }
                 });
             }
 
@@ -439,6 +453,19 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 
                                 worker().getRtcEngine().setClientRole(Constants.CLIENT_ROLE_BROADCASTER);
 
+                                try {
+                                    JSONObject jsonObject1 = new JSONObject();
+                                    jsonObject1.put("handsUp", handsUp);
+                                    jsonObject1.put("uid", config().mUid);
+                                    jsonObject1.put("uname", audienceName);
+                                    jsonObject1.put("callStatus", 0);
+                                    jsonObject1.put("auditStatus", Preferences.getUserAuditStatus());
+                                    jsonObject1.put("postTypeName", Preferences.getUserPostType());
+                                    agoraAPI.messageInstantSend(broadcastId, 0, jsonObject1.toString(), "");
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+
                                 HashMap<String, Object> params = new HashMap<String, Object>();
                                 params.put("status", 1);
                                 params.put("meetingId", meetingJoin.getMeeting().getId());
@@ -461,6 +488,8 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                                 audienceNameText.setText("");
                                 audienceLayout.setVisibility(View.GONE);
 
+                                agoraAPI.setAttr("uname", null);
+
                                 localSurfaceView = null;
 
                                 if (!isDocShow) {
@@ -476,13 +505,14 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                                 worker().getRtcEngine().setClientRole(Constants.CLIENT_ROLE_AUDIENCE);
 
                                 try {
-                                    JSONObject jsonObject2 = new JSONObject();
-                                    jsonObject2.put("handsUp", handsUp);
-                                    jsonObject2.put("uid", config().mUid);
-                                    jsonObject2.put("uname", audienceName);
-                                    jsonObject2.put("auditStatus", Preferences.getUserAuditStatus());
-                                    jsonObject2.put("postTypeName", Preferences.getUserPostType());
-                                    agoraAPI.messageInstantSend(broadcastId, 0, jsonObject2.toString(), "");
+                                    JSONObject jsonObject1 = new JSONObject();
+                                    jsonObject1.put("handsUp", handsUp);
+                                    jsonObject1.put("uid", config().mUid);
+                                    jsonObject1.put("uname", audienceName);
+                                    jsonObject1.put("callStatus", 0);
+                                    jsonObject1.put("auditStatus", Preferences.getUserAuditStatus());
+                                    jsonObject1.put("postTypeName", Preferences.getUserPostType());
+                                    agoraAPI.messageInstantSend(broadcastId, 0, jsonObject1.toString(), "");
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
@@ -567,6 +597,40 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                 super.onChannelAttrUpdated(channelID, name, value, type);
                 Log.v("onChannelAttrUpdated", "channelID:" + channelID + ", name:" + name + ", value:" + value + ", type:" + type);
                 runOnUiThread(() -> {
+                    if (CALLING_AUDIENCE.equals(name)) {
+                        if (TextUtils.isEmpty(value)) {
+                            if (remoteAudienceSurfaceView != null) {
+                                audienceView.removeAllViews();
+                                audienceNameText.setText("");
+                                audienceLayout.setVisibility(View.GONE);
+                                remoteAudienceSurfaceView = null;
+                            }
+                            if (localSurfaceView != null) {
+                                worker().getRtcEngine().setClientRole(Constants.CLIENT_ROLE_AUDIENCE);
+                                audienceView.removeAllViews();
+                                audienceNameText.setText("");
+                                audienceLayout.setVisibility(View.GONE);
+                                stopTalkButton.setVisibility(View.GONE);
+                                requestTalkButton.setVisibility(View.VISIBLE);
+                                localSurfaceView = null;
+                                if (!isDocShow) {
+                                    fullScreenButton.setVisibility(View.GONE);
+                                }
+                                agoraAPI.setAttr("uname", null);
+
+                                if (!TextUtils.isEmpty(meetingHostJoinTraceId)) {
+                                    HashMap<String, Object> params = new HashMap<String, Object>();
+                                    params.put("meetingHostJoinTraceId", meetingHostJoinTraceId);
+                                    params.put("status", 2);
+                                    params.put("meetingId", meetingJoin.getMeeting().getId());
+                                    ApiClient.getInstance().meetingHostStats(TAG, meetingHostJoinTraceCallback, params);
+                                }
+                            }
+                        } else {
+                            currentAudienceId = Integer.parseInt(value);
+                            agoraAPI.getUserAttr(value, "uname");
+                        }
+                    }
                     if ("doc_info".equals(name)) {
                         agoraAPI.channelQueryUserNum(channelName);
                         if (!TextUtils.isEmpty(value)) {
@@ -728,7 +792,9 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                         if (BuildConfig.DEBUG) {
                             Toast.makeText(MeetingAudienceActivity.this, "参会人" + uid + "正在连麦", Toast.LENGTH_SHORT).show();
                         }
-                        agoraAPI.getUserAttr(String.valueOf(uid), "uname"); // 获取名为 uid 的用户的 uname 属性值。结果通过 ICallBack 类的 onUserAttrResult 回调返回
+                        if (currentAudienceId != 0 && uid == currentAudienceId) {
+                            agoraAPI.getUserAttr(String.valueOf(uid), "uname"); // 获取名为 uid 的用户的 uname 属性值。结果通过 ICallBack 类的 onUserAttrResult 回调返回
+                        }
                     }
                 } else {
                     if ("true".equals(agora.getIsTest())) {
@@ -821,16 +887,71 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
         rightButton.setOnClickListener(view1 -> {
             dialog.cancel();
             if (type == 1) {
-                if (handsUp) {
+                if (localSurfaceView != null && remoteAudienceSurfaceView == null) {
+                    agoraAPI.setAttr("uname", null);
+
+                    audienceView.removeAllViews();
+                    audienceNameText.setText("");
+                    audienceLayout.setVisibility(View.GONE);
+
+                    localSurfaceView = null;
+
+                    agoraAPI.setAttr("uname", null);
+                    agoraAPI.channelDelAttr(channelName, CALLING_AUDIENCE);
+
+                    localSurfaceView = null;
+
+                    if (!isDocShow) {
+                        fullScreenButton.setVisibility(View.GONE);
+                    }
+                    requestTalkButton.setVisibility(View.VISIBLE);
+                    stopTalkButton.setVisibility(View.GONE);
+
                     handsUp = false;
+                    requestTalkButton.setText("我要发言");
+                    requestTalkButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_meeting_signup, 0, 0, 0);
+
+                    worker().getRtcEngine().setClientRole(Constants.CLIENT_ROLE_AUDIENCE);
+
+                    try {
+                        JSONObject jsonObject = new JSONObject();
+                        jsonObject.put("handsUp", handsUp);
+                        jsonObject.put("uid", config().mUid);
+                        jsonObject.put("uname", audienceName);
+                        jsonObject.put("callStatus", 0);
+                        jsonObject.put("auditStatus", Preferences.getUserAuditStatus());
+                        jsonObject.put("postTypeName", Preferences.getUserPostType());
+                        agoraAPI.messageInstantSend(broadcastId, 0, jsonObject.toString(), "");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    if (!TextUtils.isEmpty(meetingHostJoinTraceId)) {
+                        HashMap<String, Object> params = new HashMap<String, Object>();
+                        params.put("meetingHostJoinTraceId", meetingHostJoinTraceId);
+                        params.put("status", 2);
+                        params.put("meetingId", meetingJoin.getMeeting().getId());
+                        ApiClient.getInstance().meetingHostStats(TAG, meetingHostJoinTraceCallback, params);
+                    }
+                    try {
+                        JSONObject jsonObject = new JSONObject();
+                        jsonObject.put("finish", true);
+                        agoraAPI.messageInstantSend(broadcastId, 0, jsonObject.toString(), "");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else if (localSurfaceView == null && remoteAudienceSurfaceView != null){
+                    audienceView.removeAllViews();
+                    audienceNameText.setText("");
+                    audienceLayout.setVisibility(View.GONE);
+
+                    remoteAudienceSurfaceView = null;
+
+                    if (!isDocShow) {
+                        fullScreenButton.setVisibility(View.GONE);
+                    }
                 }
-                try {
-                    JSONObject jsonObject = new JSONObject();
-                    jsonObject.put("finish", true);
-                    agoraAPI.messageInstantSend(broadcastId, 0, jsonObject.toString(), "");
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+
                 doLeaveChannel();
                 if (agoraAPI.getStatus() == 2) {
                     agoraAPI.logout();
@@ -847,6 +968,9 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                 if (!isDocShow) {
                     fullScreenButton.setVisibility(View.GONE);
                 }
+
+                agoraAPI.channelDelAttr(channelName, CALLING_AUDIENCE);
+
                 try {
                     JSONObject jsonObject = new JSONObject();
                     jsonObject.put("finish", true);
@@ -860,6 +984,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                     jsonObject.put("handsUp", handsUp);
                     jsonObject.put("uid", config().mUid);
                     jsonObject.put("uname", audienceName);
+                    jsonObject.put("callStatus", 0);
                     jsonObject.put("auditStatus", Preferences.getUserAuditStatus());
                     jsonObject.put("postTypeName", Preferences.getUserPostType());
                     agoraAPI.messageInstantSend(broadcastId, 0, jsonObject.toString(), "");
@@ -1011,18 +1136,6 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                         e.printStackTrace();
                     }
 
-                    try {
-                        JSONObject jsonObject = new JSONObject();
-                        jsonObject.put("handsUp", handsUp);
-                        jsonObject.put("uid", config().mUid);
-                        jsonObject.put("uname", audienceName);
-                        jsonObject.put("auditStatus", Preferences.getUserAuditStatus());
-                        jsonObject.put("postTypeName", Preferences.getUserPostType());
-                        agoraAPI.messageInstantSend(broadcastId, 0, jsonObject.toString(), "");
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
                     if (!TextUtils.isEmpty(meetingHostJoinTraceId)) {
                         HashMap<String, Object> params = new HashMap<String, Object>();
                         params.put("meetingHostJoinTraceId", meetingHostJoinTraceId);
@@ -1034,6 +1147,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
             } else {
                 if (BuildConfig.DEBUG)
                     Toast.makeText(MeetingAudienceActivity.this, "连麦观众" + uid + "退出了" + config().mUid, Toast.LENGTH_SHORT).show();
+
                 audienceView.removeAllViews();
                 audienceNameText.setText("");
                 audienceLayout.setVisibility(View.GONE);
@@ -1145,7 +1259,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
     @Override
     public void onBackPressed() {
         if (dialog == null || !dialog.isShowing()) {
-            showDialog(1, "确定退出会议？", "取消", "确定", null);
+            showDialog(1, "确定退出会议吗？", "取消", "确定", null);
         }
     }
 
