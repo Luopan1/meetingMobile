@@ -3,11 +3,8 @@
     android:shape="rectangle">
 
     <gradient
-        android:angle="90.0"
         android:startColor="@color/dialog_okbtn_normal"
-        android:centerColor="@color/dialog_okbtn_normal"
         android:endColor="@color/dialog_okbtn_normal"/>
     <corners
-        android:radius="40dp" />
-
+        android:radius="@dimen/my_px_58" />
 </shape>

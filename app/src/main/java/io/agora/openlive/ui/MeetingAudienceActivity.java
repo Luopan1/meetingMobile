@@ -243,7 +243,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
             public void onLoginSuccess(int uid, int fd) {
                 super.onLoginSuccess(uid, fd);
                 if (BuildConfig.DEBUG) {
-                    runOnUiThread(() -> Toast.makeText(MeetingAudienceActivity.this, "观众登陆信令系统成功", Toast.LENGTH_SHORT).show());
+                    runOnUiThread(() -> Toast.makeText(MeetingAudienceActivity.this, "观众登录信令系统成功", Toast.LENGTH_SHORT).show());
                 }
                 agoraAPI.channelJoin(channelName);
             }
@@ -252,7 +252,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
             public void onLoginFailed(final int ecode) {
                 super.onLoginFailed(ecode);
                 if (BuildConfig.DEBUG) {
-                    runOnUiThread(() -> Toast.makeText(MeetingAudienceActivity.this, "观众登陆信令系统失败" + ecode, Toast.LENGTH_SHORT).show());
+                    runOnUiThread(() -> Toast.makeText(MeetingAudienceActivity.this, "观众登录信令系统失败" + ecode, Toast.LENGTH_SHORT).show());
                 }
                 if ("true".equals(agora.getIsTest())) {
                     agoraAPI.login2(agora.getAppID(), "" + config().mUid, "noneed_token", 0, "", 20, 30);
@@ -275,7 +275,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                 super.onChannelJoined(channelID);
                 runOnUiThread(() -> {
                     if (BuildConfig.DEBUG) {
-                        Toast.makeText(MeetingAudienceActivity.this, "观众登陆信令频道成功", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MeetingAudienceActivity.this, "观众登录信令频道成功", Toast.LENGTH_SHORT).show();
                     }
                     agoraAPI.queryUserStatus(broadcastId);
                     agoraAPI.channelQueryUserNum(channelName);
@@ -322,7 +322,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                 super.onChannelJoinFailed(channelID, ecode);
                 runOnUiThread(() -> {
                     if (BuildConfig.DEBUG) {
-                        Toast.makeText(MeetingAudienceActivity.this, "观众登陆信令频道失败", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MeetingAudienceActivity.this, "观众登录信令频道失败", Toast.LENGTH_SHORT).show();
                     }
                 });
             }

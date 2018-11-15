@@ -1,39 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginLeft="@dimen/my_px_63"
+    android:layout_marginRight="@dimen/my_px_63"
     android:layout_gravity="center"
-    android:background="@drawable/bg_message_dialog"
-    android:gravity="center"
-    android:orientation="horizontal"
-    android:padding="48dp">
+    android:orientation="horizontal">
 
-    <LinearLayout
-        android:layout_width="@dimen/my_px_800"
-        android:layout_height="match_parent"
-        android:gravity="center_horizontal"
-        android:orientation="vertical">
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/my_px_66"
+        android:layout_marginStart="@dimen/my_px_66"
+        android:layout_marginTop="@dimen/my_px_52"
+        android:layout_marginRight="@dimen/my_px_66"
+        android:layout_marginEnd="@dimen/my_px_66"
+        android:gravity="center"
+        android:lines="1"
+        android:text="您的登录信息已过期，请重新登录"
+        android:textColor="#FF434343"
+        android:textSize="@dimen/my_sp_43"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textSize="20sp"
-            android:textColor="@color/black"/>
+    <Button
+        android:id="@+id/ok"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/my_px_66"
+        android:layout_marginLeft="@dimen/my_px_66"
+        android:layout_marginTop="@dimen/my_px_96"
+        android:layout_marginEnd="@dimen/my_px_66"
+        android:layout_marginRight="@dimen/my_px_66"
+        android:layout_marginBottom="@dimen/my_px_79"
+        android:background="@drawable/bg_button_dialog_selector"
+        android:focusable="true"
+        android:paddingLeft="@dimen/my_px_86"
+        android:paddingRight="@dimen/my_px_86"
+        android:text="确定"
+        android:textColor="@color/white"
+        android:textSize="@dimen/my_sp_43"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title">
+        <requestFocus />
+    </Button>
 
-        <Button
-            android:id="@+id/ok"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/dialog_confirm1_selector"
-            android:focusable="true">
-
-            <requestFocus />
-        </Button>
-
-
-    </LinearLayout>
-
-</LinearLayout>
+</android.support.constraint.ConstraintLayout>

@@ -199,7 +199,7 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(LiveRoomActivity.this, "观众登陆信令系统成功", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(LiveRoomActivity.this, "观众登录信令系统成功", Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
@@ -213,7 +213,7 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(LiveRoomActivity.this, "观众登陆信令系统失败" + ecode, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(LiveRoomActivity.this, "观众登录信令系统失败" + ecode, Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
