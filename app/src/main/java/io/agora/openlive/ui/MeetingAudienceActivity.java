@@ -453,19 +453,6 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 
                                 worker().getRtcEngine().setClientRole(Constants.CLIENT_ROLE_BROADCASTER);
 
-                                try {
-                                    JSONObject jsonObject1 = new JSONObject();
-                                    jsonObject1.put("handsUp", handsUp);
-                                    jsonObject1.put("uid", config().mUid);
-                                    jsonObject1.put("uname", audienceName);
-                                    jsonObject1.put("callStatus", 0);
-                                    jsonObject1.put("auditStatus", Preferences.getUserAuditStatus());
-                                    jsonObject1.put("postTypeName", Preferences.getUserPostType());
-                                    agoraAPI.messageInstantSend(broadcastId, 0, jsonObject1.toString(), "");
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-
                                 HashMap<String, Object> params = new HashMap<String, Object>();
                                 params.put("status", 1);
                                 params.put("meetingId", meetingJoin.getMeeting().getId());
@@ -503,19 +490,6 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                                 requestTalkButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_meeting_signup, 0, 0, 0);
 
                                 worker().getRtcEngine().setClientRole(Constants.CLIENT_ROLE_AUDIENCE);
-
-                                try {
-                                    JSONObject jsonObject1 = new JSONObject();
-                                    jsonObject1.put("handsUp", handsUp);
-                                    jsonObject1.put("uid", config().mUid);
-                                    jsonObject1.put("uname", audienceName);
-                                    jsonObject1.put("callStatus", 0);
-                                    jsonObject1.put("auditStatus", Preferences.getUserAuditStatus());
-                                    jsonObject1.put("postTypeName", Preferences.getUserPostType());
-                                    agoraAPI.messageInstantSend(broadcastId, 0, jsonObject1.toString(), "");
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
 
                                 if (!TextUtils.isEmpty(meetingHostJoinTraceId)) {
                                     HashMap<String, Object> params = new HashMap<String, Object>();
@@ -579,10 +553,13 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                         if (jsonObject.has("finish_meeting")) {
                             boolean finishMeeting = jsonObject.getBoolean("finish_meeting");
                             if (finishMeeting) {
-                                if (BuildConfig.DEBUG)
+                                if (BuildConfig.DEBUG) {
                                     Toast.makeText(MeetingAudienceActivity.this, "主持人结束了会议", Toast.LENGTH_SHORT).show();
-                                agoraAPI.channelLeave(channelName);
-                                agoraAPI.logout();
+                                }
+                                doLeaveChannel();
+                                if (agoraAPI.getStatus() == 2) {
+                                    agoraAPI.logout();
+                                }
                                 finish();
                             }
                         }
@@ -888,8 +865,6 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
             dialog.cancel();
             if (type == 1) {
                 if (localSurfaceView != null && remoteAudienceSurfaceView == null) {
-                    agoraAPI.setAttr("uname", null);
-
                     audienceView.removeAllViews();
                     audienceNameText.setText("");
                     audienceLayout.setVisibility(View.GONE);
@@ -898,8 +873,6 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 
                     agoraAPI.setAttr("uname", null);
                     agoraAPI.channelDelAttr(channelName, CALLING_AUDIENCE);
-
-                    localSurfaceView = null;
 
                     if (!isDocShow) {
                         fullScreenButton.setVisibility(View.GONE);
