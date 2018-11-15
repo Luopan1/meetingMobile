@@ -16,6 +16,8 @@ import com.hezy.guide.phone.R;
 import com.hezy.guide.phone.entities.Agora;
 import com.hezy.guide.phone.entities.Bucket;
 import com.hezy.guide.phone.entities.MeetingJoin;
+import com.hezy.guide.phone.entities.Version;
+import com.hezy.guide.phone.entities.base.BaseBean;
 import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.utils.OkHttpCallback;
 import com.hezy.guide.phone.utils.ToastUtils;
@@ -54,6 +56,25 @@ public class LinkEntryActivity extends AppCompatActivity {
 
         initView();
         initData();
+        versionCheck();
+    }
+
+    private void versionCheck() {
+        ApiClient.getInstance().versionCheck(this, new OkHttpCallback<BaseBean<Version>>() {
+            @Override
+            public void onSuccess(BaseBean<Version> entity) {
+                Version version = entity.getData();
+                if (version == null || version.getImportance() == 0) {
+                    return;
+                }
+                if (version.getImportance() != 1 && version.getImportance() != 2) {
+                    startActivity(new Intent(getApplication(), UpdateActivity.class).putExtra("version", version));
+                    finish();
+                }
+
+
+            }
+        });
     }
 
     private void initData() {
