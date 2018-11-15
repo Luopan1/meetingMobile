@@ -22,6 +22,7 @@ import com.hezy.guide.phone.BuildConfig;
 import com.hezy.guide.phone.R;
 import com.hezy.guide.phone.business.HomeActivity;
 import com.hezy.guide.phone.business.PhoneRegisterActivity;
+import com.hezy.guide.phone.business.UpdateActivity;
 import com.hezy.guide.phone.business.UserInfoActivity;
 import com.hezy.guide.phone.entities.FinishWX;
 import com.hezy.guide.phone.entities.LoginWechat;
@@ -117,6 +118,8 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
         }
 
     }
+
+
 
     protected void initView() {
         wchatLoginImage = findViewById(R.id.wchat_login);
@@ -228,23 +231,40 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
             versionCheck();
         }
     };
-
     private void versionCheck() {
         ApiClient.getInstance().versionCheck(this, new OkHttpCallback<BaseBean<Version>>() {
             @Override
             public void onSuccess(BaseBean<Version> entity) {
                 Version version = entity.getData();
-                if (version.getImportance() != 1) {
-                    Intent intent = new Intent();
-                    intent.setAction(Intent.ACTION_VIEW);
-                    Uri content_url = Uri.parse(version.getUrl());
-                    intent.setData(content_url);
-                    startActivity(Intent.createChooser(intent, "请选择浏览器"));
+                if (version == null || version.getImportance() == 0) {
+                    return;
                 }
-            }
+                if (version.getImportance() != 1 && version.getImportance() != 2) {
+                    startActivity(new Intent(getApplication(), UpdateActivity.class).putExtra("version", version));
+                    finish();
+                }
 
+
+            }
         });
     }
+
+//    private void versionCheck() {
+//        ApiClient.getInstance().versionCheck(this, new OkHttpCallback<BaseBean<Version>>() {
+//            @Override
+//            public void onSuccess(BaseBean<Version> entity) {
+//                Version version = entity.getData();
+//                if (version.getImportance() != 1) {
+//                    Intent intent = new Intent();
+//                    intent.setAction(Intent.ACTION_VIEW);
+//                    Uri content_url = Uri.parse(version.getUrl());
+//                    intent.setData(content_url);
+//                    startActivity(Intent.createChooser(intent, "请选择浏览器"));
+//                }
+//            }
+//
+//        });
+//    }
 
     private void reToWx() {
         String app_id = BuildConfig.WEIXIN_APP_ID;
