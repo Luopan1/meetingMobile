@@ -94,6 +94,10 @@ public class ApiClient {
         okHttpUtil.postJson(API_DOMAIN_NAME + "/osg/app/user/expostor/online/stats", getCommonHead(), JSON.toJSONString(values), callback, tag);
     }
 
+    //提交聊天内容/osg/app/forum
+    public void expostorPostChatMessage(Object tag, OkHttpCallback callback, Map<String, Object> values) {
+        okHttpUtil.postJson(API_DOMAIN_NAME + "/osg/app/forum", getCommonHead(), JSON.toJSONString(values), callback, tag);
+    }
     public void meetingJoinStats(Object tag, OkHttpCallback callback, Map<String, Object> values) {
         okHttpUtil.postJson(API_DOMAIN_NAME + "/osg/app/meeting/join/stats", getCommonHead(), JSON.toJSONString(values), callback, tag);
     }
@@ -123,6 +127,14 @@ public class ApiClient {
         okHttpUtil.get(url, getCommonHead(), null, callback);
     }
 
+    ///osg/app/forum/{meetingId}/content
+    public void getChatMessages(Object tag, String meetingId, String pageNo, String pageSize,OkHttpCallback callback) {
+        String url = API_DOMAIN_NAME + "/osg/app/forum/"+meetingId+"/content";
+        Map<String, String> params = new HashMap<>();
+        params.put("pageNo", pageNo);
+        params.put("pageSize", pageSize);
+        okHttpUtil.get(url, getCommonHead(), null, callback);
+    }
     public void verifyRole(Object tag, OkHttpCallback callback, Map<String, Object> values) {
         okHttpUtil.postJson(API_DOMAIN_NAME + "/osg/app/meeting/verify", getCommonHead(), JSON.toJSONString(values), callback, tag);
     }

@@ -9,16 +9,21 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.hezy.guide.phone.R;
+import com.hezy.guide.phone.entities.ChatMesData;
+import com.hezy.guide.phone.persistence.Preferences;
+import com.hezy.guide.phone.utils.helper.ImageHelper;
 
 import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class chatAdapter extends RecyclerView.Adapter<chatAdapter.ViewHolder> {
 
     private Context context;
-    private List<String> data;
+    private List<ChatMesData.PageDataEntity> data;
     private onClickCallBack callBack;
 
-    public chatAdapter(Context context, List<String> data, onClickCallBack tempCallBack){
+    public chatAdapter(Context context, List<ChatMesData.PageDataEntity> data, onClickCallBack tempCallBack){
         this.context = context;
         this.data = data;
         this.callBack = tempCallBack;
@@ -40,7 +45,7 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.ViewHolder> {
 
     @Override
     public int getItemViewType(int position) {
-        if(position%2==0){
+        if(!data.get(position).getUserName().equals(Preferences.getUserName())){
             return 0;
         }else {
             return 1;
@@ -59,7 +64,9 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.ViewHolder> {
             }
         });
 
-        ((TextView)holder.itemView.findViewById(R.id.tv_num)).setText(data.get(position));
+        ((TextView)holder.name).setText(data.get(position).getUserName());
+        ((TextView)holder.tvContent).setText(data.get(position).getContent());
+        ImageHelper.loadImageDpId(data.get(position).getUserLogo(), R.dimen.my_px_66, R.dimen.my_px_66, holder.imgHead);
     }
 
     @Override
@@ -69,11 +76,15 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.ViewHolder> {
 
     public class ViewHolder extends RecyclerView.ViewHolder{
 
-//        private TextView name;
+        private TextView name;
+        private TextView tvContent;
+        private CircleImageView imgHead;
 
         public ViewHolder(View itemView) {
             super(itemView);
-//            name = itemView.findViewById(R.id.name);
+            name = itemView.findViewById(R.id.tv_name);
+            tvContent = itemView.findViewById(R.id.tv_content);
+            imgHead = (CircleImageView)itemView.findViewById(R.id.mIvHead);
 
         }
     }

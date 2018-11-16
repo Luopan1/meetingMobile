@@ -8,6 +8,7 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,11 +23,20 @@ import com.hezy.guide.phone.R;
 import com.hezy.guide.phone.business.adapter.GuideLogAdapter;
 import com.hezy.guide.phone.business.adapter.chatAdapter;
 import com.hezy.guide.phone.business.adapter.inputAdapter;
+import com.hezy.guide.phone.entities.Bucket;
+import com.hezy.guide.phone.entities.ChatMesData;
+import com.hezy.guide.phone.entities.ExpostorOnlineStats;
 import com.hezy.guide.phone.entities.RecordData;
 import com.hezy.guide.phone.entities.base.BaseBean;
+import com.hezy.guide.phone.persistence.Preferences;
+import com.hezy.guide.phone.utils.Logger;
 import com.hezy.guide.phone.utils.OkHttpCallback;
+import com.hezy.guide.phone.utils.ToastUtils;
+import com.jph.takephoto.app.TakePhoto;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class ChatFragment extends BaseFragment implements chatAdapter.onClickCallBack{
 
@@ -45,7 +55,7 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
     private int count = 0;
     private RelativeLayout rlContent;
     ArrayList<String> list = new ArrayList<>();
-
+    private TakePhoto takePhoto;
     @Override
     public String getStatisticsTag() {
         return "聊天";
@@ -64,6 +74,7 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
         initView(view);
         initRecy();
         setData();
+        requestRecord();
 //        mRecyclerView = view.findViewById(R.id.recycler1);
 ////        emptyText = view.findViewById(R.id.emptyView);
 //        mAdapter = new chatAdapter(mContext);
@@ -113,15 +124,16 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 
         return view;
     }
+
     private void setData(){
 
-        for(int i=0; i<25; i++){
-            String str = ""+i;
-            list.add(str);
-        }
-        adapter = new chatAdapter(getActivity(),list,this);
-        recyclerViewChat.setAdapter(adapter);
-
+//        for(int i=0; i<25; i++){
+//            String str = ""+i;
+//            list.add(str);
+//        }
+//        adapter = new chatAdapter(getActivity(),list,this);
+//        recyclerViewChat.setAdapter(adapter);
+//
 
         ArrayList<String> list2 = new ArrayList<>();
         for(int i=0; i<2; i++){
@@ -153,32 +165,47 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
             @Override
             public void onClick(View v) {
 //                createItem();
-                if(count == 0){
-                    recyclerViewInput.setVisibility(View.VISIBLE);
-                    count = 1;
-                }else if(count == 1){
 
-                    recyclerViewInput.setVisibility(View.GONE);
-                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
-                    count = 2;
-                }else if(count ==2){
-                    recyclerViewInput.setVisibility(View.VISIBLE);
-                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
-                    count = 1;
-                }
-
-//                if(hideInput){
+                HashMap<String, Object> params = new HashMap<String, Object>();
+                params.put("meetingId", "e7d627b750114191ba556d7ca188f33f");
+                params.put("ts", System.currentTimeMillis());
+                params.put("content", mEditText.getText().toString());
+                params.put("atailUserId", Preferences.getUserId());
+                ApiClient.getInstance().expostorPostChatMessage(TAG, expostorStatsCallback, params);
+//                if(count == 0){
+//                    recyclerViewInput.setVisibility(View.VISIBLE);
+//                    count = 1;
+//                }else if(count == 1){
+//
+//                    recyclerViewInput.setVisibility(View.GONE);
+//                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 //                    imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
-//                    hideInput = false;
-//                }else {
+//                    count = 2;
+//                }else if(count ==2){
+//                    recyclerViewInput.setVisibility(View.VISIBLE);
+//                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 //                    imm.hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
-//                    hideInput = true;
+//                    count = 1;
 //                }
+//
+////                if(hideInput){
+////                    imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
+////                    hideInput = false;
+////                }else {
+////                    imm.hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
+////                    hideInput = true;
+////                }
             }
         });
     }
+    private OkHttpCallback expostorStatsCallback = new OkHttpCallback<Bucket<ChatMesData.PageDataEntity>>() {
+
+        @Override
+        public void onSuccess(Bucket<ChatMesData.PageDataEntity> entity) {
+
+            ToastUtils.showToast("提交成功");
+        }
+    };
     private void initRecy(){
         LinearLayoutManager gridlayoutManager = new LinearLayoutManager(getActivity()); // 解决快速长按焦点丢失问题.
         gridlayoutManager.setOrientation(GridLayoutManager.VERTICAL);
@@ -200,25 +227,28 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
     }
 
     private void requestRecord(String pageNo, String pageSize) {
-        ApiClient.getInstance().requestRecord(this,null, pageNo, pageSize, new OkHttpCallback<BaseBean<RecordData>>() {
+        ApiClient.getInstance().getChatMessages(this,"e7d627b750114191ba556d7ca188f33f", pageNo, pageSize, new OkHttpCallback<BaseBean<ChatMesData>>() {
             @Override
-            public void onSuccess(BaseBean<RecordData> entity) {
-                if (entity.getData().getTotalCount() == 0) {
-                    emptyText.setVisibility(View.VISIBLE);
-//                    mSwipeRefreshLayout.setVisibility(View.GONE);
-                } else {
-                    emptyText.setVisibility(View.GONE);
-//                    mSwipeRefreshLayout.setVisibility(View.VISIBLE);
-                }
-                if (isRefresh) {
-                    isRefresh = false;
-//                    mAdapter.setData(entity.getData().getPageData());
-                } else {
-//                    mAdapter.addData(entity.getData().getPageData());
-                }
-                mPageNo = entity.getData().getPageNo();
-                mTotalPage = entity.getData().getTotalPage();
-                adapter.notifyDataSetChanged();
+            public void onSuccess(BaseBean<ChatMesData> entity) {
+//                if (entity.getData().getTotalCount() == 0) {
+//                    emptyText.setVisibility(View.VISIBLE);
+////                    mSwipeRefreshLayout.setVisibility(View.GONE);
+//                } else {
+//                    emptyText.setVisibility(View.GONE);
+////                    mSwipeRefreshLayout.setVisibility(View.VISIBLE);
+//                }
+                initData(entity.getData().getPageData());
+//                if (isRefresh) {
+//                    isRefresh = false;
+////                    mAdapter.setData(entity.getData().getPageData());
+//                } else {
+////                    mAdapter.addData(entity.getData().getPageData());
+//                }
+//                mPageNo = entity.getData().getPageNo();
+//                mTotalPage = entity.getData().getTotalPage();
+//                adapter.notifyDataSetChanged();
+
+
 
             }
 
@@ -231,6 +261,10 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
     }
 
 
+    private void initData(List<ChatMesData.PageDataEntity> data){
+        adapter = new chatAdapter(getActivity(),data,this);
+        recyclerViewChat.setAdapter(adapter);
+    }
     @Override
     protected void normalOnClick(View v) {
         switch (v.getId()) {
