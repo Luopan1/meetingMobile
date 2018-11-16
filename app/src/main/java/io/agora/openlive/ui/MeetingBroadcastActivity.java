@@ -250,7 +250,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                 super.onLoginSuccess(uid, fd);
                 runOnUiThread(() -> {
                     if (BuildConfig.DEBUG) {
-                        runOnUiThread(() -> Toast.makeText(MeetingBroadcastActivity.this, "信令系统登陆成功", Toast.LENGTH_SHORT).show());
+                        runOnUiThread(() -> Toast.makeText(MeetingBroadcastActivity.this, "信令系统登录成功", Toast.LENGTH_SHORT).show());
                     }
                     agoraAPI.channelJoin(channelName);
                 });
@@ -262,7 +262,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                 super.onLoginFailed(ecode);
                 runOnUiThread(() -> {
                     if (BuildConfig.DEBUG) {
-                        Toast.makeText(MeetingBroadcastActivity.this, "信令系统登陆失败" + ecode, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MeetingBroadcastActivity.this, "信令系统登录失败" + ecode, Toast.LENGTH_SHORT).show();
                     }
                 });
 

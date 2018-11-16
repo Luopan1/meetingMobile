@@ -48,7 +48,7 @@ public class PhoneRegisterActivity extends BaseDataBindingActivity<PhoneRegistLa
 
     @Override
     public String getStatisticsTag() {
-        return "手机号登陆";
+        return "手机号登录";
     }
 
     @Override
@@ -175,7 +175,7 @@ public class PhoneRegisterActivity extends BaseDataBindingActivity<PhoneRegistLa
                 return;
             }
             if (entity.getErrcode() != 0) {
-                String errMsg = "用户登陆请求失败";
+                String errMsg = "用户登录请求失败";
                 ToastUtils.showToast(errMsg);
                 ZYAgent.onEvent(PhoneRegisterActivity.this, errMsg + "，错误码：" + entity.getErrcode());
                 return;

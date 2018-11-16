@@ -30,6 +30,17 @@
             android:text="受邀会议"
             android:theme="@style/MeetingTypeUnFocus" />
 
+        <!--<TextView-->
+            <!--android:id="@+id/tv_meeting_forum"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_centerVertical="true"-->
+            <!--android:layout_marginLeft="0dp"-->
+            <!--android:layout_toRightOf="@+id/tv_meeting_private"-->
+            <!--android:paddingLeft="7dp"-->
+            <!--android:text="讨论区"-->
+            <!--android:theme="@style/MeetingTypeUnFocus" />-->
+
     </RelativeLayout>
 
     <android.support.v4.widget.SwipeRefreshLayout

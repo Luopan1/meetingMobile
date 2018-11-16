@@ -49,7 +49,7 @@ public class LinkEntryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         if (!Preferences.isLogin()) {
-            ToastUtils.showToast("您还未登陆，请先登陆" + getString(R.string.app_name));
+            ToastUtils.showToast("您还未登录，请先登录" + getString(R.string.app_name));
             this.finish();
             return;
         }

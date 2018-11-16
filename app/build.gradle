@@ -124,6 +124,8 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     //底部弹窗
     implementation project(':IosDialog')
+    //会议拍照
+    implementation project(path: ':MeetingCamera')
     //城市选择
     implementation project(path: ':citypicker')
     androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {

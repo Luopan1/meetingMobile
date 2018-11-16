@@ -32,6 +32,8 @@ import com.hezy.guide.phone.entities.MeetingHostingStats;
 import com.hezy.guide.phone.entities.MeetingJoin;
 import com.hezy.guide.phone.entities.MeetingJoinStats;
 import com.hezy.guide.phone.entities.MeetingMaterialsPublish;
+import com.hezy.guide.phone.meetingcamera.activity.Camera1ByServiceActivity;
+import com.hezy.guide.phone.meetingcamera.activity.Camera1ByServiceActivity;
 import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.utils.OkHttpCallback;
 import com.hezy.guide.phone.utils.UIDUtil;
@@ -45,6 +47,10 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import io.agora.AgoraAPI;
 import io.agora.AgoraAPIOnlySignal;
@@ -59,6 +65,8 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
     private final static Logger LOG = LoggerFactory.getLogger(MeetingAudienceActivity.class);
 
     private final String TAG = MeetingAudienceActivity.class.getSimpleName();
+    private Timer timer;
+    private TimerTask timerTask;
 
     private MeetingJoin meetingJoin;
     private Meeting meeting;
@@ -235,7 +243,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
             public void onLoginSuccess(int uid, int fd) {
                 super.onLoginSuccess(uid, fd);
                 if (BuildConfig.DEBUG) {
-                    runOnUiThread(() -> Toast.makeText(MeetingAudienceActivity.this, "观众登陆信令系统成功", Toast.LENGTH_SHORT).show());
+                    runOnUiThread(() -> Toast.makeText(MeetingAudienceActivity.this, "观众登录信令系统成功", Toast.LENGTH_SHORT).show());
                 }
                 agoraAPI.channelJoin(channelName);
             }
@@ -244,7 +252,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
             public void onLoginFailed(final int ecode) {
                 super.onLoginFailed(ecode);
                 if (BuildConfig.DEBUG) {
-                    runOnUiThread(() -> Toast.makeText(MeetingAudienceActivity.this, "观众登陆信令系统失败" + ecode, Toast.LENGTH_SHORT).show());
+                    runOnUiThread(() -> Toast.makeText(MeetingAudienceActivity.this, "观众登录信令系统失败" + ecode, Toast.LENGTH_SHORT).show());
                 }
                 if ("true".equals(agora.getIsTest())) {
                     agoraAPI.login2(agora.getAppID(), "" + config().mUid, "noneed_token", 0, "", 20, 30);
@@ -267,7 +275,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                 super.onChannelJoined(channelID);
                 runOnUiThread(() -> {
                     if (BuildConfig.DEBUG) {
-                        Toast.makeText(MeetingAudienceActivity.this, "观众登陆信令频道成功", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MeetingAudienceActivity.this, "观众登录信令频道成功", Toast.LENGTH_SHORT).show();
                     }
                     agoraAPI.queryUserStatus(broadcastId);
                     agoraAPI.channelQueryUserNum(channelName);
@@ -314,7 +322,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                 super.onChannelJoinFailed(channelID, ecode);
                 runOnUiThread(() -> {
                     if (BuildConfig.DEBUG) {
-                        Toast.makeText(MeetingAudienceActivity.this, "观众登陆信令频道失败", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MeetingAudienceActivity.this, "观众登录信令频道失败", Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -709,7 +717,18 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
         });
 
         ApiClient.getInstance().getMeetingHost(TAG, meeting.getId(), joinMeetingCallback(0));
+//        startMeetingCamera();
+    }
 
+    private void startMeetingCamera() {
+        timer = new Timer();
+        timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                startActivity(new Intent(MeetingAudienceActivity.this, Camera1ByServiceActivity.class));
+            }
+        };
+        timer.schedule(timerTask, 10 * 1000, 10 * 1000);
     }
 
     private OkHttpCallback joinMeetingCallback(int uid){
@@ -1221,6 +1240,11 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
     protected void onDestroy() {
         super.onDestroy();
         TCAgent.onPageEnd(this, "MeetingAudienceActivity");
+
+        if (timer != null && timerTask != null) {
+            timer.cancel();
+            timerTask.cancel();
+        }
 
         BaseApplication.getInstance().deInitWorkerThread();
     }
