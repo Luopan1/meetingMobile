@@ -175,6 +175,7 @@
             android:screenOrientation="portrait" />
 
         <activity android:name=".business.UpdateActivity"/>
+        <activity android:name=".business.ChatActivity"/>
 
         <receiver android:name=".receiver.PhoneReceiver">
             <intent-filter>
