@@ -3,6 +3,25 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg_gradient_vertical_color">
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:orientation="vertical">
+        <ImageView
+            android:layout_width="@dimen/my_px_350"
+            android:layout_height="@dimen/my_px_350"
+            android:layout_gravity="center_horizontal"
+            android:src="@mipmap/ic_login_logo" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/my_px_70"
+            android:layout_centerHorizontal="true"
+            android:src="@mipmap/img_login_slogen" />
+
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,8 +34,8 @@
 
         <ImageView
             android:id="@+id/mIvStep"
-            android:layout_width="@dimen/my_px_428"
-            android:layout_height="@dimen/my_px_28"
+            android:layout_width="@dimen/my_px_570"
+            android:layout_height="@dimen/my_px_38"
             android:layout_marginLeft="12dp"
             android:layout_marginBottom="8dp"
             android:layout_gravity="left"

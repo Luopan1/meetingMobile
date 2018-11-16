@@ -368,11 +368,11 @@ public class UpdateActivity extends BasicActivity {
 
     public String percent(int p1, int p2) {
         String str;
-        double p3 = (double) p1 / (double) p2;
-        NumberFormat nf = NumberFormat.getPercentInstance();
-        nf.setMinimumFractionDigits(2);
-        str = nf.format(p3);
-        return str;
+        int p3 = (int) p1 / (int) p2;
+//        NumberFormat nf = NumberFormat.getPercentInstance();
+//        nf.setMinimumFractionDigits(2);
+//        str = nf.format(p3);
+        return p3+"";
     }
 
     @Override
