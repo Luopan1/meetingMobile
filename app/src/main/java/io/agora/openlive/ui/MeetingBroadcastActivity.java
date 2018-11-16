@@ -435,28 +435,30 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
             public void onChannelAttrUpdated(String channelID, String name, String value, String type) {
                 super.onChannelAttrUpdated(channelID, name, value, type);
                 Log.v("onChannelAttrUpdated", "" + channelID + "" + name + "" + value + "" + type);
-                if (CALLING_AUDIENCE.equals(name)) {
-                    if (TextUtils.isEmpty(value)) {
-                        if (newAudience != null) {
-                            agoraAPI.channelSetAttr(channelName, CALLING_AUDIENCE,  "" + newAudience.getUid());
-                        } else {
-                            if (currentAudience != null) {
-                                currentAudience.setCallStatus(0);
-                                currentAudience.setHandsUp(false);
-                                audienceHashMap.put(currentAudience.getUid(), currentAudience);
-                                updateAudienceList();
+                runOnUiThread(() -> {
+                    if (CALLING_AUDIENCE.equals(name)) {
+                        if (TextUtils.isEmpty(value)) {
+                            if (newAudience != null) {
+                                agoraAPI.channelSetAttr(channelName, CALLING_AUDIENCE,  "" + newAudience.getUid());
+                            } else {
+                                if (currentAudience != null) {
+                                    currentAudience.setCallStatus(0);
+                                    currentAudience.setHandsUp(false);
+                                    audienceHashMap.put(currentAudience.getUid(), currentAudience);
+                                    updateAudienceList();
 
-                                stopButton.setVisibility(View.GONE);
-                                audienceView.removeAllViews();
-                                audienceNameText.setText("");
-                                audienceLayout.setVisibility(View.GONE);
+                                    stopButton.setVisibility(View.GONE);
+                                    audienceView.removeAllViews();
+                                    audienceNameText.setText("");
+                                    audienceLayout.setVisibility(View.GONE);
 
-                                currentAudience = null;
+                                    currentAudience = null;
+                                }
                             }
                         }
-                    }
 
-                }
+                    }
+                });
             }
 
             @Override
