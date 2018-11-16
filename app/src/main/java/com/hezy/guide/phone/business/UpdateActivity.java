@@ -18,6 +18,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,6 +40,7 @@ public class UpdateActivity extends BasicActivity {
     private IconProgressBar progressBar;
     private TextView infoText;
     private Version version;
+    private ImageView imgStep;
 
     private static final String MIME_TYPE = "application/vnd.android.package-archive";
     private static final int MIN_SIZE = 100;
@@ -86,6 +88,7 @@ public class UpdateActivity extends BasicActivity {
 
         infoText = (TextView) findViewById(R.id.download_percent);
         progressBar = (IconProgressBar) findViewById(R.id.download_progress_bar);
+        imgStep = (ImageView)findViewById(R.id.mIvStep);
 
         downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
         DownloadManager.Request request = new DownloadManager.Request(Uri.parse(version.getUrl()));
@@ -107,6 +110,7 @@ public class UpdateActivity extends BasicActivity {
             if (!CheckNetWorkStatus.isNetworkAvailable(this)) {
                 showNetworkDialog();
             } else {
+                imgStep.setBackground(getResources().getDrawable(R.mipmap.starter_2_download));
                 downloadId = downloadManager.enqueue(request);
             }
         } else {
@@ -138,6 +142,7 @@ public class UpdateActivity extends BasicActivity {
     protected void installApk() {
 //            String fileName = uri.getPath();
 //            String filePath = (fileName+"/"+"GuideTV.apk");
+        imgStep.setBackground(getResources().getDrawable(R.mipmap.starter_3_install));
         String filePath = "/storage/emulated/0/Download/GuideTV.apk";
         Intent intent = new Intent();
         Log.e("tag", "安装地址---》" + filePath);

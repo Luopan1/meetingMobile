@@ -15,12 +15,14 @@
 
         <ImageView
             android:id="@+id/mIvStep"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/my_px_428"
+            android:layout_height="@dimen/my_px_28"
             android:layout_marginLeft="12dp"
             android:layout_marginBottom="8dp"
             android:layout_gravity="left"
-            android:visibility="gone" />
+            android:background="@mipmap/starter_1_check_network"
+
+            />
 
         <LinearLayout
             android:layout_width="match_parent"
