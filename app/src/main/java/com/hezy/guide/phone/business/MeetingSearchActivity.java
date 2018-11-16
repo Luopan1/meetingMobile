@@ -19,18 +19,24 @@ import android.widget.Toast;
 
 import com.hezy.guide.phone.BaseException;
 import com.hezy.guide.phone.R;
+import com.hezy.guide.phone.business.adapter.ForumMeetingAdapter;
 import com.hezy.guide.phone.business.adapter.GeneralAdapter;
 import com.hezy.guide.phone.business.adapter.MeetingAdapter;
 import com.hezy.guide.phone.entities.Agora;
 import com.hezy.guide.phone.entities.Bucket;
+import com.hezy.guide.phone.entities.Forum;
+import com.hezy.guide.phone.entities.ForumMeeting;
 import com.hezy.guide.phone.entities.Meeting;
 import com.hezy.guide.phone.entities.MeetingJoin;
 import com.hezy.guide.phone.entities.base.BaseArrayBean;
 import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.utils.Logger;
 import com.hezy.guide.phone.utils.OkHttpCallback;
+import com.hezy.guide.phone.utils.ToastUtils;
 import com.hezy.guide.phone.utils.UIDUtil;
+import com.hezy.guide.phone.utils.statistics.ZYAgent;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,19 +51,26 @@ public class MeetingSearchActivity extends BasicActivity {
     private LinearLayoutManager mLayoutManager;
     private MeetingAdapter meetingAdapter;
     private TextView emptyText;
-
-    private final int TYPE_PUBLIC_MEETING = 0;
-    private final int TYPE_PRIVATE_MEETING = 1;
+    //会议类型
+    private int meetingType;
 
     @Override
     public String getStatisticsTag() {
         return "会议搜索列表";
     }
 
-    public MeetingAdapter.OnItemClickListener onItemClickListener = new MeetingAdapter.OnItemClickListener() {
+    private MeetingAdapter.OnItemClickListener onItemClickListener = new MeetingAdapter.OnItemClickListener() {
         @Override
         public void onItemClick(View view, Meeting meeting) {
             initDialog(meeting);
+        }
+    };
+
+    private ForumMeetingAdapter.OnItemClickListener onForumMeetingItemClickListener = new ForumMeetingAdapter.OnItemClickListener() {
+        @Override
+        public void onItemClick(View view, ForumMeeting forumMeeting) {
+            //TODO 跳转进讨论室界面
+            ToastUtils.showToast(forumMeeting.getTitle());
         }
     };
 
@@ -67,9 +80,10 @@ public class MeetingSearchActivity extends BasicActivity {
         setContentView(R.layout.activity_meeting_search);
 
         initView();
+        initData();
     }
 
-    private void initView(){
+    private void initView() {
         swipeRefreshLayout = findViewById(R.id.mSwipeRefreshLayout);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -77,7 +91,7 @@ public class MeetingSearchActivity extends BasicActivity {
                 if (TextUtils.isEmpty(searchEdit.getText())) {
                     Toast.makeText(mContext, "搜索会议名称不能为空", Toast.LENGTH_SHORT).show();
                 } else {
-                    requestMeetings(searchEdit.getText().toString());
+                    requestMeetings(searchEdit.getText().toString(), meetingType);
                 }
             }
         });
@@ -97,7 +111,7 @@ public class MeetingSearchActivity extends BasicActivity {
                     if (TextUtils.isEmpty(searchEdit.getText())) {
                         Toast.makeText(mContext, "搜索会议名称不能为空", Toast.LENGTH_SHORT).show();
                     } else {
-                        requestMeetings(searchEdit.getText().toString());
+                        requestMeetings(searchEdit.getText().toString(), meetingType);
                     }
                     return true;
                 } else {
@@ -114,7 +128,7 @@ public class MeetingSearchActivity extends BasicActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (TextUtils.isEmpty(s)){
+                if (TextUtils.isEmpty(s)) {
                     cancelText.setVisibility(View.GONE);
                 } else {
                     cancelText.setVisibility(View.VISIBLE);
@@ -146,9 +160,18 @@ public class MeetingSearchActivity extends BasicActivity {
 
     }
 
-    public void requestMeetings(String title) {
+    private void initData() {
+        meetingType = getIntent().getIntExtra(MeetingsFragment.KEY_MEETING_TYPE, MeetingsFragment.TYPE_PUBLIC_MEETING);
+        setResult(meetingType);
+    }
+
+    private void requestMeetings(String meetingTitle, int meetingType) {
         swipeRefreshLayout.setRefreshing(true);
-        apiClient.getAllMeeting(TAG, title, TYPE_PUBLIC_MEETING, meetingsCallback);
+        if (meetingType == MeetingsFragment.TYPE_FORUM_MEETING) {
+            apiClient.getAllForumMeeting(TAG, meetingTitle, forumMeetingsCallback);
+        } else {
+            apiClient.getAllMeeting(TAG, meetingTitle, meetingType, meetingsCallback);
+        }
     }
 
     private OkHttpCallback meetingsCallback = new OkHttpCallback<BaseArrayBean<Meeting>>() {
@@ -171,6 +194,38 @@ public class MeetingSearchActivity extends BasicActivity {
         public void onFailure(int errorCode, BaseException exception) {
             super.onFailure(errorCode, exception);
             Toast.makeText(mContext, exception.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onFinish() {
+            super.onFinish();
+            swipeRefreshLayout.setRefreshing(false);
+        }
+    };
+
+    private OkHttpCallback forumMeetingsCallback = new OkHttpCallback<Bucket<Forum>>() {
+
+        @Override
+        public void onSuccess(Bucket<Forum> entity) {
+            Forum forum = entity.getData();
+            ArrayList<ForumMeeting> forumMeetingList = forum.getPageData();
+            if (forumMeetingList.size() == 0) {
+                recyclerView.setVisibility(View.GONE);
+                emptyText.setVisibility(View.VISIBLE);
+                return;
+            }
+
+            ForumMeetingAdapter forumMeetingAdapter = new ForumMeetingAdapter(mContext, forumMeetingList, onForumMeetingItemClickListener);
+            recyclerView.setAdapter(new GeneralAdapter(forumMeetingAdapter));
+            recyclerView.setVisibility(View.VISIBLE);
+            emptyText.setVisibility(View.GONE);
+        }
+
+        @Override
+        public void onFailure(int errorCode, BaseException exception) {
+            super.onFailure(errorCode, exception);
+            ZYAgent.onEvent(getApplicationContext(), exception.getMessage());
+            ToastUtils.showToast("请求讨论区数据失败");
         }
 
         @Override
@@ -270,5 +325,4 @@ public class MeetingSearchActivity extends BasicActivity {
 
         };
     }
-
 }

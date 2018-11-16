@@ -91,6 +91,10 @@
     <color name="bg_meeting_end_tag">#ffc86dd7</color>
     <color name="bg_meeting_solid">#fff62c64</color>
 
-
+    <!--讨论区列表项配色-->
+    <color name="item_forum_meeting_at">#FFF62C64</color>
+    <color name="item_forum_meeting_gray">#FF909090</color>
+    <color name="item_forum_meeting_msg_unread">#FFEFEFEF</color>
+    <color name="item_forum_meeting_msg_dividing_line">#FFD8D8D8</color>
 
 </resources>
