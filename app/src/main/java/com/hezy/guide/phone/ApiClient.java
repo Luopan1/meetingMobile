@@ -115,6 +115,14 @@ public class ApiClient {
         okHttpUtil.get(url, getCommonHead(), null, callback);
     }
 
+    public void getAllForumMeeting(Object tag, String title, OkHttpCallback callback) {
+        String url = API_DOMAIN_NAME + "/osg/app/forum";
+        if (!TextUtils.isEmpty(title)) {
+            url += "?title=" + title;
+        }
+        okHttpUtil.get(url, getCommonHead(), null, callback);
+    }
+
     public void verifyRole(Object tag, OkHttpCallback callback, Map<String, Object> values) {
         okHttpUtil.postJson(API_DOMAIN_NAME + "/osg/app/meeting/verify", getCommonHead(), JSON.toJSONString(values), callback, tag);
     }
@@ -395,7 +403,7 @@ public class ApiClient {
         okHttpUtil.get(API_DOMAIN_NAME + "/osg/app/user/area/custom", params, tag, callback);
     }
 
-    public void meetingMaterial(Object tag, OkHttpCallback callback, String materialsId){
+    public void meetingMaterial(Object tag, OkHttpCallback callback, String materialsId) {
         okHttpUtil.get(API_DOMAIN_NAME + "/osg/app/meeting/materials/" + materialsId, getCommonHead(), null, callback);
     }
 

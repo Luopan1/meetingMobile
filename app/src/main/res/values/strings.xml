@@ -33,4 +33,6 @@
     <string name="sure">确定</string>
     <string name="cancel">取消</string>
 
+    <string name="forum_meeting_public">公开\n会议</string>
+    <string name="forum_meeting_private">受邀\n会议</string>
 </resources>
