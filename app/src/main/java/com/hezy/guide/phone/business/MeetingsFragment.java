@@ -51,7 +51,8 @@ public class MeetingsFragment extends BaseFragment {
     private RecyclerView recyclerView;
     private LinearLayoutManager mLayoutManager;
     private MeetingAdapter meetingAdapter;
-    private TextView emptyText, tv_meeting_public, tv_meeting_private, tv_meeting_forum;
+    private TextView emptyText, tv_meeting_public, tv_meeting_private;
+//    , tv_meeting_forum;
     public static final int TYPE_PUBLIC_MEETING = 0;
     public static final int TYPE_PRIVATE_MEETING = 1;
     public static final int TYPE_FORUM_MEETING = 2;
@@ -136,10 +137,10 @@ public class MeetingsFragment extends BaseFragment {
         emptyText = view.findViewById(R.id.emptyView);
         tv_meeting_public = view.findViewById(R.id.tv_meeting_public);
         tv_meeting_private = view.findViewById(R.id.tv_meeting_private);
-        tv_meeting_forum = view.findViewById(R.id.tv_meeting_forum);
+//        tv_meeting_forum = view.findViewById(R.id.tv_meeting_forum);
         tv_meeting_public.setOnClickListener(tvMeetingOnClickListener);
         tv_meeting_private.setOnClickListener(tvMeetingOnClickListener);
-        tv_meeting_forum.setOnClickListener(tvMeetingOnClickListener);
+//        tv_meeting_forum.setOnClickListener(tvMeetingOnClickListener);
 
         return view;
     }
@@ -161,9 +162,9 @@ public class MeetingsFragment extends BaseFragment {
                 case R.id.tv_meeting_private:
                     showMeeting(TYPE_PRIVATE_MEETING);
                     break;
-                case R.id.tv_meeting_forum:
-                    showMeeting(TYPE_FORUM_MEETING);
-                    break;
+//                case R.id.tv_meeting_forum:
+//                    showMeeting(TYPE_FORUM_MEETING);
+//                    break;
             }
         }
     };
@@ -203,19 +204,19 @@ public class MeetingsFragment extends BaseFragment {
     private void showPublicMeetingView() {
         TextViewCompat.setTextAppearance(tv_meeting_public, R.style.MeetingTypeFocus);
         TextViewCompat.setTextAppearance(tv_meeting_private, R.style.MeetingTypeUnFocus);
-        TextViewCompat.setTextAppearance(tv_meeting_forum, R.style.MeetingTypeUnFocus);
+//        TextViewCompat.setTextAppearance(tv_meeting_forum, R.style.MeetingTypeUnFocus);
     }
 
     private void showPrivateMeetingView() {
         TextViewCompat.setTextAppearance(tv_meeting_public, R.style.MeetingTypeUnFocus);
         TextViewCompat.setTextAppearance(tv_meeting_private, R.style.MeetingTypeFocus);
-        TextViewCompat.setTextAppearance(tv_meeting_forum, R.style.MeetingTypeUnFocus);
+//        TextViewCompat.setTextAppearance(tv_meeting_forum, R.style.MeetingTypeUnFocus);
     }
 
     private void showForumMeetingView() {
         TextViewCompat.setTextAppearance(tv_meeting_public, R.style.MeetingTypeUnFocus);
         TextViewCompat.setTextAppearance(tv_meeting_private, R.style.MeetingTypeUnFocus);
-        TextViewCompat.setTextAppearance(tv_meeting_forum, R.style.MeetingTypeFocus);
+//        TextViewCompat.setTextAppearance(tv_meeting_forum, R.style.MeetingTypeFocus);
     }
 
     /**
