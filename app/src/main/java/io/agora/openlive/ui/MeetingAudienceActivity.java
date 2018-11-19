@@ -988,6 +988,8 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                 }
 
                 handsUp = false;
+                requestTalkButton.setText("我要发言");
+                requestTalkButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_meeting_signup, 0, 0, 0);
 
                 try {
                     JSONObject jsonObject = new JSONObject();
