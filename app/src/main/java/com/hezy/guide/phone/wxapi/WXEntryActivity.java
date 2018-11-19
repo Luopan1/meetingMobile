@@ -247,6 +247,8 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
                 if (version.getImportance() != 1 && version.getImportance() != 2) {
                     startActivity(new Intent(getApplication(), UpdateActivity.class).putExtra("version", version));
                     finish();
+                }else {
+                    initEntry();
                 }
 
 
