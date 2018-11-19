@@ -593,23 +593,25 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                 isConnecting = true;
                 connectingHandler.sendEmptyMessageDelayed(0, 10000);
 
-                currentAudience.setCallStatus(0);
-                currentAudience.setHandsUp(false);
-                audienceHashMap.put(currentAudience.getUid(), currentAudience);
+                if (currentAudience != null) {
+                    currentAudience.setCallStatus(0);
+                    currentAudience.setHandsUp(false);
+                    audienceHashMap.put(currentAudience.getUid(), currentAudience);
 
-                newAudience.setCallStatus(1);
-                newAudience.setHandsUp(false);
-                audienceHashMap.put(newAudience.getUid(), newAudience);
+                    newAudience.setCallStatus(1);
+                    newAudience.setHandsUp(false);
+                    audienceHashMap.put(newAudience.getUid(), newAudience);
 
-                updateAudienceList();
+                    updateAudienceList();
 
-                audienceView.removeAllViews();
-                audienceNameText.setText("");
-                audienceLayout.setVisibility(View.GONE);
+                    audienceView.removeAllViews();
+                    audienceNameText.setText("");
+                    audienceLayout.setVisibility(View.GONE);
 
-                stopButton.setVisibility(View.GONE);
+                    stopButton.setVisibility(View.GONE);
 
-                agoraAPI.channelSetAttr(channelName, CALLING_AUDIENCE, "" + newAudience.getUid());
+                    agoraAPI.channelSetAttr(channelName, CALLING_AUDIENCE, "" + newAudience.getUid());
+                }
             }
         });
 
