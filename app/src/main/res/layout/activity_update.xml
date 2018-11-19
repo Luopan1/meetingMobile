@@ -6,7 +6,8 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="157dp"
         android:orientation="vertical">
         <ImageView
             android:layout_width="@dimen/my_px_350"
@@ -28,20 +29,39 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="41dp"
         android:layout_marginLeft="16dp"
         android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/mIvStep"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="12dp"
-            android:layout_marginBottom="8dp"
-            android:layout_gravity="left"
-            android:background="@mipmap/starter_1_check_network"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/mIvStep"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="13dp"
+                android:layout_marginBottom="8dp"
+                android:layout_gravity="left"
+                android:textColor="#ffffff"
+                android:textSize="20sp"
 
-            />
+                />
+
+            <TextView
+                android:id="@+id/download_percent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:gravity="right"
+                android:paddingRight="13dp"
+
+                android:text="0%"
+                android:textColor="@color/white"
+                android:textSize="20sp" />
+
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -55,15 +75,6 @@
                 android:layout_weight="1"
                 android:layout_height="wrap_content" />
 
-            <TextView
-                android:id="@+id/download_percent"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginRight="16dp"
-                android:text="0%"
-                android:textColor="@color/white"
-                android:textSize="20sp" />
 
         </LinearLayout>
 
