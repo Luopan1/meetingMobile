@@ -34,6 +34,10 @@
                 android:textColor="#0b0b0b"
                 android:padding="7dp"
                 android:text="我在说。。。。"/>
+            <ImageView
+                android:id="@+id/img_pic"
+                android:layout_width="116dp"
+                android:layout_height="75dp" />
         </LinearLayout>
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/mIvHead"

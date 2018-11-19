@@ -6,12 +6,15 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.hezy.guide.phone.BaseApplication;
 import com.hezy.guide.phone.R;
 import com.hezy.guide.phone.entities.ChatMesData;
 import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.utils.helper.ImageHelper;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -65,8 +68,17 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.ViewHolder> {
         });
 
         ((TextView)holder.name).setText(data.get(position).getUserName());
-        ((TextView)holder.tvContent).setText(data.get(position).getContent());
+
         ImageHelper.loadImageDpId(data.get(position).getUserLogo(), R.dimen.my_px_66, R.dimen.my_px_66, holder.imgHead);
+        if(data.get(position).getType() == 1){
+            Picasso.with(BaseApplication.getInstance()).load(data.get(position).getContent()).into(holder.imgPic);
+            ((TextView)holder.tvContent).setVisibility(View.GONE);
+            ((ImageView)holder.imgPic).setVisibility(View.VISIBLE);
+        }else {
+            ((TextView)holder.tvContent).setText(data.get(position).getContent());
+            ((TextView)holder.tvContent).setVisibility(View.VISIBLE);
+            ((ImageView)holder.imgPic).setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -79,12 +91,14 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.ViewHolder> {
         private TextView name;
         private TextView tvContent;
         private CircleImageView imgHead;
+        private ImageView imgPic;
 
         public ViewHolder(View itemView) {
             super(itemView);
             name = itemView.findViewById(R.id.tv_name);
             tvContent = itemView.findViewById(R.id.tv_content);
             imgHead = (CircleImageView)itemView.findViewById(R.id.mIvHead);
+            imgPic = (ImageView)itemView.findViewById(R.id.img_pic);
 
         }
     }
