@@ -30,6 +30,7 @@ import com.hezy.guide.phone.entities.ExpostorOnlineStats;
 import com.hezy.guide.phone.entities.base.BaseBean;
 import com.hezy.guide.phone.entities.base.BaseErrorBean;
 import com.hezy.guide.phone.event.CallEvent;
+import com.hezy.guide.phone.event.ForumSendEvent;
 import com.hezy.guide.phone.event.HangDownEvent;
 import com.hezy.guide.phone.event.HangOnEvent;
 import com.hezy.guide.phone.event.HangUpEvent;
@@ -357,6 +358,8 @@ public class WSService extends Service {
         mSocket.on("LISTEN_TV_LEAVE_CHANNEL", ON_LISTEN_TV_LEAVE_CHANNEL);
         mSocket.on("TIMEOUT_WITHOUT_REPLY", ON_TIMEOUT_WITHOUT_REPLY);
         mSocket.on("OLD_DISCONNECT", ON_OLD_DISCONNECT);
+        mSocket.on("FORUM_REVOKE", ON_FORUM_REVOKE);
+        mSocket.on("FORUM_SEND_CONTENT", ON_FORUM_SEND_CONTENT);
 //        mSocket.on("CHANGE_RESOLUTION_EVENT", resolutionChangedListener);
         mSocket.connect();
 
@@ -604,6 +607,30 @@ public class WSService extends Service {
         }
     };
 
+    private Emitter.Listener ON_FORUM_REVOKE = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            ZYAgent.onEvent(getApplicationContext(),"ON_OLD_DISCONNECT");
+            Log.i("wsserver", "Listener ON_OLD_DISCONNECT");
+            String str = (String) args[0];
+            Log.i(TAG,str);
+
+
+        }
+    };
+
+    private Emitter.Listener ON_FORUM_SEND_CONTENT = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            ZYAgent.onEvent(getApplicationContext(),"ON_FORUM_SEND_CONTENT");
+            Log.i("wsserver", "Listener ON_FORUM_SEND_CONTENT");
+//            String str = (String) args[0];
+//            Log.i(TAG,str);
+            RxBus.sendMessage(new ForumSendEvent());
+
+
+        }
+    };
 
     @Override
     public void onDestroy() {
