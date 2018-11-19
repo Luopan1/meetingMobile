@@ -601,8 +601,9 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                                 audienceView.removeAllViews();
                                 audienceView.addView(localSurfaceView);
 
-                                requestTalkButton.setVisibility(View.VISIBLE);
-                                stopTalkButton.setVisibility(View.GONE);
+                                requestTalkButton.setVisibility(View.GONE);
+                                stopTalkButton.setVisibility(View.VISIBLE);
+                                fullScreenButton.setVisibility(View.VISIBLE);
 
                                 worker().getRtcEngine().setClientRole(Constants.CLIENT_ROLE_BROADCASTER);
 
