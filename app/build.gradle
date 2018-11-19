@@ -128,6 +128,7 @@ dependencies {
     implementation project(path: ':MeetingCamera')
     //城市选择
     implementation project(path: ':citypicker')
+    //    implementation project(':takephoto_library')
     androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
@@ -172,4 +173,5 @@ dependencies {
     implementation 'com.alibaba:fastjson:1.2.32'
     implementation 'pub.devrel:easypermissions:1.1.2'
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+
 }

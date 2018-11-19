@@ -291,8 +291,9 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
                 if (!file.getParentFile().exists())
                     file.getParentFile().mkdirs();
                 final Uri imageUri = Uri.fromFile(file);
+//                takePhoto.onPickFromGallery();
+
                 takePhoto.onPickFromCapture(imageUri);
-//                takePhoto.onPickFromCapture(imageUri);
 //                createItem();
 
 //                HashMap<String, Object> params = new HashMap<String, Object>();
