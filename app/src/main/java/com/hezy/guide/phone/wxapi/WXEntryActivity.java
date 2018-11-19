@@ -110,7 +110,10 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_activity);
-
+        if (EasyPermissions.hasPermissions(this, perms)) {
+        } else {
+            EasyPermissions.requestPermissions(this, "请授予必要的权限", 0, perms);
+        }
         registerDevice();
 
 
