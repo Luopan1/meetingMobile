@@ -987,6 +987,8 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                     e.printStackTrace();
                 }
 
+                handsUp = false;
+
                 try {
                     JSONObject jsonObject = new JSONObject();
                     jsonObject.put("handsUp", handsUp);
