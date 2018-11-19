@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -15,6 +16,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -183,7 +185,11 @@ public class MeetingsFragment extends BaseFragment {
     };
 
     private void showMeeting(int type) {
+        //停止一切动画效果，包括recyclerView滚动效果，让appBarLayout常显，让刷新功能生效
         swipeRefreshLayout.setEnabled(true);
+        recyclerView.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_CANCEL, 0, 0, 0));
+        appBarLayout.setExpanded(true, true);
+
         switch (type) {
             case TYPE_PUBLIC_MEETING:
                 showPublicMeeting();
