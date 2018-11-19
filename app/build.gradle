@@ -94,7 +94,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
 
-        release{
+        release {
             signingConfig signingConfigs.config
             buildConfigField "boolean", "IS_DEBUG_LOG", "false"  //显示LOG
             buildConfigField "boolean", "IS_DEBUG_TOAST", "false"  //显示LOG的TOAST

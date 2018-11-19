@@ -456,6 +456,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                             audienceView.removeAllViews();
                             audienceNameText.setText("");
                             audienceLayout.setVisibility(View.GONE);
+                            fullScreenButton.setVisibility(View.GONE);
                         } else {
                             currentAiducenceId = Integer.parseInt(value);
                         }
