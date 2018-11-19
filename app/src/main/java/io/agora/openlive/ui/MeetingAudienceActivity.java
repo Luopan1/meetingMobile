@@ -582,9 +582,11 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                             stopTalkButton.setVisibility(View.GONE);
                             requestTalkButton.setVisibility(View.VISIBLE);
 
-                            handsUp = false;
-                            requestTalkButton.setText("我要发言");
-                            requestTalkButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_meeting_signup, 0, 0, 0);
+                            if (currentAudienceId == config().mUid) {
+                                handsUp = false;
+                                requestTalkButton.setText("我要发言");
+                                requestTalkButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_meeting_signup, 0, 0, 0);
+                            }
                         } else {
                             if (BuildConfig.DEBUG) {
                                 Toast.makeText(MeetingAudienceActivity.this, "收到主持人设置的连麦人ID：" + value + ", \ntype:" + type, Toast.LENGTH_SHORT).show();
