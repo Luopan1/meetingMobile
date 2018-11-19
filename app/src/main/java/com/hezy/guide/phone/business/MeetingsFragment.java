@@ -6,7 +6,9 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v4.widget.TextViewCompat;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -14,6 +16,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -53,6 +56,8 @@ public class MeetingsFragment extends BaseFragment {
     private MeetingAdapter meetingAdapter;
     private TextView emptyText, tv_meeting_public, tv_meeting_private;
 //    , tv_meeting_forum;
+    private AppBarLayout appBarLayout;
+
     public static final int TYPE_PUBLIC_MEETING = 0;
     public static final int TYPE_PRIVATE_MEETING = 1;
     public static final int TYPE_FORUM_MEETING = 2;
@@ -116,6 +121,17 @@ public class MeetingsFragment extends BaseFragment {
                 showMeeting(currentMeetingListPageIndex);
             }
         });
+        appBarLayout = view.findViewById(R.id.appBarLayout);
+        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                if (verticalOffset >= 0) {
+                    swipeRefreshLayout.setEnabled(true);
+                } else {
+                    swipeRefreshLayout.setEnabled(false);
+                }
+            }
+        });
 
         view.findViewById(R.id.search_text).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -133,7 +149,6 @@ public class MeetingsFragment extends BaseFragment {
         // 设置ItemAnimator
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setHasFixedSize(true);
-//        recyclerView.addItemDecoration(new DividerItemDecoration(mContext,DividerItemDecoration.VERTICAL));
         emptyText = view.findViewById(R.id.emptyView);
         tv_meeting_public = view.findViewById(R.id.tv_meeting_public);
         tv_meeting_private = view.findViewById(R.id.tv_meeting_private);
@@ -170,6 +185,11 @@ public class MeetingsFragment extends BaseFragment {
     };
 
     private void showMeeting(int type) {
+        //停止一切动画效果，包括recyclerView滚动效果，让appBarLayout常显，让刷新功能生效
+        swipeRefreshLayout.setEnabled(true);
+        recyclerView.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_CANCEL, 0, 0, 0));
+        appBarLayout.setExpanded(true, true);
+
         switch (type) {
             case TYPE_PUBLIC_MEETING:
                 showPublicMeeting();

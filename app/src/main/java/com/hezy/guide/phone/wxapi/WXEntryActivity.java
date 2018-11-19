@@ -110,12 +110,12 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_activity);
-
         if (EasyPermissions.hasPermissions(this, perms)) {
-            initView();
         } else {
             EasyPermissions.requestPermissions(this, "请授予必要的权限", 0, perms);
         }
+        registerDevice();
+
 
     }
 
@@ -177,7 +177,7 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
             }
         });
 
-        registerDevice();
+
     }
 
     /**
@@ -231,17 +231,27 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
             versionCheck();
         }
     };
+    private void initEntry(){
+        if (EasyPermissions.hasPermissions(this, perms)) {
+            initView();
+        } else {
+            EasyPermissions.requestPermissions(this, "请授予必要的权限", 0, perms);
+        }
+    }
     private void versionCheck() {
         ApiClient.getInstance().versionCheck(this, new OkHttpCallback<BaseBean<Version>>() {
             @Override
             public void onSuccess(BaseBean<Version> entity) {
                 Version version = entity.getData();
                 if (version == null || version.getImportance() == 0) {
+                    initEntry();
                     return;
                 }
                 if (version.getImportance() != 1 && version.getImportance() != 2) {
                     startActivity(new Intent(getApplication(), UpdateActivity.class).putExtra("version", version));
                     finish();
+                }else {
+                    initEntry();
                 }
 
 
