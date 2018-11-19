@@ -602,7 +602,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
 
                 updateAudienceList();
 
-                audienceLayout.removeAllViews();
+                audienceView.removeAllViews();
                 audienceNameText.setText("");
                 audienceLayout.setVisibility(View.GONE);
 
@@ -798,10 +798,10 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                     }
 
                     fullScreenButton.setVisibility(View.VISIBLE);
-                    audienceLayout.setVisibility(View.VISIBLE);
 
                     currentAiducenceId = uid;
 
+                    audienceLayout.setVisibility(View.VISIBLE);
                     audienceView.removeAllViews();
                     remoteAudienceSurfaceView = RtcEngine.CreateRendererView(getApplicationContext());
                     remoteAudienceSurfaceView.setZOrderOnTop(true);
