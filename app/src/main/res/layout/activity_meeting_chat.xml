@@ -5,12 +5,13 @@
     <RelativeLayout
         android:id="@+id/top"
         android:layout_width="match_parent"
-        android:layout_height="30dp"
+        android:layout_height="@dimen/my_px_144"
         android:background="@drawable/bg_gradient_vertical_color">
         <LinearLayout
             android:id="@+id/back"
             android:layout_width="30dp"
             android:layout_height="30dp"
+            android:layout_centerVertical="true"
             android:layout_marginLeft="13dp"
             >
             <ImageView
@@ -26,7 +27,7 @@
             android:id="@+id/tv_title"
             android:textColor="#ffffff"
             android:gravity="center"
-            android:textSize="14sp"
+            android:textSize="@dimen/my_px_43"
             android:layout_centerInParent="true"
             android:text="title"
             />

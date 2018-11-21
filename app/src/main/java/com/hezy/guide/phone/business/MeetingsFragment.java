@@ -91,7 +91,7 @@ public class MeetingsFragment extends BaseFragment {
         public void onItemClick(View view, ForumMeeting forumMeeting) {
             //TODO 跳转进讨论室界面
             ToastUtils.showToast(forumMeeting.getTitle());
-            startActivity(new Intent(getActivity(),ChatActivity.class));
+            startActivity(new Intent(getActivity(),ChatActivity.class).putExtra("title",forumMeeting.getTitle()).putExtra("meetingId",forumMeeting.getMeetingId()));
         }
     };
 

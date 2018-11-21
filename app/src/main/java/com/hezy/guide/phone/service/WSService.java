@@ -383,6 +383,8 @@ public class WSService extends Service {
         mSocket.off("SALES_ONLINE_WITH_STATUS_RETURN", ON_SALES_ONLINE_WITH_STATUS_RETURN);
         mSocket.off("LISTEN_TV_LEAVE_CHANNEL", ON_LISTEN_TV_LEAVE_CHANNEL);
         mSocket.off("OLD_DISCONNECT", ON_OLD_DISCONNECT);
+        mSocket.off("FORUM_REVOKE", ON_FORUM_REVOKE);
+        mSocket.off("FORUM_SEND_CONTENT", ON_FORUM_SEND_CONTENT);
 //        mSocket.off("CHANGE_RESOLUTION_EVENT", resolutionChangedListener);
 //        SOCKET_ONLINE = false;
         sendUserStateEvent();

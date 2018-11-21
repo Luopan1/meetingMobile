@@ -5,10 +5,17 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.PersistableBundle;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.hezy.guide.phone.R;
+import com.hezy.guide.phone.event.SetUserStateEvent;
+import com.hezy.guide.phone.service.WSService;
+import com.hezy.guide.phone.utils.RxBus;
+import com.hezy.guide.phone.utils.statistics.ZYAgent;
 import com.jph.takephoto.app.TakePhoto;
 import com.jph.takephoto.app.TakePhotoImpl;
 import com.jph.takephoto.model.InvokeParam;
@@ -25,12 +32,32 @@ public class ChatActivity extends BasicActivity implements TakePhoto.TakeResultL
     private Button btn;
     private TakePhoto takePhoto;
     private InvokeParam invokeParam;
+    private LinearLayout llBack;
+    private TextView tvTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         getTakePhoto().onCreate(savedInstanceState);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_meeting_chat);
+
+        if (!WSService.isOnline()) {
+            //当前状态离线,可切换在线
+            ZYAgent.onEvent(mContext, "在线按钮,当前离线,切换到在线");
+            Log.i(TAG, "当前状态离线,可切换在线");
+            RxBus.sendMessage(new SetUserStateEvent(true));
+        } else {
+            ZYAgent.onEvent(mContext, "在线按钮,当前在线,,无效操作");
+        }
+        llBack = (LinearLayout)this.findViewById(R.id.back);
+        tvTitle = (TextView)this.findViewById(R.id.tv_title) ;
+        tvTitle.setText(getIntent().getStringExtra("title"));
+        llBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
         initFragment();
 //        btn = (Button)this.findViewById(R.id.button);
 //        btn.setOnClickListener(new View.OnClickListener() {
@@ -100,4 +127,18 @@ public class ChatActivity extends BasicActivity implements TakePhoto.TakeResultL
 
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (WSService.isOnline()) {
+            //当前状态在线,可切换离线
+            Log.i(TAG, "当前状态在线,可切换离线");
+            ZYAgent.onEvent(mContext, "离线按钮,当前在线,切换到离线");
+            RxBus.sendMessage(new SetUserStateEvent(false));
+//                                            WSService.SOCKET_ONLINE =false;
+//                                            setState(false);
+        } else {
+            ZYAgent.onEvent(mContext, "离线按钮,当前离线,无效操作");
+        }
+    }
 }

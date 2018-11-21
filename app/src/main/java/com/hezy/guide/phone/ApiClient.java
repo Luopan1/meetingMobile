@@ -133,7 +133,7 @@ public class ApiClient {
         Map<String, String> params = new HashMap<>();
         params.put("pageNo", pageNo);
         params.put("pageSize", pageSize);
-        okHttpUtil.get(url, getCommonHead(), null, callback);
+        okHttpUtil.get(url, getCommonHead(), params, callback);
     }
     public void verifyRole(Object tag, OkHttpCallback callback, Map<String, Object> values) {
         okHttpUtil.postJson(API_DOMAIN_NAME + "/osg/app/meeting/verify", getCommonHead(), JSON.toJSONString(values), callback, tag);

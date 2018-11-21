@@ -11,8 +11,8 @@
         android:orientation="horizontal">
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/mIvHead"
-            android:layout_width="22dp"
-            android:layout_height="22dp"
+            android:layout_width="@dimen/my_px_95"
+            android:layout_height="@dimen/my_px_95"
             android:src="@mipmap/baby_default_avatar"
 
             />
@@ -26,18 +26,26 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="#909090"
-                android:textSize="11sp"
+                android:textSize="@dimen/my_px_35"
                 android:text="玫瑰"/>
             <TextView
                 android:id="@+id/tv_content"
-                android:layout_width="100dp"
-                android:layout_height="30dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:background="@drawable/chat_mes_left_bg"
                 android:layout_alignParentLeft="true"
                 android:textSize="12sp"
                 android:textColor="#0b0b0b"
                 android:padding="7dp"
                 android:text="我在说。。。。"/>
+            <com.hezy.family.photolib.PhotoView
+                android:id="@+id/img_pic"
+                android:scaleType="centerInside"
+                android:layout_width="@dimen/my_px_501"
+                android:layout_gravity="right"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="@dimen/my_px_12"
+                android:layout_height="@dimen/my_px_322" />
         </LinearLayout>
 
     </LinearLayout>

@@ -6,30 +6,33 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
+import com.hezy.family.photolib.Info;
+import com.hezy.family.photolib.PhotoView;
+import com.hezy.guide.phone.BaseApplication;
 import com.hezy.guide.phone.R;
+import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.OnItemClick;
-
-public class inputAdapter extends RecyclerView.Adapter<inputAdapter.ViewHolder> {
+public class ImageBrowerAdapter extends RecyclerView.Adapter<ImageBrowerAdapter.ViewHolder> {
 
     private Context context;
     private List<String> data;
-    private onItemClickInt itemClick;
+    private Info info;
 
-    public inputAdapter(Context context, List<String> data, onItemClickInt temItemClick){
+    public ImageBrowerAdapter(Context context, List<String> data, Info tempInfo){
         this.context = context;
         this.data = data;
-        this.itemClick = temItemClick;
-
+        this.info = tempInfo;
 
     }
 
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_input,parent,false);
+        View view = LayoutInflater.from(context).inflate(R.layout.item_img_brower,parent,false);
         return new ViewHolder(view);
     }
 
@@ -37,11 +40,14 @@ public class inputAdapter extends RecyclerView.Adapter<inputAdapter.ViewHolder> 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
 
+        Picasso.with(BaseApplication.getInstance()).load(data.get(position)).into(holder.img);
+        if(position==0){
+            holder.img.animaFrom(info);
+        }
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 //                Log.e("这里是点击每一行item的响应事件",""+position+item);
-                itemClick.onItemClick(position);
             }
         });
 
@@ -54,17 +60,14 @@ public class inputAdapter extends RecyclerView.Adapter<inputAdapter.ViewHolder> 
 
     public class ViewHolder extends RecyclerView.ViewHolder{
 
-//        private TextView name;
+        private PhotoView img;
 
         public ViewHolder(View itemView) {
             super(itemView);
-//            name = itemView.findViewById(R.id.name);
+            img = itemView.findViewById(R.id.img);
 
         }
     }
-
-    public interface  onItemClickInt{
-        void onItemClick(int pos);
-    }
 }
+
 
