@@ -22,7 +22,7 @@ public class UIDUtil {
             }
         }
         Integer account = Integer.parseInt(sb.toString());
-        return String.valueOf(account);
+        return "2" + String.valueOf(account);
     }
 
 }
