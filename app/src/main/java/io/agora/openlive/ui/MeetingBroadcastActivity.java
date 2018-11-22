@@ -8,43 +8,56 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
 import com.hezy.guide.phone.ApiClient;
-import com.hezy.guide.phone.BaseApplication;
 import com.hezy.guide.phone.BaseException;
 import com.hezy.guide.phone.BuildConfig;
 import com.hezy.guide.phone.R;
 import com.hezy.guide.phone.entities.Agora;
 import com.hezy.guide.phone.entities.Audience;
 import com.hezy.guide.phone.entities.Bucket;
+import com.hezy.guide.phone.entities.Material;
+import com.hezy.guide.phone.entities.Materials;
 import com.hezy.guide.phone.entities.Meeting;
 import com.hezy.guide.phone.entities.MeetingJoin;
 import com.hezy.guide.phone.entities.MeetingJoinStats;
+import com.hezy.guide.phone.entities.MeetingMaterialsPublish;
 import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.utils.OkHttpCallback;
 import com.hezy.guide.phone.utils.UIDUtil;
+import com.hezy.guide.phone.utils.helper.ImageHelper;
+import com.hezy.guide.phone.view.FocusFixedLinearLayoutManager;
+import com.hezy.guide.phone.view.SpaceItemDecoration;
+import com.squareup.picasso.Picasso;
 import com.tendcloud.tenddata.TCAgent;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -67,6 +80,8 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
     private Agora agora;
     private HashMap<Integer, Audience> audienceHashMap = new HashMap<Integer, Audience>();
     private ArrayList<Audience> audiences = new ArrayList<Audience>();
+    private Material currentMaterial;
+    private int position;
 
     private String channelName;
     private int memberCount;
@@ -77,16 +92,19 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
 
     private FrameLayout broadcasterLayout, broadcastSmallLayout, broadcasterSmallView, audienceView, audienceLayout;
     private TextView broadcastNameText, broadcastTipsText, audienceNameText;
-    private Button audiencesButton, stopButton;
+    private Button audiencesButton, stopButton, docButton, previewButton, nextButton, exitDocButton;
     private TextView exitButton;
     private AgoraAPIOnlySignal agoraAPI;
     private ImageButton muteButton;
     private ImageButton fullScreenButton;
-    private SurfaceView remoteAudienceSurfaceView;
+    private ImageView docImage;
+    private TextView pageText;
+    private SurfaceView localBroadcasterSurfaceView, remoteAudienceSurfaceView;
 
     private Audience currentAudience, newAudience;
     private int currentAiducenceId;
 
+    private static final String DOC_INFO = "doc_info";
     private static final String CALLING_AUDIENCE = "calling_audience";
 
     private Handler connectingHandler = new Handler() {
@@ -167,6 +185,104 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
         audienceLayout = findViewById(R.id.audience_layout);
         audienceView = findViewById(R.id.audience_view);
 
+        docImage = findViewById(R.id.doc_image);
+        pageText = findViewById(R.id.page);
+
+        previewButton = findViewById(R.id.preview);
+        previewButton.setOnClickListener(view -> {
+            if (currentMaterial != null) {
+                if (position > 0) {
+                    position--;
+                    MeetingMaterialsPublish currentMaterialPublish = currentMaterial.getMeetingMaterialsPublishList().get(position);
+                    docImage.setVisibility(View.VISIBLE);
+                    String imageUrl = ImageHelper.getThumb(currentMaterialPublish.getUrl());
+                    Picasso.with(MeetingBroadcastActivity.this).load(imageUrl).into(docImage);
+                    pageText.setVisibility(View.VISIBLE);
+                    pageText.setText("第" + currentMaterialPublish.getPriority() + "/" + currentMaterial.getMeetingMaterialsPublishList().size() + "页");
+
+                    try {
+                        JSONObject jsonObject = new JSONObject();
+                        jsonObject.put("material_id", currentMaterial.getId());
+                        jsonObject.put("doc_index", position);
+                        agoraAPI.channelSetAttr(channelName, DOC_INFO, jsonObject.toString());
+                        agoraAPI.messageChannelSend(channelName, jsonObject.toString(), "");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    Toast.makeText(MeetingBroadcastActivity.this, "当前是第一张了", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Toast.makeText(MeetingBroadcastActivity.this, "没找到ppt", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        nextButton = findViewById(R.id.next);
+        nextButton.setOnClickListener(view -> {
+            if (currentMaterial != null) {
+                if (position < (currentMaterial.getMeetingMaterialsPublishList().size() - 1)) {
+                    position++;
+                    MeetingMaterialsPublish currentMaterialPublish = currentMaterial.getMeetingMaterialsPublishList().get(position);
+                    docImage.setVisibility(View.VISIBLE);
+                    String imageUrl = ImageHelper.getThumb(currentMaterialPublish.getUrl());
+                    Picasso.with(MeetingBroadcastActivity.this).load(imageUrl).into(docImage);
+                    pageText.setVisibility(View.VISIBLE);
+                    pageText.setText("第" + currentMaterialPublish.getPriority() + "/" + currentMaterial.getMeetingMaterialsPublishList().size() + "页");
+
+                    try {
+                        JSONObject jsonObject = new JSONObject();
+                        jsonObject.put("material_id", currentMaterial.getId());
+                        jsonObject.put("doc_index", position);
+                        agoraAPI.channelSetAttr(channelName, DOC_INFO, jsonObject.toString());
+                        agoraAPI.messageChannelSend(channelName, jsonObject.toString(), "");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    Toast.makeText(MeetingBroadcastActivity.this, "当前是最后一张了", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Toast.makeText(MeetingBroadcastActivity.this, "没找到ppt", Toast.LENGTH_SHORT).show();
+            }
+
+        });
+
+        exitDocButton = findViewById(R.id.exit_ppt);
+        exitDocButton.setOnClickListener(view -> {
+            docImage.setVisibility(View.GONE);
+            pageText.setVisibility(View.GONE);
+
+            previewButton.setVisibility(View.GONE);
+            nextButton.setVisibility(View.GONE);
+            exitDocButton.setVisibility(View.GONE);
+
+            broadcasterSmallView.removeView(localBroadcasterSurfaceView);
+            broadcasterSmallView.setVisibility(View.INVISIBLE);
+            broadcasterLayout.setVisibility(View.VISIBLE);
+            broadcasterLayout.removeAllViews();
+            broadcasterLayout.addView(localBroadcasterSurfaceView);
+
+            currentMaterial = null;
+            agoraAPI.channelDelAttr(channelName, DOC_INFO);
+
+        });
+
+        docButton = findViewById(R.id.doc);
+        docButton.setOnClickListener((view) -> {
+            ApiClient.getInstance().meetingMaterials(TAG, new OkHttpCallback<Bucket<Materials>>() {
+                @Override
+                public void onSuccess(Bucket<Materials> materialsBucket) {
+                    showPPTListDialog(materialsBucket.getData().getPageData());
+                }
+
+                @Override
+                public void onFailure(int errorCode, BaseException exception) {
+                    super.onFailure(errorCode, exception);
+                    Toast.makeText(MeetingBroadcastActivity.this, exception.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }, meetingJoin.getMeeting().getId());
+        });
+
         fullScreenButton = findViewById(R.id.full_screen);
         fullScreenButton.setOnClickListener(v -> {
             if (!isFullScreen) {
@@ -240,12 +356,12 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
 
         doConfigEngine(Constants.CLIENT_ROLE_BROADCASTER);
 
-        SurfaceView localSurfaceView = RtcEngine.CreateRendererView(getApplicationContext());
-        rtcEngine().setupLocalVideo(new VideoCanvas(localSurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, config().mUid));
-        localSurfaceView.setZOrderOnTop(false);
-        localSurfaceView.setZOrderMediaOverlay(false);
-        broadcasterLayout.addView(localSurfaceView);
-        worker().preview(true, localSurfaceView, config().mUid);
+        localBroadcasterSurfaceView = RtcEngine.CreateRendererView(getApplicationContext());
+        rtcEngine().setupLocalVideo(new VideoCanvas(localBroadcasterSurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, config().mUid));
+        localBroadcasterSurfaceView.setZOrderOnTop(false);
+        localBroadcasterSurfaceView.setZOrderMediaOverlay(false);
+        broadcasterLayout.addView(localBroadcasterSurfaceView);
+        worker().preview(true, localBroadcasterSurfaceView, config().mUid);
 
         broadcastTipsText.setVisibility(View.GONE);
 
@@ -620,7 +736,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
         dialog.show();
     }
 
-    AlertDialog alertDialog;
+    AlertDialog alertDialog, pptAlertDialog, pptDetailDialog;
     AudienceAdapter audienceAdapter;
 
     private AudienceAdapter.OnAudienceButtonClickListener listener = new AudienceAdapter.OnAudienceButtonClickListener() {
@@ -700,6 +816,143 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
         }
         return audienceArrayList;
     }
+
+    private void showPPTListDialog(ArrayList<Material> materials) {
+        View view = View.inflate(this, R.layout.dialog_ppt_list, null);
+        RecyclerView recyclerViewTV = view.findViewById(R.id.meeting_doc_list);
+        FocusFixedLinearLayoutManager gridlayoutManager = new FocusFixedLinearLayoutManager(this); // 解决快速长按焦点丢失问题.
+        gridlayoutManager.setOrientation(GridLayoutManager.HORIZONTAL);
+        recyclerViewTV.setLayoutManager(gridlayoutManager);
+        recyclerViewTV.setFocusable(false);
+        recyclerViewTV.addItemDecoration(new SpaceItemDecoration((int) (getResources().getDimension(R.dimen.my_px_20)), 0, (int) (getResources().getDimension(R.dimen.my_px_20)), 0));
+        MaterialAdapter materialAdapter = new MaterialAdapter(this, materials);
+        recyclerViewTV.setAdapter(materialAdapter);
+        materialAdapter.setOnClickListener(new MaterialAdapter.OnClickListener() {
+            @Override
+            public void onPreviewButtonClick(View v, Material material, int position) {
+                showPPTDetailDialog(material);
+            }
+
+//            @Override
+//            public void onUseButtonClick(View v, Material material, int position) {
+//                currentMaterial = material;
+//                Collections.sort(currentMaterial.getMeetingMaterialsPublishList(), (o1, o2) -> (o1.getPriority() < o2.getPriority()) ? -1 : 1);
+//                ApiClient.getInstance().meetingSetMaterial(TAG, setMaterialCallback, meetingJoin.getMeeting().getId(), currentMaterial.getId());
+//            }
+        });
+        AlertDialog.Builder builder = new AlertDialog.Builder(MeetingBroadcastActivity.this, R.style.MyDialog);
+        builder.setView(view);
+        pptAlertDialog = builder.create();
+        if (!pptAlertDialog.isShowing()) {
+            pptAlertDialog.show();
+        }
+    }
+
+    private void showPPTDetailDialog(Material material) {
+        View view = View.inflate(this, R.layout.dialog_ppt_detail, null);
+        ViewPager viewPager = view.findViewById(R.id.view_pager);
+        TextView pageText = view.findViewById(R.id.page);
+        pageText.setText("第1/" + material.getMeetingMaterialsPublishList().size() + "页");
+        viewPager.setOffscreenPageLimit(3);
+        viewPager.setAdapter(new PagerAdapter() {
+            @Override
+            public int getCount() {
+                return material.getMeetingMaterialsPublishList().size();
+            }
+
+            @NonNull
+            @Override
+            public Object instantiateItem(@NonNull ViewGroup container, int position) {
+                View view = View.inflate(container.getContext(), R.layout.item_doc_detail, null);
+                ImageView imageView = view.findViewById(R.id.image_view);
+                String imageUrl = ImageHelper.getThumb(material.getMeetingMaterialsPublishList().get(position).getUrl());
+                Picasso.with(MeetingBroadcastActivity.this).load(imageUrl).into(imageView);
+                container.addView(view);
+                return view;
+            }
+
+            @Override
+            public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
+                return view == object;
+            }
+
+            @Override
+            public void destroyItem(ViewGroup container, int position, Object object) {
+                container.removeView((View) object);
+            }
+        });
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                pageText.setText("第" + (position + 1) + "/" + material.getMeetingMaterialsPublishList().size() + "页");
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+        TextView timeText = view.findViewById(R.id.time);
+        timeText.setText(material.getCreateDate() + "创建");
+        AlertDialog.Builder builder = new AlertDialog.Builder(MeetingBroadcastActivity.this, R.style.MyDialog);
+        builder.setView(view);
+        pptDetailDialog = builder.create();
+        if (!pptDetailDialog.isShowing()) {
+            pptDetailDialog.show();
+        }
+    }
+
+    private OkHttpCallback setMaterialCallback = new OkHttpCallback<Bucket>() {
+        @Override
+        public void onSuccess(Bucket bucket) {
+            Log.v("material_set", bucket.toString());
+            if (pptAlertDialog.isShowing()) {
+                pptAlertDialog.dismiss();
+            }
+
+            broadcasterLayout.removeAllViews();
+            broadcasterLayout.setVisibility(View.GONE);
+            broadcasterSmallView.setVisibility(View.VISIBLE);
+            broadcasterSmallView.removeAllViews();
+            broadcasterSmallView.addView(localBroadcasterSurfaceView);
+
+            previewButton.setVisibility(View.VISIBLE);
+            nextButton.setVisibility(View.VISIBLE);
+            exitDocButton.setVisibility(View.VISIBLE);
+
+            docImage.setVisibility(View.VISIBLE);
+
+            position = 0;
+            MeetingMaterialsPublish currentMaterialPublish = currentMaterial.getMeetingMaterialsPublishList().get(position);
+
+            pageText.setVisibility(View.VISIBLE);
+            pageText.setText("第" + currentMaterialPublish.getPriority() + "/" + currentMaterial.getMeetingMaterialsPublishList().size() + "页");
+
+            String imageUrl = ImageHelper.getThumb(currentMaterialPublish.getUrl());
+            Picasso.with(MeetingBroadcastActivity.this).load(imageUrl).into(docImage);
+
+            try {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("material_id", currentMaterial.getId());
+                jsonObject.put("doc_index", position);
+                agoraAPI.channelSetAttr(channelName, DOC_INFO, jsonObject.toString());
+                agoraAPI.messageChannelSend(channelName, jsonObject.toString(), "");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void onFailure(int errorCode, BaseException exception) {
+            super.onFailure(errorCode, exception);
+            Toast.makeText(MeetingBroadcastActivity.this, exception.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    };
 
     private OkHttpCallback finishMeetingCallback = new OkHttpCallback<Bucket<Meeting>>() {
         @Override
@@ -1001,7 +1254,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
         }
         agoraAPI.destroy();
 
-        BaseApplication.getInstance().deInitWorkerThread();
+//        BaseApplication.getInstance().deInitWorkerThread();
     }
 
 }

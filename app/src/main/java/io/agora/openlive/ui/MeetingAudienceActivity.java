@@ -1273,7 +1273,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
             timerTask.cancel();
         }
 
-        BaseApplication.getInstance().deInitWorkerThread();
+//        BaseApplication.getInstance().deInitWorkerThread();
     }
 
 }

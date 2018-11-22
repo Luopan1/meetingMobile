@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/cover_layout"
+    android:layout_width="@dimen/my_px_400"
+    android:layout_height="@dimen/my_px_450">
+
+    <ImageView
+        android:id="@+id/image"
+        android:layout_width="@dimen/my_px_400"
+        android:layout_height="@dimen/my_px_450"
+        android:background="@color/c_172938" />
+
+    <TextView
+        android:id="@+id/count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right|top"
+        android:background="@color/c_ff8600"
+        android:paddingLeft="8dp"
+        android:paddingTop="4dp"
+        android:paddingRight="8dp"
+        android:paddingBottom="4dp"
+        android:text="20张"
+        android:textColor="@color/white"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/upload_time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@color/white"
+        android:focusable="true"
+        android:gravity="center"
+        android:paddingTop="@dimen/my_px_16"
+        android:paddingBottom="@dimen/my_px_16"
+        android:text="今天 9：30 上传"
+        android:textColor="@color/black"
+        android:textSize="16sp" />
+
+</FrameLayout>

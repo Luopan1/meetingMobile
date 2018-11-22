@@ -173,6 +173,16 @@ public class ImageHelper {
      * 先缩放再裁剪等同于centerCrop效果
      *
      * @param url
+     * @return
+     */
+    public static String getThumb(String url) {
+        return url + "?imageMogr2/auto-orient/thumbnail/1920x1080";
+    }
+
+    /**
+     * 先缩放再裁剪等同于centerCrop效果
+     *
+     * @param url
      * @param w
      * @param h
      * @return
