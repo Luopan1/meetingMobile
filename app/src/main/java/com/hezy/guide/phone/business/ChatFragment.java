@@ -19,14 +19,17 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.hezy.family.photolib.Info;
 import com.hezy.family.photolib.PhotoView;
@@ -113,6 +116,7 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
     private RelativeLayout openCamera;
     private boolean onCreate = true;
     private String mMeetingId = "";
+    private String atUserId="";
     private List<ChatMesData.PageDataEntity> dataChat = new ArrayList<>();
 
     @Override
@@ -457,12 +461,16 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
         });
     }
 
-    private void sendAction() {
+    private void sendAction(){
         HashMap<String, Object> params = new HashMap<String, Object>();
         params.put("meetingId", mMeetingId);
         params.put("ts", System.currentTimeMillis());
         params.put("content", mEditText.getText().toString());
         params.put("type", 0);
+        if(!atUserId.isEmpty()){
+            params.put("atailUserId",atUserId);
+            atUserId = "";
+        }
         mEditText.setText("");
         ApiClient.getInstance().expostorPostChatMessage(TAG, expostorStatsCallback, params);
     }
@@ -578,6 +586,25 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
         imm.hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
     }
 
+    @Override
+    public void onLongImgHead(String name, String userId) {
+        mEditText.setText("@"+name);
+        mEditText.setSelection(mEditText.getText().length());
+        atUserId = userId;
+//        recyclerViewChat.scrollToPosition(dataChat.size() - 1);
+    }
+
+    @Override
+    public void onLongContent(View view, String id) {
+        showPopupWindow(view, id);
+    }
+
+    @Override
+    public void onEditCallBack(String content) {
+        mEditText.setText(content);
+        mEditText.setSelection(mEditText.getText().length());
+    }
+
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -639,6 +666,52 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
             final Uri imageUri = Uri.fromFile(file);
             takePhoto.onPickFromCapture(imageUri);
         }
+
+    }
+
+    private void showPopupWindow(View view, String id) {
+
+        // 一个自定义的布局，作为显示的内容
+        View contentView = LayoutInflater.from(mContext).inflate(
+                R.layout.pop_window, null);
+        // 设置按钮的点击事件
+        TextView button = (TextView) contentView.findViewById(R.id.del);
+        button.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+//                Toast.makeText(mContext, "button is pressed",
+//                        Toast.LENGTH_SHORT).show();
+                ApiClient.getInstance().expostorDeleteChatMessage(this,expostorStatsCallback,id);
+
+            }
+        });
+
+        final PopupWindow popupWindow = new PopupWindow(contentView,
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
+
+        popupWindow.setTouchable(true);
+
+        popupWindow.setTouchInterceptor(new View.OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                Log.i("mengdd", "onTouch : ");
+
+                return false;
+                // 这里如果返回true的话，touch事件将被拦截
+                // 拦截后 PopupWindow的onTouchEvent不被调用，这样点击外部区域无法dismiss
+            }
+        });
+
+        // 如果不设置PopupWindow的背景，无论是点击外部区域还是Back键都无法dismiss弹框
+        // 我觉得这里是API的一个bug
+        popupWindow.setBackgroundDrawable(getResources().getDrawable(
+                R.color.actionsheet_blue));
+
+        // 设置好参数之后再show
+        popupWindow.showAsDropDown(view);
 
     }
 }

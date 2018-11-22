@@ -614,8 +614,8 @@ public class WSService extends Service {
         public void call(final Object... args) {
             ZYAgent.onEvent(getApplicationContext(),"ON_OLD_DISCONNECT");
             Log.i("wsserver", "Listener ON_OLD_DISCONNECT");
-            String str = (String) args[0];
-            Log.i(TAG,str);
+//            String str = (String) args[0];
+//            Log.i(TAG,str);
 
 
         }

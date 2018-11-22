@@ -35,7 +35,7 @@
                 android:textSize="12sp"
                 android:textColor="#0b0b0b"
                 android:padding="7dp"
-                android:layout_marginLeft="@dimen/my_px_15"
+                android:layout_marginRight="@dimen/my_px_15"
                 android:text="我在说。。。。"/>
             <com.hezy.family.photolib.PhotoView
                 android:id="@+id/img_pic"

@@ -94,6 +94,13 @@ public class ApiClient {
         okHttpUtil.postJson(API_DOMAIN_NAME + "/osg/app/user/expostor/online/stats", getCommonHead(), JSON.toJSONString(values), callback, tag);
     }
 
+    //删除聊天内容/osg/app/forum/{forumId}
+
+    public void expostorDeleteChatMessage(Object tag, OkHttpCallback callback, String forumId){
+
+        okHttpUtil.delete(API_DOMAIN_NAME+"/osg/app/forum/"+forumId,getCommonHead(),null ,callback);
+    }
+
     //提交聊天内容/osg/app/forum
     public void expostorPostChatMessage(Object tag, OkHttpCallback callback, Map<String, Object> values) {
         okHttpUtil.postJson(API_DOMAIN_NAME + "/osg/app/forum", getCommonHead(), JSON.toJSONString(values), callback, tag);

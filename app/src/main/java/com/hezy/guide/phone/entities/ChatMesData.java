@@ -54,11 +54,15 @@ public class ChatMesData {
     }
 
     public static class PageDataEntity implements Parcelable {
+        private String id;
         private String userName;
         private String replyTime;
         private String content;
+        private String userId;
         private int type;
         private String userLogo;
+        private long replyTimestamp;
+        private int msgType;
 
         protected PageDataEntity(Parcel in) {
             userName = in.readString();
@@ -66,6 +70,10 @@ public class ChatMesData {
             content = in.readString();
             type = in.readInt();
             userLogo = in.readString();
+            userId = in.readString();
+            id = in.readString();
+            replyTimestamp = in.readLong();
+            msgType = in.readInt();
         }
 
         public static final Creator<PageDataEntity> CREATOR = new Creator<PageDataEntity>() {
@@ -120,6 +128,38 @@ public class ChatMesData {
             this.userLogo = userLogo;
         }
 
+        public String getUserId() {
+            return userId;
+        }
+
+        public void setUserId(String userId) {
+            this.userId = userId;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public long getReplyTimestamp() {
+            return replyTimestamp;
+        }
+
+        public void setReplyTimestamp(long replyTimestamp) {
+            this.replyTimestamp = replyTimestamp;
+        }
+
+        public int getMsgType() {
+            return msgType;
+        }
+
+        public void setMsgType(int msgType) {
+            this.msgType = msgType;
+        }
+
         @Override
         public int describeContents() {
             return 0;
@@ -132,6 +172,10 @@ public class ChatMesData {
             parcel.writeString(content);
             parcel.writeInt(type);
             parcel.writeString(userLogo);
+            parcel.writeString(userId);
+            parcel.writeString(id);
+            parcel.writeLong(replyTimestamp);
+            parcel.writeInt(msgType);
         }
     }
 }
