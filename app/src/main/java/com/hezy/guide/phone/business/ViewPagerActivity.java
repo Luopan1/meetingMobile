@@ -14,6 +14,8 @@ import com.hezy.guide.phone.BaseApplication;
 import com.hezy.guide.phone.R;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+
 /**
  * Created by liuheng on 2015/8/19.
  */
@@ -21,13 +23,15 @@ public class ViewPagerActivity extends Activity {
 
     private ViewPager mPager;
     private Info info;
+    private ArrayList<String> mListPhotp;
 
-    private int[] imgsId = new int[]{R.mipmap.baby_default_avatar,R.mipmap.baby_default_avatar};
+//    private int[] imgsId = new int[]{R.mipmap.baby_default_avatar,R.mipmap.baby_default_avatar};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_pager);
+        mListPhotp = getIntent().getStringArrayListExtra("imglist");
 
         info = getIntent().getParcelableExtra("info");
         mPager = (ViewPager) findViewById(R.id.pager);
@@ -35,7 +39,7 @@ public class ViewPagerActivity extends Activity {
         mPager.setAdapter(new PagerAdapter() {
             @Override
             public int getCount() {
-                return imgsId.length;
+                return mListPhotp.size();
             }
 
             @Override
@@ -48,8 +52,8 @@ public class ViewPagerActivity extends Activity {
                 PhotoView view = new PhotoView(ViewPagerActivity.this);
                 view.enable();
                 view.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                view.setImageResource(imgsId[position]);
-                Picasso.with(BaseApplication.getInstance()).load(getIntent().getStringArrayListExtra("imglist").get(position)).into(view);
+//                view.setImageResource(imgsId[position]);
+                Picasso.with(BaseApplication.getInstance()).load(mListPhotp.get(position)).into(view);
                 if(position == 0){
                     view.animaFrom((Info) getIntent().getParcelableExtra("info"));
                 }

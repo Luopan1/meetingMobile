@@ -513,9 +513,7 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
             @Override
             public void onSuccess(BaseBean<ChatMesData> entity) {
                     dataChat.addAll(entity.getData().getPageData());
-                    initData(dataChat,true);
-//
-
+                    initLastData(dataChat,true);
             }
 
             @Override
@@ -548,6 +546,16 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 //                mSwipeRefreshLayout.setRefreshing(false);
             }
         });
+    }
+
+    private void initLastData(List<ChatMesData.PageDataEntity> data, boolean last){
+        adapter.notifyItemChanged(data.size()-1);
+        if(last){
+            if(handler.hasMessages(10)){
+                handler.removeMessages(10);
+            }
+            handler.sendEmptyMessageDelayed(10, 100);
+        }
     }
 
 

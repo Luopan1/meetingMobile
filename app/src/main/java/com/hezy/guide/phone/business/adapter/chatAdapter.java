@@ -172,8 +172,11 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.ViewHolder> {
                 public void onClick(View view) {
 //                    callBack.onClickImage(holder.imgPic.getInfo());
                     ArrayList<String> mList = new ArrayList<>();
-                    mList.add(data.get(0).getContent());
-                    mList.add(data.get(1).getContent());
+                    for(int i=0; i<data.size(); i++){
+                        if(data.get(i).getType()==1){
+                            mList.add(data.get(i).getContent());
+                        }
+                    }
 
                     context.startActivity(new Intent(context,ViewPagerActivity.class).putExtra("info",holder.imgPic.getInfo()).putExtra("imglist",mList));
 //                    ((Activity)context).overridePendingTransition(0, 0);
