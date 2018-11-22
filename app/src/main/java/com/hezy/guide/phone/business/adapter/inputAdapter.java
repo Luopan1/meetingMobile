@@ -6,6 +6,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.hezy.guide.phone.R;
 
@@ -37,6 +39,14 @@ public class inputAdapter extends RecyclerView.Adapter<inputAdapter.ViewHolder> 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
 
+        if(position == 0){
+            holder.name.setText("相册");
+            holder.imgBg.setBackground(context.getResources().getDrawable(R.mipmap.input_photo));
+        }else {
+            holder.name.setText("拍照");
+            holder.imgBg.setBackground(context.getResources().getDrawable(R.mipmap.input_take));
+        }
+
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -54,11 +64,13 @@ public class inputAdapter extends RecyclerView.Adapter<inputAdapter.ViewHolder> 
 
     public class ViewHolder extends RecyclerView.ViewHolder{
 
-//        private TextView name;
+        private TextView name;
+        private ImageView imgBg;
 
         public ViewHolder(View itemView) {
             super(itemView);
-//            name = itemView.findViewById(R.id.name);
+            name = itemView.findViewById(R.id.tv_name);
+            imgBg = itemView.findViewById(R.id.img_photo);
 
         }
     }

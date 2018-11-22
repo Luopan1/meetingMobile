@@ -8,7 +8,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
-        android:layout_marginBottom="@dimen/my_px_56"
+        android:layout_marginTop="@dimen/my_px_28"
+        android:layout_marginBottom="@dimen/my_px_28"
         android:orientation="horizontal">
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/mIvHead"
@@ -29,16 +30,31 @@
                 android:textColor="#909090"
                 android:textSize="@dimen/my_px_35"
                 android:text="玫瑰"/>
-            <TextView
-                android:id="@+id/tv_content"
+            <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/chat_mes_left_bg"
-                android:layout_alignParentLeft="true"
-                android:textSize="12sp"
-                android:textColor="#0b0b0b"
-                android:padding="7dp"
-                android:text="我在说。。。。"/>
+                >
+
+                <TextView
+                    android:id="@+id/tv_content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/chat_mes_left_bg"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginLeft="12px"
+                    android:textSize="12sp"
+                    android:textColor="#0b0b0b"
+                    android:padding="7dp"
+                    android:text="我在说。。。。"/>
+                <ImageView
+                    android:id="@+id/img_arrow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/my_px_20"
+                    android:background="@mipmap/chat_arrow_left"
+                    />
+            </RelativeLayout>
+
             <com.hezy.family.photolib.PhotoView
                 android:id="@+id/img_pic"
                 android:scaleType="centerInside"

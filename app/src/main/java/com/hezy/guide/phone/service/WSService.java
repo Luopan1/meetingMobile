@@ -30,6 +30,7 @@ import com.hezy.guide.phone.entities.ExpostorOnlineStats;
 import com.hezy.guide.phone.entities.base.BaseBean;
 import com.hezy.guide.phone.entities.base.BaseErrorBean;
 import com.hezy.guide.phone.event.CallEvent;
+import com.hezy.guide.phone.event.ForumRevokeEvent;
 import com.hezy.guide.phone.event.ForumSendEvent;
 import com.hezy.guide.phone.event.HangDownEvent;
 import com.hezy.guide.phone.event.HangOnEvent;
@@ -613,7 +614,8 @@ public class WSService extends Service {
         @Override
         public void call(final Object... args) {
             ZYAgent.onEvent(getApplicationContext(),"ON_OLD_DISCONNECT");
-            Log.i("wsserver", "Listener ON_OLD_DISCONNECT");
+            Log.i("wsserver", "Listener ON_OLD_DISCONNECT=="+args);
+            RxBus.sendMessage(new ForumRevokeEvent());
 //            String str = (String) args[0];
 //            Log.i(TAG,str);
 

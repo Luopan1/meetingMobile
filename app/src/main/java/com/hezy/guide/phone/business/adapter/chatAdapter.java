@@ -166,6 +166,7 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.ViewHolder> {
                     (int)context.getResources().getDimension(R.dimen.my_px_322));
             Picasso.with(BaseApplication.getInstance()).load(url).into(holder.imgPic);
             ((TextView)holder.tvContent).setVisibility(View.GONE);
+            ((ImageView)holder.imgArrow).setVisibility(View.GONE);
             ((ImageView)holder.imgPic).setVisibility(View.VISIBLE);
             holder.imgPic.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -185,6 +186,7 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.ViewHolder> {
         }else {
             ((TextView)holder.tvContent).setText(data.get(position).getContent());
             ((TextView)holder.tvContent).setVisibility(View.VISIBLE);
+            ((ImageView)holder.imgArrow).setVisibility(View.VISIBLE);
             ((ImageView)holder.imgPic).setVisibility(View.GONE);
         }
     }
@@ -200,6 +202,7 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.ViewHolder> {
         private TextView tvContent;
         private CircleImageView imgHead;
         private PhotoView imgPic;
+        private ImageView imgArrow;
 
         private TextView tvCenter;
         private TextView tvEdit;
@@ -210,6 +213,7 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.ViewHolder> {
             tvContent = itemView.findViewById(R.id.tv_content);
             imgHead = (CircleImageView)itemView.findViewById(R.id.mIvHead);
             imgPic = (PhotoView)itemView.findViewById(R.id.img_pic);
+            imgArrow = (ImageView)itemView.findViewById(R.id.img_arrow);
 
             tvCenter = itemView.findViewById(R.id.tv_center);
             tvEdit = itemView.findViewById(R.id.tv_edit);

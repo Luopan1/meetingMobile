@@ -47,6 +47,7 @@ import com.hezy.guide.phone.entities.QiniuToken;
 import com.hezy.guide.phone.entities.RecordData;
 import com.hezy.guide.phone.entities.base.BaseBean;
 import com.hezy.guide.phone.event.CallEvent;
+import com.hezy.guide.phone.event.ForumRevokeEvent;
 import com.hezy.guide.phone.event.ForumSendEvent;
 import com.hezy.guide.phone.event.HangDownEvent;
 import com.hezy.guide.phone.event.HangOnEvent;
@@ -264,6 +265,8 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
             @Override
             public void call(Object o) {
                 if (o instanceof ForumSendEvent) {
+                    requestRecordOnlyLast(true);
+                }else if(o instanceof ForumRevokeEvent){
                     requestRecordOnlyLast(true);
                 }
 
@@ -491,7 +494,7 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
         recyclerViewChat.setFocusable(false);
 //        recyclerViewChat.addItemDecoration(new SpaceItemDecoration((int) (getResources().getDimension(R.dimen.my_px_15)), 0, (int) (getResources().getDimension(R.dimen.my_px_15)), 0));
 
-        GridLayoutManager gridlayoutManager2 = new GridLayoutManager(getActivity(), 4); // 解决快速长按焦点丢失问题.
+        GridLayoutManager gridlayoutManager2 = new GridLayoutManager(getActivity(),4); // 解决快速长按焦点丢失问题.
         gridlayoutManager2.setOrientation(GridLayoutManager.VERTICAL);
         recyclerViewInput.setLayoutManager(gridlayoutManager2);
         recyclerViewInput.setFocusable(false);
@@ -684,21 +687,23 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
                 R.layout.pop_window, null);
         // 设置按钮的点击事件
         TextView button = (TextView) contentView.findViewById(R.id.del);
+
+        final PopupWindow popupWindow = new PopupWindow(contentView,
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
+
+        popupWindow.setTouchable(true);
         button.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
 //                Toast.makeText(mContext, "button is pressed",
 //                        Toast.LENGTH_SHORT).show();
+                popupWindow.dismiss();
                 ApiClient.getInstance().expostorDeleteChatMessage(this,expostorStatsCallback,id);
 
             }
         });
 
-        final PopupWindow popupWindow = new PopupWindow(contentView,
-                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
-
-        popupWindow.setTouchable(true);
 
         popupWindow.setTouchInterceptor(new View.OnTouchListener() {
 

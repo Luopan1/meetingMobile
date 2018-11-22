@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -49,13 +50,20 @@ public class ViewPagerActivity extends Activity {
 
             @Override
             public Object instantiateItem(ViewGroup container, int position) {
-                PhotoView view = new PhotoView(ViewPagerActivity.this);
-                view.enable();
-                view.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                View view= LayoutInflater.from(ViewPagerActivity.this).inflate(R.layout.item_brower_photo,null);
+                PhotoView pview = view.findViewById(R.id.photo);
+                pview.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        finish();
+                    }
+                });
+                pview.enable();
+                pview.setScaleType(ImageView.ScaleType.FIT_CENTER);
 //                view.setImageResource(imgsId[position]);
-                Picasso.with(BaseApplication.getInstance()).load(mListPhotp.get(position)).into(view);
+                Picasso.with(BaseApplication.getInstance()).load(mListPhotp.get(position)).into(pview);
                 if(position == 0){
-                    view.animaFrom((Info) getIntent().getParcelableExtra("info"));
+                    pview.animaFrom((Info) getIntent().getParcelableExtra("info"));
                 }
                 container.addView(view);
                 return view;
