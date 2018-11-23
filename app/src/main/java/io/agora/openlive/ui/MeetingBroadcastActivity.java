@@ -295,6 +295,13 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                     audienceLayout.setVisibility(View.GONE);
                     stopButton.setVisibility(View.GONE);
                 }
+                if (localBroadcasterSurfaceView != null) {
+                    broadcasterSmallLayout.setVisibility(View.GONE);
+                }
+                if (currentMaterial != null) {
+                    docLayout.setVisibility(View.GONE);
+                }
+                docButton.setVisibility(View.GONE);
                 muteButton.setVisibility(View.GONE);
                 audiencesButton.setVisibility(View.GONE);
                 isFullScreen = true;
@@ -306,6 +313,13 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                     audienceView.addView(remoteAudienceSurfaceView);
                     stopButton.setVisibility(View.VISIBLE);
                 }
+                if (localBroadcasterSurfaceView != null) {
+                    broadcasterSmallLayout.setVisibility(View.VISIBLE);
+                }
+                if (currentMaterial != null) {
+                    docLayout.setVisibility(View.VISIBLE);
+                }
+                docButton.setVisibility(View.VISIBLE);
                 muteButton.setVisibility(View.VISIBLE);
                 audiencesButton.setVisibility(View.VISIBLE);
                 isFullScreen = false;
@@ -473,6 +487,25 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                         agoraAPI.channelSetAttr(channelName, CALLING_AUDIENCE, "" + currentAudience.getUid());
                     } else { // 没有正在连麦
                         agoraAPI.channelDelAttr(channelName, CALLING_AUDIENCE);
+                    }
+                    if (currentMaterial != null) { //正在演示ppt
+                        try {
+                            if (BuildConfig.DEBUG) {
+                                Toast.makeText(MeetingBroadcastActivity.this, "向参会人" + account + "发送ppt信息", Toast.LENGTH_SHORT).show();
+                            }
+                            JSONObject jsonObject = new JSONObject();
+                            jsonObject.put("material_id", currentMaterial.getId());
+                            jsonObject.put("doc_index", position);
+                            agoraAPI.channelSetAttr(channelName, DOC_INFO, jsonObject.toString());
+                            agoraAPI.messageChannelSend(channelName, jsonObject.toString(), "");
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    } else { // 没有在演示ppt
+                        agoraAPI.channelDelAttr(channelName, DOC_INFO);
+                        if (BuildConfig.DEBUG) {
+                            Toast.makeText(MeetingBroadcastActivity.this, "参会人" + account + "上来时主持人端没有ppt信息", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
             }
