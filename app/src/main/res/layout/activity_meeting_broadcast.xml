@@ -181,32 +181,32 @@
 
             <Button
                 android:id="@+id/preview"
-                android:layout_width="80sp"
+                android:layout_width="75sp"
                 android:layout_height="30sp"
                 android:background="@drawable/bg_meeting_button_selector"
                 android:text="上一页"
                 android:textColor="@color/white"
-                android:textSize="16sp" />
+                android:textSize="14sp" />
 
             <Button
                 android:id="@+id/next"
-                android:layout_width="80sp"
+                android:layout_width="75sp"
                 android:layout_height="30sp"
                 android:layout_marginLeft="10dp"
                 android:background="@drawable/bg_meeting_button_selector"
                 android:text="下一页"
                 android:textColor="@color/white"
-                android:textSize="16sp" />
+                android:textSize="14sp" />
 
             <Button
                 android:id="@+id/exit_ppt"
-                android:layout_width="120sp"
+                android:layout_width="110sp"
                 android:layout_height="30sp"
                 android:layout_marginLeft="10dp"
                 android:background="@drawable/bg_meeting_button_selector"
                 android:text="退出PPT演示"
                 android:textColor="@color/white"
-                android:textSize="16sp" />
+                android:textSize="14sp" />
 
         </LinearLayout>
 
