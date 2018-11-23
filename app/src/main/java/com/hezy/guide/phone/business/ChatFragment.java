@@ -1,5 +1,6 @@
 package com.hezy.guide.phone.business;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -27,6 +28,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.PopupWindow;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,6 +37,7 @@ import com.hezy.family.photolib.Info;
 import com.hezy.family.photolib.PhotoView;
 import com.hezy.guide.phone.ApiClient;
 import com.hezy.guide.phone.BaseApplication;
+import com.hezy.guide.phone.BaseException;
 import com.hezy.guide.phone.R;
 import com.hezy.guide.phone.business.adapter.GuideLogAdapter;
 import com.hezy.guide.phone.business.adapter.ImageBrowerAdapter;
@@ -90,7 +93,7 @@ import java.util.UUID;
 import rx.Subscription;
 import rx.functions.Action1;
 
-public class ChatFragment extends BaseFragment implements chatAdapter.onClickCallBack, TakePhoto.TakeResultListener, InvokeListener,inputAdapter.onItemClickInt {
+public class ChatFragment extends BaseFragment implements chatAdapter.onClickCallBack, TakePhoto.TakeResultListener, InvokeListener, inputAdapter.onItemClickInt {
 
     //    private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView recyclerViewChat, recyclerViewInput;
@@ -117,7 +120,10 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
     private RelativeLayout openCamera;
     private boolean onCreate = true;
     private String mMeetingId = "";
-    private String atUserId="";
+    private String atUserId = "";
+    private ProgressBar proBar;
+    private static int delayTime = 2000;
+    private static int delayRevokeTime = 2000;
     private List<ChatMesData.PageDataEntity> dataChat = new ArrayList<>();
 
     @Override
@@ -142,7 +148,7 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
         super.onSaveInstanceState(outState);
     }
 
-    private void uploadImage() {
+    private void uploadImage(long ts) {
         ApiClient.getInstance().requestQiniuToken(this, new OkHttpCallback<BaseBean<QiniuToken>>() {
 
             @Override
@@ -157,7 +163,7 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
                 System.out.println(imagePath);
                 uploadManager.put(
                         new File(imagePath),
-                        "osg/user/expostor/photo/" + UUID.randomUUID().toString().replace("-", "") + ".jpg",
+                        "osg/forum/"+mMeetingId+"/" + UUID.randomUUID().toString().replace("-", "") + ".jpg",
                         token,
                         new UpCompletionHandler() {
                             @Override
@@ -168,8 +174,8 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
                                 }
                                 if (info.isOK()) {
                                     HashMap<String, Object> params = new HashMap<String, Object>();
-                                    params.put("meetingId",mMeetingId);
-                                    params.put("ts", System.currentTimeMillis());
+                                    params.put("meetingId", mMeetingId);
+                                    params.put("ts", ts);
                                     params.put("content", Preferences.getImgUrl() + key);
                                     params.put("type", 1);
                                     ApiClient.getInstance().expostorPostChatMessage(TAG, expostorStatsCallback, params);
@@ -223,8 +229,9 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
                 super.onScrollStateChanged(recyclerView, newState);
                 if (newState == RecyclerView.SCROLL_STATE_IDLE
                         && lastVisibleItemPosition == 0
-                        && !((mPageNo-1) == mTotalPage)) {
+                        && !((mPageNo - 1) == mTotalPage) && proBar.getVisibility() == View.GONE) {
                     Log.v("onscrolllistener", "进入停止状态==" + lastVisibleItemPosition);
+                    proBar.setVisibility(View.VISIBLE);
                     requestRecord(false);
 //                    requestLiveVideoListNext();
                     if (mPageNo != -1 && mTotalPage != -1 && !(mPageNo == mTotalPage)) {
@@ -265,9 +272,57 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
             @Override
             public void call(Object o) {
                 if (o instanceof ForumSendEvent) {
-                    requestRecordOnlyLast(true);
-                }else if(o instanceof ForumRevokeEvent){
-                    requestRecordOnlyLast(true);
+                    if (((ForumSendEvent) o).getEntity().getUserId().equals(Preferences.getUserId())) {
+                        for(int i=dataChat.size()-1; i<dataChat.size();i++){
+                            Log.v("forumsendevent9090","进入循环=="+i);
+                            Log.v("forumsendevent9090","进入循环=="+dataChat.get(i).getReplyTimestamp());
+                            Log.v("forumsendevent9090","((ForumSendEvent) o).getEntity().getReplyTimestamp()=="+((ForumSendEvent) o).getEntity().getReplyTimestamp());
+                            if(dataChat.get(i).getTs() == ((ForumSendEvent) o).getEntity().getTs()){
+
+                            Log.v("forumsendevent9090","拥有13=="+handler.hasMessages(i));
+//                            Log.v("forumsendevent9090","拥有13=="+handler.hasMessages(13,temp));
+                            if(handler.hasMessages(i)){
+                                Log.v("forumsendevent9090","拥有13=="+dataChat.get(i).getContent());
+                                handler.removeMessages(i);
+                            }
+                                dataChat.set(i,((ForumSendEvent) o).getEntity());
+                                Log.v("forumsendevent9090","退出循环=="+i);
+                                Message msg = new Message();
+                                msg.arg1 = i;
+                                msg.what=12;
+
+                                handler.sendMessageDelayed(msg,10);
+                                break;
+                            }
+                        }
+
+
+                    } else {
+                        dataChat.add(((ForumSendEvent) o).getEntity());
+                        initLastData(dataChat, true);
+                    }
+
+                } else if (o instanceof ForumRevokeEvent) {
+//                    requestRecordOnlyLast(true);
+                    for(int i=0; i<dataChat.size();i++){
+                        if(dataChat.get(i).getId().equals(((ForumRevokeEvent) o).getEntity().getId())){
+                            dataChat.get(i).setMsgType(1);
+                            Message msg = new Message();
+                            msg.arg1 = i;
+                            msg.what=12;
+
+                            handler.sendMessageDelayed(msg,10);
+                            if(progressDialog !=null &&progressDialog.isShowing()){
+                                if(handler.hasMessages(14)){
+                                    handler.removeMessages(14);
+                                }
+                                progressDialog.dismiss();
+                            }
+                            break;
+                        }
+
+                    }
+
                 }
 
             }
@@ -304,7 +359,7 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
             String str = "abd";
             list2.add(str);
         }
-        inputAdapter iadapter = new inputAdapter(getActivity(), list2,this);
+        inputAdapter iadapter = new inputAdapter(getActivity(), list2, this);
 
         recyclerViewInput.setAdapter(iadapter);
     }
@@ -315,28 +370,33 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
         recyclerViewInput = (RecyclerView) rootView.findViewById(R.id.recycler2);
         btnSend = (Button) rootView.findViewById(R.id.btn_send);
         mEditText = (EditText) rootView.findViewById(R.id.edit_text);
+        proBar = (ProgressBar) rootView.findViewById(R.id.progressbar);
 
+        proBar.setVisibility(View.GONE);
         openCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.v("imput98989","count=="+count);
+                Log.v("imput98989", "count==" + count);
                 if (count == 0) {
                     InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
 //                    recyclerViewInput.setVisibility(View.VISIBLE);
-                    handler.sendEmptyMessageDelayed(11,100);
+                    handler.sendEmptyMessageDelayed(11, 100);
                     count = 1;
                 } else if (count == 1) {
-
+                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.WRAP_CONTENT);
+                    params.bottomMargin = (int)getResources().getDimension(R.dimen.my_px_180);
+                    recyclerViewChat.setLayoutParams(params);
                     recyclerViewInput.setVisibility(View.GONE);
                     InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
+                    handler.sendEmptyMessageDelayed(10,500);
                     count = 2;
                 } else if (count == 2) {
                     InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
 //                    recyclerViewInput.setVisibility(View.VISIBLE);
-                    handler.sendEmptyMessageDelayed(11,100);
+                    handler.sendEmptyMessageDelayed(11, 100);
 
                     count = 1;
                 }
@@ -347,6 +407,9 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
         rlContent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.WRAP_CONTENT);
+                params.bottomMargin = (int)getResources().getDimension(R.dimen.my_px_180);
+                recyclerViewChat.setLayoutParams(params);
                 recyclerViewInput.setVisibility(View.GONE);
                 InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
@@ -356,8 +419,19 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
             @Override
             public void onClick(View view) {
                 Log.v("medittext98", "点击事件");
-                handler.sendEmptyMessageDelayed(10, 100);
+                handler.sendEmptyMessageDelayed(10, 500);
+                recyclerViewInput.setVisibility(View.GONE);
 //                recyclerViewChat.scrollToPosition(dataChat.size()-1);
+            }
+        });
+        mEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                Log.v("edittextfocus",b+"");
+                if(b){
+//                    Log.v("edittextfocus",b+"");
+                    recyclerViewInput.setVisibility(View.GONE);
+                }
             }
         });
         mEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -375,6 +449,7 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
                 return false;
             }
         });
+
         mEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -404,7 +479,7 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
             public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
 
                 if (actionId == EditorInfo.IME_ACTION_SEND) {
-                    sendAction();
+//                    sendAction();
 //                    HashMap<String, Object> params = new HashMap<String, Object>();
 //                    params.put("meetingId", "e7d627b750114191ba556d7ca188f33f");
 //                    params.put("ts", System.currentTimeMillis());
@@ -419,7 +494,27 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendAction();
+                ChatMesData.PageDataEntity entity = new ChatMesData.PageDataEntity();
+                long ts = System.currentTimeMillis();
+                entity.setContent(mEditText.getText().toString());
+                entity.setId("");
+                entity.setMsgType(0);
+                entity.setTs(ts);
+                entity.setType(0);
+                entity.setUserName(Preferences.getUserName());
+                entity.setUserId(Preferences.getUserId());
+                entity.setUserLogo(Preferences.getUserPhoto());
+                entity.setLocalState(1);
+                Message msg = new Message();
+                msg.what = dataChat.size();;
+//                msg.arg1 = dataChat.size();
+                msg.obj = entity;
+                handler.sendMessageDelayed(msg,delayTime);
+                dataChat.add((ChatMesData.PageDataEntity) entity);
+                initLastData(dataChat,true);
+
+                sendAction(ts,mEditText.getText().toString());
+
 
 //                configTakePhotoOption(takePhoto);
 //                File file = new File(Environment.getExternalStorageDirectory(), "/temp/" + System.currentTimeMillis() + ".jpg");
@@ -464,14 +559,14 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
         });
     }
 
-    private void sendAction(){
+    private void sendAction(long ts, String content) {
         HashMap<String, Object> params = new HashMap<String, Object>();
         params.put("meetingId", mMeetingId);
-        params.put("ts", System.currentTimeMillis());
-        params.put("content", mEditText.getText().toString());
+        params.put("ts", ts);
+        params.put("content", content);
         params.put("type", 0);
-        if(!atUserId.isEmpty()){
-            params.put("atailUserId",atUserId);
+        if (!atUserId.isEmpty()) {
+            params.put("atailUserId", atUserId);
             atUserId = "";
         }
         mEditText.setText("");
@@ -485,7 +580,25 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 
             ToastUtils.showToast("提交成功");
         }
+
+        @Override
+        public void onFailure(int errorCode, BaseException exception) {
+            super.onFailure(errorCode, exception);
+            if(progressDialog !=null &&progressDialog.isShowing()){
+                if(handler.hasMessages(14)){
+                    handler.removeMessages(14);
+                }
+                progressDialog.dismiss();
+            }
+            ToastUtils.showToast(exception.getMessage());
+        }
     };
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mEditText.setFocusable(true);
+    }
 
     private void initRecy() {
         mLayoutManager = new LinearLayoutManager(getActivity()); // 解决快速长按焦点丢失问题.
@@ -494,7 +607,7 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
         recyclerViewChat.setFocusable(false);
 //        recyclerViewChat.addItemDecoration(new SpaceItemDecoration((int) (getResources().getDimension(R.dimen.my_px_15)), 0, (int) (getResources().getDimension(R.dimen.my_px_15)), 0));
 
-        GridLayoutManager gridlayoutManager2 = new GridLayoutManager(getActivity(),4); // 解决快速长按焦点丢失问题.
+        GridLayoutManager gridlayoutManager2 = new GridLayoutManager(getActivity(), 4); // 解决快速长按焦点丢失问题.
         gridlayoutManager2.setOrientation(GridLayoutManager.VERTICAL);
         recyclerViewInput.setLayoutManager(gridlayoutManager2);
         recyclerViewInput.setFocusable(false);
@@ -515,8 +628,8 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
         ApiClient.getInstance().getChatMessages(this, mMeetingId, pageNo, pageSize, new OkHttpCallback<BaseBean<ChatMesData>>() {
             @Override
             public void onSuccess(BaseBean<ChatMesData> entity) {
-                    dataChat.addAll(entity.getData().getPageData());
-                    initLastData(dataChat,true);
+                dataChat.addAll(entity.getData().getPageData());
+                initLastData(dataChat, true);
             }
 
             @Override
@@ -526,6 +639,7 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
             }
         });
     }
+
     private void requestRecord(String pageNo, String pageSize) {
         ApiClient.getInstance().getChatMessages(this, mMeetingId, pageNo, pageSize, new OkHttpCallback<BaseBean<ChatMesData>>() {
             @Override
@@ -533,10 +647,11 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
                 mTotalPage = entity.getData().getTotalPage();
                 if (dataChat.size() == 0) {
                     dataChat = entity.getData().getPageData();
-                    initData(dataChat,true);
+                    initData(dataChat, true);
                 } else {
                     dataChat.addAll(0, entity.getData().getPageData());
-                    initData(dataChat,false);
+                    proBar.setVisibility(View.GONE);
+                    initData(dataChat, false);
 //                    dataChat.addAll();
                 }
 
@@ -551,10 +666,10 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
         });
     }
 
-    private void initLastData(List<ChatMesData.PageDataEntity> data, boolean last){
-        adapter.notifyItemChanged(data.size()-1);
-        if(last){
-            if(handler.hasMessages(10)){
+    private void initLastData(List<ChatMesData.PageDataEntity> data, boolean last) {
+        adapter.notifyItemChanged(data.size() - 1);
+        if (last) {
+            if (handler.hasMessages(10)) {
                 handler.removeMessages(10);
             }
             handler.sendEmptyMessageDelayed(10, 100);
@@ -566,8 +681,8 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
         adapter = new chatAdapter(getActivity(), data, this);
         recyclerViewChat.setAdapter(adapter);
 
-        if(last){
-            if(handler.hasMessages(10)){
+        if (last) {
+            if (handler.hasMessages(10)) {
                 handler.removeMessages(10);
             }
             handler.sendEmptyMessageDelayed(10, 100);
@@ -592,6 +707,10 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 
     @Override
     public void onClickCallBackFuc() {
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.WRAP_CONTENT);
+        params.bottomMargin = (int)getResources().getDimension(R.dimen.my_px_180);
+        recyclerViewChat.setLayoutParams(params);
+
         recyclerViewInput.setVisibility(View.GONE);
         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
@@ -599,7 +718,7 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 
     @Override
     public void onLongImgHead(String name, String userId) {
-        mEditText.setText("@"+name);
+        mEditText.setText("@" + name);
         mEditText.setSelection(mEditText.getText().length());
         atUserId = userId;
 //        recyclerViewChat.scrollToPosition(dataChat.size() - 1);
@@ -616,14 +735,81 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
         mEditText.setSelection(mEditText.getText().length());
     }
 
+    @Override
+    public void onReSend(String content,int type) {
+        if(type ==0){
+            ChatMesData.PageDataEntity entity = new ChatMesData.PageDataEntity();
+            long ts = System.currentTimeMillis();
+            entity.setContent(content);
+            entity.setId("");
+            entity.setMsgType(0);
+            entity.setReplyTimestamp(ts);
+            entity.setType(0);
+            entity.setUserName(Preferences.getUserName());
+            entity.setUserId(Preferences.getUserId());
+            entity.setUserLogo(Preferences.getUserPhoto());
+            entity.setLocalState(1);
+            Message msg = new Message();
+            msg.what = dataChat.size();;
+//                msg.arg1 = dataChat.size();
+            msg.obj = entity;
+            handler.sendMessageDelayed(msg,delayTime);
+            dataChat.add((ChatMesData.PageDataEntity) entity);
+            initLastData(dataChat,true);
+
+            sendAction(ts,content);
+
+        }else {
+            ChatMesData.PageDataEntity entity = new ChatMesData.PageDataEntity();
+            long ts = System.currentTimeMillis();
+            entity.setContent(content);
+            entity.setId("");
+            entity.setMsgType(0);
+            entity.setTs(ts);
+            entity.setType(1);
+            entity.setUserName(Preferences.getUserName());
+            entity.setUserId(Preferences.getUserId());
+            entity.setUserLogo(Preferences.getUserPhoto());
+            entity.setLocalState(1);
+            Message msg = new Message();
+            msg.what = dataChat.size();;
+//                msg.arg1 = dataChat.size();
+            msg.obj = entity;
+            handler.sendMessageDelayed(msg,delayTime);
+            dataChat.add((ChatMesData.PageDataEntity) entity);
+            initLastData(dataChat,true);
+            uploadImage(ts);
+        }
+
+    }
+
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            if(msg.what == 11){
+            if (msg.what == 11) {
+                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.WRAP_CONTENT);
+                params.bottomMargin = (int)getResources().getDimension(R.dimen.my_px_500);
+                recyclerViewChat.setLayoutParams(params);
                 recyclerViewInput.setVisibility(View.VISIBLE);
-            }else {
                 recyclerViewChat.scrollToPosition(dataChat.size() - 1);
+            } else if (msg.what == 10){
+                recyclerViewChat.scrollToPosition(dataChat.size() - 1);
+            }else if(msg.what == 12){
+//                dataChat.add((ChatMesData.PageDataEntity) msg.obj);
+//                initLastData(dataChat,true);
+                adapter.notifyItemChanged(msg.arg1);
+            }else if(msg.what==14){
+                if(progressDialog !=null && progressDialog.isShowing()){
+                    ToastUtils.showToast("网络出现问题");
+                    progressDialog.dismiss();
+                }
+
+            }else if(msg.obj instanceof ChatMesData.PageDataEntity){
+                ((ChatMesData.PageDataEntity)msg.obj).setLocalState(2);
+                dataChat.set(msg.what,((ChatMesData.PageDataEntity)msg.obj));
+                adapter.notifyItemChanged(msg.what);
+
             }
 
         }
@@ -642,7 +828,28 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
     public void takeSuccess(TResult result) {
         imagePath = result.getImage().getOriginalPath();
 //        Picasso.with(BaseApplication.getInstance()).load("file:" + imagePath).into(mBinding.imgUserInfoHead);
-        uploadImage();
+
+        ChatMesData.PageDataEntity entity = new ChatMesData.PageDataEntity();
+        long ts = System.currentTimeMillis();
+        entity.setContent("file://"+result.getImage().getOriginalPath());
+        entity.setId("");
+        entity.setMsgType(0);
+        entity.setTs(ts);
+        entity.setType(1);
+        entity.setUserName(Preferences.getUserName());
+        entity.setUserId(Preferences.getUserId());
+        entity.setUserLogo(Preferences.getUserPhoto());
+        entity.setLocalState(1);
+        Message msg = new Message();
+        msg.what = dataChat.size();;
+//                msg.arg1 = dataChat.size();
+        msg.obj = entity;
+        handler.sendMessageDelayed(msg,delayTime);
+        dataChat.add((ChatMesData.PageDataEntity) entity);
+        initLastData(dataChat,true);
+
+
+        uploadImage(ts);
         Log.i(TAG, "takeSuccess：" + result.getImage().getOriginalPath());
     }
 
@@ -668,9 +875,9 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
     @Override
     public void onItemClick(int pos) {
         configTakePhotoOption(takePhoto);
-        if(pos == 0){
+        if (pos == 0) {
             takePhoto.onPickFromGallery();
-        }else {
+        } else {
             File file = new File(Environment.getExternalStorageDirectory(), "/temp/" + System.currentTimeMillis() + ".jpg");
             if (!file.getParentFile().exists())
                 file.getParentFile().mkdirs();
@@ -699,7 +906,10 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 //                Toast.makeText(mContext, "button is pressed",
 //                        Toast.LENGTH_SHORT).show();
                 popupWindow.dismiss();
-                ApiClient.getInstance().expostorDeleteChatMessage(this,expostorStatsCallback,id);
+                showRevokeDialog();
+                handler.sendEmptyMessageDelayed(14,delayRevokeTime);
+//                handler.sendMessageDelayed()
+                ApiClient.getInstance().expostorDeleteChatMessage(this, expostorStatsCallback, id);
 
             }
         });
@@ -726,5 +936,13 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
         // 设置好参数之后再show
         popupWindow.showAsDropDown(view);
 
+    }
+    Dialog progressDialog;
+    private void showRevokeDialog(){
+        progressDialog = new Dialog(getActivity(),R.style.progress_dialog);
+        progressDialog.setContentView(R.layout.dialog_revoke);
+        progressDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.show();
     }
 }

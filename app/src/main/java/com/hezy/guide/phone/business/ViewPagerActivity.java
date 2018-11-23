@@ -36,7 +36,8 @@ public class ViewPagerActivity extends Activity {
 
         info = getIntent().getParcelableExtra("info");
         mPager = (ViewPager) findViewById(R.id.pager);
-        mPager.setPageMargin((int) (getResources().getDisplayMetrics().density * 15));
+//        mPager.setPageMargin((int) (getResources().getDisplayMetrics().density * 15));
+
         mPager.setAdapter(new PagerAdapter() {
             @Override
             public int getCount() {
@@ -63,7 +64,7 @@ public class ViewPagerActivity extends Activity {
 //                view.setImageResource(imgsId[position]);
                 Picasso.with(BaseApplication.getInstance()).load(mListPhotp.get(position)).into(pview);
                 if(position == 0){
-                    pview.animaFrom((Info) getIntent().getParcelableExtra("info"));
+//                    pview.animaFrom((Info) getIntent().getParcelableExtra("info"));
                 }
                 container.addView(view);
                 return view;
@@ -74,5 +75,6 @@ public class ViewPagerActivity extends Activity {
                 container.removeView((View) object);
             }
         });
+        mPager.setCurrentItem(getIntent().getIntExtra("pos",0));
     }
 }

@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.hezy.family.photolib.Info;
@@ -158,12 +159,35 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.ViewHolder> {
                     return false;
                 }
             });
+            if(data.get(position).getLocalState()==0){
+                holder.sendBar.setVisibility(View.GONE);
+                holder.tvState.setVisibility(View.GONE);
+            }else if(data.get(position).getLocalState() == 1){
+                holder.sendBar.setVisibility(View.VISIBLE);
+                holder.tvState.setVisibility(View.GONE);
+            }else if(data.get(position).getLocalState() == 2){
+                holder.sendBar.setVisibility(View.GONE);
+                holder.tvState.setVisibility(View.VISIBLE);
+                holder.tvState.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        callBack.onReSend(data.get(position).getContent(),data.get(position).getType());
+                    }
+                });
+                holder.tvState.setText("失败");
+            }
         }
 
         if(data.get(position).getType() == 1){
-            String url = ImageHelper.getUrlJoinAndThumAndCrop(data.get(position).getContent(),
-                    (int)context.getResources().getDimension(R.dimen.my_px_501),
-                    (int)context.getResources().getDimension(R.dimen.my_px_322));
+            String url = "";
+//            if(data.get(position).getLocalState()==1){
+//                url = "file://"+data.get(position).getContent();
+//            }else {
+                url = ImageHelper.getUrlJoinAndThumAndCrop(data.get(position).getContent(),
+                        (int)context.getResources().getDimension(R.dimen.my_px_501),
+                        (int)context.getResources().getDimension(R.dimen.my_px_322));
+//            }
+
             Picasso.with(BaseApplication.getInstance()).load(url).into(holder.imgPic);
             ((TextView)holder.tvContent).setVisibility(View.GONE);
             ((ImageView)holder.imgArrow).setVisibility(View.GONE);
@@ -172,17 +196,31 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.ViewHolder> {
                 @Override
                 public void onClick(View view) {
 //                    callBack.onClickImage(holder.imgPic.getInfo());
+                    int pos = 0;
                     ArrayList<String> mList = new ArrayList<>();
                     for(int i=0; i<data.size(); i++){
                         if(data.get(i).getType()==1){
                             mList.add(data.get(i).getContent());
+                            if(data.get(i).getContent().equals(data.get(position).getContent())){
+                                pos = mList.size()-1;
+                            }
                         }
                     }
-
-                    context.startActivity(new Intent(context,ViewPagerActivity.class).putExtra("info",holder.imgPic.getInfo()).putExtra("imglist",mList));
+                    context.startActivity(new Intent(context,ViewPagerActivity.class).putExtra("imglist",mList)
+                            .putExtra("pos",pos));
+//                    context.startActivity(new Intent(context,ViewPagerActivity.class).putExtra("info",holder.imgPic.getInfo()).putExtra("imglist",mList)
+//                            .putExtra("pos",pos));
 //                    ((Activity)context).overridePendingTransition(0, 0);
                 }
             });
+            holder.imgPic.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    callBack.onLongContent(view,data.get(position).getId());
+                    return true;
+                }
+            });
+
         }else {
             ((TextView)holder.tvContent).setText(data.get(position).getContent());
             ((TextView)holder.tvContent).setVisibility(View.VISIBLE);
@@ -201,8 +239,10 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.ViewHolder> {
         private TextView name;
         private TextView tvContent;
         private CircleImageView imgHead;
-        private PhotoView imgPic;
+        private ImageView imgPic;
         private ImageView imgArrow;
+        private ProgressBar sendBar;
+        private TextView tvState;
 
         private TextView tvCenter;
         private TextView tvEdit;
@@ -212,8 +252,10 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.ViewHolder> {
             name = itemView.findViewById(R.id.tv_name);
             tvContent = itemView.findViewById(R.id.tv_content);
             imgHead = (CircleImageView)itemView.findViewById(R.id.mIvHead);
-            imgPic = (PhotoView)itemView.findViewById(R.id.img_pic);
+            imgPic = (ImageView) itemView.findViewById(R.id.img_pic);
             imgArrow = (ImageView)itemView.findViewById(R.id.img_arrow);
+            sendBar = (ProgressBar)itemView.findViewById(R.id.send_bar);
+            tvState = (TextView)itemView.findViewById(R.id.send_sate);
 
             tvCenter = itemView.findViewById(R.id.tv_center);
             tvEdit = itemView.findViewById(R.id.tv_edit);
@@ -226,6 +268,7 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.ViewHolder> {
         void onLongImgHead(String name, String userId);
         void onLongContent(View view, String id);
         void onEditCallBack(String content);
+        void onReSend(String content,int type);
 //        void onClickImage(Info info);
     }
 }

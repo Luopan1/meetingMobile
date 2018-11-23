@@ -62,9 +62,14 @@ public class ChatMesData {
         private int type;
         private String userLogo;
         private long replyTimestamp;
+        private long ts;
         private int msgType;
+        private int localState;//0发送成功1正在发送2发送失败
+        public PageDataEntity(){
 
-        protected PageDataEntity(Parcel in) {
+        }
+
+        public PageDataEntity(Parcel in) {
             userName = in.readString();
             replyTime = in.readString();
             content = in.readString();
@@ -74,6 +79,8 @@ public class ChatMesData {
             id = in.readString();
             replyTimestamp = in.readLong();
             msgType = in.readInt();
+            localState = in.readInt();
+            ts = in.readLong();
         }
 
         public static final Creator<PageDataEntity> CREATOR = new Creator<PageDataEntity>() {
@@ -160,6 +167,22 @@ public class ChatMesData {
             this.msgType = msgType;
         }
 
+        public int getLocalState() {
+            return localState;
+        }
+
+        public void setLocalState(int localState) {
+            this.localState = localState;
+        }
+
+        public long getTs() {
+            return ts;
+        }
+
+        public void setTs(long ts) {
+            this.ts = ts;
+        }
+
         @Override
         public int describeContents() {
             return 0;
@@ -176,6 +199,8 @@ public class ChatMesData {
             parcel.writeString(id);
             parcel.writeLong(replyTimestamp);
             parcel.writeInt(msgType);
+            parcel.writeInt(localState);
+            parcel.writeLong(ts);
         }
     }
 }

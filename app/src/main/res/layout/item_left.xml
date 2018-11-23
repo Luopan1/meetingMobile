@@ -43,6 +43,7 @@
                     android:layout_alignParentLeft="true"
                     android:layout_marginLeft="12px"
                     android:textSize="12sp"
+                    android:maxEms="15"
                     android:textColor="#0b0b0b"
                     android:padding="7dp"
                     android:text="我在说。。。。"/>
@@ -55,7 +56,7 @@
                     />
             </RelativeLayout>
 
-            <com.hezy.family.photolib.PhotoView
+            <ImageView
                 android:id="@+id/img_pic"
                 android:scaleType="centerInside"
                 android:layout_width="@dimen/my_px_501"

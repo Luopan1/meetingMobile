@@ -19,6 +19,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
+import com.google.gson.JsonObject;
 import com.hezy.guide.phone.ApiClient;
 import com.hezy.guide.phone.BaseApplication;
 import com.hezy.guide.phone.BaseException;
@@ -26,6 +27,7 @@ import com.hezy.guide.phone.BuildConfig;
 import com.hezy.guide.phone.R;
 import com.hezy.guide.phone.business.OnCallActivity;
 import com.hezy.guide.phone.entities.Bucket;
+import com.hezy.guide.phone.entities.ChatMesData;
 import com.hezy.guide.phone.entities.ExpostorOnlineStats;
 import com.hezy.guide.phone.entities.base.BaseBean;
 import com.hezy.guide.phone.entities.base.BaseErrorBean;
@@ -615,7 +617,24 @@ public class WSService extends Service {
         public void call(final Object... args) {
             ZYAgent.onEvent(getApplicationContext(),"ON_OLD_DISCONNECT");
             Log.i("wsserver", "Listener ON_OLD_DISCONNECT=="+args);
-            RxBus.sendMessage(new ForumRevokeEvent());
+            ForumRevokeEvent event = new ForumRevokeEvent();
+            JSONObject json = (JSONObject) args[0];
+            ChatMesData.PageDataEntity entity = new ChatMesData.PageDataEntity();
+            try {
+//                entity.setContent(json.getString("content"));
+                entity.setId(json.getString("forumId"));
+                entity.setMsgType(1);
+//                entity.setReplyTimestamp(json.getLong("replyTimestamp"));
+//                entity.setType(json.getInt("type"));
+                entity.setUserName(json.getString("userName"));
+                entity.setUserId(json.getString("userId"));
+                entity.setUserLogo(json.getString("userLogo"));
+//                entity.setLocalState(0);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            event.setEntity(entity);
+            RxBus.sendMessage(event);
 //            String str = (String) args[0];
 //            Log.i(TAG,str);
 
@@ -627,10 +646,26 @@ public class WSService extends Service {
         @Override
         public void call(final Object... args) {
             ZYAgent.onEvent(getApplicationContext(),"ON_FORUM_SEND_CONTENT");
-            Log.i("wsserver", "Listener ON_FORUM_SEND_CONTENT");
-//            String str = (String) args[0];
-//            Log.i(TAG,str);
-            RxBus.sendMessage(new ForumSendEvent());
+            Log.i("wsserver", "Listener ON_FORUM_SEND_CONTENT=="+args);
+            ForumSendEvent event = new ForumSendEvent();
+            JSONObject json = (JSONObject) args[0];
+            ChatMesData.PageDataEntity entity = new ChatMesData.PageDataEntity();
+            try {
+                entity.setContent(json.getString("content"));
+                entity.setId(json.getString("id"));
+                entity.setMsgType(0);
+                entity.setReplyTimestamp(json.getLong("replyTimestamp"));
+                entity.setType(json.getInt("type"));
+                entity.setUserName(json.getString("userName"));
+                entity.setUserId(json.getString("userId"));
+                entity.setUserLogo(json.getString("userLogo"));
+                entity.setTs(json.getLong("ts"));
+                entity.setLocalState(0);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            event.setEntity(entity);
+            RxBus.sendMessage(event);
 
 
         }

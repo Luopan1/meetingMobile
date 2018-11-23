@@ -50,7 +50,7 @@ public class ImageHelper {
 
     public static String getUrlJoin(String url) {
         if (url != null) {
-            if (url.contains("http")) {
+            if (url.contains("http") || url.contains("file")) {
                 return url;
             } else {
                 return Preferences.getImgUrl() + url;
