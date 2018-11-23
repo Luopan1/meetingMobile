@@ -177,7 +177,7 @@
             android:layout_marginBottom="10dp"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:visibility="visible">
+            android:visibility="gone">
 
             <Button
                 android:id="@+id/preview"

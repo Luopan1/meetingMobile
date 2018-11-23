@@ -404,7 +404,7 @@ public class ApiClient {
     }
 
     public void meetingMaterials(Object tag, OkHttpCallback callback, String meetingId){
-        okHttpUtil.get(API_DOMAIN_NAME + "/meeting/materials?meetingId=" + meetingId, getCommonHead(), null, callback);
+        okHttpUtil.get(API_DOMAIN_NAME + "/osg/app/meeting/materials?meetingId=" + meetingId, getCommonHead(), null, callback);
     }
 
     public void meetingMaterial(Object tag, OkHttpCallback callback, String materialsId) {
@@ -412,7 +412,7 @@ public class ApiClient {
     }
 
     public void meetingSetMaterial(Object tag, OkHttpCallback callback, String meetingId, String materialId){
-        okHttpUtil.post(API_DOMAIN_NAME + "/meeting/" + meetingId + "/materials/" + materialId, getCommonHead(), null, callback);
+        okHttpUtil.post(API_DOMAIN_NAME + "/osg/app/meeting/" + meetingId + "/materials/" + materialId, getCommonHead(), null, callback);
     }
 
 }

@@ -25,6 +25,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -90,7 +91,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
 
     private boolean isFullScreen = false;
 
-    private FrameLayout broadcasterLayout, broadcastSmallLayout, broadcasterSmallView, audienceView, audienceLayout;
+    private FrameLayout broadcasterLayout, broadcasterSmallLayout, broadcasterSmallView, audienceView, audienceLayout;
     private TextView broadcastNameText, broadcastTipsText, audienceNameText;
     private Button audiencesButton, stopButton, docButton, previewButton, nextButton, exitDocButton;
     private TextView exitButton;
@@ -100,6 +101,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
     private ImageView docImage;
     private TextView pageText;
     private SurfaceView localBroadcasterSurfaceView, remoteAudienceSurfaceView;
+    private LinearLayout docLayout;
 
     private Audience currentAudience, newAudience;
     private int currentAiducenceId;
@@ -179,8 +181,10 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
         broadcastNameText.setText("主持人：" + meetingJoin.getHostUser().getHostUserName());
         broadcasterLayout = findViewById(R.id.broadcaster_view);
 
-        broadcastSmallLayout = findViewById(R.id.broadcaster_small_layout);
+        broadcasterSmallLayout = findViewById(R.id.broadcaster_small_layout);
         broadcasterSmallView = findViewById(R.id.broadcaster_small_view);
+
+        docLayout = findViewById(R.id.doc_layout);
 
         audienceLayout = findViewById(R.id.audience_layout);
         audienceView = findViewById(R.id.audience_view);
@@ -252,12 +256,11 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
             docImage.setVisibility(View.GONE);
             pageText.setVisibility(View.GONE);
 
-            previewButton.setVisibility(View.GONE);
-            nextButton.setVisibility(View.GONE);
-            exitDocButton.setVisibility(View.GONE);
-
             broadcasterSmallView.removeView(localBroadcasterSurfaceView);
-            broadcasterSmallView.setVisibility(View.INVISIBLE);
+            broadcasterSmallLayout.setVisibility(View.GONE);
+
+            docLayout.setVisibility(View.GONE);
+
             broadcasterLayout.setVisibility(View.VISIBLE);
             broadcasterLayout.removeAllViews();
             broadcasterLayout.addView(localBroadcasterSurfaceView);
@@ -819,6 +822,11 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
 
     private void showPPTListDialog(ArrayList<Material> materials) {
         View view = View.inflate(this, R.layout.dialog_ppt_list, null);
+        view.findViewById(R.id.exit).setOnClickListener(v -> {
+            if (pptAlertDialog.isShowing()) {
+                pptAlertDialog.dismiss();
+            }
+        });
         RecyclerView recyclerViewTV = view.findViewById(R.id.meeting_doc_list);
         FocusFixedLinearLayoutManager gridlayoutManager = new FocusFixedLinearLayoutManager(this); // 解决快速长按焦点丢失问题.
         gridlayoutManager.setOrientation(GridLayoutManager.HORIZONTAL);
@@ -827,19 +835,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
         recyclerViewTV.addItemDecoration(new SpaceItemDecoration((int) (getResources().getDimension(R.dimen.my_px_20)), 0, (int) (getResources().getDimension(R.dimen.my_px_20)), 0));
         MaterialAdapter materialAdapter = new MaterialAdapter(this, materials);
         recyclerViewTV.setAdapter(materialAdapter);
-        materialAdapter.setOnClickListener(new MaterialAdapter.OnClickListener() {
-            @Override
-            public void onPreviewButtonClick(View v, Material material, int position) {
-                showPPTDetailDialog(material);
-            }
-
-//            @Override
-//            public void onUseButtonClick(View v, Material material, int position) {
-//                currentMaterial = material;
-//                Collections.sort(currentMaterial.getMeetingMaterialsPublishList(), (o1, o2) -> (o1.getPriority() < o2.getPriority()) ? -1 : 1);
-//                ApiClient.getInstance().meetingSetMaterial(TAG, setMaterialCallback, meetingJoin.getMeeting().getId(), currentMaterial.getId());
-//            }
-        });
+        materialAdapter.setOnClickListener((v, material, position) -> showPPTDetailDialog(material));
         AlertDialog.Builder builder = new AlertDialog.Builder(MeetingBroadcastActivity.this, R.style.MyDialog);
         builder.setView(view);
         pptAlertDialog = builder.create();
@@ -897,8 +893,20 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
 
             }
         });
+        TextView nameText = view.findViewById(R.id.name);
+        nameText.setText(material.getName());
         TextView timeText = view.findViewById(R.id.time);
         timeText.setText(material.getCreateDate() + "创建");
+        view.findViewById(R.id.use_doc).setOnClickListener(v -> {
+                currentMaterial = material;
+                Collections.sort(currentMaterial.getMeetingMaterialsPublishList(), (o1, o2) -> (o1.getPriority() < o2.getPriority()) ? -1 : 1);
+                ApiClient.getInstance().meetingSetMaterial(TAG, setMaterialCallback, meetingJoin.getMeeting().getId(), currentMaterial.getId());
+        });
+        view.findViewById(R.id.exit_preview).setOnClickListener(v -> {
+            if (pptDetailDialog.isShowing()) {
+                pptDetailDialog.dismiss();
+            }
+        });
         AlertDialog.Builder builder = new AlertDialog.Builder(MeetingBroadcastActivity.this, R.style.MyDialog);
         builder.setView(view);
         pptDetailDialog = builder.create();
@@ -911,19 +919,20 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
         @Override
         public void onSuccess(Bucket bucket) {
             Log.v("material_set", bucket.toString());
+            if (pptDetailDialog.isShowing()) {
+                pptDetailDialog.dismiss();
+            }
             if (pptAlertDialog.isShowing()) {
                 pptAlertDialog.dismiss();
             }
 
             broadcasterLayout.removeAllViews();
             broadcasterLayout.setVisibility(View.GONE);
-            broadcasterSmallView.setVisibility(View.VISIBLE);
+            broadcasterSmallLayout.setVisibility(View.VISIBLE);
             broadcasterSmallView.removeAllViews();
             broadcasterSmallView.addView(localBroadcasterSurfaceView);
 
-            previewButton.setVisibility(View.VISIBLE);
-            nextButton.setVisibility(View.VISIBLE);
-            exitDocButton.setVisibility(View.VISIBLE);
+            docLayout.setVisibility(View.VISIBLE);
 
             docImage.setVisibility(View.VISIBLE);
 
@@ -980,7 +989,25 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
         public void onFailure(int errorCode, BaseException exception) {
             super.onFailure(errorCode, exception);
             Toast.makeText(MeetingBroadcastActivity.this, exception.getMessage(), Toast.LENGTH_SHORT).show();
+            try {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("finish_meeting", true);
+                agoraAPI.messageChannelSend(channelName, jsonObject.toString(), "");
+
+                stopButton.setVisibility(View.GONE);
+
+                audienceNameText.setText("");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            doLeaveChannel();
+            if (agoraAPI.getStatus() == 2) {
+                agoraAPI.logout();
+            }
+            finish();
         }
+
     };
 
     private void doConfigEngine(int cRole) {
