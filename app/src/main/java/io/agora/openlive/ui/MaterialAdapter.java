@@ -56,6 +56,7 @@ public class MaterialAdapter extends RecyclerView.Adapter<MaterialAdapter.ViewHo
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int position) {
         Material material = materials.get(position);
 
+        viewHolder.nameText.setText(material.getName());
         String imageUrl = ImageHelper.getThumb(material.getMeetingMaterialsPublishList().get(0).getUrl());
         Picasso.with(mContext).load(imageUrl).into(viewHolder.imageView);
         viewHolder.countText.setText(String.format("%d张", material.getMeetingMaterialsPublishList().size()));
@@ -79,7 +80,7 @@ public class MaterialAdapter extends RecyclerView.Adapter<MaterialAdapter.ViewHo
 
         View itemView;
         ImageView imageView;
-        TextView countText, uploadTimeText;
+        TextView nameText, countText, uploadTimeText;
         FrameLayout coverLayout;
 
         public ViewHolder(View itemView) {
@@ -87,6 +88,7 @@ public class MaterialAdapter extends RecyclerView.Adapter<MaterialAdapter.ViewHo
             this.itemView = itemView;
             coverLayout = itemView.findViewById(R.id.cover_layout);
             imageView = itemView.findViewById(R.id.image);
+            nameText = itemView.findViewById(R.id.name);
             countText = itemView.findViewById(R.id.count);
             uploadTimeText = itemView.findViewById(R.id.upload_time);
         }

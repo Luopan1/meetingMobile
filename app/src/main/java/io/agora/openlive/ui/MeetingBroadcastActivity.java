@@ -608,7 +608,11 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                             audienceView.removeAllViews();
                             audienceNameText.setText("");
                             audienceLayout.setVisibility(View.GONE);
-                            fullScreenButton.setVisibility(View.GONE);
+                            if (currentMaterial != null) {
+                                fullScreenButton.setVisibility(View.VISIBLE);
+                            } else {
+                                fullScreenButton.setVisibility(View.GONE);
+                            }
                         } else {
                             currentAiducenceId = Integer.parseInt(value);
                         }
@@ -725,6 +729,10 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                 updateAudienceList();
 
                 stopButton.setVisibility(View.GONE);
+
+                if (currentMaterial != null) {
+                    fullScreenButton.setVisibility(View.VISIBLE);
+                }
 
                 audienceView.removeAllViews();
                 audienceNameText.setText("");
@@ -1083,12 +1091,6 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
             } else {
                 agoraAPI.login2(agora.getAppID(), "" + uid, agora.getSignalingKey(), 0, "", 20, 30);
             }
-
-            HashMap<String, Object> params = new HashMap<String, Object>();
-            params.put("status", 1);
-            params.put("type", 2);
-            params.put("meetingId", meetingJoin.getMeeting().getId());
-            ApiClient.getInstance().meetingJoinStats(TAG, meetingJoinStatsCallback, params);
         });
     }
 
@@ -1286,6 +1288,29 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                 }
             });
         }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        doLeaveChannel();
+    }
+
+    @Override
+    protected void onUserLeaveHint() {
+        super.onUserLeaveHint();
+        doLeaveChannel();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        HashMap<String, Object> params = new HashMap<String, Object>();
+        params.put("status", 1);
+        params.put("type", 2);
+        params.put("meetingId", meetingJoin.getMeeting().getId());
+        ApiClient.getInstance().meetingJoinStats(TAG, meetingJoinStatsCallback, params);
     }
 
     @Override
