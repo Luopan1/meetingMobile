@@ -476,6 +476,8 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                                     params.put("meetingHostJoinTraceId", meetingHostJoinTraceId);
                                     params.put("status", 2);
                                     params.put("meetingId", meetingJoin.getMeeting().getId());
+                                    params.put("type", 2);
+                                    params.put("leaveType", 1);
                                     ApiClient.getInstance().meetingHostStats(TAG, meetingHostJoinTraceCallback, params);
                                 }
                             }
@@ -573,6 +575,8 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                                     params.put("meetingHostJoinTraceId", meetingHostJoinTraceId);
                                     params.put("status", 2);
                                     params.put("meetingId", meetingJoin.getMeeting().getId());
+                                    params.put("type", 2);
+                                    params.put("leaveType", 1);
                                     ApiClient.getInstance().meetingHostStats(TAG, meetingHostJoinTraceCallback, params);
                                 }
                             }
@@ -631,6 +635,8 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                                         params.put("meetingHostJoinTraceId", meetingHostJoinTraceId);
                                         params.put("status", 2);
                                         params.put("meetingId", meetingJoin.getMeeting().getId());
+                                        params.put("type", 2);
+                                        params.put("leaveType", 1);
                                         ApiClient.getInstance().meetingHostStats(TAG, meetingHostJoinTraceCallback, params);
                                     }
                                 }
@@ -941,6 +947,8 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                         params.put("meetingHostJoinTraceId", meetingHostJoinTraceId);
                         params.put("status", 2);
                         params.put("meetingId", meetingJoin.getMeeting().getId());
+                        params.put("type", 2);
+                        params.put("leaveType", 1);
                         ApiClient.getInstance().meetingHostStats(TAG, meetingHostJoinTraceCallback, params);
                     }
                     try {
@@ -1011,6 +1019,8 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                     params.put("meetingHostJoinTraceId", meetingHostJoinTraceId);
                     params.put("status", 2);
                     params.put("meetingId", meetingJoin.getMeeting().getId());
+                    params.put("type", 2);
+                    params.put("leaveType", 1);
                     ApiClient.getInstance().meetingHostStats(TAG, meetingHostJoinTraceCallback, params);
                 }
             }
@@ -1141,6 +1151,8 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                         params.put("meetingHostJoinTraceId", meetingHostJoinTraceId);
                         params.put("status", 2);
                         params.put("meetingId", meetingJoin.getMeeting().getId());
+                        params.put("type", 2);
+                        params.put("leaveType", 1);
                         ApiClient.getInstance().meetingHostStats(TAG, meetingHostJoinTraceCallback, params);
                     }
                 }

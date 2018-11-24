@@ -1065,6 +1065,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
         params.put("meetingId", meetingJoin.getMeeting().getId());
         params.put("status", 2);
         params.put("type", 2);
+        params.put("leaveType", 1);
         ApiClient.getInstance().meetingJoinStats(TAG, meetingJoinStatsCallback, params);
     }
 
