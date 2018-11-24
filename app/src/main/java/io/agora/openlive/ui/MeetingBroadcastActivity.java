@@ -969,6 +969,8 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
 
             docImage.setVisibility(View.VISIBLE);
 
+            fullScreenButton.setVisibility(View.VISIBLE);
+
             position = 0;
             MeetingMaterialsPublish currentMaterialPublish = currentMaterial.getMeetingMaterialsPublishList().get(position);
 
