@@ -1104,7 +1104,6 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                 return;
             }
             ApiClient.getInstance().getMeetingHost(TAG, meeting.getId(), joinMeetingCallback(uid));
-
         });
     }
 
@@ -1283,7 +1282,6 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
     @Override
     protected void onUserLeaveHint() {
         super.onUserLeaveHint();
-        
     }
 
     @Override

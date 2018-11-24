@@ -175,6 +175,12 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
         meetingJoin = intent.getParcelableExtra("meeting");
         channelName = meetingJoin.getMeeting().getId();
 
+        HashMap<String, Object> params = new HashMap<String, Object>();
+        params.put("status", 1);
+        params.put("type", 2);
+        params.put("meetingId", meetingJoin.getMeeting().getId());
+        ApiClient.getInstance().meetingJoinStats(TAG, meetingJoinStatsCallback, params);
+
         broadcastTipsText = findViewById(R.id.broadcast_tips);
         audienceNameText = findViewById(R.id.audience_name);
         broadcastNameText = findViewById(R.id.broadcaster);
@@ -1300,17 +1306,6 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
     protected void onUserLeaveHint() {
         super.onUserLeaveHint();
         doLeaveChannel();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        HashMap<String, Object> params = new HashMap<String, Object>();
-        params.put("status", 1);
-        params.put("type", 2);
-        params.put("meetingId", meetingJoin.getMeeting().getId());
-        ApiClient.getInstance().meetingJoinStats(TAG, meetingJoinStatsCallback, params);
     }
 
     @Override

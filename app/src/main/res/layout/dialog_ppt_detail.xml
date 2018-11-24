@@ -63,15 +63,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
+            android:text="左右滑动预览"
             android:textColor="@color/white"
-            android:textSize="14sp"
-            android:text="可左右滑动预览"/>
+            android:textSize="14sp" />
+
         <Button
             android:id="@+id/use_doc"
             android:layout_width="145dp"
             android:layout_height="40dp"
-            android:background="@drawable/bg_doc_use_button"
             android:layout_marginBottom="8dp"
+            android:background="@drawable/bg_doc_use_button"
             android:text="使用资料"
             android:textColor="@color/white"
             android:textSize="14sp" />
