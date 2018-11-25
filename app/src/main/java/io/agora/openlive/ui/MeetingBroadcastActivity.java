@@ -1299,17 +1299,17 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
         }
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        doLeaveChannel();
-    }
+//    @Override
+//    protected void onStop() {
+//        super.onStop();
+//        doLeaveChannel();
+//    }
 
-    @Override
-    protected void onUserLeaveHint() {
-        super.onUserLeaveHint();
-        doLeaveChannel();
-    }
+//    @Override
+//    protected void onUserLeaveHint() {
+//        super.onUserLeaveHint();
+//        doLeaveChannel();
+//    }
 
     @Override
     public void onBackPressed() {
