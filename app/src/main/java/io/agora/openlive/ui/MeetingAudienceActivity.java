@@ -622,23 +622,23 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                                 params.put("meetingId", meetingJoin.getMeeting().getId());
                                 ApiClient.getInstance().meetingHostStats(TAG, meetingHostJoinTraceCallback, params);
                             } else {  // 连麦人不是我
+                                worker().getRtcEngine().setClientRole(Constants.CLIENT_ROLE_AUDIENCE);
+                                agoraAPI.setAttr("uname", null);
+
+                                requestTalkButton.setVisibility(View.VISIBLE);
+                                stopTalkButton.setVisibility(View.GONE);
+
+                                if (!TextUtils.isEmpty(meetingHostJoinTraceId)) {
+                                    HashMap<String, Object> params = new HashMap<String, Object>();
+                                    params.put("meetingHostJoinTraceId", meetingHostJoinTraceId);
+                                    params.put("status", 2);
+                                    params.put("meetingId", meetingJoin.getMeeting().getId());
+                                    params.put("type", 2);
+                                    params.put("leaveType", 1);
+                                    ApiClient.getInstance().meetingHostStats(TAG, meetingHostJoinTraceCallback, params);
+                                }
                                 if (localSurfaceView != null) {
-                                    worker().getRtcEngine().setClientRole(Constants.CLIENT_ROLE_AUDIENCE);
-                                    agoraAPI.setAttr("uname", null);
                                     localSurfaceView = null;
-
-                                    requestTalkButton.setVisibility(View.VISIBLE);
-                                    stopTalkButton.setVisibility(View.GONE);
-
-                                    if (!TextUtils.isEmpty(meetingHostJoinTraceId)) {
-                                        HashMap<String, Object> params = new HashMap<String, Object>();
-                                        params.put("meetingHostJoinTraceId", meetingHostJoinTraceId);
-                                        params.put("status", 2);
-                                        params.put("meetingId", meetingJoin.getMeeting().getId());
-                                        params.put("type", 2);
-                                        params.put("leaveType", 1);
-                                        ApiClient.getInstance().meetingHostStats(TAG, meetingHostJoinTraceCallback, params);
-                                    }
                                 }
                             }
                         }
@@ -989,30 +989,30 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 
                 agoraAPI.channelDelAttr(channelName, CALLING_AUDIENCE);
 
-                try {
-                    JSONObject jsonObject = new JSONObject();
-                    jsonObject.put("finish", true);
-                    agoraAPI.messageInstantSend(broadcastId, 0, jsonObject.toString(), "");
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+//                try {
+//                    JSONObject jsonObject = new JSONObject();
+//                    jsonObject.put("finish", true);
+//                    agoraAPI.messageInstantSend(broadcastId, 0, jsonObject.toString(), "");
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+
+//                try {
+//                    JSONObject jsonObject = new JSONObject();
+//                    jsonObject.put("handsUp", handsUp);
+//                    jsonObject.put("uid", config().mUid);
+//                    jsonObject.put("uname", audienceName);
+//                    jsonObject.put("callStatus", 0);
+//                    jsonObject.put("auditStatus", Preferences.getUserAuditStatus());
+//                    jsonObject.put("postTypeName", Preferences.getUserPostType());
+//                    agoraAPI.messageInstantSend(broadcastId, 0, jsonObject.toString(), "");
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
 
                 handsUp = false;
                 requestTalkButton.setText("我要发言");
                 requestTalkButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_meeting_signup, 0, 0, 0);
-
-                try {
-                    JSONObject jsonObject = new JSONObject();
-                    jsonObject.put("handsUp", handsUp);
-                    jsonObject.put("uid", config().mUid);
-                    jsonObject.put("uname", audienceName);
-                    jsonObject.put("callStatus", 0);
-                    jsonObject.put("auditStatus", Preferences.getUserAuditStatus());
-                    jsonObject.put("postTypeName", Preferences.getUserPostType());
-                    agoraAPI.messageInstantSend(broadcastId, 0, jsonObject.toString(), "");
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
 
                 if (!TextUtils.isEmpty(meetingHostJoinTraceId)) {
                     HashMap<String, Object> params = new HashMap<String, Object>();

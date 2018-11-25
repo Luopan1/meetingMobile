@@ -35,6 +35,8 @@ public class Preferences {
     private static final String PREFERENCE_USER_RANK = "u_rank";
     private static final String PREFERENCE_USER_AUDIT_STATUS = "u_audit_status";
 
+    private static final String PREFERENCE_MEETING_ID = "meeting_id";
+    private static final String PREFERENCE_MEETING_TRACE_ID = "meeting_trace_id";
 
     private static final String PREFERENCE_STUDENT_ID = "s_id";
 
@@ -57,6 +59,34 @@ public class Preferences {
             Log.d(tag, "student id save failure");
         } else {
             Log.d(tag, "student id save success");
+        }
+    }
+
+    public static String getMeetingTraceId() {
+        return getPreferences().getString(PREFERENCE_MEETING_TRACE_ID, null);
+    }
+
+    public static void setMeetingTraceId(String meetingTraceId) {
+        SharedPreferences.Editor editor = getPreferences().edit();
+        editor.putString(PREFERENCE_MEETING_TRACE_ID, meetingTraceId);
+        if (!editor.commit()) {
+            Log.d(tag, "meetingTraceId save failure");
+        } else {
+            Log.d(tag, "meetingTraceId save success");
+        }
+    }
+
+    public static String getMeetingId() {
+        return getPreferences().getString(PREFERENCE_MEETING_ID, null);
+    }
+
+    public static void setMeetingId(String meetingId) {
+        SharedPreferences.Editor editor = getPreferences().edit();
+        editor.putString(PREFERENCE_MEETING_ID, meetingId);
+        if (!editor.commit()) {
+            Log.d(tag, "meetingId save failure");
+        } else {
+            Log.d(tag, "meetingId save success");
         }
     }
 

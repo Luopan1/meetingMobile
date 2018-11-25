@@ -1108,9 +1108,12 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
         public void onSuccess(Bucket<MeetingJoinStats> meetingJoinStatsBucket) {
             if (TextUtils.isEmpty(meetingJoinTraceId)) {
                 meetingJoinTraceId = meetingJoinStatsBucket.getData().getId();
+                Preferences.setMeetingId(meetingJoin.getMeeting().getId());
             } else {
                 meetingJoinTraceId = null;
+                Preferences.setMeetingId(null);
             }
+            Preferences.setMeetingTraceId(meetingJoinTraceId);
         }
     };
 
