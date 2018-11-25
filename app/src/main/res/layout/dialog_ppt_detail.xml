@@ -9,27 +9,33 @@
     android:orientation="horizontal"
     android:padding="16dp">
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="wrap_content"
-        android:layout_height="280dp"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <android.support.v4.view.ViewPager
             android:id="@+id/view_pager"
-            android:layout_width="480dp"
-            android:layout_height="240dp" />
+            android:layout_width="500dp"
+            android:layout_height="280dp" />
 
         <TextView
             android:id="@+id/page"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
+            android:layout_gravity="right|bottom"
             android:layout_marginTop="8dp"
+            android:layout_marginRight="4dp"
+            android:layout_marginBottom="4dp"
+            android:shadowColor="@color/black"
+            android:shadowDx="3"
+            android:shadowDy="3"
+            android:shadowRadius="5"
             android:textColor="@color/white"
             android:textSize="16sp"
             tools:text="第1/10页" />
 
-    </LinearLayout>
+    </FrameLayout>
 
     <LinearLayout
         android:layout_width="218dp"
