@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.Window;
@@ -53,9 +54,17 @@ public abstract class BaseActivity extends AppCompatActivity {
                 } else {
                     layout.getViewTreeObserver().removeGlobalOnLayoutListener(this);
                 }
-                initUIandEvent();
+                Log.v("addonClobalLayoutlis","进入初始化initUIandEvent");
+//                initUIandEvent();
             }
         });
+    }
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        initUIandEvent();
     }
 
     protected abstract void initUIandEvent();

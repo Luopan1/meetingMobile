@@ -1045,7 +1045,17 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
         event().removeEventHandler(this);
 
     }
+    @Override
+    protected void onStart() {
+        super.onStart();
+        initUIandEvent();
+    }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        doLeaveChannel();
+    }
     private void doLeaveChannel() {
         worker().leaveChannel(config().mChannel);
         worker().preview(false, null, 0);
