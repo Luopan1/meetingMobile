@@ -49,7 +49,7 @@ public class ChatActivity extends BasicActivity implements TakePhoto.TakeResultL
         } else {
             ZYAgent.onEvent(mContext, "在线按钮,当前在线,,无效操作");
         }
-        llBack = (LinearLayout)this.findViewById(R.id.back);
+        llBack = (LinearLayout)this.findViewById(R.id.ll_back);
         tvTitle = (TextView)this.findViewById(R.id.tv_title) ;
         tvTitle.setText(getIntent().getStringExtra("title"));
         llBack.setOnClickListener(new View.OnClickListener() {
