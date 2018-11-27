@@ -304,6 +304,7 @@
         android:background="@drawable/blue_rectangle"
         android:layout_marginTop="@dimen/my_px_498"
         android:layout_marginLeft="@dimen/my_px_90"
+        android:visibility="gone"
         android:orientation="horizontal">
         <TextView
             android:layout_width="wrap_content"
