@@ -1062,7 +1062,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
         HashMap<String, Object> params = new HashMap<String, Object>();
         params.put("status", 1);
         params.put("type", 2);
-        params.put("meetingId", meetingJoin.getMeeting().getId());
+        params.put("meetingId", ((MeetingJoin)(getIntent().getParcelableExtra("meeting"))).getMeeting().getId());
         ApiClient.getInstance().meetingJoinStats(TAG, meetingJoinStatsCallback, params);
 
     }
