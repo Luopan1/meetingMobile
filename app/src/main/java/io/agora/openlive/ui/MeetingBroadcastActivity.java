@@ -268,6 +268,12 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
             currentMaterial = null;
             agoraAPI.channelDelAttr(channelName, DOC_INFO);
 
+            if (currentAudience == null) {
+                fullScreenButton.setVisibility(View.GONE);
+            } else {
+                fullScreenButton.setVisibility(View.VISIBLE);
+            }
+
         });
 
         docButton = findViewById(R.id.doc);
@@ -294,15 +300,20 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                     audienceView.removeView(remoteAudienceSurfaceView);
                     audienceLayout.setVisibility(View.GONE);
                     stopButton.setVisibility(View.GONE);
+                } else {
+                    audienceLayout.setVisibility(View.GONE);
+                    stopButton.setVisibility(View.GONE);
                 }
                 if (localBroadcasterSurfaceView != null) {
                     broadcasterSmallLayout.setVisibility(View.GONE);
                 }
-                if (currentMaterial != null) {
+                if (currentMaterial == null) {
                     docLayout.setVisibility(View.GONE);
+                } else {
+                    docLayout.setVisibility(View.VISIBLE);
                 }
                 docButton.setVisibility(View.GONE);
-                muteButton.setVisibility(View.GONE);
+                muteButton.setVisibility(View.INVISIBLE);
                 audiencesButton.setVisibility(View.GONE);
                 isFullScreen = true;
             } else {
@@ -312,13 +323,20 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                     audienceView.removeAllViews();
                     audienceView.addView(remoteAudienceSurfaceView);
                     stopButton.setVisibility(View.VISIBLE);
+                } else {
+                    audienceLayout.setVisibility(View.GONE);
+                    stopButton.setVisibility(View.GONE);
                 }
                 if (localBroadcasterSurfaceView != null) {
-                    broadcasterSmallLayout.setVisibility(View.VISIBLE);
+                    if (currentMaterial == null) {
+                        docLayout.setVisibility(View.GONE);
+                        broadcasterSmallLayout.setVisibility(View.GONE);
+                    } else {
+                        docLayout.setVisibility(View.VISIBLE);
+                        broadcasterSmallLayout.setVisibility(View.VISIBLE);
+                    }
                 }
-                if (currentMaterial != null) {
-                    docLayout.setVisibility(View.VISIBLE);
-                }
+
                 docButton.setVisibility(View.VISIBLE);
                 muteButton.setVisibility(View.VISIBLE);
                 audiencesButton.setVisibility(View.VISIBLE);
@@ -579,6 +597,8 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                                     audienceNameText.setText("");
                                     audienceLayout.setVisibility(View.GONE);
 
+                                    remoteAudienceSurfaceView = null;
+
                                     agoraAPI.channelDelAttr(channelName, CALLING_AUDIENCE);
                                 }
                             }
@@ -601,8 +621,11 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                                 currentAudience.setHandsUp(false);
                                 audienceHashMap.put(currentAudience.getUid(), currentAudience);
                                 updateAudienceList();
-                                currentAudience = null;
                             }
+
+                            currentAudience = null;
+
+                            remoteAudienceSurfaceView = null;
 
                             stopButton.setVisibility(View.GONE);
                             audienceView.removeAllViews();
