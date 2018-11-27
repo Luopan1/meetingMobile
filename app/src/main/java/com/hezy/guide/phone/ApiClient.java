@@ -422,8 +422,16 @@ public class ApiClient {
         okHttpUtil.get(API_DOMAIN_NAME + "/osg/app/user/area/custom", params, tag, callback);
     }
 
+    public void meetingMaterials(Object tag, OkHttpCallback callback, String meetingId){
+        okHttpUtil.get(API_DOMAIN_NAME + "/osg/app/meeting/materials?meetingId=" + meetingId, getCommonHead(), null, callback);
+    }
+
     public void meetingMaterial(Object tag, OkHttpCallback callback, String materialsId) {
         okHttpUtil.get(API_DOMAIN_NAME + "/osg/app/meeting/materials/" + materialsId, getCommonHead(), null, callback);
+    }
+
+    public void meetingSetMaterial(Object tag, OkHttpCallback callback, String meetingId, String materialId){
+        okHttpUtil.post(API_DOMAIN_NAME + "/osg/app/meeting/" + meetingId + "/materials/" + materialId, getCommonHead(), null, callback);
     }
 
 }

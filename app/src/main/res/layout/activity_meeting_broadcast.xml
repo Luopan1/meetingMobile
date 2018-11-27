@@ -7,8 +7,7 @@
     android:background="@color/black"
     android:gravity="center_vertical"
     android:keepScreenOn="true"
-    android:orientation="vertical"
-    tools:context="io.agora.openlive.ui.MeetingBroadcastActivity">
+    android:orientation="vertical">
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -163,58 +162,120 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
         android:background="@drawable/bg_buttom_meeting"
         android:gravity="center_vertical"
-        android:orientation="horizontal"
         android:paddingLeft="30dp"
         android:paddingTop="12dp"
-        android:paddingBottom="12dp">
+        android:paddingBottom="12dp"
+        android:layout_gravity="bottom"
+        android:orientation="vertical">
 
-        <Button
-            android:id="@+id/waiter"
-            android:layout_width="wrap_content"
-            android:layout_height="35dp"
-            android:layout_marginRight="15dp"
-            android:background="@drawable/bg_meeting_button_selector"
-            android:drawableLeft="@drawable/ic_meeting_signup"
-            android:drawablePadding="3dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:text="参会人（0）"
-            android:textColor="@color/white"
-            android:textSize="14sp" />
+        <LinearLayout
+            android:id="@+id/doc_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:visibility="gone">
 
-        <Button
-            android:id="@+id/stop_audience"
-            android:layout_width="99dp"
-            android:layout_height="35dp"
-            android:layout_marginRight="15dp"
-            android:background="@drawable/bg_meeting_button_selector"
-            android:drawableLeft="@drawable/ic_meeting_end_speech"
-            android:drawablePadding="3dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:text="终止发言"
-            android:textColor="@color/white"
-            android:textSize="14sp"
-            android:visibility="gone" />
+            <Button
+                android:id="@+id/preview"
+                android:layout_width="75sp"
+                android:layout_height="30sp"
+                android:background="@drawable/bg_meeting_button_selector"
+                android:text="上一页"
+                android:textColor="@color/white"
+                android:textSize="14sp" />
 
-        <ImageButton
-            android:id="@+id/mute_audio"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:layout_marginRight="15dp"
-            android:background="@drawable/bg_meeting_mute_selector"
-            android:src="@drawable/ic_unmuted" />
+            <Button
+                android:id="@+id/next"
+                android:layout_width="75sp"
+                android:layout_height="30sp"
+                android:layout_marginLeft="10dp"
+                android:background="@drawable/bg_meeting_button_selector"
+                android:text="下一页"
+                android:textColor="@color/white"
+                android:textSize="14sp" />
 
-        <ImageButton
-            android:id="@+id/full_screen"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:visibility="gone"
-            android:background="@drawable/bg_meeting_mute_selector"
-            android:src="@drawable/ic_full_screen" />
+            <Button
+                android:id="@+id/exit_ppt"
+                android:layout_width="110sp"
+                android:layout_height="30sp"
+                android:layout_marginLeft="10dp"
+                android:background="@drawable/bg_meeting_button_selector"
+                android:text="退出PPT演示"
+                android:textColor="@color/white"
+                android:textSize="14sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/waiter"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:layout_marginRight="15dp"
+                android:background="@drawable/bg_meeting_button_selector"
+                android:drawableLeft="@drawable/ic_meeting_signup"
+                android:drawablePadding="3dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="参会人（0）"
+                android:textColor="@color/white"
+                android:textSize="14sp" />
+
+            <Button
+                android:id="@+id/stop_audience"
+                android:layout_width="99dp"
+                android:layout_height="35dp"
+                android:layout_marginRight="15dp"
+                android:background="@drawable/bg_meeting_button_selector"
+                android:drawableLeft="@drawable/ic_meeting_end_speech"
+                android:drawablePadding="3dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="终止发言"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:visibility="gone" />
+
+            <ImageButton
+                android:id="@+id/mute_audio"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_marginRight="15dp"
+                android:background="@drawable/bg_meeting_mute_selector"
+                android:src="@drawable/ic_unmuted" />
+
+            <Button
+                android:id="@+id/doc"
+                android:layout_width="99dp"
+                android:layout_height="35dp"
+                android:layout_marginRight="15dp"
+                android:background="@drawable/bg_meeting_button_selector"
+                android:drawableLeft="@drawable/ic_meeting_doc"
+                android:drawablePadding="3dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="会议资料"
+                android:textColor="@color/white"
+                android:textSize="14sp" />
+
+            <ImageButton
+                android:id="@+id/full_screen"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:background="@drawable/bg_meeting_mute_selector"
+                android:src="@drawable/ic_full_screen"
+                android:visibility="gone" />
+
+        </LinearLayout>
 
     </LinearLayout>
 

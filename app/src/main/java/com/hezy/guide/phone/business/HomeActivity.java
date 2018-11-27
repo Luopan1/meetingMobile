@@ -23,6 +23,8 @@ import com.adorkable.iosdialog.ActionSheetDialog;
 import com.hezy.guide.phone.ApiClient;
 import com.hezy.guide.phone.BuildConfig;
 import com.hezy.guide.phone.R;
+import com.hezy.guide.phone.entities.Bucket;
+import com.hezy.guide.phone.entities.MeetingJoinStats;
 import com.hezy.guide.phone.entities.Version;
 import com.hezy.guide.phone.entities.base.BaseBean;
 import com.hezy.guide.phone.event.SetUserStateEvent;
@@ -42,6 +44,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import rx.Subscription;
 import rx.functions.Action1;
@@ -96,7 +99,26 @@ public class HomeActivity extends BasicActivity implements View.OnClickListener 
 //        versionCheck();
         initData();
         registerDevice();
+
+        if (!TextUtils.isEmpty(Preferences.getMeetingTraceId())) {
+            HashMap<String, Object> params = new HashMap<String, Object>();
+            params.put("meetingJoinTraceId", Preferences.getMeetingTraceId());
+            params.put("meetingId", Preferences.getMeetingId());
+            params.put("status", 2);
+            params.put("type", 1);
+            params.put("leaveType", 1);
+            ApiClient.getInstance().meetingJoinStats(TAG, meetingJoinStatsCallback, params);
+        }
     }
+
+    private OkHttpCallback meetingJoinStatsCallback = new OkHttpCallback<Bucket<MeetingJoinStats>>() {
+
+        @Override
+        public void onSuccess(Bucket<MeetingJoinStats> meetingJoinStatsBucket) {
+            Preferences.setMeetingId(null);
+            Preferences.setMeetingTraceId(null);
+        }
+    };
 
     private void initView() {
         viewPager = findViewById(R.id.view_pager);

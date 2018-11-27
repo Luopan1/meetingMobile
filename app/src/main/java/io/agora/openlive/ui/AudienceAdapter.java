@@ -63,6 +63,7 @@ public class AudienceAdapter extends BaseAdapter {
             viewHolder.talkButton = convertView.findViewById(R.id.talk);
             viewHolder.checkButton = convertView.findViewById(R.id.check);
             viewHolder.handsupImage = convertView.findViewById(R.id.handsup);
+            viewHolder.clientTypeImage = convertView.findViewById(R.id.clientType);
             viewHolder.callingText = convertView.findViewById(R.id.calling);
             viewHolder.auditStatusImage = convertView.findViewById(R.id.auditStatus);
             viewHolder.postTypeNameText = convertView.findViewById(R.id.postTypeName);
@@ -78,6 +79,22 @@ public class AudienceAdapter extends BaseAdapter {
             viewHolder.auditStatusImage.setVisibility(View.VISIBLE);
         } else {
             viewHolder.auditStatusImage.setVisibility(View.INVISIBLE);
+        }
+
+        if (String.valueOf(audience.getUid()).startsWith("1")) {
+            viewHolder.clientTypeImage.setVisibility(View.VISIBLE);
+            viewHolder.clientTypeImage.setImageResource(R.drawable.ic_lable_tv);
+        } else if(String.valueOf(audience.getUid()).startsWith("2")) {
+            viewHolder.clientTypeImage.setVisibility(View.VISIBLE);
+            viewHolder.clientTypeImage.setImageResource(R.drawable.ic_lable_mobile);
+        } else if(String.valueOf(audience.getUid()).startsWith("3")) {
+            viewHolder.clientTypeImage.setVisibility(View.VISIBLE);
+            viewHolder.clientTypeImage.setImageResource(R.drawable.ic_lable_tv);
+        } else if(String.valueOf(audience.getUid()).startsWith("4")) {
+            viewHolder.clientTypeImage.setVisibility(View.VISIBLE);
+            viewHolder.clientTypeImage.setImageResource(R.drawable.ic_lable_mobile);
+        } else {
+            viewHolder.clientTypeImage.setVisibility(View.GONE);
         }
 
         if (!TextUtils.isEmpty(audience.getPostTypeName())) {
@@ -115,7 +132,7 @@ public class AudienceAdapter extends BaseAdapter {
 
     class ViewHolder {
         LinearLayout audienceLayout;
-        ImageView handsupImage, auditStatusImage;
+        ImageView handsupImage, auditStatusImage, clientTypeImage;
         TextView nameText, callingText, postTypeNameText;
         Button talkButton, checkButton;
     }

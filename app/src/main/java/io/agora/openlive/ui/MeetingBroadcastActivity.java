@@ -8,43 +8,57 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
 import com.hezy.guide.phone.ApiClient;
-import com.hezy.guide.phone.BaseApplication;
 import com.hezy.guide.phone.BaseException;
 import com.hezy.guide.phone.BuildConfig;
 import com.hezy.guide.phone.R;
 import com.hezy.guide.phone.entities.Agora;
 import com.hezy.guide.phone.entities.Audience;
 import com.hezy.guide.phone.entities.Bucket;
+import com.hezy.guide.phone.entities.Material;
+import com.hezy.guide.phone.entities.Materials;
 import com.hezy.guide.phone.entities.Meeting;
 import com.hezy.guide.phone.entities.MeetingJoin;
 import com.hezy.guide.phone.entities.MeetingJoinStats;
+import com.hezy.guide.phone.entities.MeetingMaterialsPublish;
 import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.utils.OkHttpCallback;
 import com.hezy.guide.phone.utils.UIDUtil;
+import com.hezy.guide.phone.utils.helper.ImageHelper;
+import com.hezy.guide.phone.view.FocusFixedLinearLayoutManager;
+import com.hezy.guide.phone.view.SpaceItemDecoration;
+import com.squareup.picasso.Picasso;
 import com.tendcloud.tenddata.TCAgent;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -67,6 +81,8 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
     private Agora agora;
     private HashMap<Integer, Audience> audienceHashMap = new HashMap<Integer, Audience>();
     private ArrayList<Audience> audiences = new ArrayList<Audience>();
+    private Material currentMaterial;
+    private int position;
 
     private String channelName;
     private int memberCount;
@@ -75,20 +91,25 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
 
     private boolean isFullScreen = false;
 
-    private FrameLayout broadcasterLayout, broadcastSmallLayout, broadcasterSmallView, audienceView, audienceLayout;
+    private FrameLayout broadcasterLayout, broadcasterSmallLayout, broadcasterSmallView, audienceView, audienceLayout;
     private TextView broadcastNameText, broadcastTipsText, audienceNameText;
-    private Button audiencesButton, stopButton;
+    private Button audiencesButton, stopButton, docButton, previewButton, nextButton, exitDocButton;
     private TextView exitButton;
     private AgoraAPIOnlySignal agoraAPI;
     private ImageButton muteButton;
     private ImageButton fullScreenButton;
-    private SurfaceView remoteAudienceSurfaceView;
+    private ImageView docImage;
+    private TextView pageText;
+    private SurfaceView localBroadcasterSurfaceView, remoteAudienceSurfaceView;
+    private LinearLayout docLayout;
 
     private Audience currentAudience, newAudience;
+    private int currentAiducenceId;
 
+    private static final String DOC_INFO = "doc_info";
     private static final String CALLING_AUDIENCE = "calling_audience";
 
-    private Handler connectingHandler = new Handler(){
+    private Handler connectingHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
@@ -116,9 +137,10 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                     newAudience.setCallStatus(0);
                     audienceHashMap.put(newAudience.getUid(), newAudience);
                     updateAudienceList();
+                    newAudience = null;
+                } else {
+                    currentAudience = null;
                 }
-                currentAudience = null;
-                newAudience = null;
             }
         }
     };
@@ -153,17 +175,122 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
         meetingJoin = intent.getParcelableExtra("meeting");
         channelName = meetingJoin.getMeeting().getId();
 
+        HashMap<String, Object> params = new HashMap<String, Object>();
+        params.put("status", 1);
+        params.put("type", 2);
+        params.put("meetingId", meetingJoin.getMeeting().getId());
+        ApiClient.getInstance().meetingJoinStats(TAG, meetingJoinStatsCallback, params);
+
         broadcastTipsText = findViewById(R.id.broadcast_tips);
         audienceNameText = findViewById(R.id.audience_name);
         broadcastNameText = findViewById(R.id.broadcaster);
         broadcastNameText.setText("主持人：" + meetingJoin.getHostUser().getHostUserName());
         broadcasterLayout = findViewById(R.id.broadcaster_view);
 
-        broadcastSmallLayout = findViewById(R.id.broadcaster_small_layout);
+        broadcasterSmallLayout = findViewById(R.id.broadcaster_small_layout);
         broadcasterSmallView = findViewById(R.id.broadcaster_small_view);
+
+        docLayout = findViewById(R.id.doc_layout);
 
         audienceLayout = findViewById(R.id.audience_layout);
         audienceView = findViewById(R.id.audience_view);
+
+        docImage = findViewById(R.id.doc_image);
+        pageText = findViewById(R.id.page);
+
+        previewButton = findViewById(R.id.preview);
+        previewButton.setOnClickListener(view -> {
+            if (currentMaterial != null) {
+                if (position > 0) {
+                    position--;
+                    MeetingMaterialsPublish currentMaterialPublish = currentMaterial.getMeetingMaterialsPublishList().get(position);
+                    docImage.setVisibility(View.VISIBLE);
+                    String imageUrl = ImageHelper.getThumb(currentMaterialPublish.getUrl());
+                    Picasso.with(MeetingBroadcastActivity.this).load(imageUrl).into(docImage);
+                    pageText.setVisibility(View.VISIBLE);
+                    pageText.setText("第" + currentMaterialPublish.getPriority() + "/" + currentMaterial.getMeetingMaterialsPublishList().size() + "页");
+
+                    try {
+                        JSONObject jsonObject = new JSONObject();
+                        jsonObject.put("material_id", currentMaterial.getId());
+                        jsonObject.put("doc_index", position);
+                        agoraAPI.channelSetAttr(channelName, DOC_INFO, jsonObject.toString());
+                        agoraAPI.messageChannelSend(channelName, jsonObject.toString(), "");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    Toast.makeText(MeetingBroadcastActivity.this, "当前是第一张了", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Toast.makeText(MeetingBroadcastActivity.this, "没找到ppt", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        nextButton = findViewById(R.id.next);
+        nextButton.setOnClickListener(view -> {
+            if (currentMaterial != null) {
+                if (position < (currentMaterial.getMeetingMaterialsPublishList().size() - 1)) {
+                    position++;
+                    MeetingMaterialsPublish currentMaterialPublish = currentMaterial.getMeetingMaterialsPublishList().get(position);
+                    docImage.setVisibility(View.VISIBLE);
+                    String imageUrl = ImageHelper.getThumb(currentMaterialPublish.getUrl());
+                    Picasso.with(MeetingBroadcastActivity.this).load(imageUrl).into(docImage);
+                    pageText.setVisibility(View.VISIBLE);
+                    pageText.setText("第" + currentMaterialPublish.getPriority() + "/" + currentMaterial.getMeetingMaterialsPublishList().size() + "页");
+
+                    try {
+                        JSONObject jsonObject = new JSONObject();
+                        jsonObject.put("material_id", currentMaterial.getId());
+                        jsonObject.put("doc_index", position);
+                        agoraAPI.channelSetAttr(channelName, DOC_INFO, jsonObject.toString());
+                        agoraAPI.messageChannelSend(channelName, jsonObject.toString(), "");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    Toast.makeText(MeetingBroadcastActivity.this, "当前是最后一张了", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Toast.makeText(MeetingBroadcastActivity.this, "没找到ppt", Toast.LENGTH_SHORT).show();
+            }
+
+        });
+
+        exitDocButton = findViewById(R.id.exit_ppt);
+        exitDocButton.setOnClickListener(view -> {
+            docImage.setVisibility(View.GONE);
+            pageText.setVisibility(View.GONE);
+
+            broadcasterSmallView.removeView(localBroadcasterSurfaceView);
+            broadcasterSmallLayout.setVisibility(View.GONE);
+
+            docLayout.setVisibility(View.GONE);
+
+            broadcasterLayout.setVisibility(View.VISIBLE);
+            broadcasterLayout.removeAllViews();
+            broadcasterLayout.addView(localBroadcasterSurfaceView);
+
+            currentMaterial = null;
+            agoraAPI.channelDelAttr(channelName, DOC_INFO);
+
+        });
+
+        docButton = findViewById(R.id.doc);
+        docButton.setOnClickListener((view) -> {
+            ApiClient.getInstance().meetingMaterials(TAG, new OkHttpCallback<Bucket<Materials>>() {
+                @Override
+                public void onSuccess(Bucket<Materials> materialsBucket) {
+                    showPPTListDialog(materialsBucket.getData().getPageData());
+                }
+
+                @Override
+                public void onFailure(int errorCode, BaseException exception) {
+                    super.onFailure(errorCode, exception);
+                    Toast.makeText(MeetingBroadcastActivity.this, exception.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }, meetingJoin.getMeeting().getId());
+        });
 
         fullScreenButton = findViewById(R.id.full_screen);
         fullScreenButton.setOnClickListener(v -> {
@@ -174,6 +301,13 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                     audienceLayout.setVisibility(View.GONE);
                     stopButton.setVisibility(View.GONE);
                 }
+                if (localBroadcasterSurfaceView != null) {
+                    broadcasterSmallLayout.setVisibility(View.GONE);
+                }
+                if (currentMaterial != null) {
+                    docLayout.setVisibility(View.GONE);
+                }
+                docButton.setVisibility(View.GONE);
                 muteButton.setVisibility(View.GONE);
                 audiencesButton.setVisibility(View.GONE);
                 isFullScreen = true;
@@ -185,6 +319,13 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                     audienceView.addView(remoteAudienceSurfaceView);
                     stopButton.setVisibility(View.VISIBLE);
                 }
+                if (localBroadcasterSurfaceView != null) {
+                    broadcasterSmallLayout.setVisibility(View.VISIBLE);
+                }
+                if (currentMaterial != null) {
+                    docLayout.setVisibility(View.VISIBLE);
+                }
+                docButton.setVisibility(View.VISIBLE);
                 muteButton.setVisibility(View.VISIBLE);
                 audiencesButton.setVisibility(View.VISIBLE);
                 isFullScreen = false;
@@ -207,7 +348,18 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
             if (audiences.size() > 0) {
                 showAlertDialog();
             } else {
-                Toast.makeText(this, "暂无参会人", Toast.LENGTH_SHORT).show();
+                agoraAPI.channelClearAttr(channelName);
+                if (currentAiducenceId != 0) {
+                    stopButton.setVisibility(View.GONE);
+                    try {
+                        JSONObject jsonObject = new JSONObject();
+                        jsonObject.put("finish", true);
+                        agoraAPI.messageInstantSend("" + currentAiducenceId, 0, jsonObject.toString(), "");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+
+                    }
+                }
             }
         });
 
@@ -227,12 +379,12 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
 
         doConfigEngine(Constants.CLIENT_ROLE_BROADCASTER);
 
-        SurfaceView localSurfaceView = RtcEngine.CreateRendererView(getApplicationContext());
-        rtcEngine().setupLocalVideo(new VideoCanvas(localSurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, config().mUid));
-        localSurfaceView.setZOrderOnTop(false);
-        localSurfaceView.setZOrderMediaOverlay(false);
-        broadcasterLayout.addView(localSurfaceView);
-        worker().preview(true, localSurfaceView, config().mUid);
+        localBroadcasterSurfaceView = RtcEngine.CreateRendererView(getApplicationContext());
+        rtcEngine().setupLocalVideo(new VideoCanvas(localBroadcasterSurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, config().mUid));
+        localBroadcasterSurfaceView.setZOrderOnTop(false);
+        localBroadcasterSurfaceView.setZOrderMediaOverlay(false);
+        broadcasterLayout.addView(localBroadcasterSurfaceView);
+        worker().preview(true, localBroadcasterSurfaceView, config().mUid);
 
         broadcastTipsText.setVisibility(View.GONE);
 
@@ -335,13 +487,31 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                     if (BuildConfig.DEBUG) {
                         Toast.makeText(MeetingBroadcastActivity.this, "参会人" + account + "进入信令频道", Toast.LENGTH_SHORT).show();
                     }
-                    if (currentAudience != null) {
+                    agoraAPI.channelQueryUserNum(channelName);
+
+                    if (currentAudience != null) { // 正在连麦
                         agoraAPI.channelSetAttr(channelName, CALLING_AUDIENCE, "" + currentAudience.getUid());
-                    } else {
+                    } else { // 没有正在连麦
                         agoraAPI.channelDelAttr(channelName, CALLING_AUDIENCE);
                     }
-                    if (agoraAPI.getStatus() == 2) {
-                        agoraAPI.channelQueryUserNum(channelName);
+                    if (currentMaterial != null) { //正在演示ppt
+                        try {
+                            if (BuildConfig.DEBUG) {
+                                Toast.makeText(MeetingBroadcastActivity.this, "向参会人" + account + "发送ppt信息", Toast.LENGTH_SHORT).show();
+                            }
+                            JSONObject jsonObject = new JSONObject();
+                            jsonObject.put("material_id", currentMaterial.getId());
+                            jsonObject.put("doc_index", position);
+                            agoraAPI.channelSetAttr(channelName, DOC_INFO, jsonObject.toString());
+                            agoraAPI.messageChannelSend(channelName, jsonObject.toString(), "");
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    } else { // 没有在演示ppt
+                        agoraAPI.channelDelAttr(channelName, DOC_INFO);
+                        if (BuildConfig.DEBUG) {
+                            Toast.makeText(MeetingBroadcastActivity.this, "参会人" + account + "上来时主持人端没有ppt信息", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
             }
@@ -353,10 +523,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                     if (BuildConfig.DEBUG) {
                         Toast.makeText(MeetingBroadcastActivity.this, account + "退出信令频道", Toast.LENGTH_SHORT).show();
                     }
-                    if (agoraAPI.getStatus() == 2) {
-                        agoraAPI.channelQueryUserNum(channelName);
-                    }
-
+                    agoraAPI.channelQueryUserNum(channelName);
                     Audience audience = audienceHashMap.remove(Integer.parseInt(account));
                     if (audience != null) {
                         if (BuildConfig.DEBUG) {
@@ -374,12 +541,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                     if (BuildConfig.DEBUG) {
                         Toast.makeText(MeetingBroadcastActivity.this, "获取到用户" + account + "的属性" + name + "的值为" + value, Toast.LENGTH_SHORT).show();
                     }
-                    if (TextUtils.isEmpty(value)) {
-                        audienceNameText.setVisibility(View.GONE);
-                    } else {
-                        audienceNameText.setText(value);
-                        audienceNameText.setVisibility(View.VISIBLE);
-                    }
+                    audienceNameText.setText(TextUtils.isEmpty(value) ? "" : value);
                 });
             }
 
@@ -422,6 +584,8 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                                     audienceView.removeAllViews();
                                     audienceNameText.setText("");
                                     audienceLayout.setVisibility(View.GONE);
+
+                                    agoraAPI.channelDelAttr(channelName, CALLING_AUDIENCE);
                                 }
                             }
                         }
@@ -435,28 +599,31 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
             public void onChannelAttrUpdated(String channelID, String name, String value, String type) {
                 super.onChannelAttrUpdated(channelID, name, value, type);
                 Log.v("onChannelAttrUpdated", "" + channelID + "" + name + "" + value + "" + type);
-                if (CALLING_AUDIENCE.equals(name)) {
-                    if (TextUtils.isEmpty(value)) {
-                        if (newAudience != null) {
-                            agoraAPI.channelSetAttr(channelName, CALLING_AUDIENCE,  "" + newAudience.getUid());
-                        } else {
+                runOnUiThread(() -> {
+                    if (CALLING_AUDIENCE.equals(name)) {
+                        if (TextUtils.isEmpty(value)) {
                             if (currentAudience != null) {
                                 currentAudience.setCallStatus(0);
                                 currentAudience.setHandsUp(false);
                                 audienceHashMap.put(currentAudience.getUid(), currentAudience);
                                 updateAudienceList();
-
-                                stopButton.setVisibility(View.GONE);
-                                audienceView.removeAllViews();
-                                audienceNameText.setText("");
-                                audienceLayout.setVisibility(View.GONE);
-
                                 currentAudience = null;
                             }
+
+                            stopButton.setVisibility(View.GONE);
+                            audienceView.removeAllViews();
+                            audienceNameText.setText("");
+                            audienceLayout.setVisibility(View.GONE);
+                            if (currentMaterial != null) {
+                                fullScreenButton.setVisibility(View.VISIBLE);
+                            } else {
+                                fullScreenButton.setVisibility(View.GONE);
+                            }
+                        } else {
+                            currentAiducenceId = Integer.parseInt(value);
                         }
                     }
-
-                }
+                });
             }
 
             @Override
@@ -499,6 +666,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
             dialog.cancel();
             if (type == 1) {
                 if (currentAudience != null) {
+                    agoraAPI.channelDelAttr(channelName, CALLING_AUDIENCE);
                     try {
                         JSONObject jsonObject = new JSONObject();
                         jsonObject.put("finish", true);
@@ -507,8 +675,19 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                         e.printStackTrace();
                     }
                 } else {
-                    if (BuildConfig.DEBUG)
-                    Toast.makeText(this, "当前没有连麦人", Toast.LENGTH_SHORT).show();
+                    if (BuildConfig.DEBUG) {
+                        Toast.makeText(this, "当前没有连麦人", Toast.LENGTH_SHORT).show();
+                    }
+                    if (currentAiducenceId != 0) {
+                        stopButton.setVisibility(View.GONE);
+                        try {
+                            JSONObject jsonObject = new JSONObject();
+                            jsonObject.put("finish", true);
+                            agoraAPI.messageInstantSend("" + currentAiducenceId, 0, jsonObject.toString(), "");
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
                 doLeaveChannel();
                 if (agoraAPI.getStatus() == 2) {
@@ -518,15 +697,15 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
             } else if (type == 2 || type == 5) {
                 isConnecting = true;
                 connectingHandler.sendEmptyMessageDelayed(0, 10000);
-                audienceNameText.setText(audience.getUname());
                 currentAudience = audience;
-                try {
-                    JSONObject jsonObject = new JSONObject();
-                    jsonObject.put("response", true);
-                    agoraAPI.messageInstantSend("" + audience.getUid(), 0, jsonObject.toString(), "");
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                currentAudience.setCallStatus(1);
+                currentAudience.setHandsUp(false);
+                audienceHashMap.put(currentAudience.getUid(), currentAudience);
+                updateAudienceList();
+                audienceNameText.setText(currentAudience.getUname());
+
+                agoraAPI.channelSetAttr(channelName, CALLING_AUDIENCE, "" + currentAudience.getUid());
+
             }
         });
 
@@ -557,6 +736,10 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
 
                 stopButton.setVisibility(View.GONE);
 
+                if (currentMaterial != null) {
+                    fullScreenButton.setVisibility(View.VISIBLE);
+                }
+
                 audienceView.removeAllViews();
                 audienceNameText.setText("");
                 audienceLayout.setVisibility(View.GONE);
@@ -574,59 +757,36 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                 newAudience = audience;
 
                 isConnecting = true;
-                if (connectingHandler.hasMessages(0)) {
-                    connectingHandler.removeMessages(0);
-                }
                 connectingHandler.sendEmptyMessageDelayed(0, 10000);
-                stopButton.setVisibility(View.GONE);
 
-                audienceView.removeAllViews();
-                audienceNameText.setText("");
-                audienceLayout.setVisibility(View.GONE);
+                if (currentAudience != null) {
+                    currentAudience.setCallStatus(0);
+                    currentAudience.setHandsUp(false);
+                    audienceHashMap.put(currentAudience.getUid(), currentAudience);
 
-                currentAudience.setCallStatus(0);
-                currentAudience.setHandsUp(false);
-                audienceHashMap.put(currentAudience.getUid(), currentAudience);
-                newAudience.setCallStatus(1);
-                newAudience.setHandsUp(false);
-                audienceHashMap.put(newAudience.getUid(), newAudience);
-                updateAudienceList();
+                    newAudience.setCallStatus(1);
+                    newAudience.setHandsUp(false);
+                    audienceHashMap.put(newAudience.getUid(), newAudience);
 
-                try {
-                    JSONObject jsonObject = new JSONObject();
-                    jsonObject.put("finish", true);
-                    agoraAPI.messageInstantSend("" + currentAudience.getUid(), 0, jsonObject.toString(), "");
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                    updateAudienceList();
 
-                agoraAPI.channelSetAttr(channelName, CALLING_AUDIENCE, "" + newAudience.getUid());
+                    audienceView.removeAllViews();
+                    audienceNameText.setText("");
+                    audienceLayout.setVisibility(View.GONE);
 
-                audienceNameText.setText(newAudience.getUname());
+                    stopButton.setVisibility(View.GONE);
 
-                try {
-                    JSONObject jsonObject = new JSONObject();
-                    jsonObject.put("response", true);
-                    agoraAPI.messageInstantSend("" + newAudience.getUid(), 0, jsonObject.toString(), "");
-                } catch (Exception e) {
-                    e.printStackTrace();
+                    agoraAPI.channelSetAttr(channelName, CALLING_AUDIENCE, "" + newAudience.getUid());
                 }
             }
         });
 
         dialog = new Dialog(this, R.style.MyDialog);
         dialog.setContentView(view);
-
-//        Window dialogWindow = dialog.getWindow();
-//        WindowManager.LayoutParams lp = dialogWindow.getAttributes();
-//        lp.width = 740;
-//        lp.height = 480;
-//        dialogWindow.setAttributes(lp);
-
         dialog.show();
     }
 
-    AlertDialog alertDialog;
+    AlertDialog alertDialog, pptAlertDialog, pptDetailDialog;
     AudienceAdapter audienceAdapter;
 
     private AudienceAdapter.OnAudienceButtonClickListener listener = new AudienceAdapter.OnAudienceButtonClickListener() {
@@ -697,15 +857,160 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
         alertDialog.show();
     }
 
-    private ArrayList<Audience> searchAudiences(ArrayList<Audience> audiences, String keyword){
+    private ArrayList<Audience> searchAudiences(ArrayList<Audience> audiences, String keyword) {
         ArrayList<Audience> audienceArrayList = new ArrayList<>();
-        for (Audience audience: audiences) {
+        for (Audience audience : audiences) {
             if (audience.getUname().contains(keyword)) {
                 audienceArrayList.add(audience);
             }
         }
         return audienceArrayList;
     }
+
+    private void showPPTListDialog(ArrayList<Material> materials) {
+        View view = View.inflate(this, R.layout.dialog_ppt_list, null);
+        view.findViewById(R.id.exit).setOnClickListener(v -> {
+            if (pptAlertDialog.isShowing()) {
+                pptAlertDialog.dismiss();
+            }
+        });
+        RecyclerView recyclerViewTV = view.findViewById(R.id.meeting_doc_list);
+        FocusFixedLinearLayoutManager gridlayoutManager = new FocusFixedLinearLayoutManager(this); // 解决快速长按焦点丢失问题.
+        gridlayoutManager.setOrientation(GridLayoutManager.HORIZONTAL);
+        recyclerViewTV.setLayoutManager(gridlayoutManager);
+        recyclerViewTV.setFocusable(false);
+        recyclerViewTV.addItemDecoration(new SpaceItemDecoration((int) (getResources().getDimension(R.dimen.my_px_20)), 0, (int) (getResources().getDimension(R.dimen.my_px_20)), 0));
+        MaterialAdapter materialAdapter = new MaterialAdapter(this, materials);
+        recyclerViewTV.setAdapter(materialAdapter);
+        materialAdapter.setOnClickListener((v, material, position) -> showPPTDetailDialog(material));
+        AlertDialog.Builder builder = new AlertDialog.Builder(MeetingBroadcastActivity.this, R.style.MyDialog);
+        builder.setView(view);
+        pptAlertDialog = builder.create();
+        if (!pptAlertDialog.isShowing()) {
+            pptAlertDialog.show();
+        }
+    }
+
+    private void showPPTDetailDialog(Material material) {
+        View view = View.inflate(this, R.layout.dialog_ppt_detail, null);
+        ViewPager viewPager = view.findViewById(R.id.view_pager);
+        TextView pageText = view.findViewById(R.id.page);
+        pageText.setText("第1/" + material.getMeetingMaterialsPublishList().size() + "页");
+        viewPager.setOffscreenPageLimit(3);
+        viewPager.setAdapter(new PagerAdapter() {
+            @Override
+            public int getCount() {
+                return material.getMeetingMaterialsPublishList().size();
+            }
+
+            @NonNull
+            @Override
+            public Object instantiateItem(@NonNull ViewGroup container, int position) {
+                View view = View.inflate(container.getContext(), R.layout.item_doc_detail, null);
+                ImageView imageView = view.findViewById(R.id.image_view);
+                String imageUrl = ImageHelper.getThumb(material.getMeetingMaterialsPublishList().get(position).getUrl());
+                Picasso.with(MeetingBroadcastActivity.this).load(imageUrl).into(imageView);
+                container.addView(view);
+                return view;
+            }
+
+            @Override
+            public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
+                return view == object;
+            }
+
+            @Override
+            public void destroyItem(ViewGroup container, int position, Object object) {
+                container.removeView((View) object);
+            }
+        });
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                pageText.setText("第" + (position + 1) + "/" + material.getMeetingMaterialsPublishList().size() + "页");
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+        TextView nameText = view.findViewById(R.id.name);
+        nameText.setText(material.getName());
+        TextView timeText = view.findViewById(R.id.time);
+        timeText.setText(material.getCreateDate() + "创建");
+        view.findViewById(R.id.use_doc).setOnClickListener(v -> {
+            currentMaterial = material;
+            Collections.sort(currentMaterial.getMeetingMaterialsPublishList(), (o1, o2) -> (o1.getPriority() < o2.getPriority()) ? -1 : 1);
+            ApiClient.getInstance().meetingSetMaterial(TAG, setMaterialCallback, meetingJoin.getMeeting().getId(), currentMaterial.getId());
+        });
+        view.findViewById(R.id.exit_preview).setOnClickListener(v -> {
+            if (pptDetailDialog.isShowing()) {
+                pptDetailDialog.dismiss();
+            }
+        });
+        AlertDialog.Builder builder = new AlertDialog.Builder(MeetingBroadcastActivity.this, R.style.MyDialog);
+        builder.setView(view);
+        pptDetailDialog = builder.create();
+        if (!pptDetailDialog.isShowing()) {
+            pptDetailDialog.show();
+        }
+    }
+
+    private OkHttpCallback setMaterialCallback = new OkHttpCallback<Bucket>() {
+        @Override
+        public void onSuccess(Bucket bucket) {
+            Log.v("material_set", bucket.toString());
+            if (pptDetailDialog.isShowing()) {
+                pptDetailDialog.dismiss();
+            }
+            if (pptAlertDialog.isShowing()) {
+                pptAlertDialog.dismiss();
+            }
+
+            broadcasterLayout.removeAllViews();
+            broadcasterLayout.setVisibility(View.GONE);
+            broadcasterSmallLayout.setVisibility(View.VISIBLE);
+            broadcasterSmallView.removeAllViews();
+            broadcasterSmallView.addView(localBroadcasterSurfaceView);
+
+            docLayout.setVisibility(View.VISIBLE);
+
+            docImage.setVisibility(View.VISIBLE);
+
+            fullScreenButton.setVisibility(View.VISIBLE);
+
+            position = 0;
+            MeetingMaterialsPublish currentMaterialPublish = currentMaterial.getMeetingMaterialsPublishList().get(position);
+
+            pageText.setVisibility(View.VISIBLE);
+            pageText.setText("第" + currentMaterialPublish.getPriority() + "/" + currentMaterial.getMeetingMaterialsPublishList().size() + "页");
+
+            String imageUrl = ImageHelper.getThumb(currentMaterialPublish.getUrl());
+            Picasso.with(MeetingBroadcastActivity.this).load(imageUrl).into(docImage);
+
+            try {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("material_id", currentMaterial.getId());
+                jsonObject.put("doc_index", position);
+                agoraAPI.channelSetAttr(channelName, DOC_INFO, jsonObject.toString());
+                agoraAPI.messageChannelSend(channelName, jsonObject.toString(), "");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void onFailure(int errorCode, BaseException exception) {
+            super.onFailure(errorCode, exception);
+            Toast.makeText(MeetingBroadcastActivity.this, exception.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    };
 
     private OkHttpCallback finishMeetingCallback = new OkHttpCallback<Bucket<Meeting>>() {
         @Override
@@ -733,7 +1038,25 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
         public void onFailure(int errorCode, BaseException exception) {
             super.onFailure(errorCode, exception);
             Toast.makeText(MeetingBroadcastActivity.this, exception.getMessage(), Toast.LENGTH_SHORT).show();
+            try {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("finish_meeting", true);
+                agoraAPI.messageChannelSend(channelName, jsonObject.toString(), "");
+
+                stopButton.setVisibility(View.GONE);
+
+                audienceNameText.setText("");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            doLeaveChannel();
+            if (agoraAPI.getStatus() == 2) {
+                agoraAPI.logout();
+            }
+            finish();
         }
+
     };
 
     private void doConfigEngine(int cRole) {
@@ -757,7 +1080,8 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
         params.put("meetingJoinTraceId", meetingJoinTraceId);
         params.put("meetingId", meetingJoin.getMeeting().getId());
         params.put("status", 2);
-        params.put("type", 2);
+        params.put("type", 1);
+        params.put("leaveType", 1);
         ApiClient.getInstance().meetingJoinStats(TAG, meetingJoinStatsCallback, params);
     }
 
@@ -773,12 +1097,6 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
             } else {
                 agoraAPI.login2(agora.getAppID(), "" + uid, agora.getSignalingKey(), 0, "", 20, 30);
             }
-
-            HashMap<String, Object> params = new HashMap<String, Object>();
-            params.put("status", 1);
-            params.put("type", 2);
-            params.put("meetingId", meetingJoin.getMeeting().getId());
-            ApiClient.getInstance().meetingJoinStats(TAG, meetingJoinStatsCallback, params);
         });
     }
 
@@ -790,29 +1108,30 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
         public void onSuccess(Bucket<MeetingJoinStats> meetingJoinStatsBucket) {
             if (TextUtils.isEmpty(meetingJoinTraceId)) {
                 meetingJoinTraceId = meetingJoinStatsBucket.getData().getId();
+                Preferences.setMeetingId(meetingJoin.getMeeting().getId());
             } else {
                 meetingJoinTraceId = null;
+                Preferences.setMeetingId(null);
             }
+            Preferences.setMeetingTraceId(meetingJoinTraceId);
         }
     };
 
     @Override
     public void onFirstRemoteVideoDecoded(int uid, int width, int height, int elapsed) {
-        doRenderRemoteUi(uid);
-    }
-
-    private void doRenderRemoteUi(final int uid) {
         runOnUiThread(() -> {
             if (isFinishing()) {
                 return;
             }
-            if (BuildConfig.DEBUG){
+            if (BuildConfig.DEBUG) {
                 Toast.makeText(MeetingBroadcastActivity.this, "参会人" + uid + "的视频流进入", Toast.LENGTH_SHORT).show();
             }
 
             fullScreenButton.setVisibility(View.VISIBLE);
-            audienceLayout.setVisibility(View.VISIBLE);
 
+            currentAiducenceId = uid;
+
+            audienceLayout.setVisibility(View.VISIBLE);
             audienceView.removeAllViews();
             remoteAudienceSurfaceView = RtcEngine.CreateRendererView(getApplicationContext());
             remoteAudienceSurfaceView.setZOrderOnTop(true);
@@ -821,24 +1140,31 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
             audienceView.addView(remoteAudienceSurfaceView);
 
             agoraAPI.getUserAttr(String.valueOf(uid), "uname");
-            agoraAPI.channelSetAttr(channelName, CALLING_AUDIENCE, String.valueOf(uid));
+
+            if (connectingHandler.hasMessages(0)) {
+                connectingHandler.removeMessages(0);
+            }
 
             isConnecting = false;
 
-            stopButton.setVisibility(View.VISIBLE);
-
-            if (currentAudience == null) {
-                currentAudience = audienceHashMap.get(uid);
+            if (newAudience != null) {
+                currentAudience = newAudience;
+                newAudience = null;
             }
             if (currentAudience != null) {
                 currentAudience.setCallStatus(2);
                 audienceHashMap.put(currentAudience.getUid(), currentAudience);
                 updateAudienceList();
+            } else {
+                Toast.makeText(this, "current audience is null", Toast.LENGTH_SHORT).show();
             }
+
+            stopButton.setVisibility(View.VISIBLE);
+
         });
     }
 
-    private void updateAudienceList(){
+    private void updateAudienceList() {
         Iterator iter = audienceHashMap.entrySet().iterator();
         audiences.clear();
         while (iter.hasNext()) {
@@ -866,40 +1192,20 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
             if (isFinishing()) {
                 return;
             }
-            if (BuildConfig.DEBUG){
-                Toast.makeText(MeetingBroadcastActivity.this,  uid + "退出了", Toast.LENGTH_SHORT).show();
+            if (BuildConfig.DEBUG) {
+                Toast.makeText(MeetingBroadcastActivity.this, uid + "退出了", Toast.LENGTH_SHORT).show();
             }
-            audienceView.removeAllViews();
-            audienceNameText.setText("");
-            audienceLayout.setVisibility(View.GONE);
-
-            fullScreenButton.setVisibility(View.GONE);
-            audiencesButton.setVisibility(View.VISIBLE);
-
-            remoteAudienceSurfaceView = null;
-
-            currentAudience = null;
-
-//            if (newAudience != null) {
-//                audienceNameText.setText(newAudience.getUname());
+//            audienceView.removeAllViews();
+//            audienceNameText.setText("");
+//            audienceLayout.setVisibility(View.GONE);
 //
-//                stopButton.setVisibility(View.VISIBLE);
+//            fullScreenButton.setVisibility(View.GONE);
+//            audiencesButton.setVisibility(View.VISIBLE);
 //
-//                currentAudience = newAudience;
+//            remoteAudienceSurfaceView = null;
 //
-//                audienceLayout.setVisibility(View.VISIBLE);
-//                try {
-//                    JSONObject jsonObject = new JSONObject();
-//                    jsonObject.put("response", true);
-//                    agoraAPI.messageInstantSend("" + newAudience.getUid(), 0, jsonObject.toString(), "");
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//
-//                newAudience = null;
-//            } else {
-//                currentAudience = null;
-//            }
+//            currentAudience = null;
+
         });
     }
 
@@ -994,6 +1300,42 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+//        initUIandEvent();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+//        if (BuildConfig.DEBUG) {
+//            Toast.makeText(this, "当前没有连麦人", Toast.LENGTH_SHORT).show();
+//        }
+        if (currentAiducenceId != 0) {
+            try {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("finish", true);
+                agoraAPI.messageInstantSend("" + currentAiducenceId, 0, jsonObject.toString(), "");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        doLeaveChannel();
+        if (agoraAPI.getStatus() == 2) {
+            agoraAPI.logout();
+        }
+        finish();
+
+    }
+
+//    @Override
+//    protected void onUserLeaveHint() {
+//        super.onUserLeaveHint();
+//        doLeaveChannel();
+//    }
+
+    @Override
     public void onBackPressed() {
         showDialog(1, "确定结束会议吗？", "暂时离开", "结束会议", null);
     }
@@ -1022,7 +1364,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
         }
         agoraAPI.destroy();
 
-        BaseApplication.getInstance().deInitWorkerThread();
+//        BaseApplication.getInstance().deInitWorkerThread();
     }
 
 }

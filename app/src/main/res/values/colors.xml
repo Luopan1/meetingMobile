@@ -13,6 +13,7 @@
 
     <color name="transparent_20_white">#33FFFFFF</color>
     <color name="transparent_75_white">#ACFFFFFF</color>
+    <color name="transparent_90_white">#E6FFFFFF</color>
 
     <color name="transparent_20_black">#33000000</color>
     <color name="transparent_60_black">#a8000000</color>

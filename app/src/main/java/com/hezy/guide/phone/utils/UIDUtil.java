@@ -21,7 +21,8 @@ public class UIDUtil {
                 sb.append(temp.charAt(i) % 10);
             }
         }
-        return sb.toString();
+        Integer account = Integer.parseInt(sb.toString());
+        return "2" + String.valueOf(account);
     }
 
 }
