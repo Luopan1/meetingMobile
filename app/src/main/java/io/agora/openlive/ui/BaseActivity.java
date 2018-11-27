@@ -55,7 +55,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                     layout.getViewTreeObserver().removeGlobalOnLayoutListener(this);
                 }
                 Log.v("addonClobalLayoutlis","进入初始化initUIandEvent");
-//                initUIandEvent();
+                initUIandEvent();
             }
         });
     }
@@ -64,7 +64,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        initUIandEvent();
+//        initUIandEvent();
     }
 
     protected abstract void initUIandEvent();

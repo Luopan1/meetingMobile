@@ -1048,18 +1048,26 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
     @Override
     protected void onStart() {
         super.onStart();
-        initUIandEvent();
+        doTEnterChannel();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        doLeaveChannel();
-    }
-    private void doLeaveChannel() {
-        worker().leaveChannel(config().mChannel);
-        worker().preview(false, null, 0);
+        doTLeaveChannel();
 
+    }
+
+    private void doTEnterChannel(){
+        HashMap<String, Object> params = new HashMap<String, Object>();
+        params.put("status", 1);
+        params.put("type", 2);
+        params.put("meetingId", meetingJoin.getMeeting().getId());
+        ApiClient.getInstance().meetingJoinStats(TAG, meetingJoinStatsCallback, params);
+
+    }
+
+    private void doTLeaveChannel(){
         if (!TextUtils.isEmpty(meetingJoinTraceId)) {
             HashMap<String, Object> params = new HashMap<String, Object>();
             params.put("meetingJoinTraceId", meetingJoinTraceId);
@@ -1068,6 +1076,10 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
             params.put("type", 2);
             ApiClient.getInstance().meetingJoinStats(TAG, meetingJoinStatsCallback, params);
         }
+    }
+    private void doLeaveChannel() {
+            worker().leaveChannel(config().mChannel);
+            worker().preview(false, null, 0);
     }
 
     @Override
