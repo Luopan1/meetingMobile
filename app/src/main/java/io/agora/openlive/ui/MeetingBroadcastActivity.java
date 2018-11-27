@@ -118,6 +118,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
     private int currentAiducenceId;
     private Subscription subscription;
     private RelativeLayout rlContent;
+    InMeetChatFragment fragment;
 
     private static final String DOC_INFO = "doc_info";
     private static final String CALLING_AUDIENCE = "calling_audience";
@@ -179,6 +180,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
             ZYAgent.onEvent(this, "在线按钮,当前在线,,无效操作");
         }
         TCAgent.onEvent(this, "进入会议直播界面");
+
         subscription = RxBus.handleMessage(new Action1() {
             @Override
             public void call(Object o) {
@@ -202,7 +204,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
     @Override
     protected void onResume() {
         super.onResume();
-        initFragment();
+//        initFragment();
         TCAgent.onPageStart(this, "视频通话");
     }
 
@@ -220,7 +222,11 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
         agora = intent.getParcelableExtra("agora");
         meetingJoin = intent.getParcelableExtra("meeting");
         channelName = meetingJoin.getMeeting().getId();
-
+        fragment = InMeetChatFragment.newInstance(meetingJoin.getMeeting().getId());
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.add(R.id.rl_content, fragment);
+        fragmentTransaction.hide(fragment);
+        fragmentTransaction.commitAllowingStateLoss();
         HashMap<String, Object> params = new HashMap<String, Object>();
         params.put("status", 1);
         params.put("type", 2);
@@ -234,6 +240,12 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
         broadcastNameText = findViewById(R.id.broadcaster);
         broadcastNameText.setText("主持人：" + meetingJoin.getHostUser().getHostUserName());
         broadcasterLayout = findViewById(R.id.broadcaster_view);
+        broadcasterLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                hideFragment();
+            }
+        });
 
         broadcasterSmallLayout = findViewById(R.id.broadcaster_small_layout);
         broadcasterSmallView = findViewById(R.id.broadcaster_small_view);
@@ -247,6 +259,12 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
         pageText = findViewById(R.id.page);
 
         previewButton = findViewById(R.id.preview);
+        findViewById(R.id.taolunqu).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                initFragment();
+            }
+        });
         previewButton.setOnClickListener(view -> {
             if (currentMaterial != null) {
                 if (position > 0) {
@@ -1426,9 +1444,15 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
     }
 
     private void initFragment(){
-        InMeetChatFragment fragment = InMeetChatFragment.newInstance(meetingJoin.getMeeting().getId());
+
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.add(R.id.rl_content, fragment).show(fragment);
+        fragmentTransaction.show(fragment);
+        fragmentTransaction.commitAllowingStateLoss();
+    }
+
+    private void hideFragment(){
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.hide(fragment);
         fragmentTransaction.commitAllowingStateLoss();
     }
 

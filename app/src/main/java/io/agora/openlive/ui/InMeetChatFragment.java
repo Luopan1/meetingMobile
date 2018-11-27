@@ -169,6 +169,7 @@ public class InMeetChatFragment extends BaseFragment implements InMeetingAdapter
         params.put("ts", ts);
         params.put("content", content);
         params.put("type", 0);
+        editText.setText("");
         ApiClient.getInstance().expostorPostChatMessage(TAG, expostorStatsCallback, params);
     }
     private void initLastData(List<ChatMesData.PageDataEntity> data, boolean last) {

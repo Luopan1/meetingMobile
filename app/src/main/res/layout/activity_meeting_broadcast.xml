@@ -229,6 +229,19 @@
                 android:text="参会人（0）"
                 android:textColor="@color/white"
                 android:textSize="14sp" />
+            <Button
+                android:id="@+id/taolunqu"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:layout_marginRight="15dp"
+                android:background="@drawable/bg_meeting_button_selector"
+                android:drawableLeft="@drawable/ic_meeting_signup"
+                android:drawablePadding="3dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="讨论区"
+                android:textColor="@color/white"
+                android:textSize="14sp" />
 
             <Button
                 android:id="@+id/stop_audience"
