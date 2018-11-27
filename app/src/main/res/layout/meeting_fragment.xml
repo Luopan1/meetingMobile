@@ -1,91 +1,120 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <RelativeLayout
+    <android.support.constraint.ConstraintLayout
         android:id="@+id/title_meeting_list"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/my_px_160"
+        android:layout_height="@dimen/my_px_300"
         android:background="@drawable/bg_gradient_vertical_color">
 
         <TextView
             android:id="@+id/tv_meeting_public"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:paddingLeft="16dp"
+            android:layout_marginStart="@dimen/my_px_43"
+            android:layout_marginLeft="@dimen/my_px_43"
+            android:layout_marginBottom="@dimen/my_px_200"
             android:text="公开会议"
-            android:theme="@style/MeetingTypeFocus" />
+            android:theme="@style/MeetingTypeFocus"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
             android:id="@+id/tv_meeting_private"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="0dp"
+            android:layout_marginStart="@dimen/my_px_29"
+            android:layout_marginLeft="@dimen/my_px_29"
+            android:layout_marginBottom="0dp"
             android:layout_toRightOf="@+id/tv_meeting_public"
-            android:paddingLeft="7dp"
             android:text="受邀会议"
-            android:theme="@style/MeetingTypeUnFocus" />
+            android:theme="@style/MeetingTypeUnFocus"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_meeting_public"
+            app:layout_constraintStart_toEndOf="@+id/tv_meeting_public" />
 
         <TextView
             android:id="@+id/tv_meeting_forum"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="0dp"
+            android:layout_marginStart="@dimen/my_px_29"
+            android:layout_marginLeft="@dimen/my_px_29"
+            android:layout_marginBottom="0dp"
             android:layout_toRightOf="@+id/tv_meeting_private"
-            android:paddingLeft="7dp"
             android:text="讨论区"
-            android:theme="@style/MeetingTypeUnFocus" />
-
-    </RelativeLayout>
+            android:theme="@style/MeetingTypeUnFocus"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_meeting_private"
+            app:layout_constraintStart_toEndOf="@+id/tv_meeting_private" />
+    </android.support.constraint.ConstraintLayout>
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/mSwipeRefreshLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/my_px_141"
+        app:layout_constraintTop_toTopOf="@+id/title_meeting_list">
 
-        <LinearLayout
+        <android.support.design.widget.CoordinatorLayout
+            android:id="@+id/id_coordinatorlayout_appbar_scroll"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="match_parent">
 
-            <LinearLayout
-                android:id="@+id/search_text"
+            <android.support.design.widget.AppBarLayout
+                android:id="@+id/appBarLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="12dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginBottom="12dp"
-                android:background="@drawable/bg_meeting_search"
-                android:gravity="center"
-                android:orientation="horizontal">
+                android:layout_marginTop="0dp"
+                android:background="#00FFFFFF"
+                app:elevation="0dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="40dp"
-                    android:layout_marginTop="1dp"
-                    android:layout_marginBottom="1dp"
-                    android:drawableLeft="@drawable/ic_search"
-                    android:drawablePadding="8dp"
-                    android:gravity="center"
-                    android:hint="请输入会议名称搜索"
-                    android:textSize="14sp" />
+                <android.support.v7.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/my_px_158"
+                    app:layout_scrollFlags="scroll|snap">
 
-            </LinearLayout>
+                    <FrameLayout
+                        android:id="@+id/search_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/my_px_35"
+                        android:layout_marginRight="@dimen/my_px_35"
+                        android:layout_marginBottom="@dimen/my_px_43"
+                        android:background="@drawable/bg_meeting_search_edittext">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/my_px_115"
+                            android:layout_gravity="center"
+                            android:drawableLeft="@drawable/ic_search"
+                            android:drawablePadding="3dp"
+                            android:gravity="center"
+                            android:hint="请输入会议名称搜索"
+                            android:textColorHint="#FFFFFF"
+                            android:textSize="14sp" />
+                    </FrameLayout>
+
+                </android.support.v7.widget.Toolbar>
+            </android.support.design.widget.AppBarLayout>
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/mRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="0dp"
                 android:background="@color/white"
                 android:cacheColorHint="@null"
-                android:paddingBottom="16dp"
-                android:scrollbars="none" />
+                android:scrollbars="none"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/appBarLayout" />
+
 
             <TextView
                 android:id="@+id/emptyView"
@@ -97,13 +126,9 @@
                 android:drawablePadding="8dp"
                 android:gravity="center_horizontal"
                 android:text="暂时没有会议"
-                android:textColor="@color/text_gray_909090"
+                android:textColor="#909090"
                 android:textSize="15sp"
                 android:visibility="gone" />
-
-        </LinearLayout>
-
+        </android.support.design.widget.CoordinatorLayout>
     </android.support.v4.widget.SwipeRefreshLayout>
-
-</LinearLayout>
-
+</android.support.constraint.ConstraintLayout>

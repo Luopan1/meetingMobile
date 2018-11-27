@@ -54,11 +54,9 @@ public class MeetingsFragment extends BaseFragment {
     private RecyclerView recyclerView;
     private LinearLayoutManager mLayoutManager;
     private MeetingAdapter meetingAdapter;
-
     private TextView emptyText, tv_meeting_public, tv_meeting_private
-    , tv_meeting_forum;
-//    , tv_meeting_forum;
-//    private AppBarLayout appBarLayout;
+        , tv_meeting_forum;
+    private AppBarLayout appBarLayout;
 
     public static final int TYPE_PUBLIC_MEETING = 0;
     public static final int TYPE_PRIVATE_MEETING = 1;
@@ -124,17 +122,17 @@ public class MeetingsFragment extends BaseFragment {
                 showMeeting(currentMeetingListPageIndex);
             }
         });
-//        appBarLayout = view.findViewById(R.id.appBarLayout);
-//        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
-//            @Override
-//            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-//                if (verticalOffset >= 0) {
-//                    swipeRefreshLayout.setEnabled(true);
-//                } else {
-//                    swipeRefreshLayout.setEnabled(false);
-//                }
-//            }
-//        });
+        appBarLayout = view.findViewById(R.id.appBarLayout);
+        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                if (verticalOffset >= 0) {
+                    swipeRefreshLayout.setEnabled(true);
+                } else {
+                    swipeRefreshLayout.setEnabled(false);
+                }
+            }
+        });
 
         view.findViewById(R.id.search_text).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -191,7 +189,7 @@ public class MeetingsFragment extends BaseFragment {
         //停止一切动画效果，包括recyclerView滚动效果，让appBarLayout常显，让刷新功能生效
         swipeRefreshLayout.setEnabled(true);
         recyclerView.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_CANCEL, 0, 0, 0));
-//        appBarLayout.setExpanded(true, true);
+        appBarLayout.setExpanded(true, true);
 
         switch (type) {
             case TYPE_PUBLIC_MEETING:
