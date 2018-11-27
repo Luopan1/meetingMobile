@@ -175,12 +175,6 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
         meetingJoin = intent.getParcelableExtra("meeting");
         channelName = meetingJoin.getMeeting().getId();
 
-        HashMap<String, Object> params = new HashMap<String, Object>();
-        params.put("status", 1);
-        params.put("type", 2);
-        params.put("meetingId", meetingJoin.getMeeting().getId());
-        ApiClient.getInstance().meetingJoinStats(TAG, meetingJoinStatsCallback, params);
-
         broadcastTipsText = findViewById(R.id.broadcast_tips);
         audienceNameText = findViewById(R.id.audience_name);
         broadcastNameText = findViewById(R.id.broadcaster);
@@ -1095,10 +1089,16 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
         event().removeEventHandler(this);
     }
 
-    private void doLeaveChannel() {
-        worker().leaveChannel(config().mChannel);
-        worker().preview(false, null, 0);
+    private void doTEnterChannel(){
+        HashMap<String, Object> params = new HashMap<String, Object>();
+        params.put("status", 1);
+        params.put("type", 2);
+        params.put("meetingId", meetingJoin.getMeeting().getId());
+        ApiClient.getInstance().meetingJoinStats(TAG, meetingJoinStatsCallback, params);
 
+    }
+
+    private void doTLeaveChannel(){
         HashMap<String, Object> params = new HashMap<String, Object>();
         params.put("meetingJoinTraceId", meetingJoinTraceId);
         params.put("meetingId", meetingJoin.getMeeting().getId());
@@ -1106,6 +1106,12 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
         params.put("type", 1);
         params.put("leaveType", 1);
         ApiClient.getInstance().meetingJoinStats(TAG, meetingJoinStatsCallback, params);
+    }
+
+    private void doLeaveChannel() {
+
+            worker().leaveChannel(config().mChannel);
+            worker().preview(false, null, 0);
     }
 
     @Override
@@ -1326,6 +1332,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
     protected void onStart() {
         super.onStart();
 //        initUIandEvent();
+        doTEnterChannel();
     }
 
     @Override
@@ -1334,21 +1341,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
 //        if (BuildConfig.DEBUG) {
 //            Toast.makeText(this, "当前没有连麦人", Toast.LENGTH_SHORT).show();
 //        }
-        if (currentAiducenceId != 0) {
-            try {
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("finish", true);
-                agoraAPI.messageInstantSend("" + currentAiducenceId, 0, jsonObject.toString(), "");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        doLeaveChannel();
-        if (agoraAPI.getStatus() == 2) {
-            agoraAPI.logout();
-        }
-        finish();
+        doTLeaveChannel();
 
     }
 
