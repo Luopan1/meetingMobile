@@ -279,4 +279,43 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/blue_rectangle"
+        android:layout_marginTop="@dimen/my_px_498"
+        android:layout_marginLeft="@dimen/my_px_90"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#ffffff"
+            android:textSize="@dimen/my_px_42"
+            android:layout_marginLeft="@dimen/my_px_24"
+            android:text="月二"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/yellow_corner"
+            android:textSize="@dimen/my_px_18"
+            android:textColor="#fff000"
+            android:text="大区"/>
+
+        <TextView
+            android:id="@+id/tv_chat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/my_px_10"
+            android:textColor="#ffffff"
+            android:textSize="@dimen/my_px_42"
+            android:text="debode debode debode debode debode debode debode debode debode"/>
+    </LinearLayout>
+    
+    <RelativeLayout
+        android:id="@+id/rl_content"
+        android:layout_gravity="bottom"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/my_px_750"
+        ></RelativeLayout>
+
 </FrameLayout>

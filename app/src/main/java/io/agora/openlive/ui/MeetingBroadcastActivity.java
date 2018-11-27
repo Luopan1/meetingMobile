@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.GridLayoutManager;
@@ -27,6 +28,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,6 +37,7 @@ import com.hezy.guide.phone.ApiClient;
 import com.hezy.guide.phone.BaseException;
 import com.hezy.guide.phone.BuildConfig;
 import com.hezy.guide.phone.R;
+import com.hezy.guide.phone.business.ChatFragment;
 import com.hezy.guide.phone.entities.Agora;
 import com.hezy.guide.phone.entities.Audience;
 import com.hezy.guide.phone.entities.Bucket;
@@ -44,10 +47,16 @@ import com.hezy.guide.phone.entities.Meeting;
 import com.hezy.guide.phone.entities.MeetingJoin;
 import com.hezy.guide.phone.entities.MeetingJoinStats;
 import com.hezy.guide.phone.entities.MeetingMaterialsPublish;
+import com.hezy.guide.phone.event.ForumRevokeEvent;
+import com.hezy.guide.phone.event.ForumSendEvent;
+import com.hezy.guide.phone.event.SetUserStateEvent;
 import com.hezy.guide.phone.persistence.Preferences;
+import com.hezy.guide.phone.service.WSService;
 import com.hezy.guide.phone.utils.OkHttpCallback;
+import com.hezy.guide.phone.utils.RxBus;
 import com.hezy.guide.phone.utils.UIDUtil;
 import com.hezy.guide.phone.utils.helper.ImageHelper;
+import com.hezy.guide.phone.utils.statistics.ZYAgent;
 import com.hezy.guide.phone.view.FocusFixedLinearLayoutManager;
 import com.hezy.guide.phone.view.SpaceItemDecoration;
 import com.squareup.picasso.Picasso;
@@ -70,6 +79,8 @@ import io.agora.openlive.model.ConstantApp;
 import io.agora.rtc.Constants;
 import io.agora.rtc.RtcEngine;
 import io.agora.rtc.video.VideoCanvas;
+import rx.Subscription;
+import rx.functions.Action1;
 
 public class MeetingBroadcastActivity extends BaseActivity implements AGEventHandler {
 
@@ -92,7 +103,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
     private boolean isFullScreen = false;
 
     private FrameLayout broadcasterLayout, broadcasterSmallLayout, broadcasterSmallView, audienceView, audienceLayout;
-    private TextView broadcastNameText, broadcastTipsText, audienceNameText;
+    private TextView broadcastNameText, broadcastTipsText, audienceNameText,tvChat;
     private Button audiencesButton, stopButton, docButton, previewButton, nextButton, exitDocButton;
     private TextView exitButton;
     private AgoraAPIOnlySignal agoraAPI;
@@ -105,9 +116,19 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
 
     private Audience currentAudience, newAudience;
     private int currentAiducenceId;
+    private Subscription subscription;
+    private RelativeLayout rlContent;
 
     private static final String DOC_INFO = "doc_info";
     private static final String CALLING_AUDIENCE = "calling_audience";
+
+    private Handler ChatHandler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            tvChat.setText(msg.obj.toString());
+        }
+    };
 
     private Handler connectingHandler = new Handler() {
         @Override
@@ -149,14 +170,39 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_meeting_broadcast);
-
+        if (!WSService.isOnline()) {
+            //当前状态离线,可切换在线
+            ZYAgent.onEvent(this, "在线按钮,当前离线,切换到在线");
+            Log.i(TAG, "当前状态离线,可切换在线");
+            RxBus.sendMessage(new SetUserStateEvent(true));
+        } else {
+            ZYAgent.onEvent(this, "在线按钮,当前在线,,无效操作");
+        }
         TCAgent.onEvent(this, "进入会议直播界面");
+        subscription = RxBus.handleMessage(new Action1() {
+            @Override
+            public void call(Object o) {
+                if (o instanceof ForumSendEvent) {
 
+                    Message msg = new Message();
+                    msg.obj = ((ForumSendEvent) o).getEntity().getContent();
+//                    tvChat.setText(((ForumSendEvent) o).getEntity().getContent());
+                    ChatHandler.sendMessage(msg);
+
+                } else if (o instanceof ForumRevokeEvent) {
+//                    requestRecordOnlyLast(true);
+
+
+                }
+
+            }
+        });
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        initFragment();
         TCAgent.onPageStart(this, "视频通话");
     }
 
@@ -183,6 +229,8 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
 
         broadcastTipsText = findViewById(R.id.broadcast_tips);
         audienceNameText = findViewById(R.id.audience_name);
+        rlContent = (RelativeLayout)findViewById(R.id.rl_content);
+        tvChat = findViewById(R.id.tv_chat);
         broadcastNameText = findViewById(R.id.broadcaster);
         broadcastNameText.setText("主持人：" + meetingJoin.getHostUser().getHostUserName());
         broadcasterLayout = findViewById(R.id.broadcaster_view);
@@ -1346,6 +1394,16 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
 
         TCAgent.onPageEnd(this, "MeetingAudienceActivity");
 
+        if (WSService.isOnline()) {
+            //当前状态在线,可切换离线
+            Log.i(TAG, "当前状态在线,可切换离线");
+            ZYAgent.onEvent(this, "离线按钮,当前在线,切换到离线");
+            RxBus.sendMessage(new SetUserStateEvent(false));
+//                                            WSService.SOCKET_ONLINE =false;
+//                                            setState(false);
+        } else {
+            ZYAgent.onEvent(this, "离线按钮,当前离线,无效操作");
+        }
         doLeaveChannel();
         if (agoraAPI.getStatus() == 2) {
             agoraAPI.channelClearAttr(channelName);
@@ -1365,6 +1423,13 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
         agoraAPI.destroy();
 
 //        BaseApplication.getInstance().deInitWorkerThread();
+    }
+
+    private void initFragment(){
+        InMeetChatFragment fragment = InMeetChatFragment.newInstance(meetingJoin.getMeeting().getId());
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.add(R.id.rl_content, fragment).show(fragment);
+        fragmentTransaction.commitAllowingStateLoss();
     }
 
 }

@@ -330,6 +330,12 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
         return view;
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        subscription.unsubscribe();
+    }
+
     public TakePhoto getTakePhoto() {
         if (takePhoto == null) {
             takePhoto = (TakePhoto) TakePhotoInvocationHandler.of(this).bind(new TakePhotoImpl(this, this));
@@ -512,49 +518,7 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
                 handler.sendMessageDelayed(msg,delayTime);
                 dataChat.add((ChatMesData.PageDataEntity) entity);
                 initLastData(dataChat,true);
-
                 sendAction(ts,mEditText.getText().toString());
-
-
-//                configTakePhotoOption(takePhoto);
-//                File file = new File(Environment.getExternalStorageDirectory(), "/temp/" + System.currentTimeMillis() + ".jpg");
-//                if (!file.getParentFile().exists())
-//                    file.getParentFile().mkdirs();
-//                final Uri imageUri = Uri.fromFile(file);
-////                takePhoto.onPickFromGallery();
-//
-//                takePhoto.onPickFromCapture(imageUri);
-//                createItem();
-
-//                HashMap<String, Object> params = new HashMap<String, Object>();
-//                params.put("meetingId", "e7d627b750114191ba556d7ca188f33f");
-//                params.put("ts", System.currentTimeMillis());
-//                params.put("content", mEditText.getText().toString());
-//                params.put("type", 2);
-//                ApiClient.getInstance().expostorPostChatMessage(TAG, expostorStatsCallback, params);
-//                if(count == 0){
-//                    recyclerViewInput.setVisibility(View.VISIBLE);
-//                    count = 1;
-//                }else if(count == 1){
-//
-//                    recyclerViewInput.setVisibility(View.GONE);
-//                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-//                    imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
-//                    count = 2;
-//                }else if(count ==2){
-//                    recyclerViewInput.setVisibility(View.VISIBLE);
-//                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-//                    imm.hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
-//                    count = 1;
-//                }
-
-//                if(hideInput){
-//                    imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
-//                    hideInput = false;
-//                }else {
-//                    imm.hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
-//                    hideInput = true;
-//                }
             }
         });
     }
