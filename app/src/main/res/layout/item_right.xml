@@ -67,11 +67,11 @@
             <ImageView
                 android:id="@+id/img_pic"
                 android:scaleType="centerInside"
-                android:layout_width="@dimen/my_px_501"
+                android:layout_width="wrap_content"
                 android:layout_gravity="right"
                 android:layout_marginRight="8dp"
                 android:layout_marginTop="@dimen/my_px_12"
-                android:layout_height="@dimen/my_px_322" />
+                android:layout_height="wrap_content" />
         </LinearLayout>
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/mIvHead"

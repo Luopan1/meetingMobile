@@ -71,7 +71,8 @@ public class MeetingSearchActivity extends BasicActivity {
         public void onItemClick(View view, ForumMeeting forumMeeting) {
             //TODO 跳转进讨论室界面
 //            ToastUtils.showToast(forumMeeting.getTitle());
-            startActivity(new Intent(getApplication(),ChatActivity.class).putExtra("title",forumMeeting.getTitle()).putExtra("meetingId",forumMeeting.getMeetingId()));
+            startActivity(new Intent(getApplication(),ChatActivity.class).putExtra("title",forumMeeting.getTitle()).putExtra("meetingId",forumMeeting.getMeetingId())
+            .putExtra("num",forumMeeting.getUserCnt()));
         }
     };
 

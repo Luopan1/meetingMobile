@@ -3,6 +3,6 @@
     android:drawable="@drawable/chat_input_bg"
     android:insetLeft="0dp"
     android:insetRight="0dp"
-    android:insetTop="0dp"
-    android:insetBottom="@dimen/my_px_40">
+    android:insetTop="@dimen/my_px_10"
+    android:insetBottom="@dimen/my_px_10">
 </inset>

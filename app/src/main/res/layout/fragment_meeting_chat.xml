@@ -42,6 +42,7 @@
                 android:layout_weight="3"
                 android:layout_height="@dimen/my_px_132"
                 android:paddingLeft="@dimen/my_px_10"
+                android:maxLength="500"
 
                 android:background="@drawable/insertdrawable"
                 />

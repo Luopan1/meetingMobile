@@ -27,10 +27,19 @@
             android:id="@+id/tv_title"
             android:textColor="#ffffff"
             android:gravity="center"
-            android:textSize="@dimen/my_px_43"
+            android:textSize="@dimen/my_px_48"
             android:layout_centerInParent="true"
             android:text="title"
             />
+        <TextView
+            android:id="@+id/tv_num"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="12"
+            android:layout_centerVertical="true"
+            android:textColor="#ffffff"
+            android:layout_marginRight="@dimen/my_px_36"/>
 
     </RelativeLayout>
 

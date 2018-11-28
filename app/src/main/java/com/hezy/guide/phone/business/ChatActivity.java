@@ -33,7 +33,7 @@ public class ChatActivity extends BasicActivity implements TakePhoto.TakeResultL
     private TakePhoto takePhoto;
     private InvokeParam invokeParam;
     private LinearLayout llBack;
-    private TextView tvTitle;
+    private TextView tvTitle, tvNum;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +51,10 @@ public class ChatActivity extends BasicActivity implements TakePhoto.TakeResultL
         }
         llBack = (LinearLayout)this.findViewById(R.id.ll_back);
         tvTitle = (TextView)this.findViewById(R.id.tv_title) ;
+        tvNum = (TextView)this.findViewById(R.id.tv_num) ;
         tvTitle.setText(getIntent().getStringExtra("title"));
+        tvNum.setText(getIntent().getIntExtra("num",0)+"人");
+
         llBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

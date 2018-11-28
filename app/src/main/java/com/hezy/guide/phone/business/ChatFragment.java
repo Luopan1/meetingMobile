@@ -3,6 +3,8 @@ package com.hezy.guide.phone.business;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -299,7 +301,7 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 
                     } else {
                         dataChat.add(((ForumSendEvent) o).getEntity());
-                        initLastData(dataChat, true);
+                        handler.sendEmptyMessageDelayed(16,0);
                     }
 
                 } else if (o instanceof ForumRevokeEvent) {
@@ -770,6 +772,8 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
                     progressDialog.dismiss();
                 }
 
+            }else if(msg.what==16){
+                initLastData(dataChat, true);
             }else if(msg.obj instanceof ChatMesData.PageDataEntity){
                 ((ChatMesData.PageDataEntity)msg.obj).setLocalState(2);
                 dataChat.set(msg.what,((ChatMesData.PageDataEntity)msg.obj));
@@ -813,7 +817,10 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
         dataChat.add((ChatMesData.PageDataEntity) entity);
         initLastData(dataChat,true);
 
-
+//        BitmapFactory.Options options = new BitmapFactory.Options();
+//        options.inJustDecodeBounds = true;
+//        Bitmap bitmap = BitmapFactory.decodeFile(Uri.parse("file://"+result.getImage().getOriginalPath()).getPath(), options);
+//        Log.v("options9090",options.outHeight+"********"+options.outWidth);
         uploadImage(ts);
         Log.i(TAG, "takeSuccess：" + result.getImage().getOriginalPath());
     }
