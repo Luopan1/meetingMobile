@@ -713,6 +713,9 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                             }
                             audienceHashMap.put(audience.getUid(), audience);
                             updateAudienceList();
+                            if (audience.isHandsUp()) {
+                                Toast.makeText(MeetingBroadcastActivity.this, audience.getUname() + "请求发言", Toast.LENGTH_SHORT).show();
+                            }
                         }
                         if (jsonObject.has("finish")) {
                             boolean finish = jsonObject.getBoolean("finish");
