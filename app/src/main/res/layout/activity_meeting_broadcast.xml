@@ -161,20 +161,6 @@
                 android:textColor="@color/white"
                 android:textSize="14sp" />
             <Button
-                android:id="@+id/taolunqu"
-                android:layout_width="wrap_content"
-                android:layout_height="35dp"
-                android:layout_marginRight="15dp"
-                android:background="@drawable/bg_meeting_button_selector"
-                android:drawableLeft="@drawable/ic_meeting_signup"
-                android:drawablePadding="3dp"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:text="讨论区"
-                android:textColor="@color/white"
-                android:textSize="14sp" />
-
-            <Button
                 android:id="@+id/stop_audience"
                 android:layout_width="104dp"
                 android:layout_height="35dp"
@@ -190,6 +176,20 @@
                 android:textSize="14sp"
                 android:visibility="gone"
                 tools:visibility="visible" />
+            <Button
+                android:id="@+id/discuss"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:layout_marginRight="15dp"
+                android:layout_gravity="bottom"
+                android:background="@drawable/bg_meeting_button_selector"
+                android:drawableLeft="@drawable/ic_meeting_signup"
+                android:drawablePadding="3dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="讨论区"
+                android:textColor="@color/white"
+                android:textSize="14sp" />
 
             <Button
                 android:id="@+id/doc"
@@ -299,26 +299,34 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/ll_chat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/blue_rectangle"
         android:layout_marginTop="@dimen/my_px_498"
         android:layout_marginLeft="@dimen/my_px_90"
+        android:padding="@dimen/my_px_24"
         android:visibility="gone"
         android:orientation="horizontal">
         <TextView
+            android:id="@+id/tv_chat_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="#ffffff"
             android:textSize="@dimen/my_px_42"
-            android:layout_marginLeft="@dimen/my_px_24"
             android:text="月二"/>
         <TextView
+            android:id="@+id/tv_chat_address"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/yellow_corner"
-            android:textSize="@dimen/my_px_18"
+            android:textSize="@dimen/my_px_27"
             android:textColor="#fff000"
+            android:layout_gravity="center_vertical"
+            android:paddingLeft="@dimen/my_px_20"
+            android:paddingRight="@dimen/my_px_20"
+            android:paddingTop="@dimen/my_px_5"
+            android:paddingBottom="@dimen/my_px_5"
             android:text="大区"/>
 
         <TextView
@@ -328,7 +336,8 @@
             android:layout_marginLeft="@dimen/my_px_10"
             android:textColor="#ffffff"
             android:textSize="@dimen/my_px_42"
-            android:text="debode debode debode debode debode debode debode debode debode"/>
+            android:maxEms="21"
+            android:text=""/>
     </LinearLayout>
     
     <RelativeLayout
@@ -344,6 +353,7 @@
         android:layout_height="@dimen/my_px_120"
         android:background="#cc000000"
         android:layout_gravity="bottom"
+        android:visibility="gone"
         android:orientation="horizontal">
         <TextView
             android:id="@+id/tv_name"
@@ -368,11 +378,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="@dimen/my_px_45"
-            android:text="春"
+            android:text=""
             android:layout_gravity="center_vertical"
             android:textColor="#ffffff"/>
 
         <TextView
+            android:id="@+id/open_comment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="@dimen/my_px_45"

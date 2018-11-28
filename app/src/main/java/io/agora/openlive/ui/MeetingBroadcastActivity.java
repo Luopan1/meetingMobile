@@ -41,6 +41,7 @@ import com.hezy.guide.phone.business.ChatFragment;
 import com.hezy.guide.phone.entities.Agora;
 import com.hezy.guide.phone.entities.Audience;
 import com.hezy.guide.phone.entities.Bucket;
+import com.hezy.guide.phone.entities.ChatMesData;
 import com.hezy.guide.phone.entities.Material;
 import com.hezy.guide.phone.entities.Materials;
 import com.hezy.guide.phone.entities.Meeting;
@@ -104,21 +105,22 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
 
     private FrameLayout broadcasterLayout, broadcasterSmallLayout, broadcasterSmallView, audienceView, audienceLayout;
     private TextView broadcastNameText, broadcastTipsText, audienceNameText,tvChat;
-    private Button audiencesButton, stopButton, docButton, previewButton, nextButton, exitDocButton;
+    private Button audiencesButton, stopButton, docButton, previewButton, nextButton, exitDocButton,disCussButton;
     private TextView exitButton;
     private AgoraAPIOnlySignal agoraAPI;
     private ImageButton muteButton;
     private ImageButton fullScreenButton;
     private ImageView docImage;
-    private TextView pageText;
+    private TextView pageText, tvChatName, tvChatAddress, tvName, tvAddress, tvContent, tvOpenComment;
     private SurfaceView localBroadcasterSurfaceView, remoteAudienceSurfaceView;
-    private LinearLayout docLayout;
+    private LinearLayout docLayout, llMsg, llChat;
 
     private Audience currentAudience, newAudience;
     private int currentAiducenceId;
     private Subscription subscription;
     private RelativeLayout rlContent;
     InMeetChatFragment fragment;
+    boolean hideFragment = false;
 
     private static final String DOC_INFO = "doc_info";
     private static final String CALLING_AUDIENCE = "calling_audience";
@@ -127,7 +129,28 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            tvChat.setText(msg.obj.toString());
+            if(hideFragment){
+                llMsg.setVisibility(View.GONE);
+                llChat.setVisibility(View.GONE);
+            }else {
+                if(isFullScreen){
+                    llMsg.setVisibility(View.VISIBLE);
+                    llChat.setVisibility(View.GONE);
+                }else {
+                    llMsg.setVisibility(View.GONE);
+                    llChat.setVisibility(View.VISIBLE);
+                    tvChat.setVisibility(View.VISIBLE);
+                }
+            }
+
+            tvChat.setText(" : "+((ChatMesData.PageDataEntity)msg.obj).getContent());
+            tvAddress.setText("未填写");
+            tvName.setText(((ChatMesData.PageDataEntity)msg.obj).getUserName()+" ");
+
+            tvContent.setText(" : "+((ChatMesData.PageDataEntity)msg.obj).getContent());
+            tvChatAddress.setText("未填写");
+            tvChatName.setText(((ChatMesData.PageDataEntity)msg.obj).getUserName()+" ");
+
         }
     };
 
@@ -187,7 +210,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                 if (o instanceof ForumSendEvent) {
 
                     Message msg = new Message();
-                    msg.obj = ((ForumSendEvent) o).getEntity().getContent();
+                    msg.obj = ((ForumSendEvent) o).getEntity();
 //                    tvChat.setText(((ForumSendEvent) o).getEntity().getContent());
                     ChatHandler.sendMessage(msg);
 
@@ -238,6 +261,15 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
             @Override
             public void onClick(View view) {
                 hideFragment();
+                if(isFullScreen){
+                    if(!tvContent.getText().toString().isEmpty())
+                        llMsg.setVisibility(View.VISIBLE);
+
+                }else {
+                    if(!tvChat.getText().toString().isEmpty())
+                    llChat.setVisibility(View.VISIBLE);
+
+                }
             }
         });
 
@@ -245,6 +277,22 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
         broadcasterSmallView = findViewById(R.id.broadcaster_small_view);
 
         docLayout = findViewById(R.id.doc_layout);
+        llMsg = findViewById(R.id.ll_msg);
+        llChat = findViewById(R.id.ll_chat);
+
+        tvChatAddress = findViewById(R.id.tv_chat_address);
+        tvChatName = findViewById(R.id.tv_chat_name);
+        tvName = findViewById(R.id.tv_name);
+        tvAddress = findViewById(R.id.tv_addres);
+        tvContent = findViewById(R.id.tv_content);
+        tvOpenComment = findViewById(R.id.open_comment);
+        tvOpenComment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                initFragment();
+                llMsg.setVisibility(View.GONE);
+            }
+        });
 
         audienceLayout = findViewById(R.id.audience_layout);
         audienceView = findViewById(R.id.audience_view);
@@ -253,10 +301,12 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
         pageText = findViewById(R.id.page);
 
         previewButton = findViewById(R.id.preview);
-        findViewById(R.id.taolunqu).setOnClickListener(new View.OnClickListener() {
+        disCussButton = findViewById(R.id.discuss);
+        disCussButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 initFragment();
+                llChat.setVisibility(View.GONE);
             }
         });
         previewButton.setOnClickListener(view -> {
@@ -321,6 +371,10 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
         exitDocButton.setOnClickListener(view -> {
             docImage.setVisibility(View.GONE);
             pageText.setVisibility(View.GONE);
+            isFullScreen = false;
+            llMsg.setVisibility(View.GONE);
+            if(!tvChat.getText().toString().isEmpty())
+            llChat.setVisibility(View.VISIBLE);
 
             broadcasterSmallView.removeView(localBroadcasterSurfaceView);
             broadcasterSmallLayout.setVisibility(View.GONE);
@@ -381,6 +435,10 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                 docButton.setVisibility(View.GONE);
                 muteButton.setVisibility(View.INVISIBLE);
                 audiencesButton.setVisibility(View.GONE);
+                disCussButton.setVisibility(View.GONE);
+                if(!tvContent.getText().toString().isEmpty())
+                llMsg.setVisibility(View.VISIBLE);
+                llChat.setVisibility(View.GONE);
                 isFullScreen = true;
             } else {
                 fullScreenButton.setImageResource(R.drawable.ic_full_screen);
@@ -402,7 +460,10 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                         broadcasterSmallLayout.setVisibility(View.VISIBLE);
                     }
                 }
-
+                llMsg.setVisibility(View.GONE);
+                if(!tvChat.getText().toString().isEmpty())
+                llChat.setVisibility(View.VISIBLE);
+                disCussButton.setVisibility(View.VISIBLE);
                 docButton.setVisibility(View.VISIBLE);
                 muteButton.setVisibility(View.VISIBLE);
                 audiencesButton.setVisibility(View.VISIBLE);
@@ -1063,8 +1124,34 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
             broadcasterSmallView.addView(localBroadcasterSurfaceView);
 
             docLayout.setVisibility(View.VISIBLE);
+            docLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    hideFragment();
+                    if(isFullScreen){
+                        if(!tvContent.getText().toString().isEmpty())
+                        llMsg.setVisibility(View.VISIBLE);
+                    }else {
+                        if(!tvChat.getText().toString().isEmpty())
+                        llChat.setVisibility(View.VISIBLE);
+                    }
+                }
+            });
 
             docImage.setVisibility(View.VISIBLE);
+            docImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    hideFragment();
+                    if(isFullScreen){
+                        if(!tvContent.getText().toString().isEmpty())
+                        llMsg.setVisibility(View.VISIBLE);
+                    }else {
+                        if(!tvChat.getText().toString().isEmpty())
+                        llChat.setVisibility(View.VISIBLE);
+                    }
+                }
+            });
 
             fullScreenButton.setVisibility(View.VISIBLE);
 
@@ -1460,13 +1547,14 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
     }
 
     private void initFragment(){
-
+        hideFragment = true;
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.show(fragment);
         fragmentTransaction.commitAllowingStateLoss();
     }
 
     private void hideFragment(){
+        hideFragment = false;
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.hide(fragment);
         fragmentTransaction.commitAllowingStateLoss();

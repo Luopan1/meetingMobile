@@ -34,8 +34,9 @@
                 android:layout_weight="7"
                 android:paddingLeft="@dimen/my_px_10"
                 android:textColor="#909090"
-                android:background="@drawable/white_conner"
-                android:layout_height="@dimen/my_px_126" />
+                android:imeOptions="flagNoExtractUi"
+                android:background="@drawable/insertdrawable"
+                android:layout_height="@dimen/my_px_146" />
             <TextView
                 android:id="@+id/tv_send"
                 android:layout_width="0dp"
@@ -54,5 +55,11 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/my_px_45"></LinearLayout>
     </LinearLayout>
-
+    <ProgressBar
+        android:id="@+id/progressbar"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="@dimen/my_px_30"
+        android:layout_centerHorizontal="true"/>
 </RelativeLayout>

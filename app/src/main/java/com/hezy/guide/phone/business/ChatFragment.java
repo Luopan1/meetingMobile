@@ -612,6 +612,7 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
                 if (dataChat.size() == 0) {
                     dataChat = entity.getData().getPageData();
                     initData(dataChat, true);
+                    ApiClient.getInstance().postViewLog(mMeetingId,this,expostorStatsCallback);
                 } else {
                     dataChat.addAll(0, entity.getData().getPageData());
                     proBar.setVisibility(View.GONE);

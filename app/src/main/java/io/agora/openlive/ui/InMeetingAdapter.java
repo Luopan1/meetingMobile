@@ -1,6 +1,7 @@
 package io.agora.openlive.ui;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,9 +11,14 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.hezy.guide.phone.BaseApplication;
 import com.hezy.guide.phone.R;
+import com.hezy.guide.phone.business.ViewPagerActivity;
 import com.hezy.guide.phone.entities.ChatMesData;
+import com.hezy.guide.phone.utils.helper.ImageHelper;
+import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class InMeetingAdapter extends RecyclerView.Adapter<InMeetingAdapter.ViewHolder> {
@@ -39,8 +45,39 @@ public class InMeetingAdapter extends RecyclerView.Adapter<InMeetingAdapter.View
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
 
-        holder.tvContent.setText(":"+data.get(position).getContent());
-        holder.tvName.setText(data.get(position).getUserName());
+        if(data.get(position).getType()==0){
+            holder.imgContent.setVisibility(View.GONE);
+            holder.tvContent.setVisibility(View.VISIBLE);
+            holder.tvContent.setText(" : "+data.get(position).getContent());
+        }else {
+            String url = ImageHelper.getUrlJoinAndThumAndCrop(data.get(position).getContent(),
+                    (int)context.getResources().getDimension(R.dimen.my_px_331),
+                    (int)context.getResources().getDimension(R.dimen.my_px_196));
+//            }
+
+            holder.imgContent.setVisibility(View.VISIBLE);
+            holder.imgContent.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int pos = 0;
+                    ArrayList<String> mList = new ArrayList<>();
+                    for(int i=0; i<data.size(); i++){
+                        if(data.get(i).getType()==1){
+                            mList.add(data.get(i).getContent());
+                            if(data.get(i).getContent().equals(data.get(position).getContent())){
+                                pos = mList.size()-1;
+                            }
+                        }
+                    }
+                    context.startActivity(new Intent(context,ViewPagerActivity.class).putExtra("imglist",mList)
+                            .putExtra("pos",pos).putExtra("orientation","land"));
+                }
+            });
+            holder.tvContent.setVisibility(View.GONE);
+            Picasso.with(BaseApplication.getInstance()).load(url).into(holder.imgContent);
+        }
+
+        holder.tvName.setText(data.get(position).getUserName()+" ");
         holder.tvAddress.setText(data.get(position).getUserName());
         if(data.get(position).getLocalState()==0){
             holder.sendBar.setVisibility(View.GONE);
@@ -79,6 +116,7 @@ public class InMeetingAdapter extends RecyclerView.Adapter<InMeetingAdapter.View
 
         private TextView tvName, tvAddress, tvContent, tvState;
         private ProgressBar sendBar;
+        private ImageView imgContent;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -87,6 +125,7 @@ public class InMeetingAdapter extends RecyclerView.Adapter<InMeetingAdapter.View
             tvContent = itemView.findViewById(R.id.tv_content);
             tvState = itemView.findViewById(R.id.send_sate);
             sendBar = itemView.findViewById(R.id.send_bar);
+            imgContent = itemView.findViewById(R.id.img_content);
 
         }
     }

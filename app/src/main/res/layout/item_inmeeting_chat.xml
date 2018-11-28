@@ -32,6 +32,11 @@
             android:textColor="#fff000"
             android:gravity="center"
             android:textSize="@dimen/my_px_27"
+
+            android:paddingLeft="@dimen/my_px_20"
+            android:paddingRight="@dimen/my_px_20"
+            android:paddingTop="@dimen/my_px_5"
+            android:paddingBottom="@dimen/my_px_5"
             android:background="@drawable/yellow_corner"/>
         <TextView
             android:id="@+id/tv_content"
@@ -39,5 +44,10 @@
             android:layout_height="wrap_content"
             android:textSize="@dimen/my_px_45"
             android:textColor="#ffffff"/>
+        <ImageView
+            android:id="@+id/img_content"
+            android:layout_marginLeft="@dimen/my_px_20"
+            android:layout_width="@dimen/my_px_331"
+            android:layout_height="@dimen/my_px_196" />
     </LinearLayout>
 </RelativeLayout>

@@ -4,7 +4,10 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.preference.PreferenceManager;
+import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -14,6 +17,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,6 +29,7 @@ import com.hezy.guide.phone.R;
 import com.hezy.guide.phone.entities.Agora;
 import com.hezy.guide.phone.entities.Audience;
 import com.hezy.guide.phone.entities.Bucket;
+import com.hezy.guide.phone.entities.ChatMesData;
 import com.hezy.guide.phone.entities.HostUser;
 import com.hezy.guide.phone.entities.Material;
 import com.hezy.guide.phone.entities.Meeting;
@@ -32,11 +37,17 @@ import com.hezy.guide.phone.entities.MeetingHostingStats;
 import com.hezy.guide.phone.entities.MeetingJoin;
 import com.hezy.guide.phone.entities.MeetingJoinStats;
 import com.hezy.guide.phone.entities.MeetingMaterialsPublish;
+import com.hezy.guide.phone.event.ForumRevokeEvent;
+import com.hezy.guide.phone.event.ForumSendEvent;
+import com.hezy.guide.phone.event.SetUserStateEvent;
 import com.hezy.guide.phone.meetingcamera.activity.Camera1ByServiceActivity;
 import com.hezy.guide.phone.meetingcamera.activity.Camera1ByServiceActivity;
 import com.hezy.guide.phone.persistence.Preferences;
+import com.hezy.guide.phone.service.WSService;
 import com.hezy.guide.phone.utils.OkHttpCallback;
+import com.hezy.guide.phone.utils.RxBus;
 import com.hezy.guide.phone.utils.UIDUtil;
+import com.hezy.guide.phone.utils.statistics.ZYAgent;
 import com.squareup.picasso.Picasso;
 import com.tendcloud.tenddata.TCAgent;
 
@@ -59,6 +70,8 @@ import io.agora.openlive.model.ConstantApp;
 import io.agora.rtc.Constants;
 import io.agora.rtc.RtcEngine;
 import io.agora.rtc.video.VideoCanvas;
+import rx.Subscription;
+import rx.functions.Action1;
 
 public class MeetingAudienceActivity extends BaseActivity implements AGEventHandler {
 
@@ -75,8 +88,8 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 
     private FrameLayout broadcasterLayout, broadcasterSmallLayout, broadcasterSmallView, audienceLayout, audienceView;
     private TextView broadcastNameText, broadcastTipsText, countText, audienceNameText;
-    private Button requestTalkButton, stopTalkButton;
-    private TextView exitButton, pageText;
+    private Button requestTalkButton, stopTalkButton,disCussButton;
+    private TextView exitButton, pageText,tvChat,tvChatName, tvChatAddress, tvName, tvAddress, tvContent, tvOpenComment;;
     private ImageView docImage;
     private ImageButton fullScreenButton;
 
@@ -90,21 +103,78 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 
     private String audienceName;
 
+    private Subscription subscription;
     private SurfaceView remoteBroadcasterSurfaceView, remoteAudienceSurfaceView, localSurfaceView;
 
     private AgoraAPIOnlySignal agoraAPI;
-
+    private LinearLayout  llMsg, llChat;
     private static final String DOC_INFO = "doc_info";
     private static final String CALLING_AUDIENCE = "calling_audience";
 
     private int currentAudienceId;
+    InMeetChatFragment fragment;
+    boolean hideFragment = false;
+
+    private Handler ChatHandler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if(hideFragment){
+                llMsg.setVisibility(View.GONE);
+                llChat.setVisibility(View.GONE);
+            }else {
+                if(isFullScreen){
+                    llMsg.setVisibility(View.VISIBLE);
+                    llChat.setVisibility(View.GONE);
+                }else {
+                    llMsg.setVisibility(View.GONE);
+                    llChat.setVisibility(View.VISIBLE);
+                    tvChat.setVisibility(View.VISIBLE);
+                }
+            }
+
+            tvChat.setText(" : "+((ChatMesData.PageDataEntity)msg.obj).getContent());
+            tvAddress.setText("未填写");
+            tvName.setText(((ChatMesData.PageDataEntity)msg.obj).getUserName()+" ");
+
+            tvContent.setText(" : "+((ChatMesData.PageDataEntity)msg.obj).getContent());
+            tvChatAddress.setText("未填写");
+            tvChatName.setText(((ChatMesData.PageDataEntity)msg.obj).getUserName()+" ");
+
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_meeting_audience);
         TCAgent.onEvent(this, "进入会议直播界面");
+        if (!WSService.isOnline()) {
+            //当前状态离线,可切换在线
+            ZYAgent.onEvent(this, "在线按钮,当前离线,切换到在线");
+            Log.i(TAG, "当前状态离线,可切换在线");
+            RxBus.sendMessage(new SetUserStateEvent(true));
+        } else {
+            ZYAgent.onEvent(this, "在线按钮,当前在线,,无效操作");
+        }
+        subscription = RxBus.handleMessage(new Action1() {
+            @Override
+            public void call(Object o) {
+                if (o instanceof ForumSendEvent) {
 
+                    Message msg = new Message();
+                    msg.obj = ((ForumSendEvent) o).getEntity();
+//                    tvChat.setText(((ForumSendEvent) o).getEntity().getContent());
+                    ChatHandler.sendMessage(msg);
+
+                } else if (o instanceof ForumRevokeEvent) {
+//                    requestRecordOnlyLast(true);
+
+
+                }
+
+            }
+        });
     }
 
     @Override
@@ -137,17 +207,75 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
         Log.v("uid--->", "" + config().mUid);
 
         channelName = meetingJoin.getMeeting().getId();
-
+        fragment = InMeetChatFragment.newInstance(meetingJoin.getMeeting().getId());
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.add(R.id.rl_content, fragment);
+        fragmentTransaction.hide(fragment);
+        fragmentTransaction.commitAllowingStateLoss();
         audienceName = (TextUtils.isEmpty(Preferences.getAreaName()) ? "" : Preferences.getAreaName()) + "-" + (TextUtils.isEmpty(Preferences.getUserCustom()) ? "" : Preferences.getUserCustom()) + "-" + Preferences.getUserName();
 
         broadcasterLayout = findViewById(R.id.broadcaster_view);
+        broadcasterLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                hideFragment();
+                if(isFullScreen){
+                    if(!tvContent.getText().toString().isEmpty())
+                        llMsg.setVisibility(View.VISIBLE);
+
+                }else {
+                    if(!tvChat.getText().toString().isEmpty())
+                        llChat.setVisibility(View.VISIBLE);
+
+                }
+            }
+        });
         broadcastTipsText = findViewById(R.id.broadcast_tips);
         broadcastNameText = findViewById(R.id.broadcaster);
+        tvChat = findViewById(R.id.tv_chat);
         broadcastNameText.setText("主持人：" + meetingJoin.getHostUser().getHostUserName());
         broadcasterSmallLayout = findViewById(R.id.broadcaster_small_layout);
         broadcasterSmallView = findViewById(R.id.broadcaster_small_view);
         docImage = findViewById(R.id.doc_image);
+        docImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                hideFragment();
+                if(isFullScreen){
+                    if(!tvContent.getText().toString().isEmpty())
+                        llMsg.setVisibility(View.VISIBLE);
+                }else {
+                    if(!tvChat.getText().toString().isEmpty())
+                        llChat.setVisibility(View.VISIBLE);
+                }
+            }
+        });
         pageText = findViewById(R.id.page);
+        llMsg = findViewById(R.id.ll_msg);
+        llChat = findViewById(R.id.ll_chat);
+
+        tvChatAddress = findViewById(R.id.tv_chat_address);
+        tvChatName = findViewById(R.id.tv_chat_name);
+        tvName = findViewById(R.id.tv_name);
+        tvAddress = findViewById(R.id.tv_addres);
+        tvContent = findViewById(R.id.tv_content);
+        tvOpenComment = findViewById(R.id.open_comment);
+        disCussButton = findViewById(R.id.discuss);
+        disCussButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                initFragment();
+                llChat.setVisibility(View.GONE);
+            }
+        });
+        tvOpenComment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                initFragment();
+                llMsg.setVisibility(View.GONE);
+            }
+        });
+
         fullScreenButton = findViewById(R.id.full_screen);
         fullScreenButton.setOnClickListener(v -> {
             if (!isFullScreen) {
@@ -162,6 +290,10 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                     broadcasterSmallLayout.setVisibility(View.GONE);
                     stopTalkButton.setVisibility(View.GONE);
                 }
+                disCussButton.setVisibility(View.GONE);
+                if(!tvContent.getText().toString().isEmpty())
+                    llMsg.setVisibility(View.VISIBLE);
+                llChat.setVisibility(View.GONE);
                 isFullScreen = true;
             } else {
                 fullScreenButton.setImageResource(R.drawable.ic_full_screen);
@@ -185,6 +317,10 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                 if (broadcasterSmallView.getChildCount() > 0) {
                     broadcasterSmallLayout.setVisibility(View.VISIBLE);
                 }
+                llMsg.setVisibility(View.GONE);
+                if(!tvChat.getText().toString().isEmpty())
+                    llChat.setVisibility(View.VISIBLE);
+                disCussButton.setVisibility(View.VISIBLE);
                 isFullScreen = false;
             }
         });
@@ -1299,6 +1435,16 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (WSService.isOnline()) {
+            //当前状态在线,可切换离线
+            Log.i(TAG, "当前状态在线,可切换离线");
+            ZYAgent.onEvent(this, "离线按钮,当前在线,切换到离线");
+            RxBus.sendMessage(new SetUserStateEvent(false));
+//                                            WSService.SOCKET_ONLINE =false;
+//                                            setState(false);
+        } else {
+            ZYAgent.onEvent(this, "离线按钮,当前离线,无效操作");
+        }
         TCAgent.onPageEnd(this, "MeetingAudienceActivity");
 
         if (timer != null && timerTask != null) {
@@ -1308,5 +1454,17 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 
 //        BaseApplication.getInstance().deInitWorkerThread();
     }
+    private void initFragment(){
+        hideFragment = true;
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.show(fragment);
+        fragmentTransaction.commitAllowingStateLoss();
+    }
 
+    private void hideFragment(){
+        hideFragment = false;
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.hide(fragment);
+        fragmentTransaction.commitAllowingStateLoss();
+    }
 }
