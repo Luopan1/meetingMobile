@@ -323,6 +323,7 @@
             android:textSize="@dimen/my_px_27"
             android:textColor="#fff000"
             android:layout_gravity="center_vertical"
+            android:visibility="gone"
             android:paddingLeft="@dimen/my_px_20"
             android:paddingRight="@dimen/my_px_20"
             android:paddingTop="@dimen/my_px_5"
@@ -370,6 +371,7 @@
             android:textColor="#fff000"
             android:gravity="center"
             android:textSize="@dimen/my_px_27"
+            android:visibility="gone"
             android:text="春"
             android:layout_gravity="center_vertical"
             android:background="@drawable/yellow_corner"/>

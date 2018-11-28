@@ -145,11 +145,11 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
 
             tvChat.setText(" : "+((ChatMesData.PageDataEntity)msg.obj).getContent());
             tvAddress.setText("未填写");
-            tvName.setText(((ChatMesData.PageDataEntity)msg.obj).getUserName()+" ");
+            tvName.setText(((ChatMesData.PageDataEntity)msg.obj).getUserName()+"");
 
             tvContent.setText(" : "+((ChatMesData.PageDataEntity)msg.obj).getContent());
             tvChatAddress.setText("未填写");
-            tvChatName.setText(((ChatMesData.PageDataEntity)msg.obj).getUserName()+" ");
+            tvChatName.setText(((ChatMesData.PageDataEntity)msg.obj).getUserName()+"");
 
         }
     };

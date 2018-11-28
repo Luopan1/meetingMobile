@@ -32,6 +32,7 @@
             android:textColor="#fff000"
             android:gravity="center"
             android:textSize="@dimen/my_px_27"
+            android:visibility="gone"
 
             android:paddingLeft="@dimen/my_px_20"
             android:paddingRight="@dimen/my_px_20"

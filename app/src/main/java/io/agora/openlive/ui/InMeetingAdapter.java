@@ -45,8 +45,14 @@ public class InMeetingAdapter extends RecyclerView.Adapter<InMeetingAdapter.View
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
 
-        if(data.get(position).getType()==0){
+        if(data.get(position).getMsgType() == 1){
             holder.imgContent.setVisibility(View.GONE);
+            holder.tvContent.setVisibility(View.VISIBLE);
+            holder.tvContent.setTextColor(context.getResources().getColor(R.color.color_7FBAFF));
+            holder.tvContent.setText(" ：["+data.get(position).getUserName()+" 撤回了一条消息]");
+        }else if(data.get(position).getType()==0){
+            holder.imgContent.setVisibility(View.GONE);
+            holder.tvContent.setTextColor(context.getResources().getColor(R.color.white));
             holder.tvContent.setVisibility(View.VISIBLE);
             holder.tvContent.setText(" : "+data.get(position).getContent());
         }else {
@@ -77,7 +83,7 @@ public class InMeetingAdapter extends RecyclerView.Adapter<InMeetingAdapter.View
             Picasso.with(BaseApplication.getInstance()).load(url).into(holder.imgContent);
         }
 
-        holder.tvName.setText(data.get(position).getUserName()+" ");
+        holder.tvName.setText(data.get(position).getUserName()+"");
         holder.tvAddress.setText(data.get(position).getUserName());
         if(data.get(position).getLocalState()==0){
             holder.sendBar.setVisibility(View.GONE);
