@@ -774,7 +774,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                 meetingJoin.setHostUser(meetingJoinBucket.getData());
                 broadcastId = meetingJoinBucket.getData().getClientUid();
                 broadcastNameText.setText("主持人：" + meetingJoinBucket.getData().getHostUserName());
-                if (uid != 0) {
+                if (uid != 0 && broadcastId != null) {
                     if (uid == Integer.parseInt(broadcastId)) {
                         if (BuildConfig.DEBUG) {
                             Toast.makeText(MeetingAudienceActivity.this, "主持人" + broadcastId + "---" + uid + meetingJoin.getHostUser().getHostUserName() + "进入了", Toast.LENGTH_SHORT).show();
