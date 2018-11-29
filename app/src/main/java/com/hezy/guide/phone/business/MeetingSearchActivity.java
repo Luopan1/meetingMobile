@@ -70,7 +70,7 @@ public class MeetingSearchActivity extends BasicActivity {
     private ForumMeetingAdapter.OnItemClickListener onForumMeetingItemClickListener = new ForumMeetingAdapter.OnItemClickListener() {
         @Override
         public void onItemClick(View view, ForumMeeting forumMeeting) {
-            startActivity(new Intent(getApplication(), ChatActivity.class).putExtra("title", forumMeeting.getTitle()).putExtra("meetingId", forumMeeting.getMeetingId()));
+            startActivity(new Intent(getApplication(), ChatActivity.class).putExtra("title", forumMeeting.getTitle()).putExtra("meetingId", forumMeeting.getMeetingId()).putExtra("num", forumMeeting.getUserCnt()));
         }
     };
 

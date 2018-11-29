@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
+import android.os.Message;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.telephony.TelephonyManager;
@@ -38,6 +39,7 @@ import com.hezy.guide.phone.event.HangDownEvent;
 import com.hezy.guide.phone.event.HangOnEvent;
 import com.hezy.guide.phone.event.HangUpEvent;
 import com.hezy.guide.phone.event.ResolutionChangeEvent;
+import com.hezy.guide.phone.event.SetUserChatEvent;
 import com.hezy.guide.phone.event.SetUserStateEvent;
 import com.hezy.guide.phone.event.TvLeaveChannel;
 import com.hezy.guide.phone.event.TvTimeoutHangUp;
@@ -178,6 +180,13 @@ public class WSService extends Service {
                 } else if (o instanceof ResolutionChangeEvent) {
                     ResolutionChangeEvent resolutionChangeEvent = (ResolutionChangeEvent) o;
                     resolutionChanged(resolutionChangeEvent.getResolution());
+                }else if(o instanceof SetUserChatEvent){
+                    SetUserChatEvent event = (SetUserChatEvent) o;
+                    if (event.isOnline()) {
+                        connectChatSocket();
+                    } else {
+                        disconnectChatSocket();
+                    }
                 }
 
             }
@@ -336,6 +345,40 @@ public class WSService extends Service {
         }
     };
 
+    private void connectChatSocket(){
+        Log.i(TAG, "connectChatSocket");
+        if (isOnline()) {
+            Log.i(TAG, "connectChatSocket SOCKET_ONLINE == true re");
+            return;
+        }
+        ZYAgent.onEvent(getApplicationContext(),"长连接 主动调用连接");
+        Logger.i(TAG,WS_URL);
+
+        mSocket.on(Socket.EVENT_DISCONNECT, onChatDisconnect);
+        mSocket.on(Socket.EVENT_CONNECT_ERROR, onChatConnectError);
+        mSocket.on(Socket.EVENT_CONNECT_TIMEOUT, onChatConnectError);
+        mSocket.on("FORUM_REVOKE", ON_FORUM_REVOKE);
+        mSocket.on("FORUM_SEND_CONTENT", ON_FORUM_SEND_CONTENT);
+//        mSocket.on("CHANGE_RESOLUTION_EVENT", resolutionChangedListener);
+        mSocket.connect();
+
+    }
+
+    private void disconnectChatSocket(){
+        Log.i(TAG, "disconnectChatSocket");
+        if (mSocket == null) {
+            Log.i(TAG, "disConnectSocket mSocket==null return");
+            return;
+        }
+        ZYAgent.onEvent(getApplicationContext(),"长连接 主动调用断开连接");
+        mSocket.disconnect();
+        mSocket.off(Socket.EVENT_DISCONNECT, onChatDisconnect);
+        mSocket.off(Socket.EVENT_CONNECT_ERROR, onChatConnectError);
+        mSocket.off(Socket.EVENT_CONNECT_TIMEOUT, onChatConnectError);
+        mSocket.off("FORUM_REVOKE", ON_FORUM_REVOKE);
+        mSocket.off("FORUM_SEND_CONTENT", ON_FORUM_SEND_CONTENT);
+
+    }
     private void connectSocket() {
         Log.i(TAG, "connectSocket");
         if (isOnline()) {
@@ -426,6 +469,43 @@ public class WSService extends Service {
         });
     }
 
+    private Emitter.Listener onChatDisconnect = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            ZYAgent.onEvent(getApplicationContext(),"断开连接回调");
+            Log.i("wsserver", "Listener onChatDisconnect diconnected");
+//            SOCKET_ONLINE = false;
+//            sendUserStateEvent();
+
+        }
+    };
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            Log.i("wsserver", "延时1s去连接 ");
+            connectChatSocket();
+
+        }
+    };
+    private Emitter.Listener onChatConnectError = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            ZYAgent.onEvent(getApplicationContext(),"断开连接回调");
+            disconnectChatSocket();
+            if(handler.hasMessages(10)){
+                handler.removeMessages(10);
+            }
+            handler.sendEmptyMessageDelayed(10,10000);
+//            mSocket.disconnect();
+//            mSocket.connect();
+            Log.i("wsserver", "Listener onChatConnectError ");
+//            SOCKET_ONLINE = false;
+//            sendUserStateEvent();
+//            connectChatSocket();
+
+        }
+    };
     private Emitter.Listener onDisconnect = new Emitter.Listener() {
         @Override
         public void call(Object... args) {

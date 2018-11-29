@@ -3,6 +3,8 @@ package com.hezy.guide.phone.business.adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -23,6 +25,7 @@ import com.hezy.guide.phone.business.ViewPagerActivity;
 import com.hezy.guide.phone.entities.ChatMesData;
 import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.utils.helper.ImageHelper;
+import com.hezy.guide.phone.view.CropSquareTransformation;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -64,7 +67,7 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.ViewHolder> {
     @Override
     public int getItemViewType(int position) {
 
-        if(data.get(position).getMsgType() == 1){
+        if(data.get(position).getMsgType() == 1 || data.get(position).getMsgType() == 2){
             return 2;
         }else {
             if(!data.get(position).getUserId().equals(Preferences.getUserId())){
@@ -89,30 +92,33 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
 
         if(getItemViewType(position)==2){
-            if(data.get(position).getUserId().equals(Preferences.getUserId())){
-                ((TextView)holder.tvCenter).setText("你撤回了一条消息");
-                Log.v("onbindviewholder999","=="+(System.currentTimeMillis()-data.get(position).getReplyTimestamp()));
-                if(System.currentTimeMillis()-data.get(position).getReplyTimestamp()<20000){
-                    ((TextView)holder.tvEdit).setVisibility(View.VISIBLE);
-                    Message msg = new Message();
-                    msg.obj = holder.tvEdit;
-                    handler.sendMessageDelayed(msg,20000);
-                    ((TextView)holder.tvEdit).setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            callBack.onEditCallBack(data.get(position).getContent());
-                        }
-                    });
+            if(data.get(position).getMsgType()==1){
+                if(data.get(position).getUserId().equals(Preferences.getUserId())){
+                    ((TextView)holder.tvCenter).setText("你撤回了一条消息");
+                    Log.v("onbindviewholder999","=="+(System.currentTimeMillis()-data.get(position).getReplyTimestamp()));
+                    if(System.currentTimeMillis()-data.get(position).getReplyTimestamp()<20000){
+                        ((TextView)holder.tvEdit).setVisibility(View.VISIBLE);
+                        Message msg = new Message();
+                        msg.obj = holder.tvEdit;
+                        handler.sendMessageDelayed(msg,20000);
+                        ((TextView)holder.tvEdit).setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                callBack.onEditCallBack(data.get(position).getContent());
+                            }
+                        });
+                    }else {
+                        ((TextView)holder.tvEdit).setVisibility(View.GONE);
+                    }
+
                 }else {
+                    ((TextView)holder.tvCenter).setText(data.get(position).getUserName()+"  撤回了一条消息");
                     ((TextView)holder.tvEdit).setVisibility(View.GONE);
                 }
-
             }else {
-                ((TextView)holder.tvCenter).setText(data.get(position).getUserName()+"  撤回了一条消息");
+                ((TextView)holder.tvCenter).setText(data.get(position).getReplyTime());
                 ((TextView)holder.tvEdit).setVisibility(View.GONE);
             }
-
-
 
             return;
         }
@@ -133,7 +139,7 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.ViewHolder> {
             holder.tvContent.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
-//                    callBack.onLongContent(view);
+                    callBack.onLongContent(view,null,data.get(position).getContent());
                     return false;
                 }
             });
@@ -148,7 +154,7 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.ViewHolder> {
             holder.tvContent.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
-                    callBack.onLongContent(view,data.get(position).getId());
+                    callBack.onLongContent(view,data.get(position).getId(),data.get(position).getContent());
                     return false;
                 }
             });
@@ -162,19 +168,22 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.ViewHolder> {
             if(data.get(position).getLocalState()==0){
                 holder.sendBar.setVisibility(View.GONE);
                 holder.tvState.setVisibility(View.GONE);
+                holder.tvError.setVisibility(View.GONE);
             }else if(data.get(position).getLocalState() == 1){
                 holder.sendBar.setVisibility(View.VISIBLE);
                 holder.tvState.setVisibility(View.GONE);
+                holder.tvError.setVisibility(View.GONE);
             }else if(data.get(position).getLocalState() == 2){
                 holder.sendBar.setVisibility(View.GONE);
                 holder.tvState.setVisibility(View.VISIBLE);
+                holder.tvError.setVisibility(View.VISIBLE);
                 holder.tvState.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         callBack.onReSend(data.get(position).getContent(),data.get(position).getType());
                     }
                 });
-                holder.tvState.setText("失败");
+//                holder.tvState.setText("失败");
             }
         }
 
@@ -183,12 +192,15 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.ViewHolder> {
 //            if(data.get(position).getLocalState()==1){
 //                url = "file://"+data.get(position).getContent();
 //            }else {
-                url = ImageHelper.getUrlJoinAndThumAndCrop(data.get(position).getContent(),
-                        (int)context.getResources().getDimension(R.dimen.my_px_501),
-                        (int)context.getResources().getDimension(R.dimen.my_px_322));
+//            BitmapFactory.Options options = new BitmapFactory.Options();
+//            options.inJustDecodeBounds = true;
+//            Bitmap bitmap = BitmapFactory.decodeFile(data.get(position).getContent(), options);
+//                url = ImageHelper.getUrlJoinAndThumAndCrop(data.get(position).getContent(),
+//                        (int)context.getResources().getDimension(R.dimen.my_px_501),
+//                        (int)context.getResources().getDimension(R.dimen.my_px_322));
 //            }
 
-            Picasso.with(BaseApplication.getInstance()).load(url).into(holder.imgPic);
+            Picasso.with(BaseApplication.getInstance()).load(data.get(position).getContent()).transform(new CropSquareTransformation()).into(holder.imgPic);
             ((TextView)holder.tvContent).setVisibility(View.GONE);
             ((ImageView)holder.imgArrow).setVisibility(View.GONE);
             ((ImageView)holder.imgPic).setVisibility(View.VISIBLE);
@@ -216,7 +228,7 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.ViewHolder> {
             holder.imgPic.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
-                    callBack.onLongContent(view,data.get(position).getId());
+                    callBack.onLongContent(view,data.get(position).getId(),null);
                     return true;
                 }
             });
@@ -242,7 +254,7 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.ViewHolder> {
         private ImageView imgPic;
         private ImageView imgArrow;
         private ProgressBar sendBar;
-        private TextView tvState;
+        private TextView tvState, tvError;
 
         private TextView tvCenter;
         private TextView tvEdit;
@@ -256,6 +268,7 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.ViewHolder> {
             imgArrow = (ImageView)itemView.findViewById(R.id.img_arrow);
             sendBar = (ProgressBar)itemView.findViewById(R.id.send_bar);
             tvState = (TextView)itemView.findViewById(R.id.send_sate);
+            tvError = (TextView)itemView.findViewById(R.id.send_err);
 
             tvCenter = itemView.findViewById(R.id.tv_center);
             tvEdit = itemView.findViewById(R.id.tv_edit);
@@ -266,7 +279,7 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.ViewHolder> {
     public interface onClickCallBack{
         void onClickCallBackFuc();
         void onLongImgHead(String name, String userId);
-        void onLongContent(View view, String id);
+        void onLongContent(View view, String id,String content);
         void onEditCallBack(String content);
         void onReSend(String content,int type);
 //        void onClickImage(Info info);

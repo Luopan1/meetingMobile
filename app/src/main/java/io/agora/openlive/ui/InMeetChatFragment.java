@@ -48,13 +48,14 @@ public class InMeetChatFragment extends BaseFragment implements InMeetingAdapter
     private RecyclerView recyclerViewChat;
     private ProgressBar proBar;
     private int mTotalPage = -1;
-    private int mPageNo = 1;
+    private int mPageNo = 2;
     private String mMeetingId = "";
     private List<ChatMesData.PageDataEntity> dataChat = new ArrayList<>();
     private LinearLayoutManager mLayoutManager;
     private InMeetingAdapter adapter;
     private static int delayTime = 2000;
     private Subscription subscription;
+    private boolean onCreate = true;
     @Override
     public String getStatisticsTag() {
         return "会议中聊天";
@@ -98,7 +99,8 @@ public class InMeetChatFragment extends BaseFragment implements InMeetingAdapter
 
                     } else {
                         dataChat.add(((ForumSendEvent) o).getEntity());
-                        initLastData(dataChat, true);
+                        handler.sendEmptyMessageDelayed(16,0);
+
                     }
 
                 } else if (o instanceof ForumRevokeEvent) {
@@ -137,7 +139,9 @@ public class InMeetChatFragment extends BaseFragment implements InMeetingAdapter
         tvSend = view.findViewById(R.id.tv_send);
         editText = (EditText)view.findViewById(R.id.edit);
         recyclerViewChat = (RecyclerView)view.findViewById(R.id.recy_chat);
+        proBar = (ProgressBar) view.findViewById(R.id.progressbar);
 
+        proBar.setVisibility(View.GONE);
         tvSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -186,9 +190,9 @@ public class InMeetChatFragment extends BaseFragment implements InMeetingAdapter
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             if (msg.what == 11) {
-                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.WRAP_CONTENT);
-                params.bottomMargin = (int)getResources().getDimension(R.dimen.my_px_500);
-                recyclerViewChat.setLayoutParams(params);
+//                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.WRAP_CONTENT);
+//                params.bottomMargin = (int)getResources().getDimension(R.dimen.my_px_500);
+//                recyclerViewChat.setLayoutParams(params);
 //                recyclerViewInput.setVisibility(View.VISIBLE);
                 recyclerViewChat.scrollToPosition(dataChat.size() - 1);
             } else if (msg.what == 10){
@@ -203,6 +207,8 @@ public class InMeetChatFragment extends BaseFragment implements InMeetingAdapter
                     progressDialog.dismiss();
                 }
 
+            }else if(msg.what == 16){
+                initLastData(dataChat, true);
             }else if(msg.obj instanceof ChatMesData.PageDataEntity){
                 ((ChatMesData.PageDataEntity)msg.obj).setLocalState(2);
                 dataChat.set(msg.what,((ChatMesData.PageDataEntity)msg.obj));
@@ -249,6 +255,7 @@ public class InMeetChatFragment extends BaseFragment implements InMeetingAdapter
                 if (dataChat.size() == 0) {
                     dataChat = entity.getData().getPageData();
                     initData(dataChat, true);
+                    ApiClient.getInstance().postViewLog(mMeetingId,this,expostorStatsCallback);
                 } else {
                     dataChat.addAll(0, entity.getData().getPageData());
                     proBar.setVisibility(View.GONE);
@@ -272,8 +279,49 @@ public class InMeetChatFragment extends BaseFragment implements InMeetingAdapter
         recyclerViewChat.addItemDecoration(new SpaceItemDecoration(0, 0, 0, (int) (getResources().getDimension(R.dimen.my_px_36))));
         recyclerViewChat.setLayoutManager(mLayoutManager);
         recyclerViewChat.setFocusable(false);
-    }
 
+        recyclerViewChat.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            private int lastVisibleItemPosition;
+
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView,
+                                             int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (newState == RecyclerView.SCROLL_STATE_IDLE
+                        && lastVisibleItemPosition == 0
+                        && !((mPageNo - 1) == mTotalPage) && proBar.getVisibility() == View.GONE) {
+                    Log.v("onscrolllistener", "进入停止状态==" + lastVisibleItemPosition);
+                    proBar.setVisibility(View.VISIBLE);
+                    requestRecord(false);
+//                    requestLiveVideoListNext();
+                    if (mPageNo != -1 && mTotalPage != -1 && !(mPageNo == mTotalPage)) {
+//                        requestRecord(String.valueOf(mPageNo + 1), "20");
+                    }
+
+                }
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (onCreate) {
+                    onCreate = false;
+                } else {
+                    lastVisibleItemPosition = mLayoutManager.findFirstVisibleItemPosition();
+                    Log.v("onscrolllistener", "lastvisibleitemp==" + lastVisibleItemPosition);
+                    if (lastVisibleItemPosition == 0) {
+//                        requestRecord(false);
+                    }
+                }
+
+
+            }
+        });
+    }
+    private void requestRecord(boolean last) {
+        requestRecord(mPageNo + "", "10");
+        mPageNo = mPageNo + 1;
+    }
     private void initData(List<ChatMesData.PageDataEntity> data, boolean last) {
         adapter = new InMeetingAdapter(getActivity(), data, this);
         recyclerViewChat.setAdapter(adapter);

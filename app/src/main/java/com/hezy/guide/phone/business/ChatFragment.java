@@ -1,8 +1,11 @@
 package com.hezy.guide.phone.business;
 
 import android.app.Dialog;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -18,6 +21,7 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -27,6 +31,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -299,7 +304,7 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 
                     } else {
                         dataChat.add(((ForumSendEvent) o).getEntity());
-                        initLastData(dataChat, true);
+                        handler.sendEmptyMessageDelayed(16,0);
                     }
 
                 } else if (o instanceof ForumRevokeEvent) {
@@ -512,6 +517,7 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
                 entity.setUserLogo(Preferences.getUserPhoto());
                 entity.setLocalState(1);
                 Message msg = new Message();
+                Log.v("chatfragment9090","开始发送");
                 msg.what = dataChat.size();;
 //                msg.arg1 = dataChat.size();
                 msg.obj = entity;
@@ -612,6 +618,7 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
                 if (dataChat.size() == 0) {
                     dataChat = entity.getData().getPageData();
                     initData(dataChat, true);
+                    ApiClient.getInstance().postViewLog(mMeetingId,this,expostorStatsCallback);
                 } else {
                     dataChat.addAll(0, entity.getData().getPageData());
                     proBar.setVisibility(View.GONE);
@@ -689,8 +696,8 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
     }
 
     @Override
-    public void onLongContent(View view, String id) {
-        showPopupWindow(view, id);
+    public void onLongContent(View view, String id, String content) {
+        showPopupWindow(view, id, content);
     }
 
     @Override
@@ -707,7 +714,7 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
             entity.setContent(content);
             entity.setId("");
             entity.setMsgType(0);
-            entity.setReplyTimestamp(ts);
+            entity.setTs(ts);
             entity.setType(0);
             entity.setUserName(Preferences.getUserName());
             entity.setUserId(Preferences.getUserId());
@@ -751,7 +758,14 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            if (msg.what == 11) {
+            Log.v("chatfragment9090","收到msg=="+msg.what+"*****"+msg.obj);
+            if(msg.obj instanceof ChatMesData.PageDataEntity){
+                Log.v("chatfragment9090","2s收到");
+                ((ChatMesData.PageDataEntity)msg.obj).setLocalState(2);
+                dataChat.set(msg.what,((ChatMesData.PageDataEntity)msg.obj));
+                adapter.notifyItemChanged(msg.what);
+
+            }else if (msg.what == 11) {
                 RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.WRAP_CONTENT);
                 params.bottomMargin = (int)getResources().getDimension(R.dimen.my_px_500);
                 recyclerViewChat.setLayoutParams(params);
@@ -769,11 +783,8 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
                     progressDialog.dismiss();
                 }
 
-            }else if(msg.obj instanceof ChatMesData.PageDataEntity){
-                ((ChatMesData.PageDataEntity)msg.obj).setLocalState(2);
-                dataChat.set(msg.what,((ChatMesData.PageDataEntity)msg.obj));
-                adapter.notifyItemChanged(msg.what);
-
+            }else if(msg.what==16){
+                initLastData(dataChat, true);
             }
 
         }
@@ -812,7 +823,10 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
         dataChat.add((ChatMesData.PageDataEntity) entity);
         initLastData(dataChat,true);
 
-
+//        BitmapFactory.Options options = new BitmapFactory.Options();
+//        options.inJustDecodeBounds = true;
+//        Bitmap bitmap = BitmapFactory.decodeFile(Uri.parse("file://"+result.getImage().getOriginalPath()).getPath(), options);
+//        Log.v("options9090",options.outHeight+"********"+options.outWidth);
         uploadImage(ts);
         Log.i(TAG, "takeSuccess：" + result.getImage().getOriginalPath());
     }
@@ -851,18 +865,36 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 
     }
 
-    private void showPopupWindow(View view, String id) {
+    private void showPopupWindow(View view, String id, String content) {
 
         // 一个自定义的布局，作为显示的内容
         View contentView = LayoutInflater.from(mContext).inflate(
                 R.layout.pop_window, null);
         // 设置按钮的点击事件
-        TextView button = (TextView) contentView.findViewById(R.id.del);
 
+        TextView button = (TextView) contentView.findViewById(R.id.del);
+        TextView btnCopy = (TextView) contentView.findViewById(R.id.copy);
+        ImageView min = (ImageView) contentView.findViewById(R.id.min);
+        if(id == null){
+            button.setVisibility(View.GONE);
+            min.setVisibility(View.GONE);
+        }
+        if(content == null){
+            btnCopy.setVisibility(View.GONE);
+            min.setVisibility(View.GONE);
+        }
         final PopupWindow popupWindow = new PopupWindow(contentView,
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
 
         popupWindow.setTouchable(true);
+        btnCopy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                popupWindow.dismiss();
+                ClipboardManager cm = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+                cm.setText(content);
+            }
+        });
         button.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -895,10 +927,22 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
         // 如果不设置PopupWindow的背景，无论是点击外部区域还是Back键都无法dismiss弹框
         // 我觉得这里是API的一个bug
         popupWindow.setBackgroundDrawable(getResources().getDrawable(
-                R.color.actionsheet_blue));
+                R.color.transparent));
 
         // 设置好参数之后再show
-        popupWindow.showAsDropDown(view);
+        Log.v("popu8989",view.getWidth()+"=== view width");
+        Log.v("popu8989",contentView.getWidth()+"=== popupWindow width");
+        if(content == null){
+            popupWindow.showAsDropDown(view,0,-view.getHeight()-100);
+        }else if(id == null){
+            popupWindow.showAsDropDown(view,0,-view.getHeight()-100);
+        }else {
+            popupWindow.showAsDropDown(view,view.getWidth()-400,-view.getHeight()-100);
+        }
+
+
+
+//        popupWindow.sh
 
     }
     Dialog progressDialog;

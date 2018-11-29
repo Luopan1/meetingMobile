@@ -41,8 +41,11 @@
                         android:layout_height="20dp" />
                     <TextView
                         android:id="@+id/send_sate"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:background="@mipmap/msg_error"
+                        android:layout_marginRight="@dimen/my_px_20"
+                        android:visibility="gone"
                         />
                 </RelativeLayout>
                 <TextView
@@ -50,7 +53,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/chat_mes_right_bg"
-                    android:textSize="12sp"
+                    android:textSize="@dimen/my_px_40"
                     android:textColor="#0b0b0b"
                     android:maxEms="15"
                     android:padding="7dp"
@@ -67,11 +70,22 @@
             <ImageView
                 android:id="@+id/img_pic"
                 android:scaleType="centerInside"
-                android:layout_width="@dimen/my_px_501"
+                android:layout_width="wrap_content"
                 android:layout_gravity="right"
                 android:layout_marginRight="8dp"
                 android:layout_marginTop="@dimen/my_px_12"
-                android:layout_height="@dimen/my_px_322" />
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/send_err"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#F43530"
+                android:textSize="@dimen/my_px_30"
+                android:layout_marginLeft="@dimen/my_px_70"
+                android:visibility="gone"
+                android:layout_marginTop="@dimen/my_px_24"
+                android:text="发送失败"/>
         </LinearLayout>
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/mIvHead"

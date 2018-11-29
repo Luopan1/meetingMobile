@@ -1,6 +1,7 @@
 package com.hezy.guide.phone.business;
 
 import android.app.Activity;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -32,6 +33,10 @@ public class ViewPagerActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_pager);
+        if(getIntent().getStringExtra("orientation")!=null){
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        }
+
         mListPhotp = getIntent().getStringArrayListExtra("imglist");
 
         info = getIntent().getParcelableExtra("info");

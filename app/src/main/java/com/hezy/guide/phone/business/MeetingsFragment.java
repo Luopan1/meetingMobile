@@ -116,7 +116,7 @@ public class MeetingsFragment extends BaseFragment {
     private ForumMeetingAdapter.OnItemClickListener onForumMeetingItemClickListener = new ForumMeetingAdapter.OnItemClickListener() {
         @Override
         public void onItemClick(View view, ForumMeeting forumMeeting) {
-            startActivity(new Intent(getActivity(), ChatActivity.class).putExtra("title", forumMeeting.getTitle()).putExtra("meetingId", forumMeeting.getMeetingId()));
+            startActivity(new Intent(getActivity(),ChatActivity.class).putExtra("title",forumMeeting.getTitle()).putExtra("meetingId",forumMeeting.getMeetingId()).putExtra("num",forumMeeting.getUserCnt()));
         }
     };
 
@@ -361,7 +361,6 @@ public class MeetingsFragment extends BaseFragment {
             emptyText.setVisibility(View.GONE);
 
             forumMeetingAdapter.addData(forumMeetingList);
-//            forumMeetingAdapter.notifyDataSetChanged();
         }
 
         @Override

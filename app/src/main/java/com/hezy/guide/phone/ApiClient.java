@@ -102,7 +102,11 @@ public class ApiClient {
 
         okHttpUtil.delete(API_DOMAIN_NAME + "/osg/app/forum/" + forumId, getCommonHead(), null, callback);
     }
+    ///osg/app/forum/{meetingId}/view/log
 
+    public void postViewLog(String meetingid,Object tag, OkHttpCallback callback){
+        okHttpUtil.post(API_DOMAIN_NAME + "/osg/app/forum/"+meetingid+"/view/log", getCommonHead(), null,callback);
+    }
     //提交聊天内容/osg/app/forum
     public void expostorPostChatMessage(Object tag, OkHttpCallback callback, Map<String, Object> values) {
         okHttpUtil.postJson(API_DOMAIN_NAME + "/osg/app/forum", getCommonHead(), JSON.toJSONString(values), callback, tag);
