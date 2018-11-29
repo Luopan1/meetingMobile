@@ -35,8 +35,8 @@
                 android:paddingLeft="@dimen/my_px_10"
                 android:textColor="#909090"
                 android:imeOptions="flagNoExtractUi"
-                android:background="@drawable/insertdrawable"
-                android:layout_height="@dimen/my_px_146" />
+                android:background="@drawable/white_conner"
+                android:layout_height="@dimen/my_px_126" />
             <TextView
                 android:id="@+id/tv_send"
                 android:layout_width="0dp"
