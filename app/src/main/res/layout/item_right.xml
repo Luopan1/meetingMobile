@@ -43,6 +43,8 @@
                         android:id="@+id/send_sate"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:background="@mipmap/msg_error"
+                        android:visibility="gone"
                         />
                 </RelativeLayout>
                 <TextView
@@ -72,6 +74,16 @@
                 android:layout_marginRight="8dp"
                 android:layout_marginTop="@dimen/my_px_12"
                 android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/send_err"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#F43530"
+                android:textSize="@dimen/my_px_30"
+                android:visibility="gone"
+                android:layout_marginTop="@dimen/my_px_24"
+                android:text="发送失败"/>
         </LinearLayout>
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/mIvHead"

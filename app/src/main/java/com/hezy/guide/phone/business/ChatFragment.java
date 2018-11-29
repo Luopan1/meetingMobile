@@ -1,6 +1,7 @@
 package com.hezy.guide.phone.business;
 
 import android.app.Dialog;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -20,6 +21,7 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -29,6 +31,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -692,8 +695,8 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
     }
 
     @Override
-    public void onLongContent(View view, String id) {
-        showPopupWindow(view, id);
+    public void onLongContent(View view, String id, String content) {
+        showPopupWindow(view, id, content);
     }
 
     @Override
@@ -859,18 +862,36 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 
     }
 
-    private void showPopupWindow(View view, String id) {
+    private void showPopupWindow(View view, String id, String content) {
 
         // 一个自定义的布局，作为显示的内容
         View contentView = LayoutInflater.from(mContext).inflate(
                 R.layout.pop_window, null);
         // 设置按钮的点击事件
-        TextView button = (TextView) contentView.findViewById(R.id.del);
 
+        TextView button = (TextView) contentView.findViewById(R.id.del);
+        TextView btnCopy = (TextView) contentView.findViewById(R.id.copy);
+        ImageView min = (ImageView) contentView.findViewById(R.id.min);
+        if(id == null){
+            button.setVisibility(View.GONE);
+            min.setVisibility(View.GONE);
+        }
+        if(content == null){
+            btnCopy.setVisibility(View.GONE);
+            min.setVisibility(View.GONE);
+        }
         final PopupWindow popupWindow = new PopupWindow(contentView,
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
 
         popupWindow.setTouchable(true);
+        btnCopy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                popupWindow.dismiss();
+                ClipboardManager cm = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+                cm.setText(content);
+            }
+        });
         button.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -903,10 +924,22 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
         // 如果不设置PopupWindow的背景，无论是点击外部区域还是Back键都无法dismiss弹框
         // 我觉得这里是API的一个bug
         popupWindow.setBackgroundDrawable(getResources().getDrawable(
-                R.color.actionsheet_blue));
+                R.color.transparent));
 
         // 设置好参数之后再show
-        popupWindow.showAsDropDown(view);
+        Log.v("popu8989",view.getWidth()+"=== view width");
+        Log.v("popu8989",contentView.getWidth()+"=== popupWindow width");
+        if(content == null){
+            popupWindow.showAsDropDown(view,0,-view.getHeight()-100);
+        }else if(id == null){
+            popupWindow.showAsDropDown(view,0,-view.getHeight()-100);
+        }else {
+            popupWindow.showAsDropDown(view,view.getWidth()-400,-view.getHeight()-100);
+        }
+
+
+
+//        popupWindow.sh
 
     }
     Dialog progressDialog;

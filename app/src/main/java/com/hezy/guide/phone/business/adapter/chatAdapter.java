@@ -139,7 +139,7 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.ViewHolder> {
             holder.tvContent.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
-//                    callBack.onLongContent(view);
+                    callBack.onLongContent(view,null,data.get(position).getContent());
                     return false;
                 }
             });
@@ -154,7 +154,7 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.ViewHolder> {
             holder.tvContent.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
-                    callBack.onLongContent(view,data.get(position).getId());
+                    callBack.onLongContent(view,data.get(position).getId(),data.get(position).getContent());
                     return false;
                 }
             });
@@ -168,19 +168,22 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.ViewHolder> {
             if(data.get(position).getLocalState()==0){
                 holder.sendBar.setVisibility(View.GONE);
                 holder.tvState.setVisibility(View.GONE);
+                holder.tvError.setVisibility(View.GONE);
             }else if(data.get(position).getLocalState() == 1){
                 holder.sendBar.setVisibility(View.VISIBLE);
                 holder.tvState.setVisibility(View.GONE);
+                holder.tvError.setVisibility(View.GONE);
             }else if(data.get(position).getLocalState() == 2){
                 holder.sendBar.setVisibility(View.GONE);
                 holder.tvState.setVisibility(View.VISIBLE);
+                holder.tvError.setVisibility(View.VISIBLE);
                 holder.tvState.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         callBack.onReSend(data.get(position).getContent(),data.get(position).getType());
                     }
                 });
-                holder.tvState.setText("失败");
+//                holder.tvState.setText("失败");
             }
         }
 
@@ -225,7 +228,7 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.ViewHolder> {
             holder.imgPic.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
-                    callBack.onLongContent(view,data.get(position).getId());
+                    callBack.onLongContent(view,data.get(position).getId(),null);
                     return true;
                 }
             });
@@ -251,7 +254,7 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.ViewHolder> {
         private ImageView imgPic;
         private ImageView imgArrow;
         private ProgressBar sendBar;
-        private TextView tvState;
+        private TextView tvState, tvError;
 
         private TextView tvCenter;
         private TextView tvEdit;
@@ -265,6 +268,7 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.ViewHolder> {
             imgArrow = (ImageView)itemView.findViewById(R.id.img_arrow);
             sendBar = (ProgressBar)itemView.findViewById(R.id.send_bar);
             tvState = (TextView)itemView.findViewById(R.id.send_sate);
+            tvError = (TextView)itemView.findViewById(R.id.send_err);
 
             tvCenter = itemView.findViewById(R.id.tv_center);
             tvEdit = itemView.findViewById(R.id.tv_edit);
@@ -275,7 +279,7 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.ViewHolder> {
     public interface onClickCallBack{
         void onClickCallBackFuc();
         void onLongImgHead(String name, String userId);
-        void onLongContent(View view, String id);
+        void onLongContent(View view, String id,String content);
         void onEditCallBack(String content);
         void onReSend(String content,int type);
 //        void onClickImage(Info info);
