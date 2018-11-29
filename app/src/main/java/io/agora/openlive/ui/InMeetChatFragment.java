@@ -190,9 +190,9 @@ public class InMeetChatFragment extends BaseFragment implements InMeetingAdapter
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             if (msg.what == 11) {
-                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.WRAP_CONTENT);
-                params.bottomMargin = (int)getResources().getDimension(R.dimen.my_px_500);
-                recyclerViewChat.setLayoutParams(params);
+//                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.WRAP_CONTENT);
+//                params.bottomMargin = (int)getResources().getDimension(R.dimen.my_px_500);
+//                recyclerViewChat.setLayoutParams(params);
 //                recyclerViewInput.setVisibility(View.VISIBLE);
                 recyclerViewChat.scrollToPosition(dataChat.size() - 1);
             } else if (msg.what == 10){
