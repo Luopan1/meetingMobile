@@ -53,7 +53,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/chat_mes_right_bg"
-                    android:textSize="12sp"
+                    android:textSize="@dimen/my_px_40"
                     android:textColor="#0b0b0b"
                     android:maxEms="15"
                     android:padding="7dp"
