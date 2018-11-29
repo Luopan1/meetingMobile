@@ -1248,7 +1248,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
     private void doTEnterChannel(){
         HashMap<String, Object> params = new HashMap<String, Object>();
         params.put("status", 1);
-        params.put("type", 2);
+        params.put("type", 1);
         params.put("meetingId", ((MeetingJoin)(getIntent().getParcelableExtra("meeting"))).getMeeting().getId());
         ApiClient.getInstance().meetingJoinStats(TAG, meetingJoinStatsCallback, params);
 

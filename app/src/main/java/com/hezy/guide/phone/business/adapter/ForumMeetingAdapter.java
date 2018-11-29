@@ -65,8 +65,16 @@ public class ForumMeetingAdapter extends OpenPresenter {
 
         //会议title
         holder.tv_forum_meeting_item_title.setText(forumMeeting.getTitle());
-        //未读消息
-        holder.tv_forum_meeting_item_unread.setText(forumMeeting.getNewMsgCnt() + "条新消息");
+
+
+        //未读消息，0条消息不显示
+        if (forumMeeting.getNewMsgCnt() == 0) {
+            holder.tv_forum_meeting_item_unread.setVisibility(View.GONE);
+        }else {
+            holder.tv_forum_meeting_item_unread.setVisibility(View.VISIBLE);
+            holder.tv_forum_meeting_item_unread.setText(forumMeeting.getNewMsgCnt() + "条新消息");
+        }
+
         //最后消息时间
         holder.tv_forum_meeting_item_msg_lasttime.setText(forumMeeting.getNewMsgReplyTime());
 

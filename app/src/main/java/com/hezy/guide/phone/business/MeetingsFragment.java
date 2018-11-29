@@ -54,8 +54,7 @@ public class MeetingsFragment extends BaseFragment {
     private RecyclerView recyclerView;
     private LinearLayoutManager mLayoutManager;
     private MeetingAdapter meetingAdapter;
-    private TextView emptyText, tv_meeting_public, tv_meeting_private
-        , tv_meeting_forum;
+    private TextView emptyText, tv_meeting_public, tv_meeting_private, tv_meeting_forum;
     private AppBarLayout appBarLayout;
 
     public static final int TYPE_PUBLIC_MEETING = 0;
@@ -70,25 +69,22 @@ public class MeetingsFragment extends BaseFragment {
         return "会议列表";
     }
 
-    private MeetingAdapter.OnItemClickListener onMeetingListItemClickListener = new MeetingAdapter.OnItemClickListener() {
-        @Override
-        public void onItemClick(View view, Meeting meeting) {
-            if (Build.VERSION.SDK_INT >= 23) {
-                //视频会议拍照功能
-                int REQUEST_CODE_CONTACT = 101;
-                String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                        Manifest.permission.CAMERA};
-                //验证是否许可权限
-                for (String str : permissions) {
-                    if (getActivity().checkSelfPermission(str) != PackageManager.PERMISSION_GRANTED) {
-                        //申请权限
-                        getActivity().requestPermissions(permissions, REQUEST_CODE_CONTACT);
-                        return;
-                    }
+    private MeetingAdapter.OnItemClickListener onMeetingListItemClickListener = (view, meeting) -> {
+        if (Build.VERSION.SDK_INT >= 23) {
+            //视频会议拍照功能
+            int REQUEST_CODE_CONTACT = 101;
+            String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.CAMERA};
+            //验证是否许可权限
+            for (String str : permissions) {
+                if (getActivity().checkSelfPermission(str) != PackageManager.PERMISSION_GRANTED) {
+                    //申请权限
+                    getActivity().requestPermissions(permissions, REQUEST_CODE_CONTACT);
+                    return;
                 }
             }
-            initDialog(meeting);
         }
+        initDialog(meeting);
     };
 
     private ForumMeetingAdapter.OnItemClickListener onForumMeetingItemClickListener = new ForumMeetingAdapter.OnItemClickListener() {
