@@ -75,15 +75,19 @@ public class ForumMeetingAdapter extends OpenPresenter {
             holder.tv_forum_meeting_item_unread.setText(forumMeeting.getNewMsgCnt() + "条新消息");
         }
 
+        //是否被@
+        if (forumMeeting.isAtailFlag()){
+            holder.tv_forum_meeting_item_at.setVisibility(View.VISIBLE);
+        }else {
+            holder.tv_forum_meeting_item_at.setVisibility(View.GONE);
+        }
+
         //最后消息时间
         holder.tv_forum_meeting_item_msg_lasttime.setText(forumMeeting.getNewMsgReplyTime());
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (listener != null) {
-                    listener.onItemClick(v, forumMeeting);
-                }
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onItemClick(v, forumMeeting);
             }
         });
     }
