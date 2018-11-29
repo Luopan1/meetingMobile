@@ -23,6 +23,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.hezy.guide.phone.ApiClient;
 import com.hezy.guide.phone.BaseException;
 import com.hezy.guide.phone.R;
 import com.hezy.guide.phone.business.adapter.ForumMeetingAdapter;
@@ -40,6 +41,7 @@ import com.hezy.guide.phone.utils.Logger;
 import com.hezy.guide.phone.utils.OkHttpCallback;
 import com.hezy.guide.phone.utils.ToastUtils;
 import com.hezy.guide.phone.utils.UIDUtil;
+import com.hezy.guide.phone.utils.listener.RecyclerViewScrollListener;
 import com.hezy.guide.phone.utils.statistics.ZYAgent;
 
 import java.util.ArrayList;
@@ -56,6 +58,10 @@ public class MeetingsFragment extends BaseFragment {
     private MeetingAdapter meetingAdapter;
     private TextView emptyText, tv_meeting_public, tv_meeting_private, tv_meeting_forum;
     private AppBarLayout appBarLayout;
+    private Dialog dialog;
+    private Forum forum;
+    private ForumMeetingAdapter forumMeetingAdapter;
+    private ArrayList<ForumMeeting> forumMeetingList = new ArrayList<>();
 
     public static final int TYPE_PUBLIC_MEETING = 0;
     public static final int TYPE_PRIVATE_MEETING = 1;
@@ -64,9 +70,29 @@ public class MeetingsFragment extends BaseFragment {
     public static final String KEY_MEETING_TYPE = "meetingType";
     private int currentMeetingListPageIndex = TYPE_PUBLIC_MEETING;
 
+    //分页信息
+    private final int PAGE_SIZE = 20;
+    private final int PAGE_NO = 1;
+    private int pageNo = PAGE_NO;
+
     @Override
     public String getStatisticsTag() {
         return "会议列表";
+    }
+
+    private void initForumPage() {
+        pageNo = PAGE_NO;
+        forumMeetingAdapter.clearData();
+        recyclerView.setAdapter(forumMeetingAdapter);
+    }
+
+    private boolean nextPage() {
+        if (pageNo >= forum.getTotalPage()) {
+            ToastUtils.showToast("没有更多数据了！");
+            return false;
+        }
+        pageNo += PAGE_NO;
+        return true;
     }
 
     private MeetingAdapter.OnItemClickListener onMeetingListItemClickListener = (view, meeting) -> {
@@ -90,7 +116,7 @@ public class MeetingsFragment extends BaseFragment {
     private ForumMeetingAdapter.OnItemClickListener onForumMeetingItemClickListener = new ForumMeetingAdapter.OnItemClickListener() {
         @Override
         public void onItemClick(View view, ForumMeeting forumMeeting) {
-            startActivity(new Intent(getActivity(),ChatActivity.class).putExtra("title",forumMeeting.getTitle()).putExtra("meetingId",forumMeeting.getMeetingId()));
+            startActivity(new Intent(getActivity(), ChatActivity.class).putExtra("title", forumMeeting.getTitle()).putExtra("meetingId", forumMeeting.getMeetingId()));
         }
     };
 
@@ -101,6 +127,8 @@ public class MeetingsFragment extends BaseFragment {
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
+        forumMeetingAdapter = new ForumMeetingAdapter(mContext, onForumMeetingItemClickListener);
+        forumMeetingAdapter.addData(forumMeetingList);
         showMeeting(currentMeetingListPageIndex);
         super.onActivityCreated(savedInstanceState);
     }
@@ -151,9 +179,23 @@ public class MeetingsFragment extends BaseFragment {
         tv_meeting_public.setOnClickListener(tvMeetingOnClickListener);
         tv_meeting_private.setOnClickListener(tvMeetingOnClickListener);
         tv_meeting_forum.setOnClickListener(tvMeetingOnClickListener);
-
+        recyclerView.addOnScrollListener(recyclerViewScrollListener);
         return view;
     }
+
+    /**
+     * 滑动到底部分页监听
+     */
+    private RecyclerViewScrollListener recyclerViewScrollListener = new RecyclerViewScrollListener() {
+        @Override
+        public void onScrollToBottom() {
+            if (TYPE_FORUM_MEETING == currentMeetingListPageIndex) {
+                if (nextPage()){
+                    requestForum(null);
+                }
+            }
+        }
+    };
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -211,6 +253,7 @@ public class MeetingsFragment extends BaseFragment {
     }
 
     private void showForumMeeting() {
+        initForumPage();
         showForumMeetingView();
         currentMeetingListPageIndex = TYPE_FORUM_MEETING;
         requestForum(null);
@@ -254,7 +297,13 @@ public class MeetingsFragment extends BaseFragment {
             title = null;
         }
         swipeRefreshLayout.setRefreshing(true);
-        apiClient.getAllForumMeeting(TAG, title, forumMeetingsCallback);
+        Map<String, String> params = new HashMap<>();
+        params.put(ApiClient.PAGE_NO, String.valueOf(pageNo));
+        params.put(ApiClient.PAGE_SIZE, String.valueOf(PAGE_SIZE));
+        if (title != null) {
+            params.put("title", title);
+        }
+        apiClient.getAllForumMeeting(TAG, params, forumMeetingsCallback);
     }
 
     private OkHttpCallback meetingsCallback = new OkHttpCallback<BaseArrayBean<Meeting>>() {
@@ -265,17 +314,16 @@ public class MeetingsFragment extends BaseFragment {
                 Logger.i("", meetingBucket.toString());
                 meetingAdapter = new MeetingAdapter(mContext, meetingBucket.getData(), onMeetingListItemClickListener);
                 recyclerView.setAdapter(new GeneralAdapter(meetingAdapter));
-                recyclerView.setVisibility(View.VISIBLE);
-                emptyText.setVisibility(View.GONE);
+                loadForumListSuccessView();
             } else {
-                recyclerView.setVisibility(View.GONE);
-                emptyText.setVisibility(View.VISIBLE);
+                loadForumListFaildView();
             }
         }
 
         @Override
         public void onFailure(int errorCode, BaseException exception) {
             super.onFailure(errorCode, exception);
+            loadForumListFaildView();
             Toast.makeText(mContext, exception.getMessage(), Toast.LENGTH_SHORT).show();
         }
 
@@ -286,22 +334,34 @@ public class MeetingsFragment extends BaseFragment {
         }
     };
 
+    private void loadForumListSuccessView() {
+        recyclerView.setVisibility(View.VISIBLE);
+        emptyText.setVisibility(View.GONE);
+    }
+
+    private void loadForumListFaildView() {
+        recyclerView.setVisibility(View.GONE);
+        emptyText.setVisibility(View.VISIBLE);
+    }
+
+
     private OkHttpCallback forumMeetingsCallback = new OkHttpCallback<Bucket<Forum>>() {
 
         @Override
         public void onSuccess(Bucket<Forum> entity) {
-            Forum forum = entity.getData();
-            ArrayList<ForumMeeting> forumMeetingList = forum.getPageData();
+            forum = entity.getData();
+            forumMeetingList.clear();
+            forumMeetingList = forum.getPageData();
             if (forumMeetingList.size() == 0) {
                 recyclerView.setVisibility(View.GONE);
                 emptyText.setVisibility(View.VISIBLE);
                 return;
             }
-
-            ForumMeetingAdapter forumMeetingAdapter = new ForumMeetingAdapter(mContext, forumMeetingList, onForumMeetingItemClickListener);
-            recyclerView.setAdapter(new GeneralAdapter(forumMeetingAdapter));
             recyclerView.setVisibility(View.VISIBLE);
             emptyText.setVisibility(View.GONE);
+
+            forumMeetingAdapter.addData(forumMeetingList);
+//            forumMeetingAdapter.notifyDataSetChanged();
         }
 
         @Override
@@ -317,8 +377,6 @@ public class MeetingsFragment extends BaseFragment {
             swipeRefreshLayout.setRefreshing(false);
         }
     };
-
-    private Dialog dialog;
 
     private void initDialog(final Meeting meeting) {
         View view = View.inflate(mContext, R.layout.dialog_meeting_code, null);

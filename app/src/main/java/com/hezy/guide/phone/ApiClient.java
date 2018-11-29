@@ -41,6 +41,8 @@ public class ApiClient {
 
     private static final String API_DOMAIN_NAME = BuildConfig.API_DOMAIN_NAME;
     private static final String API_DOMAIN_NAME_YOYOTU = BuildConfig.API_DOMAIN_NAME_YOYOTU;
+    public static final String PAGE_NO = "pageNo";
+    public static final String PAGE_SIZE = "pageSize";
 
     private OkHttpUtil okHttpUtil;
 
@@ -96,15 +98,16 @@ public class ApiClient {
 
     //删除聊天内容/osg/app/forum/{forumId}
 
-    public void expostorDeleteChatMessage(Object tag, OkHttpCallback callback, String forumId){
+    public void expostorDeleteChatMessage(Object tag, OkHttpCallback callback, String forumId) {
 
-        okHttpUtil.delete(API_DOMAIN_NAME+"/osg/app/forum/"+forumId,getCommonHead(),null ,callback);
+        okHttpUtil.delete(API_DOMAIN_NAME + "/osg/app/forum/" + forumId, getCommonHead(), null, callback);
     }
 
     //提交聊天内容/osg/app/forum
     public void expostorPostChatMessage(Object tag, OkHttpCallback callback, Map<String, Object> values) {
         okHttpUtil.postJson(API_DOMAIN_NAME + "/osg/app/forum", getCommonHead(), JSON.toJSONString(values), callback, tag);
     }
+
     public void meetingJoinStats(Object tag, OkHttpCallback callback, Map<String, Object> values) {
         okHttpUtil.postJson(API_DOMAIN_NAME + "/osg/app/meeting/join/stats", getCommonHead(), JSON.toJSONString(values), callback, tag);
     }
@@ -126,22 +129,20 @@ public class ApiClient {
         okHttpUtil.get(url, getCommonHead(), null, callback);
     }
 
-    public void getAllForumMeeting(Object tag, String title, OkHttpCallback callback) {
+    public void getAllForumMeeting(Object tag, Map<String, String> params, OkHttpCallback callback) {
         String url = API_DOMAIN_NAME + "/osg/app/forum";
-        if (!TextUtils.isEmpty(title)) {
-            url += "?title=" + title;
-        }
-        okHttpUtil.get(url, getCommonHead(), null, callback);
+        okHttpUtil.get(url, getCommonHead(), params, callback);
     }
 
     ///osg/app/forum/{meetingId}/content
-    public void getChatMessages(Object tag, String meetingId, String pageNo, String pageSize,OkHttpCallback callback) {
-        String url = API_DOMAIN_NAME + "/osg/app/forum/"+meetingId+"/content";
+    public void getChatMessages(Object tag, String meetingId, String pageNo, String pageSize, OkHttpCallback callback) {
+        String url = API_DOMAIN_NAME + "/osg/app/forum/" + meetingId + "/content";
         Map<String, String> params = new HashMap<>();
         params.put("pageNo", pageNo);
         params.put("pageSize", pageSize);
         okHttpUtil.get(url, getCommonHead(), params, callback);
     }
+
     public void verifyRole(Object tag, OkHttpCallback callback, Map<String, Object> values) {
         okHttpUtil.postJson(API_DOMAIN_NAME + "/osg/app/meeting/verify", getCommonHead(), JSON.toJSONString(values), callback, tag);
     }
@@ -422,7 +423,7 @@ public class ApiClient {
         okHttpUtil.get(API_DOMAIN_NAME + "/osg/app/user/area/custom", params, tag, callback);
     }
 
-    public void meetingMaterials(Object tag, OkHttpCallback callback, String meetingId){
+    public void meetingMaterials(Object tag, OkHttpCallback callback, String meetingId) {
         okHttpUtil.get(API_DOMAIN_NAME + "/osg/app/meeting/materials?meetingId=" + meetingId, getCommonHead(), null, callback);
     }
 
@@ -430,7 +431,7 @@ public class ApiClient {
         okHttpUtil.get(API_DOMAIN_NAME + "/osg/app/meeting/materials/" + materialsId, getCommonHead(), null, callback);
     }
 
-    public void meetingSetMaterial(Object tag, OkHttpCallback callback, String meetingId, String materialId){
+    public void meetingSetMaterial(Object tag, OkHttpCallback callback, String meetingId, String materialId) {
         okHttpUtil.post(API_DOMAIN_NAME + "/osg/app/meeting/" + meetingId + "/materials/" + materialId, getCommonHead(), null, callback);
     }
 

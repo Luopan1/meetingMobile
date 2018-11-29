@@ -1,7 +1,9 @@
 package com.hezy.guide.phone.business.adapter;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +14,7 @@ import com.hezy.guide.phone.R;
 import com.hezy.guide.phone.entities.ForumMeeting;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 讨论区列表adapter
@@ -19,38 +22,42 @@ import java.util.ArrayList;
  * @author Dongce
  * create time: 2018/11/14
  */
-public class ForumMeetingAdapter extends OpenPresenter {
+public class ForumMeetingAdapter extends RecyclerView.Adapter<ForumMeetingAdapter.ForumMeetingHolder> {
 
     private Context mContext;
-    private ArrayList<ForumMeeting> forumMeetings;
-    private GeneralAdapter mAdapter;
+    private List<ForumMeeting> forumMeetings = new ArrayList<>();
     private OnItemClickListener listener;
 
-    public ForumMeetingAdapter(Context context, ArrayList<ForumMeeting> forumMeetings, OnItemClickListener listener) {
+    public ForumMeetingAdapter(Context context, OnItemClickListener listener) {
         this.mContext = context;
-        this.forumMeetings = forumMeetings;
         this.listener = listener;
     }
 
-    @Override
-    public void setAdapter(GeneralAdapter adapter) {
-        this.mAdapter = adapter;
+    public void addData(ArrayList<ForumMeeting> forumMeetings) {
+        this.forumMeetings.addAll(forumMeetings);
+        notifyItemRangeInserted(this.forumMeetings.size() - 1, forumMeetings.size());
+        notifyItemRangeChanged(this.forumMeetings.size() - 1, forumMeetings.size());
+    }
+
+    public void clearData() {
+        this.forumMeetings.clear();
+        notifyDataSetChanged();
     }
 
     @Override
     public int getItemCount() {
-        return forumMeetings != null ? forumMeetings.size() : 0;
+        return forumMeetings.size();
     }
 
+    @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ForumMeetingHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(mContext).inflate(R.layout.item_forum_meeting, parent, false);
         return new ForumMeetingHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder viewHolder, int position) {
-
+    public void onBindViewHolder(@NonNull ForumMeetingHolder viewHolder, int position) {
         final ForumMeeting forumMeeting = forumMeetings.get(position);
         ForumMeetingHolder holder = (ForumMeetingHolder) viewHolder;
 
@@ -70,15 +77,15 @@ public class ForumMeetingAdapter extends OpenPresenter {
         //未读消息，0条消息不显示
         if (forumMeeting.getNewMsgCnt() == 0) {
             holder.tv_forum_meeting_item_unread.setVisibility(View.GONE);
-        }else {
+        } else {
             holder.tv_forum_meeting_item_unread.setVisibility(View.VISIBLE);
             holder.tv_forum_meeting_item_unread.setText(forumMeeting.getNewMsgCnt() + "条新消息");
         }
 
         //是否被@
-        if (forumMeeting.isAtailFlag()){
+        if (forumMeeting.isAtailFlag()) {
             holder.tv_forum_meeting_item_at.setVisibility(View.VISIBLE);
-        }else {
+        } else {
             holder.tv_forum_meeting_item_at.setVisibility(View.GONE);
         }
 
@@ -96,7 +103,7 @@ public class ForumMeetingAdapter extends OpenPresenter {
         void onItemClick(View view, ForumMeeting forumMeeting);
     }
 
-    private class ForumMeetingHolder extends ViewHolder {
+    class ForumMeetingHolder extends RecyclerView.ViewHolder {
         View itemView;
         ImageView img_forum_meeting_item_head;
         TextView tv_forum_meeting_item_head, tv_forum_meeting_item_title, tv_forum_meeting_item_unread, tv_forum_meeting_item_at, tv_forum_meeting_item_msg_lasttime;

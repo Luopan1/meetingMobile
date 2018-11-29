@@ -17,6 +17,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.hezy.guide.phone.ApiClient;
 import com.hezy.guide.phone.BaseException;
 import com.hezy.guide.phone.R;
 import com.hezy.guide.phone.business.adapter.ForumMeetingAdapter;
@@ -69,9 +70,7 @@ public class MeetingSearchActivity extends BasicActivity {
     private ForumMeetingAdapter.OnItemClickListener onForumMeetingItemClickListener = new ForumMeetingAdapter.OnItemClickListener() {
         @Override
         public void onItemClick(View view, ForumMeeting forumMeeting) {
-            //TODO 跳转进讨论室界面
-//            ToastUtils.showToast(forumMeeting.getTitle());
-            startActivity(new Intent(getApplication(),ChatActivity.class).putExtra("title",forumMeeting.getTitle()).putExtra("meetingId",forumMeeting.getMeetingId()));
+            startActivity(new Intent(getApplication(), ChatActivity.class).putExtra("title", forumMeeting.getTitle()).putExtra("meetingId", forumMeeting.getMeetingId()));
         }
     };
 
@@ -169,7 +168,13 @@ public class MeetingSearchActivity extends BasicActivity {
     private void requestMeetings(String meetingTitle, int meetingType) {
         swipeRefreshLayout.setRefreshing(true);
         if (meetingType == MeetingsFragment.TYPE_FORUM_MEETING) {
-            apiClient.getAllForumMeeting(TAG, meetingTitle, forumMeetingsCallback);
+            Map<String, String> params = new HashMap<>();
+            params.put(ApiClient.PAGE_NO, "1");
+            params.put(ApiClient.PAGE_SIZE, "20");
+            if (!meetingTitle.equals("")) {
+                params.put("title", meetingTitle);
+            }
+            apiClient.getAllForumMeeting(TAG, params, forumMeetingsCallback);
         } else {
             apiClient.getAllMeeting(TAG, meetingTitle, meetingType, meetingsCallback);
         }
@@ -216,8 +221,9 @@ public class MeetingSearchActivity extends BasicActivity {
                 return;
             }
 
-            ForumMeetingAdapter forumMeetingAdapter = new ForumMeetingAdapter(mContext, forumMeetingList, onForumMeetingItemClickListener);
-            recyclerView.setAdapter(new GeneralAdapter(forumMeetingAdapter));
+            ForumMeetingAdapter forumMeetingAdapter = new ForumMeetingAdapter(mContext, onForumMeetingItemClickListener);
+            recyclerView.setAdapter(forumMeetingAdapter);
+            forumMeetingAdapter.addData(forumMeetingList);
             recyclerView.setVisibility(View.VISIBLE);
             emptyText.setVisibility(View.GONE);
         }
