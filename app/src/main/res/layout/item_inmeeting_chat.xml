@@ -15,8 +15,11 @@
                 android:layout_height="20dp" />
             <TextView
                 android:id="@+id/send_sate"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:background="@mipmap/msg_error"
+                android:layout_marginRight="@dimen/my_px_20"
+                android:visibility="gone"
                 />
         </RelativeLayout>
         <TextView

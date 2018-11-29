@@ -45,6 +45,9 @@ public class InMeetingAdapter extends RecyclerView.Adapter<InMeetingAdapter.View
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
 
+        if(data.get(position).getMsgType() == 2){
+            return;
+        }
         if(data.get(position).getMsgType() == 1){
             holder.imgContent.setVisibility(View.GONE);
             holder.tvContent.setVisibility(View.VISIBLE);
@@ -100,7 +103,7 @@ public class InMeetingAdapter extends RecyclerView.Adapter<InMeetingAdapter.View
 //                    callBack.onReSend(data.get(position).getContent(),data.get(position).getType());
                 }
             });
-            holder.tvState.setText("失败");
+//            holder.tvState.setText("失败");
         }
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
