@@ -517,6 +517,7 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
                 entity.setUserLogo(Preferences.getUserPhoto());
                 entity.setLocalState(1);
                 Message msg = new Message();
+                Log.v("chatfragment9090","开始发送");
                 msg.what = dataChat.size();;
 //                msg.arg1 = dataChat.size();
                 msg.obj = entity;
@@ -713,7 +714,7 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
             entity.setContent(content);
             entity.setId("");
             entity.setMsgType(0);
-            entity.setReplyTimestamp(ts);
+            entity.setTs(ts);
             entity.setType(0);
             entity.setUserName(Preferences.getUserName());
             entity.setUserId(Preferences.getUserId());
@@ -757,7 +758,14 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            if (msg.what == 11) {
+            Log.v("chatfragment9090","收到msg=="+msg.what+"*****"+msg.obj);
+            if(msg.obj instanceof ChatMesData.PageDataEntity){
+                Log.v("chatfragment9090","2s收到");
+                ((ChatMesData.PageDataEntity)msg.obj).setLocalState(2);
+                dataChat.set(msg.what,((ChatMesData.PageDataEntity)msg.obj));
+                adapter.notifyItemChanged(msg.what);
+
+            }else if (msg.what == 11) {
                 RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.WRAP_CONTENT);
                 params.bottomMargin = (int)getResources().getDimension(R.dimen.my_px_500);
                 recyclerViewChat.setLayoutParams(params);
@@ -777,11 +785,6 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 
             }else if(msg.what==16){
                 initLastData(dataChat, true);
-            }else if(msg.obj instanceof ChatMesData.PageDataEntity){
-                ((ChatMesData.PageDataEntity)msg.obj).setLocalState(2);
-                dataChat.set(msg.what,((ChatMesData.PageDataEntity)msg.obj));
-                adapter.notifyItemChanged(msg.what);
-
             }
 
         }
