@@ -36,7 +36,6 @@ public class ForumMeetingAdapter extends RecyclerView.Adapter<ForumMeetingAdapte
     public void addData(ArrayList<ForumMeeting> forumMeetings) {
         this.forumMeetings.addAll(forumMeetings);
         notifyItemRangeInserted(this.forumMeetings.size() - 1, forumMeetings.size());
-        notifyItemRangeChanged(this.forumMeetings.size() - 1, forumMeetings.size());
     }
 
     public void clearData() {
