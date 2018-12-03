@@ -165,7 +165,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                 tvChat.setTextColor(getResources().getColor(R.color.white));
                 tvChat.setText(((ChatMesData.PageDataEntity)msg.obj).getContent());
             }
-            tvChat.setText(" : "+((ChatMesData.PageDataEntity)msg.obj).getContent());
+//            tvChat.setText(" : "+((ChatMesData.PageDataEntity)msg.obj).getContent());
             tvAddress.setText("未填写");
             tvName.setText(((ChatMesData.PageDataEntity)msg.obj).getUserName()+"");
 
@@ -187,7 +187,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                 tvChat.setText("[撤回一条消息]");
             }
             tvChatAddress.setText("未填写");
-            tvChatName.setText(" : "+((ChatMesData.PageDataEntity)msg.obj).getUserName()+"");
+            tvChatName.setText(((ChatMesData.PageDataEntity)msg.obj).getUserName()+" : ");
             ChatHandler.sendEmptyMessageDelayed(22,100);
         }
     };
