@@ -191,7 +191,15 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
 
             Log.v("llchat98989",tvChatAddress.getWidth()+"*******前");
 //            tvChatAddress.setText("未填写");
+            if(((ChatMesData.PageDataEntity)msg.obj).getMsgType()==1){
+                tvContent.setTextColor(getResources().getColor(R.color.color_7FBAFF));
+                tvContent.setText(" ：[撤回一条消息]");
+            }
 
+            if(((ChatMesData.PageDataEntity)msg.obj).getMsgType()==1){
+                tvChat.setTextColor(getResources().getColor(R.color.color_7FBAFF));
+                tvChat.setText("[撤回一条消息]");
+            }
             tvChatName.setText(((ChatMesData.PageDataEntity)msg.obj).getUserName()+" : ");
 //            Log.v("llchat989891",tvChatName.getWidth()+"*******中");
             Log.v("llchat9898llChat",findViewById(R.id.small_chat).getWidth()+"*******中");
@@ -263,6 +271,10 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
 
                 } else if (o instanceof ForumRevokeEvent) {
 //                    requestRecordOnlyLast(true);
+                    Message msg = new Message();
+                    msg.obj = ((ForumSendEvent) o).getEntity();
+                    ChatHandler.sendMessage(msg);
+
 
 
                 }

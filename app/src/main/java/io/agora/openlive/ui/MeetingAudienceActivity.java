@@ -157,7 +157,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                     tvChat.setVisibility(View.VISIBLE);
                 }
             }
-            if(((ChatMesData.PageDataEntity)msg.obj).getType()==0){
+            if(((ChatMesData.PageDataEntity)msg.obj).getType()==1){
                 tvChat.setTextColor(getResources().getColor(R.color.color_7FBAFF));
                 tvChat.setText("[发送一张图片]");
             }else {
@@ -168,12 +168,22 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
             tvAddress.setText("未填写");
             tvName.setText(((ChatMesData.PageDataEntity)msg.obj).getUserName()+"");
 
-            if(((ChatMesData.PageDataEntity)msg.obj).getType()==0){
+            if(((ChatMesData.PageDataEntity)msg.obj).getType()==1){
                 tvContent.setTextColor(getResources().getColor(R.color.color_7FBAFF));
                 tvContent.setText(" ：[发送一张图片]");
             }else {
                 tvContent.setTextColor(getResources().getColor(R.color.white));
                 tvContent.setText(" : "+((ChatMesData.PageDataEntity)msg.obj).getContent());
+            }
+
+            if(((ChatMesData.PageDataEntity)msg.obj).getMsgType()==1){
+                tvContent.setTextColor(getResources().getColor(R.color.color_7FBAFF));
+                tvContent.setText(" ：[撤回一条消息]");
+            }
+
+            if(((ChatMesData.PageDataEntity)msg.obj).getMsgType()==1){
+                tvChat.setTextColor(getResources().getColor(R.color.color_7FBAFF));
+                tvChat.setText("[撤回一条消息]");
             }
             tvChatAddress.setText("未填写");
             tvChatName.setText(" : "+((ChatMesData.PageDataEntity)msg.obj).getUserName()+"");
@@ -207,7 +217,9 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                 } else if (o instanceof ForumRevokeEvent) {
 //                    requestRecordOnlyLast(true);
 
-
+                    Message msg = new Message();
+                    msg.obj = ((ForumSendEvent) o).getEntity();
+                    ChatHandler.sendMessage(msg);
                 }
 
             }
