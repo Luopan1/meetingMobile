@@ -116,6 +116,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
     private int currentAudienceId;
     InMeetChatFragment fragment;
     boolean hideFragment = false;
+    boolean JoinSuc = false;
 
     private Handler ChatHandler = new Handler(){
         @Override
@@ -1234,7 +1235,13 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
     @Override
     protected void onStart() {
         super.onStart();
-        doTEnterChannel();
+        if(JoinSuc){
+            if (TextUtils.isEmpty(meetingJoinTraceId)){
+                doTEnterChannel();
+            }
+        }
+
+
     }
 
     @Override
@@ -1287,6 +1294,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
             params.put("status", 1);
             params.put("type", 2);
             params.put("meetingId", meetingJoin.getMeeting().getId());
+            JoinSuc = true;
             ApiClient.getInstance().meetingJoinStats(TAG, meetingJoinStatsCallback, params);
         });
     }
