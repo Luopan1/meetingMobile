@@ -259,9 +259,19 @@ public class InMeetChatFragment extends BaseFragment implements InMeetingAdapter
                 mTotalPage = entity.getData().getTotalPage();
                 if (dataChat.size() == 0) {
                     dataChat = entity.getData().getPageData();
+                    for(int i=0; i<dataChat.size();i++){
+                        if(dataChat.get(i).getMsgType()==2){
+                            dataChat.remove(i);
+                        }
+                    }
                     initData(dataChat, true);
                     ApiClient.getInstance().postViewLog(mMeetingId,this,expostorStatsCallback);
                 } else {
+                    for(int i=0; i<entity.getData().getPageData().size();i++){
+                        if(entity.getData().getPageData().get(i).getMsgType()==2){
+                            entity.getData().getPageData().remove(i);
+                        }
+                    }
                     dataChat.addAll(0, entity.getData().getPageData());
                     proBar.setVisibility(View.GONE);
                     initData(dataChat, false);
