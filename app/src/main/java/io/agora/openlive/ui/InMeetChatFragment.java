@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -145,6 +146,10 @@ public class InMeetChatFragment extends BaseFragment implements InMeetingAdapter
         tvSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(TextUtils.isEmpty(editText.getText().toString())){
+                    ToastUtils.showToast("发送内容不能为空");
+                    return;
+                }
                 ChatMesData.PageDataEntity entity = new ChatMesData.PageDataEntity();
                 long ts = System.currentTimeMillis();
                 entity.setContent(editText.getText().toString());

@@ -16,6 +16,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,6 +51,7 @@ import com.hezy.guide.phone.entities.MeetingJoinStats;
 import com.hezy.guide.phone.entities.MeetingMaterialsPublish;
 import com.hezy.guide.phone.event.ForumRevokeEvent;
 import com.hezy.guide.phone.event.ForumSendEvent;
+import com.hezy.guide.phone.event.SetUserChatEvent;
 import com.hezy.guide.phone.event.SetUserStateEvent;
 import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.service.WSService;
@@ -113,7 +115,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
     private ImageView docImage;
     private TextView pageText, tvChatName, tvChatAddress, tvName, tvAddress, tvContent, tvOpenComment;
     private SurfaceView localBroadcasterSurfaceView, remoteAudienceSurfaceView;
-    private LinearLayout docLayout, llMsg, llChat;
+    private LinearLayout docLayout, llMsg, llChat, llSmallChat;
 
     private Audience currentAudience, newAudience;
     private int currentAiducenceId;
@@ -129,27 +131,72 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
+//            Log.v("llchat9898",llChat.getWidth()+"*******前");
+            if(msg.what == 22){
+                Log.v("llchat989890",tvChat.getWidth()+"****tvChat***后");
+                FrameLayout.LayoutParams params =new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT,FrameLayout.LayoutParams.WRAP_CONTENT);
+                Log.v("llchat9898llChat",findViewById(R.id.small_chat).getWidth()+"*******后");
+                Log.v("llchat9898",disCussButton.getLeft()+"*******2");
+                params.bottomMargin = 106;
+                params.gravity = Gravity.BOTTOM;
+                params.leftMargin = disCussButton.getLeft()-(llSmallChat.getWidth()/2)+disCussButton.getWidth()/2;
+                Log.v("llchat9898",params.leftMargin+"*******3");
+                if(params.leftMargin<90){
+                    params.leftMargin = 90;
+                    LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT);
+                    params2.leftMargin = disCussButton.getLeft()-90+(disCussButton.getWidth()/2);
+                    findViewById(R.id.img_tri).setLayoutParams(params2);
+                    llChat.setLayoutParams(params);
+                }else {
+                    LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT);
+                    params2.gravity = Gravity.CENTER_HORIZONTAL;
+                    findViewById(R.id.img_tri).setLayoutParams(params2);
+                    llChat.setLayoutParams(params);
+                }
+                return;
+            }
             if(hideFragment){
                 llMsg.setVisibility(View.GONE);
-                llChat.setVisibility(View.GONE);
+                llChat.setVisibility(View.INVISIBLE);
             }else {
                 if(isFullScreen){
                     llMsg.setVisibility(View.VISIBLE);
-                    llChat.setVisibility(View.GONE);
+                    llChat.setVisibility(View.INVISIBLE);
                 }else {
                     llMsg.setVisibility(View.GONE);
                     llChat.setVisibility(View.VISIBLE);
+
                     tvChat.setVisibility(View.VISIBLE);
                 }
             }
-
-            tvChat.setText(" : "+((ChatMesData.PageDataEntity)msg.obj).getContent());
-            tvAddress.setText("未填写");
+            Log.v("llchat989890",tvChat.getWidth()+"***tvChat****前");
+            if(((ChatMesData.PageDataEntity)msg.obj).getType()==1){
+                tvChat.setTextColor(getResources().getColor(R.color.color_7FBAFF));
+                tvChat.setText("[发送一张图片]");
+            }else {
+                tvChat.setTextColor(getResources().getColor(R.color.white));
+                tvChat.setText(((ChatMesData.PageDataEntity)msg.obj).getContent());
+            }
+            Log.v("llchat989890",tvChat.getWidth()+"****tvChat***后");
+//            tvAddress.setText("未填写");
             tvName.setText(((ChatMesData.PageDataEntity)msg.obj).getUserName()+"");
 
-            tvContent.setText(" : "+((ChatMesData.PageDataEntity)msg.obj).getContent());
-            tvChatAddress.setText("未填写");
-            tvChatName.setText(((ChatMesData.PageDataEntity)msg.obj).getUserName()+"");
+            if(((ChatMesData.PageDataEntity)msg.obj).getType()==0){
+                tvContent.setTextColor(getResources().getColor(R.color.color_7FBAFF));
+                tvContent.setText(" ：[发送一张图片]");
+            }else {
+                tvContent.setTextColor(getResources().getColor(R.color.white));
+                tvContent.setText(" : "+((ChatMesData.PageDataEntity)msg.obj).getContent());
+            }
+
+            Log.v("llchat98989",tvChatAddress.getWidth()+"*******前");
+//            tvChatAddress.setText("未填写");
+
+            tvChatName.setText(((ChatMesData.PageDataEntity)msg.obj).getUserName()+" : ");
+//            Log.v("llchat989891",tvChatName.getWidth()+"*******中");
+            Log.v("llchat9898llChat",findViewById(R.id.small_chat).getWidth()+"*******中");
+            Log.v("llchat989891",tvChatAddress.getWidth()+tvChatName.getWidth()+tvChat.getWidth()+"*******前");
+            ChatHandler.sendEmptyMessageDelayed(22,100);
 
         }
     };
@@ -198,7 +245,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
             //当前状态离线,可切换在线
             ZYAgent.onEvent(this, "在线按钮,当前离线,切换到在线");
             Log.i(TAG, "当前状态离线,可切换在线");
-            RxBus.sendMessage(new SetUserStateEvent(true));
+            RxBus.sendMessage(new SetUserChatEvent(true));
         } else {
             ZYAgent.onEvent(this, "在线按钮,当前在线,,无效操作");
         }
@@ -253,6 +300,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
         broadcastTipsText = findViewById(R.id.broadcast_tips);
         audienceNameText = findViewById(R.id.audience_name);
         rlContent = (RelativeLayout)findViewById(R.id.rl_content);
+        llSmallChat = findViewById(R.id.small_chat);
         tvChat = findViewById(R.id.tv_chat);
         broadcastNameText = findViewById(R.id.broadcaster);
         broadcastNameText.setText("主持人：" + meetingJoin.getHostUser().getHostUserName());
@@ -306,7 +354,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
             @Override
             public void onClick(View view) {
                 initFragment();
-                llChat.setVisibility(View.GONE);
+                llChat.setVisibility(View.INVISIBLE);
             }
         });
         previewButton.setOnClickListener(view -> {
@@ -438,7 +486,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                 disCussButton.setVisibility(View.GONE);
                 if(!tvContent.getText().toString().isEmpty())
                 llMsg.setVisibility(View.VISIBLE);
-                llChat.setVisibility(View.GONE);
+                llChat.setVisibility(View.INVISIBLE);
                 isFullScreen = true;
             } else {
                 fullScreenButton.setImageResource(R.drawable.ic_full_screen);
@@ -1518,16 +1566,20 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
 
         TCAgent.onPageEnd(this, "MeetingAudienceActivity");
 
+        if(ChatHandler.hasMessages(22)){
+            ChatHandler.removeMessages(22);
+        }
         if (WSService.isOnline()) {
             //当前状态在线,可切换离线
             Log.i(TAG, "当前状态在线,可切换离线");
             ZYAgent.onEvent(this, "离线按钮,当前在线,切换到离线");
-            RxBus.sendMessage(new SetUserStateEvent(false));
+            RxBus.sendMessage(new SetUserChatEvent(false));
 //                                            WSService.SOCKET_ONLINE =false;
 //                                            setState(false);
         } else {
             ZYAgent.onEvent(this, "离线按钮,当前离线,无效操作");
         }
+        subscription.unsubscribe();
         doLeaveChannel();
         if (agoraAPI.getStatus() == 2) {
             agoraAPI.channelClearAttr(channelName);
