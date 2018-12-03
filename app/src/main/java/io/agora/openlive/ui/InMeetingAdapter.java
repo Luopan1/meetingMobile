@@ -46,8 +46,10 @@ public class InMeetingAdapter extends RecyclerView.Adapter<InMeetingAdapter.View
     public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
 
         if(data.get(position).getMsgType() == 2){
+            holder.itemView.setVisibility(View.GONE);
             return;
         }
+        holder.itemView.setVisibility(View.VISIBLE);
         if(data.get(position).getMsgType() == 1){
             holder.imgContent.setVisibility(View.GONE);
             holder.tvContent.setVisibility(View.VISIBLE);
