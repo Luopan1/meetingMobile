@@ -439,4 +439,8 @@ public class ApiClient {
         okHttpUtil.post(API_DOMAIN_NAME + "/osg/app/meeting/" + meetingId + "/materials/" + materialId, getCommonHead(), null, callback);
     }
 
+    public void meetingLeaveTemp(Object tag, Map<String, String> params, OkHttpCallback callback, String meetingId) {
+        okHttpUtil.post(API_DOMAIN_NAME + "/osg/app/meeting/" + meetingId + "/leave/temp", getCommonHead(), params, callback);
+    }
+
 }
