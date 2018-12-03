@@ -104,6 +104,10 @@
             android:layout_width="70sp"
             android:layout_height="30sp"
             android:background="@drawable/bg_meeting_button_selector"
+            android:shadowColor="@color/black"
+            android:shadowDx="3"
+            android:shadowDy="3"
+            android:shadowRadius="5"
             android:text="上一页"
             android:textColor="@color/white"
             android:textSize="14sp" />
@@ -114,6 +118,10 @@
             android:layout_height="30sp"
             android:layout_marginLeft="10dp"
             android:background="@drawable/bg_meeting_button_selector"
+            android:shadowColor="@color/black"
+            android:shadowDx="3"
+            android:shadowDy="3"
+            android:shadowRadius="5"
             android:text="下一页"
             android:textColor="@color/white"
             android:textSize="14sp" />
@@ -124,6 +132,10 @@
             android:layout_height="30sp"
             android:layout_marginLeft="10dp"
             android:background="@drawable/bg_meeting_button_selector"
+            android:shadowColor="@color/black"
+            android:shadowDx="3"
+            android:shadowDy="3"
+            android:shadowRadius="5"
             android:text="退出PPT演示"
             android:textColor="@color/white"
             android:textSize="14sp" />

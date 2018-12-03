@@ -896,6 +896,14 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                         }
                     }
                 }
+
+                HashMap<String, String> params = new HashMap<String, String>();
+                params.put("clientUid", "" + config().mUid);
+                params.put("hostUserId", Preferences.getUserId());
+                params.put("hostUserName", meetingJoin.getHostUser().getHostUserName());
+                params.put("status", "2");
+                ApiClient.getInstance().meetingLeaveTemp(TAG, params, meetingTempLeaveCallback, meetingJoin.getMeeting().getId());
+
                 doLeaveChannel();
                 if (agoraAPI.getStatus() == 2) {
                     agoraAPI.logout();
@@ -1344,6 +1352,14 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
             }
         });
     }
+
+    private OkHttpCallback meetingTempLeaveCallback = new OkHttpCallback<Bucket>() {
+
+        @Override
+        public void onSuccess(Bucket meetingTempLeaveBucket) {
+            Log.v("meetingTempLeave", meetingTempLeaveBucket.toString());
+        }
+    };
 
     private String meetingJoinTraceId;
 
