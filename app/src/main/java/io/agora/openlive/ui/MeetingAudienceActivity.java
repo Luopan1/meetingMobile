@@ -704,7 +704,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                                 if (!isDocShow) {
                                     fullScreenButton.setVisibility(View.GONE);
                                 }
-//                                agoraAPI.setAttr("uname", null);
+                                agoraAPI.setAttr("uname", null);
 
                                 if (!TextUtils.isEmpty(meetingHostJoinTraceId)) {
                                     HashMap<String, Object> params = new HashMap<String, Object>();
