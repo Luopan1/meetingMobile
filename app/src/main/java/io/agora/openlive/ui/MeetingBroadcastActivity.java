@@ -449,7 +449,11 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
             agoraAPI.channelDelAttr(channelName, DOC_INFO);
 
             if (currentAudience == null) {
-                fullScreenButton.setVisibility(View.GONE);
+                if (currentMaterial == null) {
+                    fullScreenButton.setVisibility(View.VISIBLE);
+                } else {
+                    fullScreenButton.setVisibility(View.GONE);
+                }
             } else {
                 fullScreenButton.setVisibility(View.VISIBLE);
             }
