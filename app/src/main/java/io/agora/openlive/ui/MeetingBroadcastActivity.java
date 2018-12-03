@@ -887,7 +887,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                     params.put("hostUserId", Preferences.getUserId());
                     params.put("hostUserName", meetingJoin.getHostUser().getHostUserName());
                     params.put("status", "2");
-                    ApiClient.getInstance().meetingLeaveTemp(TAG, params, meetingJoinStatsCallback, meetingJoin.getMeeting().getId());
+                    ApiClient.getInstance().meetingLeaveTemp(TAG, params, meetingTempLeaveCallback, meetingJoin.getMeeting().getId());
                 } else {
                     if (BuildConfig.DEBUG) {
                         Toast.makeText(this, "当前没有连麦人", Toast.LENGTH_SHORT).show();
@@ -1351,6 +1351,14 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
             }
         });
     }
+
+    private OkHttpCallback meetingTempLeaveCallback = new OkHttpCallback<Bucket>() {
+
+        @Override
+        public void onSuccess(Bucket meetingTempLeaveBucket) {
+            Log.v("meetingTempLeave", meetingTempLeaveBucket.toString());
+        }
+    };
 
     private String meetingJoinTraceId;
 
