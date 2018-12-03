@@ -1107,9 +1107,6 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                     if (agoraAPI.getStatus() == 2) {
                         agoraAPI.setAttr("uname", null);
                         agoraAPI.channelDelAttr(channelName, CALLING_AUDIENCE);
-                        Toast.makeText(this, "is login", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(this, "not login", Toast.LENGTH_SHORT).show();
                     }
 
                     if (!isDocShow) {
