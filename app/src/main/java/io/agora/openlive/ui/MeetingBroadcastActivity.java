@@ -881,13 +881,6 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-
-                    HashMap<String, String> params = new HashMap<String, String>();
-                    params.put("clientUid", "" + config().mUid);
-                    params.put("hostUserId", Preferences.getUserId());
-                    params.put("hostUserName", meetingJoin.getHostUser().getHostUserName());
-                    params.put("status", "2");
-                    ApiClient.getInstance().meetingLeaveTemp(TAG, params, meetingTempLeaveCallback, meetingJoin.getMeeting().getId());
                 } else {
                     if (BuildConfig.DEBUG) {
                         Toast.makeText(this, "当前没有连麦人", Toast.LENGTH_SHORT).show();
@@ -903,6 +896,14 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                         }
                     }
                 }
+
+                HashMap<String, String> params = new HashMap<String, String>();
+                params.put("clientUid", "" + config().mUid);
+                params.put("hostUserId", Preferences.getUserId());
+                params.put("hostUserName", meetingJoin.getHostUser().getHostUserName());
+                params.put("status", "2");
+                ApiClient.getInstance().meetingLeaveTemp(TAG, params, meetingTempLeaveCallback, meetingJoin.getMeeting().getId());
+
                 doLeaveChannel();
                 if (agoraAPI.getStatus() == 2) {
                     agoraAPI.logout();
