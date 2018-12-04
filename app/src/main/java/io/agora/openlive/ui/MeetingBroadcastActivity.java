@@ -249,14 +249,14 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_meeting_broadcast);
-        if (!WSService.isOnline()) {
-            //当前状态离线,可切换在线
-            ZYAgent.onEvent(this, "在线按钮,当前离线,切换到在线");
-            Log.i(TAG, "当前状态离线,可切换在线");
-            RxBus.sendMessage(new SetUserChatEvent(true));
-        } else {
-            ZYAgent.onEvent(this, "在线按钮,当前在线,,无效操作");
-        }
+//        if (!WSService.isOnline()) {
+//            //当前状态离线,可切换在线
+//            ZYAgent.onEvent(this, "在线按钮,当前离线,切换到在线");
+//            Log.i(TAG, "当前状态离线,可切换在线");
+//            RxBus.sendMessage(new SetUserChatEvent(true));
+//        } else {
+//            ZYAgent.onEvent(this, "在线按钮,当前在线,,无效操作");
+//        }
         TCAgent.onEvent(this, "进入会议直播界面");
 
         subscription = RxBus.handleMessage(new Action1() {
@@ -1601,16 +1601,16 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
         if(ChatHandler.hasMessages(22)){
             ChatHandler.removeMessages(22);
         }
-        if (WSService.isOnline()) {
-            //当前状态在线,可切换离线
-            Log.i(TAG, "当前状态在线,可切换离线");
-            ZYAgent.onEvent(this, "离线按钮,当前在线,切换到离线");
-            RxBus.sendMessage(new SetUserChatEvent(false));
-//                                            WSService.SOCKET_ONLINE =false;
-//                                            setState(false);
-        } else {
-            ZYAgent.onEvent(this, "离线按钮,当前离线,无效操作");
-        }
+//        if (WSService.isOnline()) {
+//            //当前状态在线,可切换离线
+//            Log.i(TAG, "当前状态在线,可切换离线");
+//            ZYAgent.onEvent(this, "离线按钮,当前在线,切换到离线");
+//            RxBus.sendMessage(new SetUserChatEvent(false));
+////                                            WSService.SOCKET_ONLINE =false;
+////                                            setState(false);
+//        } else {
+//            ZYAgent.onEvent(this, "离线按钮,当前离线,无效操作");
+//        }
         subscription.unsubscribe();
         doLeaveChannel();
         if (agoraAPI.getStatus() == 2) {

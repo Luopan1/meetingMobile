@@ -91,7 +91,7 @@ public class HomeActivity extends BasicActivity implements View.OnClickListener 
             @Override
             public void call(Object o) {
                 if (o instanceof UserStateEvent) {
-                    setState(WSService.isOnline());
+                    setState(WSService.isPhoneOnline());
                 }
             }
         });
@@ -199,7 +199,7 @@ public class HomeActivity extends BasicActivity implements View.OnClickListener 
     @Override
     protected void onResume() {
         super.onResume();
-        setState(WSService.isOnline());
+        setState(WSService.isPhoneOnline());
         if (!TextUtils.isEmpty(Preferences.getToken())) {
             ApiClient.getInstance().requestUser();
         }
@@ -237,7 +237,7 @@ public class HomeActivity extends BasicActivity implements View.OnClickListener 
                                     public void onClick(int which) {
                                         ZYAgent.onEvent(mContext, "在线按钮");
 
-                                        if (!WSService.isOnline()) {
+                                        if (!WSService.isPhoneOnline()) {
                                             //当前状态离线,可切换在线
                                             ZYAgent.onEvent(mContext, "在线按钮,当前离线,切换到在线");
                                             Log.i(TAG, "当前状态离线,可切换在线");
@@ -252,7 +252,7 @@ public class HomeActivity extends BasicActivity implements View.OnClickListener 
                                     @Override
                                     public void onClick(int which) {
                                         ZYAgent.onEvent(mContext, "离线按钮");
-                                        if (WSService.isOnline()) {
+                                        if (WSService.isPhoneOnline()) {
                                             //当前状态在线,可切换离线
                                             Log.i(TAG, "当前状态在线,可切换离线");
                                             ZYAgent.onEvent(mContext, "离线按钮,当前在线,切换到离线");

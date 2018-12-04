@@ -86,9 +86,17 @@ public class WSService extends Service {
 
     private Subscription subscription;
     private Handler mHandler;
+    private static boolean PHONE_ONLINE = false;
 
     public static boolean isOnline() {
         return mSocket != null && mSocket.connected();
+    }
+
+    public static boolean isPhoneOnline() {
+         if(mSocket != null && mSocket.connected()){
+             return PHONE_ONLINE;
+         }
+         return false;
     }
 
     public static void actionStart(Context context) {
@@ -133,16 +141,21 @@ public class WSService extends Service {
                 if (o instanceof SetUserStateEvent) {
                     SetUserStateEvent event = (SetUserStateEvent) o;
                     if (event.isOnline()) {
-                        connectSocket();
-                        HashMap<String, Object> params = new HashMap<String, Object>();
-                        params.put("status", 1);
-                        ApiClient.getInstance().expostorOnlineStats(TAG, expostorStatsCallback, params);
+                        PHONE_ONLINE = true;
+                        disconnectChatSocket();
+                        handler.sendEmptyMessageDelayed(11,100);
+//                        connectSocket();
+//                        HashMap<String, Object> params = new HashMap<String, Object>();
+//                        params.put("status", 1);
+//                        ApiClient.getInstance().expostorOnlineStats(TAG, expostorStatsCallback, params);
                     } else {
+                        PHONE_ONLINE = false;
                         disConnectSocket();
                         HashMap<String, Object> params = new HashMap<String, Object>();
                         params.put("onlineTraceId", onlineTraceId);
                         params.put("status", 2);
                         ApiClient.getInstance().expostorOnlineStats(TAG, expostorStatsCallback, params);
+                        handler.sendEmptyMessageDelayed(12,100);
                     }
                 } else if (o instanceof CallEvent) {
                     CallEvent event = (CallEvent) o;
@@ -191,14 +204,14 @@ public class WSService extends Service {
 
             }
         });
-        if (!WSService.isOnline()) {
+//        if (!WSService.isOnline()) {
             //当前状态离线,可切换在线
 //            ZYAgent.onEvent(mContext, "在线按钮,当前离线,切换到在线");
-            Log.i(TAG, "当前状态离线,可切换在线");
+//            Log.i(TAG, "当前状态离线,可切换在线");
             RxBus.sendMessage(new SetUserChatEvent(true));
-        } else {
-//            ZYAgent.onEvent(mContext, "在线按钮,当前在线,,无效操作");
-        }
+//        } else {
+////            ZYAgent.onEvent(mContext, "在线按钮,当前在线,,无效操作");
+//        }
     }
 
     private String onlineTraceId;
@@ -491,8 +504,18 @@ public class WSService extends Service {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            Log.i("wsserver", "延时1s去连接 ");
-            connectChatSocket();
+            if(msg.what == 10){
+                Log.i("wsserver", "延时1s去连接 ");
+                connectChatSocket();
+            }else if(msg.what == 11){
+                connectSocket();
+                HashMap<String, Object> params = new HashMap<String, Object>();
+                params.put("status", 1);
+                ApiClient.getInstance().expostorOnlineStats(TAG, expostorStatsCallback, params);
+            }else if(msg.what==12){
+                connectChatSocket();
+            }
+
 
         }
     };
