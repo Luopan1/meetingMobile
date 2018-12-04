@@ -316,7 +316,7 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
                 } else if (o instanceof ForumRevokeEvent) {
 //                    requestRecordOnlyLast(true);
                     if(mMeetingId != null){
-                        if(!((ForumSendEvent) o).getEntity().getMeetingId().equals(mMeetingId)){
+                        if(!((ForumRevokeEvent) o).getEntity().getMeetingId().equals(mMeetingId)){
                             return;
                         }
                     }
