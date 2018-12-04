@@ -208,19 +208,30 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
         subscription = RxBus.handleMessage(new Action1() {
             @Override
             public void call(Object o) {
+                String meetingid = "";
+                if(((MeetingJoin)(getIntent().getParcelableExtra("meeting")))!=null && ((MeetingJoin)(getIntent().getParcelableExtra("meeting"))).getMeeting()!=null){
+                    meetingid  = ((MeetingJoin)(getIntent().getParcelableExtra("meeting"))).getMeeting().getId();
+                }
+
                 if (o instanceof ForumSendEvent) {
 
-                    Message msg = new Message();
-                    msg.obj = ((ForumSendEvent) o).getEntity();
+                    if (((ForumSendEvent) o).getEntity().getMeetingId().equals(meetingid)) {
+                        Message msg = new Message();
+                        msg.obj = ((ForumSendEvent) o).getEntity();
 //                    tvChat.setText(((ForumSendEvent) o).getEntity().getContent());
-                    ChatHandler.sendMessage(msg);
+                        ChatHandler.sendMessage(msg);
+                    }
+
 
                 } else if (o instanceof ForumRevokeEvent) {
 //                    requestRecordOnlyLast(true);
 
-                    Message msg = new Message();
-                    msg.obj = ((ForumSendEvent) o).getEntity();
-                    ChatHandler.sendMessage(msg);
+                    if (((ForumSendEvent) o).getEntity().getMeetingId().equals(meetingid)) {
+                        Message msg = new Message();
+                        msg.obj = ((ForumSendEvent) o).getEntity();
+                        ChatHandler.sendMessage(msg);
+                    }
+
                 }
 
             }

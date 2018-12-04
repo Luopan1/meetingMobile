@@ -51,6 +51,7 @@ import com.hezy.guide.phone.business.adapter.inputAdapter;
 import com.hezy.guide.phone.entities.Bucket;
 import com.hezy.guide.phone.entities.ChatMesData;
 import com.hezy.guide.phone.entities.ExpostorOnlineStats;
+import com.hezy.guide.phone.entities.MeetingJoin;
 import com.hezy.guide.phone.entities.QiniuToken;
 import com.hezy.guide.phone.entities.RecordData;
 import com.hezy.guide.phone.entities.base.BaseBean;
@@ -277,6 +278,11 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
             @Override
             public void call(Object o) {
                 if (o instanceof ForumSendEvent) {
+                    if(mMeetingId != null){
+                        if(!((ForumSendEvent) o).getEntity().getMeetingId().equals(mMeetingId)){
+                            return;
+                        }
+                    }
                     if (((ForumSendEvent) o).getEntity().getUserId().equals(Preferences.getUserId())) {
                         for(int i=dataChat.size()-1; i<dataChat.size();i++){
                             Log.v("forumsendevent9090","进入循环=="+i);
@@ -309,6 +315,11 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 
                 } else if (o instanceof ForumRevokeEvent) {
 //                    requestRecordOnlyLast(true);
+                    if(mMeetingId != null){
+                        if(!((ForumSendEvent) o).getEntity().getMeetingId().equals(mMeetingId)){
+                            return;
+                        }
+                    }
                     for(int i=0; i<dataChat.size();i++){
                         if(dataChat.get(i).getId().equals(((ForumRevokeEvent) o).getEntity().getId())){
                             dataChat.get(i).setMsgType(1);

@@ -36,6 +36,7 @@
                 android:textColor="#909090"
                 android:imeOptions="flagNoExtractUi"
                 android:background="@drawable/white_conner"
+                android:maxLength="500"
                 android:layout_height="@dimen/my_px_126" />
             <TextView
                 android:id="@+id/tv_send"
@@ -49,7 +50,7 @@
                 android:textSize="@dimen/my_px_45"
                 android:gravity="center"
                 android:textColor="#ffffff"
-                android:text="确认发送"/>
+                android:text="发送"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"

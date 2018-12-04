@@ -54,7 +54,7 @@ public class InMeetingAdapter extends RecyclerView.Adapter<InMeetingAdapter.View
             holder.imgContent.setVisibility(View.GONE);
             holder.tvContent.setVisibility(View.VISIBLE);
             holder.tvContent.setTextColor(context.getResources().getColor(R.color.color_7FBAFF));
-            holder.tvContent.setText(" ：["+data.get(position).getUserName()+" 撤回了一条消息]");
+            holder.tvContent.setText(" ：["+" 撤回了一条消息]");
         }else if(data.get(position).getType()==0){
             holder.imgContent.setVisibility(View.GONE);
             holder.tvContent.setTextColor(context.getResources().getColor(R.color.white));
