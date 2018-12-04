@@ -73,6 +73,11 @@ public class InMeetChatFragment extends BaseFragment implements InMeetingAdapter
             @Override
             public void call(Object o) {
                 if (o instanceof ForumSendEvent) {
+                    if(mMeetingId != null){
+                        if(!((ForumSendEvent) o).getEntity().getMeetingId().equals(mMeetingId)){
+                            return;
+                        }
+                    }
                     if (((ForumSendEvent) o).getEntity().getUserId().equals(Preferences.getUserId())) {
                         for(int i=dataChat.size()-1; i<dataChat.size();i++){
                             Log.v("forumsendevent9090","进入循环=="+i);
@@ -106,6 +111,11 @@ public class InMeetChatFragment extends BaseFragment implements InMeetingAdapter
 
                 } else if (o instanceof ForumRevokeEvent) {
 //                    requestRecordOnlyLast(true);
+                    if(mMeetingId != null){
+                        if(!((ForumRevokeEvent) o).getEntity().getMeetingId().equals(mMeetingId)){
+                            return;
+                        }
+                    }
                     for(int i=0; i<dataChat.size();i++){
                         if(dataChat.get(i).getId().equals(((ForumRevokeEvent) o).getEntity().getId())){
                             dataChat.get(i).setMsgType(1);
