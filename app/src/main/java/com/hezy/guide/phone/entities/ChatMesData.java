@@ -65,6 +65,7 @@ public class ChatMesData {
         private long ts;
         private int msgType;
         private int localState;//0发送成功1正在发送2发送失败
+        private String meetingId;
         public PageDataEntity(){
 
         }
@@ -81,6 +82,7 @@ public class ChatMesData {
             msgType = in.readInt();
             localState = in.readInt();
             ts = in.readLong();
+            meetingId = in.readString();
         }
 
         public static final Creator<PageDataEntity> CREATOR = new Creator<PageDataEntity>() {
@@ -183,6 +185,14 @@ public class ChatMesData {
             this.ts = ts;
         }
 
+        public void setMeetingId(String meetingId) {
+            this.meetingId = meetingId;
+        }
+
+        public String getMeetingId() {
+            return meetingId;
+        }
+
         @Override
         public int describeContents() {
             return 0;
@@ -201,6 +211,7 @@ public class ChatMesData {
             parcel.writeInt(msgType);
             parcel.writeInt(localState);
             parcel.writeLong(ts);
+            parcel.writeString(meetingId);
         }
     }
 }

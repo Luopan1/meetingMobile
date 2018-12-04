@@ -31,14 +31,17 @@ import com.hezy.guide.phone.business.adapter.GeneralAdapter;
 import com.hezy.guide.phone.business.adapter.MeetingAdapter;
 import com.hezy.guide.phone.entities.Agora;
 import com.hezy.guide.phone.entities.Bucket;
+import com.hezy.guide.phone.entities.ChatMesData;
 import com.hezy.guide.phone.entities.Forum;
 import com.hezy.guide.phone.entities.ForumMeeting;
 import com.hezy.guide.phone.entities.Meeting;
 import com.hezy.guide.phone.entities.MeetingJoin;
 import com.hezy.guide.phone.entities.base.BaseArrayBean;
+import com.hezy.guide.phone.event.ForumSendEvent;
 import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.utils.Logger;
 import com.hezy.guide.phone.utils.OkHttpCallback;
+import com.hezy.guide.phone.utils.RxBus;
 import com.hezy.guide.phone.utils.ToastUtils;
 import com.hezy.guide.phone.utils.UIDUtil;
 import com.hezy.guide.phone.utils.listener.RecyclerViewScrollListener;
@@ -49,9 +52,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import io.agora.openlive.ui.MeetingInitActivity;
+import rx.Subscription;
 
 public class MeetingsFragment extends BaseFragment {
 
+    private Subscription subscription;
     private SwipeRefreshLayout swipeRefreshLayout;
     private RecyclerView recyclerView;
     private LinearLayoutManager mLayoutManager;
@@ -115,8 +120,10 @@ public class MeetingsFragment extends BaseFragment {
 
     private ForumMeetingAdapter.OnItemClickListener onForumMeetingItemClickListener = new ForumMeetingAdapter.OnItemClickListener() {
         @Override
-        public void onItemClick(View view, ForumMeeting forumMeeting) {
-            startActivity(new Intent(getActivity(),ChatActivity.class).putExtra("title",forumMeeting.getTitle()).putExtra("meetingId",forumMeeting.getMeetingId()).putExtra("num",forumMeeting.getUserCnt()));
+        public void onItemClick(View view, ForumMeeting forumMeeting, int position) {
+            forumMeeting.setNewMsgCnt(0);
+            forumMeetingAdapter.notifyItemChanged(position);
+            startActivity(new Intent(getActivity(), ChatActivity.class).putExtra("title", forumMeeting.getTitle()).putExtra("meetingId", forumMeeting.getMeetingId()).putExtra("num", forumMeeting.getUserCnt()));
         }
     };
 
@@ -130,7 +137,29 @@ public class MeetingsFragment extends BaseFragment {
         forumMeetingAdapter = new ForumMeetingAdapter(mContext, onForumMeetingItemClickListener);
         forumMeetingAdapter.addData(forumMeetingList);
         showMeeting(currentMeetingListPageIndex);
+        subscription = RxBus.handleMessage(o -> {
+            if (o instanceof ForumSendEvent) {
+                ChatMesData.PageDataEntity entity = ((ForumSendEvent) o).getEntity();
+                for (ForumMeeting forumMeeting : forumMeetingList) {
+                    if (entity.getMeetingId().equals(forumMeeting.getMeetingId())) {
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                forumMeeting.setNewMsgCnt(forumMeeting.getNewMsgCnt() + 1);
+                                forumMeetingAdapter.notifyDataSetChanged();
+                            }
+                        });
+                    }
+                }
+            }
+        });
         super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
+    public void onDestroyView() {
+        subscription.unsubscribe();
+        super.onDestroyView();
     }
 
     @Nullable
@@ -190,7 +219,7 @@ public class MeetingsFragment extends BaseFragment {
         @Override
         public void onScrollToBottom() {
             if (TYPE_FORUM_MEETING == currentMeetingListPageIndex) {
-                if (nextPage()){
+                if (nextPage()) {
                     requestForum(null);
                 }
             }

@@ -93,13 +93,13 @@ public class ForumMeetingAdapter extends RecyclerView.Adapter<ForumMeetingAdapte
 
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) {
-                listener.onItemClick(v, forumMeeting);
+                listener.onItemClick(v, forumMeeting, position);
             }
         });
     }
 
     public interface OnItemClickListener {
-        void onItemClick(View view, ForumMeeting forumMeeting);
+        void onItemClick(View view, ForumMeeting forumMeeting, int position);
     }
 
     class ForumMeetingHolder extends RecyclerView.ViewHolder {

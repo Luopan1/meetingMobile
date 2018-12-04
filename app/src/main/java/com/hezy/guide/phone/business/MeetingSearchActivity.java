@@ -54,6 +54,7 @@ public class MeetingSearchActivity extends BasicActivity {
     private TextView emptyText;
     //会议类型
     private int meetingType;
+    private ForumMeetingAdapter forumMeetingAdapter;
 
     @Override
     public String getStatisticsTag() {
@@ -67,11 +68,10 @@ public class MeetingSearchActivity extends BasicActivity {
         }
     };
 
-    private ForumMeetingAdapter.OnItemClickListener onForumMeetingItemClickListener = new ForumMeetingAdapter.OnItemClickListener() {
-        @Override
-        public void onItemClick(View view, ForumMeeting forumMeeting) {
-            startActivity(new Intent(getApplication(), ChatActivity.class).putExtra("title", forumMeeting.getTitle()).putExtra("meetingId", forumMeeting.getMeetingId()).putExtra("num", forumMeeting.getUserCnt()));
-        }
+    private ForumMeetingAdapter.OnItemClickListener onForumMeetingItemClickListener = (view, forumMeeting, position) -> {
+        forumMeeting.setNewMsgCnt(0);
+        forumMeetingAdapter.notifyItemChanged(position);
+        startActivity(new Intent(getApplication(), ChatActivity.class).putExtra("title", forumMeeting.getTitle()).putExtra("meetingId", forumMeeting.getMeetingId()).putExtra("num", forumMeeting.getUserCnt()));
     };
 
     @Override
@@ -221,7 +221,7 @@ public class MeetingSearchActivity extends BasicActivity {
                 return;
             }
 
-            ForumMeetingAdapter forumMeetingAdapter = new ForumMeetingAdapter(mContext, onForumMeetingItemClickListener);
+            forumMeetingAdapter = new ForumMeetingAdapter(mContext, onForumMeetingItemClickListener);
             recyclerView.setAdapter(forumMeetingAdapter);
             forumMeetingAdapter.addData(forumMeetingList);
             recyclerView.setVisibility(View.VISIBLE);
