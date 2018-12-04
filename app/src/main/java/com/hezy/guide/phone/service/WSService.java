@@ -191,6 +191,14 @@ public class WSService extends Service {
 
             }
         });
+        if (!WSService.isOnline()) {
+            //当前状态离线,可切换在线
+//            ZYAgent.onEvent(mContext, "在线按钮,当前离线,切换到在线");
+            Log.i(TAG, "当前状态离线,可切换在线");
+            RxBus.sendMessage(new SetUserChatEvent(true));
+        } else {
+//            ZYAgent.onEvent(mContext, "在线按钮,当前在线,,无效操作");
+        }
     }
 
     private String onlineTraceId;
