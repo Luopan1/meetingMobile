@@ -176,7 +176,8 @@
             android:screenOrientation="portrait" />
 
         <activity android:name=".business.UpdateActivity"/>
-        <activity android:name=".business.ChatActivity"/>
+        <activity android:name=".business.ChatActivity"
+            android:screenOrientation="portrait"/>
         <activity android:name=".business.ViewPagerActivity"/>
         <activity android:name=".business.ImageBrowerActivity"/>
 

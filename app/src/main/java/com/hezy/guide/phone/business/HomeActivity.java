@@ -27,6 +27,7 @@ import com.hezy.guide.phone.entities.Bucket;
 import com.hezy.guide.phone.entities.MeetingJoinStats;
 import com.hezy.guide.phone.entities.Version;
 import com.hezy.guide.phone.entities.base.BaseBean;
+import com.hezy.guide.phone.event.SetUserChatEvent;
 import com.hezy.guide.phone.event.SetUserStateEvent;
 import com.hezy.guide.phone.event.UserStateEvent;
 import com.hezy.guide.phone.persistence.Preferences;
@@ -94,6 +95,15 @@ public class HomeActivity extends BasicActivity implements View.OnClickListener 
                 }
             }
         });
+
+        if (!WSService.isOnline()) {
+            //当前状态离线,可切换在线
+            ZYAgent.onEvent(mContext, "在线按钮,当前离线,切换到在线");
+            Log.i(TAG, "当前状态离线,可切换在线");
+            RxBus.sendMessage(new SetUserChatEvent(true));
+        } else {
+            ZYAgent.onEvent(mContext, "在线按钮,当前在线,,无效操作");
+        }
 
         initView();
 //        versionCheck();
@@ -390,5 +400,15 @@ public class HomeActivity extends BasicActivity implements View.OnClickListener 
 
         subscription.unsubscribe();
         super.onDestroy();
+        if (WSService.isOnline()) {
+            //当前状态在线,可切换离线
+            Log.i(TAG, "当前状态在线,可切换离线");
+            ZYAgent.onEvent(mContext, "离线按钮,当前在线,切换到离线");
+            RxBus.sendMessage(new SetUserChatEvent(false));
+//                                            WSService.SOCKET_ONLINE =false;
+//                                            setState(false);
+        } else {
+            ZYAgent.onEvent(mContext, "离线按钮,当前离线,无效操作");
+        }
     }
 }
