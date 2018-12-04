@@ -740,6 +740,7 @@ public class WSService extends Service {
                 entity.setUserName(json.getString("userName"));
                 entity.setUserId(json.getString("userId"));
                 entity.setUserLogo(json.getString("userLogo"));
+                entity.setMeetingId(json.getString("meetingId"));
 //                entity.setLocalState(0);
             } catch (JSONException e) {
                 e.printStackTrace();
