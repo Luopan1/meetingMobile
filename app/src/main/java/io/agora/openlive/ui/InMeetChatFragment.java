@@ -239,7 +239,7 @@ public class InMeetChatFragment extends BaseFragment implements InMeetingAdapter
         @Override
         public void onSuccess(Bucket<ChatMesData.PageDataEntity> entity) {
 
-            ToastUtils.showToast("提交成功");
+//            ToastUtils.showToast("提交成功");
         }
 
         @Override
