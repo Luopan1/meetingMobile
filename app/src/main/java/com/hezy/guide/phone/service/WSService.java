@@ -733,7 +733,7 @@ public class WSService extends Service {
             ChatMesData.PageDataEntity entity = new ChatMesData.PageDataEntity();
             try {
 //                entity.setContent(json.getString("content"));
-                entity.setId(json.getString("forumId"));
+                entity.setId(json.getString("contentId"));
                 entity.setMsgType(1);
 //                entity.setReplyTimestamp(json.getLong("replyTimestamp"));
 //                entity.setType(json.getInt("type"));
