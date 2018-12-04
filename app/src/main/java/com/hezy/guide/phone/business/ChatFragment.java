@@ -559,7 +559,7 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
         @Override
         public void onSuccess(Bucket<ChatMesData.PageDataEntity> entity) {
 
-            ToastUtils.showToast("提交成功");
+//            ToastUtils.showToast("提交成功");
         }
 
         @Override
