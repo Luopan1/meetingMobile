@@ -226,9 +226,9 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                 } else if (o instanceof ForumRevokeEvent) {
 //                    requestRecordOnlyLast(true);
 
-                    if (((ForumSendEvent) o).getEntity().getMeetingId().equals(meetingid)) {
+                    if (((ForumRevokeEvent) o).getEntity().getMeetingId().equals(meetingid)) {
                         Message msg = new Message();
-                        msg.obj = ((ForumSendEvent) o).getEntity();
+                        msg.obj = ((ForumRevokeEvent) o).getEntity();
                         ChatHandler.sendMessage(msg);
                     }
 
