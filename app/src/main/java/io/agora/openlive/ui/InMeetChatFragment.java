@@ -353,4 +353,10 @@ public class InMeetChatFragment extends BaseFragment implements InMeetingAdapter
     public void onItemClick(int pos) {
 
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        subscription.unsubscribe();
+    }
 }
