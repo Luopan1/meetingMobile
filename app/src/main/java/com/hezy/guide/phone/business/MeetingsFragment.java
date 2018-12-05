@@ -118,11 +118,28 @@ public class MeetingsFragment extends BaseFragment {
         initDialog(meeting);
     };
 
+    private void clearForumListUnReadInformationAndAtailFlag(ForumMeeting forumMeeting, ForumMeetingAdapter forumMeetingAdapter, int itemPosition) {
+        forumMeeting.setNewMsgCnt(0);
+        if (forumMeeting.isAtailFlag()) {
+            forumMeeting.setAtailFlag(!forumMeeting.isAtailFlag());
+        }
+        forumMeetingAdapter.notifyItemChanged(itemPosition);
+    }
+
+    private void updateForumListUnReadInformationAndAtailFlag(ForumMeeting forumMeeting, ChatMesData.PageDataEntity entity, ForumMeetingAdapter forumMeetingAdapter) {
+        forumMeeting.setNewMsgCnt(forumMeeting.getNewMsgCnt() + 1);
+        //讨论区功能里区分用户的userId字段作用，等同于User实体类里的id字段。在微信授权进入app时，已进行存储。
+        //找到userId是不是自己，已决定是否显示被@标示
+        if (Preferences.getUserId().equals(entity.getAtailUserId())) {
+            forumMeeting.setAtailFlag(!forumMeeting.isAtailFlag());
+        }
+        forumMeetingAdapter.notifyDataSetChanged();
+    }
+
     private ForumMeetingAdapter.OnItemClickListener onForumMeetingItemClickListener = new ForumMeetingAdapter.OnItemClickListener() {
         @Override
         public void onItemClick(View view, ForumMeeting forumMeeting, int position) {
-            forumMeeting.setNewMsgCnt(0);
-            forumMeetingAdapter.notifyItemChanged(position);
+            clearForumListUnReadInformationAndAtailFlag(forumMeeting, forumMeetingAdapter, position);
             startActivity(new Intent(getActivity(), ChatActivity.class).putExtra("title", forumMeeting.getTitle()).putExtra("meetingId", forumMeeting.getMeetingId()).putExtra("num", forumMeeting.getUserCnt()));
         }
     };
@@ -145,8 +162,7 @@ public class MeetingsFragment extends BaseFragment {
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                forumMeeting.setNewMsgCnt(forumMeeting.getNewMsgCnt() + 1);
-                                forumMeetingAdapter.notifyDataSetChanged();
+                                updateForumListUnReadInformationAndAtailFlag(forumMeeting, entity, forumMeetingAdapter);
                             }
                         });
                     }

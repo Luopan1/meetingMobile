@@ -70,6 +70,9 @@ public class MeetingSearchActivity extends BasicActivity {
 
     private ForumMeetingAdapter.OnItemClickListener onForumMeetingItemClickListener = (view, forumMeeting, position) -> {
         forumMeeting.setNewMsgCnt(0);
+        if (forumMeeting.isAtailFlag()){
+            forumMeeting.setAtailFlag(!forumMeeting.isAtailFlag());
+        }
         forumMeetingAdapter.notifyItemChanged(position);
         startActivity(new Intent(getApplication(), ChatActivity.class).putExtra("title", forumMeeting.getTitle()).putExtra("meetingId", forumMeeting.getMeetingId()).putExtra("num", forumMeeting.getUserCnt()));
     };
