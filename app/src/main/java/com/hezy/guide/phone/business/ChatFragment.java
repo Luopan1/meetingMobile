@@ -284,7 +284,7 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
                         }
                     }
                     if (((ForumSendEvent) o).getEntity().getUserId().equals(Preferences.getUserId())) {
-                        for(int i=dataChat.size()-1; i<dataChat.size();i++){
+                        for(int i=dataChat.size()-1; i>=0;i--){
                             Log.v("forumsendevent9090","进入循环=="+i);
                             Log.v("forumsendevent9090","进入循环=="+dataChat.get(i).getReplyTimestamp());
                             Log.v("forumsendevent9090","((ForumSendEvent) o).getEntity().getReplyTimestamp()=="+((ForumSendEvent) o).getEntity().getReplyTimestamp());
