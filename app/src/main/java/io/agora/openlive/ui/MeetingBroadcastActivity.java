@@ -576,7 +576,10 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
         });
 
         exitButton = findViewById(R.id.exit);
-        exitButton.setOnClickListener(view -> showDialog(1, "确定结束会议吗？", "暂时离开", "结束会议", null));
+        exitButton.setOnClickListener(view -> {
+            showDialog(1, "确定结束会议吗？", "暂时离开", "结束会议", null);
+            showExitDialog(null);
+        });
 
         stopButton = findViewById(R.id.stop_audience);
         stopButton.setOnClickListener(view -> {
@@ -873,7 +876,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
 
     }
 
-    private Dialog dialog;
+    private Dialog dialog, exitDialog;
 
     private void showDialog(final int type, final String title, final String leftText, final String rightText, final Audience audience) {
         View view = View.inflate(this, R.layout.dialog_selector, null);
@@ -1044,6 +1047,14 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
             }
         }
     };
+
+    private void showExitDialog(Audience audience){
+        View contentView = View.inflate(this, R.layout.dialog_exit_meeting, null);
+
+        exitDialog = new Dialog(this, R.style.MyDialog);
+        exitDialog.setContentView(contentView);
+        exitDialog.show();
+    }
 
     private TextView audienceCountText;
     private EditText searchEdit;
@@ -1271,7 +1282,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
         public void onSuccess(Bucket<Meeting> meetingBucket) {
             try {
                 JSONObject jsonObject = new JSONObject();
-                jsonObject.put("finish_meeting", true);
+                jsonObject.put("ic_finish_meeting", true);
                 agoraAPI.messageChannelSend(channelName, jsonObject.toString(), "");
 
                 stopButton.setVisibility(View.GONE);
@@ -1294,7 +1305,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
             Toast.makeText(MeetingBroadcastActivity.this, exception.getMessage(), Toast.LENGTH_SHORT).show();
             try {
                 JSONObject jsonObject = new JSONObject();
-                jsonObject.put("finish_meeting", true);
+                jsonObject.put("ic_finish_meeting", true);
                 agoraAPI.messageChannelSend(channelName, jsonObject.toString(), "");
 
                 stopButton.setVisibility(View.GONE);
@@ -1598,7 +1609,8 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
 
     @Override
     public void onBackPressed() {
-        showDialog(1, "确定结束会议吗？", "暂时离开", "结束会议", null);
+//        showDialog(1, "确定结束会议吗？", "暂时离开", "结束会议", null);
+        showExitDialog(null);
     }
 
     @Override

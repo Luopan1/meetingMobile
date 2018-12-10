@@ -730,8 +730,8 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                                 ApiClient.getInstance().meetingMaterial(TAG, meetingMaterialCallback, materialId);
                             }
                         }
-                        if (jsonObject.has("finish_meeting")) {
-                            boolean finishMeeting = jsonObject.getBoolean("finish_meeting");
+                        if (jsonObject.has("ic_finish_meeting")) {
+                            boolean finishMeeting = jsonObject.getBoolean("ic_finish_meeting");
                             if (finishMeeting) {
                                 if (BuildConfig.DEBUG) {
                                     Toast.makeText(MeetingAudienceActivity.this, "主持人结束了会议", Toast.LENGTH_SHORT).show();

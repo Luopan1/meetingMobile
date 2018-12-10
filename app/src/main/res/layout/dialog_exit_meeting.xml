@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_message_dialog"
+    android:gravity="center"
+    android:orientation="horizontal"
+    android:padding="6dp">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:drawableTop="@drawable/ic_temp_exit"
+            android:drawablePadding="8dp"
+            android:gravity="center"
+            android:textSize="14sp"
+            android:textColor="@color/white"
+            android:text="只是暂时离开\n你还是会回来哒～" />
+
+        <Button
+            android:id="@+id/left"
+            android:layout_width="100dp"
+            android:layout_height="38.33dp"
+            android:layout_marginRight="26.67dp"
+            android:background="@drawable/bg_button_dialog_selector"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            tools:text="@string/sure" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/ic_finish_meeting"
+            android:drawablePadding="8dp"
+            android:gravity="center"
+            android:textSize="14sp"
+            android:textColor="@color/white"
+            android:text="结束会议会把所有人\n都踢出去哒～" />
+
+        <Button
+            android:id="@+id/right"
+            android:layout_width="100dp"
+            android:layout_height="38.33dp"
+            android:background="@drawable/bg_button_dialog_selector"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            tools:text="@string/cancel" />
+    </LinearLayout>
+
+</LinearLayout>
