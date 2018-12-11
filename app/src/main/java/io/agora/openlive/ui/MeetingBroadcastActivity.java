@@ -1091,7 +1091,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
             }
             finish();
         });
-        Button finishMeetingButton = contentView.findViewById(R.id.left);
+        Button finishMeetingButton = contentView.findViewById(R.id.right);
         finishMeetingButton.setOnClickListener(view -> {
             if(finishTips.getVisibility() == View.VISIBLE) {
                 ApiClient.getInstance().finishMeeting(TAG, meetingJoin.getMeeting().getId(), memberCount, finishMeetingCallback);
