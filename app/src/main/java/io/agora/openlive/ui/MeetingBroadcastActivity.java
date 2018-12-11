@@ -1050,7 +1050,56 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
 
     private void showExitDialog(Audience audience){
         View contentView = View.inflate(this, R.layout.dialog_exit_meeting, null);
+        TextView finishTips = contentView.findViewById(R.id.finish_meeting_tips);
+        Button tempLeaveButton = contentView.findViewById(R.id.left);
+        tempLeaveButton.setOnClickListener(view -> {
+            if (currentAudience != null) {
+                agoraAPI.channelDelAttr(channelName, CALLING_AUDIENCE);
+                try {
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("finish", true);
+                    agoraAPI.messageInstantSend("" + currentAudience.getUid(), 0, jsonObject.toString(), "");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else {
+                if (BuildConfig.DEBUG) {
+                    Toast.makeText(MeetingBroadcastActivity.this, "当前没有连麦人", Toast.LENGTH_SHORT).show();
+                }
+                if (currentAiducenceId != 0) {
+                    stopButton.setVisibility(View.GONE);
+                    try {
+                        JSONObject jsonObject = new JSONObject();
+                        jsonObject.put("finish", true);
+                        agoraAPI.messageInstantSend("" + currentAiducenceId, 0, jsonObject.toString(), "");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
 
+            HashMap<String, String> params = new HashMap<String, String>();
+            params.put("clientUid", "" + config().mUid);
+            params.put("hostUserId", Preferences.getUserId());
+            params.put("hostUserName", meetingJoin.getHostUser().getHostUserName());
+            params.put("status", "2");
+            ApiClient.getInstance().meetingLeaveTemp(TAG, params, meetingTempLeaveCallback, meetingJoin.getMeeting().getId());
+
+            doLeaveChannel();
+            if (agoraAPI.getStatus() == 2) {
+                agoraAPI.logout();
+            }
+            finish();
+        });
+        Button finishMeetingButton = contentView.findViewById(R.id.left);
+        finishMeetingButton.setOnClickListener(view -> {
+            if(finishTips.getVisibility() == View.VISIBLE) {
+                ApiClient.getInstance().finishMeeting(TAG, meetingJoin.getMeeting().getId(), memberCount, finishMeetingCallback);
+                exitDialog.cancel();
+            } else {
+                finishTips.setVisibility(View.VISIBLE);
+            }
+        });
         exitDialog = new Dialog(this, R.style.MyDialog);
         exitDialog.setContentView(contentView);
         exitDialog.show();
