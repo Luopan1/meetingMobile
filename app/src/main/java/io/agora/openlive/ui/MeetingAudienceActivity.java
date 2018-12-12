@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
 import android.util.Log;
@@ -23,7 +24,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hezy.guide.phone.ApiClient;
-import com.hezy.guide.phone.BaseApplication;
 import com.hezy.guide.phone.BaseException;
 import com.hezy.guide.phone.BuildConfig;
 import com.hezy.guide.phone.R;
@@ -38,18 +38,24 @@ import com.hezy.guide.phone.entities.MeetingHostingStats;
 import com.hezy.guide.phone.entities.MeetingJoin;
 import com.hezy.guide.phone.entities.MeetingJoinStats;
 import com.hezy.guide.phone.entities.MeetingMaterialsPublish;
+import com.hezy.guide.phone.entities.MeetingScreenShot;
+import com.hezy.guide.phone.entities.QiniuToken;
+import com.hezy.guide.phone.entities.base.BaseBean;
 import com.hezy.guide.phone.event.ForumRevokeEvent;
 import com.hezy.guide.phone.event.ForumSendEvent;
-import com.hezy.guide.phone.event.SetUserChatEvent;
-import com.hezy.guide.phone.event.SetUserStateEvent;
-import com.hezy.guide.phone.meetingcamera.activity.Camera1ByServiceActivity;
 import com.hezy.guide.phone.meetingcamera.activity.Camera1ByServiceActivity;
 import com.hezy.guide.phone.persistence.Preferences;
-import com.hezy.guide.phone.service.WSService;
 import com.hezy.guide.phone.utils.OkHttpCallback;
 import com.hezy.guide.phone.utils.RxBus;
+import com.hezy.guide.phone.utils.ToastUtils;
 import com.hezy.guide.phone.utils.UIDUtil;
 import com.hezy.guide.phone.utils.statistics.ZYAgent;
+import com.qiniu.android.http.ResponseInfo;
+import com.qiniu.android.storage.Configuration;
+import com.qiniu.android.storage.UpCompletionHandler;
+import com.qiniu.android.storage.UpProgressHandler;
+import com.qiniu.android.storage.UploadManager;
+import com.qiniu.android.storage.UploadOptions;
 import com.squareup.picasso.Picasso;
 import com.tendcloud.tenddata.TCAgent;
 
@@ -58,10 +64,10 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -80,8 +86,9 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
     private final static Logger LOG = LoggerFactory.getLogger(MeetingAudienceActivity.class);
 
     private final String TAG = MeetingAudienceActivity.class.getSimpleName();
-    private Timer timer;
-    private TimerTask timerTask;
+    private Timer takePhotoTimer;
+    private TimerTask takePhotoTimerTask;
+    private final int CODE_REQUEST_TAKEPHOTO = 8011;
 
     private MeetingJoin meetingJoin;
     private Meeting meeting;
@@ -90,8 +97,9 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 
     private FrameLayout broadcasterLayout, broadcasterSmallLayout, broadcasterSmallView, audienceLayout, audienceView;
     private TextView broadcastNameText, broadcastTipsText, countText, audienceNameText;
-    private Button requestTalkButton, stopTalkButton,disCussButton;
-    private TextView exitButton, pageText,tvChat,tvChatName, tvChatAddress, tvName, tvAddress, tvContent, tvOpenComment;;
+    private Button requestTalkButton, stopTalkButton, disCussButton;
+    private TextView exitButton, pageText, tvChat, tvChatName, tvChatAddress, tvName, tvAddress, tvContent, tvOpenComment;
+
     private ImageView docImage;
     private ImageButton fullScreenButton;
 
@@ -109,7 +117,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
     private SurfaceView remoteBroadcasterSurfaceView, remoteAudienceSurfaceView, localSurfaceView;
 
     private AgoraAPIOnlySignal agoraAPI;
-    private LinearLayout  llMsg, llChat, llSmallChat;
+    private LinearLayout llMsg, llChat, llSmallChat;
     private static final String DOC_INFO = "doc_info";
     private static final String CALLING_AUDIENCE = "calling_audience";
 
@@ -118,77 +126,77 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
     boolean hideFragment = false;
     boolean JoinSuc = false;
 
-    private Handler ChatHandler = new Handler(){
+    private Handler ChatHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            if(msg.what == 22){
-                Log.v("llchat989890",tvChat.getWidth()+"****tvChat***后");
-                FrameLayout.LayoutParams params =new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT,FrameLayout.LayoutParams.WRAP_CONTENT);
-                Log.v("llchat9898llChat",findViewById(R.id.small_chat).getWidth()+"*******后");
-                Log.v("llchat9898",disCussButton.getLeft()+"*******2");
+            if (msg.what == 22) {
+                Log.v("llchat989890", tvChat.getWidth() + "****tvChat***后");
+                FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
+                Log.v("llchat9898llChat", findViewById(R.id.small_chat).getWidth() + "*******后");
+                Log.v("llchat9898", disCussButton.getLeft() + "*******2");
                 params.bottomMargin = 106;
                 params.gravity = Gravity.BOTTOM;
-                params.leftMargin = disCussButton.getLeft()-(llSmallChat.getWidth()/2)+disCussButton.getWidth()/2;
-                Log.v("llchat9898",params.leftMargin+"*******3");
-                if(params.leftMargin<90){
+                params.leftMargin = disCussButton.getLeft() - (llSmallChat.getWidth() / 2) + disCussButton.getWidth() / 2;
+                Log.v("llchat9898", params.leftMargin + "*******3");
+                if (params.leftMargin < 90) {
                     params.leftMargin = 90;
-                    LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT);
-                    params2.leftMargin = disCussButton.getLeft()-90+(disCussButton.getWidth()/2);
+                    LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                    params2.leftMargin = disCussButton.getLeft() - 90 + (disCussButton.getWidth() / 2);
                     findViewById(R.id.img_tri).setLayoutParams(params2);
                     llChat.setLayoutParams(params);
-                }else {
-                    LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT);
+                } else {
+                    LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                     params2.gravity = Gravity.CENTER_HORIZONTAL;
                     findViewById(R.id.img_tri).setLayoutParams(params2);
                     llChat.setLayoutParams(params);
                 }
                 return;
             }
-            if(hideFragment){
+            if (hideFragment) {
                 llMsg.setVisibility(View.GONE);
                 llChat.setVisibility(View.INVISIBLE);
-            }else {
-                if(isFullScreen){
+            } else {
+                if (isFullScreen) {
                     llMsg.setVisibility(View.VISIBLE);
                     llChat.setVisibility(View.INVISIBLE);
-                }else {
+                } else {
                     llMsg.setVisibility(View.GONE);
                     llChat.setVisibility(View.VISIBLE);
                     tvChat.setVisibility(View.VISIBLE);
                 }
             }
-            if(((ChatMesData.PageDataEntity)msg.obj).getType()==1){
+            if (((ChatMesData.PageDataEntity) msg.obj).getType() == 1) {
                 tvChat.setTextColor(getResources().getColor(R.color.color_7FBAFF));
                 tvChat.setText("[发送一张图片]");
-            }else {
+            } else {
                 tvChat.setTextColor(getResources().getColor(R.color.white));
-                tvChat.setText(((ChatMesData.PageDataEntity)msg.obj).getContent());
+                tvChat.setText(((ChatMesData.PageDataEntity) msg.obj).getContent());
             }
 //            tvChat.setText(" : "+((ChatMesData.PageDataEntity)msg.obj).getContent());
             tvAddress.setText("未填写");
-            tvName.setText(((ChatMesData.PageDataEntity)msg.obj).getUserName()+"");
+            tvName.setText(((ChatMesData.PageDataEntity) msg.obj).getUserName() + "");
 
-            if(((ChatMesData.PageDataEntity)msg.obj).getType()==1){
+            if (((ChatMesData.PageDataEntity) msg.obj).getType() == 1) {
                 tvContent.setTextColor(getResources().getColor(R.color.color_7FBAFF));
                 tvContent.setText(" ：[发送一张图片]");
-            }else {
+            } else {
                 tvContent.setTextColor(getResources().getColor(R.color.white));
-                tvContent.setText(" : "+((ChatMesData.PageDataEntity)msg.obj).getContent());
+                tvContent.setText(" : " + ((ChatMesData.PageDataEntity) msg.obj).getContent());
             }
 
-            if(((ChatMesData.PageDataEntity)msg.obj).getMsgType()==1){
+            if (((ChatMesData.PageDataEntity) msg.obj).getMsgType() == 1) {
                 tvContent.setTextColor(getResources().getColor(R.color.color_7FBAFF));
                 tvContent.setText(" ：[撤回一条消息]");
             }
 
-            if(((ChatMesData.PageDataEntity)msg.obj).getMsgType()==1){
+            if (((ChatMesData.PageDataEntity) msg.obj).getMsgType() == 1) {
                 tvChat.setTextColor(getResources().getColor(R.color.color_7FBAFF));
                 tvChat.setText("[撤回一条消息]");
             }
             tvChatAddress.setText("未填写");
-            tvChatName.setText(((ChatMesData.PageDataEntity)msg.obj).getUserName()+" : ");
-            ChatHandler.sendEmptyMessageDelayed(22,100);
+            tvChatName.setText(((ChatMesData.PageDataEntity) msg.obj).getUserName() + " : ");
+            ChatHandler.sendEmptyMessageDelayed(22, 100);
         }
     };
 
@@ -209,8 +217,8 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
             @Override
             public void call(Object o) {
                 String meetingid = "";
-                if(((MeetingJoin)(getIntent().getParcelableExtra("meeting")))!=null && ((MeetingJoin)(getIntent().getParcelableExtra("meeting"))).getMeeting()!=null){
-                    meetingid  = ((MeetingJoin)(getIntent().getParcelableExtra("meeting"))).getMeeting().getId();
+                if (((MeetingJoin) (getIntent().getParcelableExtra("meeting"))) != null && ((MeetingJoin) (getIntent().getParcelableExtra("meeting"))).getMeeting() != null) {
+                    meetingid = ((MeetingJoin) (getIntent().getParcelableExtra("meeting"))).getMeeting().getId();
                 }
 
                 if (o instanceof ForumSendEvent) {
@@ -280,12 +288,12 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
             @Override
             public void onClick(View view) {
                 hideFragment();
-                if(isFullScreen){
-                    if(!tvContent.getText().toString().isEmpty())
+                if (isFullScreen) {
+                    if (!tvContent.getText().toString().isEmpty())
                         llMsg.setVisibility(View.VISIBLE);
 
-                }else {
-                    if(!tvChat.getText().toString().isEmpty())
+                } else {
+                    if (!tvChat.getText().toString().isEmpty())
                         llChat.setVisibility(View.VISIBLE);
 
                 }
@@ -302,11 +310,11 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
             @Override
             public void onClick(View view) {
                 hideFragment();
-                if(isFullScreen){
-                    if(!tvContent.getText().toString().isEmpty())
+                if (isFullScreen) {
+                    if (!tvContent.getText().toString().isEmpty())
                         llMsg.setVisibility(View.VISIBLE);
-                }else {
-                    if(!tvChat.getText().toString().isEmpty())
+                } else {
+                    if (!tvChat.getText().toString().isEmpty())
                         llChat.setVisibility(View.VISIBLE);
                 }
             }
@@ -353,7 +361,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                     stopTalkButton.setVisibility(View.GONE);
                 }
                 disCussButton.setVisibility(View.GONE);
-                if(!tvContent.getText().toString().isEmpty())
+                if (!tvContent.getText().toString().isEmpty())
                     llMsg.setVisibility(View.VISIBLE);
                 llChat.setVisibility(View.INVISIBLE);
                 isFullScreen = true;
@@ -380,7 +388,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                     broadcasterSmallLayout.setVisibility(View.VISIBLE);
                 }
                 llMsg.setVisibility(View.GONE);
-                if(!tvChat.getText().toString().isEmpty())
+                if (!tvChat.getText().toString().isEmpty())
                     llChat.setVisibility(View.VISIBLE);
                 disCussButton.setVisibility(View.VISIBLE);
                 isFullScreen = false;
@@ -953,21 +961,115 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
         });
 
         ApiClient.getInstance().getMeetingHost(TAG, meeting.getId(), joinMeetingCallback(0));
-//        startMeetingCamera();
+        startMeetingCamera(meeting.getScreenshotFrequency());
     }
 
-    private void startMeetingCamera() {
-        timer = new Timer();
-        timerTask = new TimerTask() {
+    private void startMeetingCamera(int screenshotFrequency) {
+        if (screenshotFrequency == Meeting.SCREENSHOTFREQUENCY_INVALID) {
+            //不抓拍
+            return;
+        }
+        takePhotoTimer = new Timer();
+        takePhotoTimerTask = new TimerTask() {
             @Override
             public void run() {
-                startActivity(new Intent(MeetingAudienceActivity.this, Camera1ByServiceActivity.class));
+                startActivityForResult(new Intent(MeetingAudienceActivity.this, Camera1ByServiceActivity.class), CODE_REQUEST_TAKEPHOTO);
+                overridePendingTransition(0, 0);
             }
         };
-        timer.schedule(timerTask, 10 * 1000, 10 * 1000);
+        takePhotoTimer.schedule(takePhotoTimerTask, screenshotFrequency * 1000, screenshotFrequency * 1000);
     }
 
-    private OkHttpCallback joinMeetingCallback(int uid){
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == CODE_REQUEST_TAKEPHOTO) {
+            try {
+                String pictureLocalPath = data.getStringExtra("pictureLocalPath");
+                uploadMeetingImageToQiniu(pictureLocalPath);
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        }
+    }
+
+    /**
+     * 上传参会人参会时图片到七牛服务器
+     *
+     * @param imagePath
+     */
+    private void uploadMeetingImageToQiniu(String imagePath) {
+        ApiClient.getInstance().requestQiniuToken(this, new OkHttpCallback<BaseBean<QiniuToken>>() {
+
+            @Override
+            public void onSuccess(BaseBean<QiniuToken> result) {
+                String token = result.getData().getToken();
+                if (TextUtils.isEmpty(token)) {
+                    String errorMsg = "七牛token获取错误";
+                    ZYAgent.onEvent(getApplicationContext(), errorMsg);
+                    ToastUtils.showToast(errorMsg);
+                    return;
+                }
+                Configuration config = new Configuration.Builder().connectTimeout(5).responseTimeout(5).build();
+                UploadManager uploadManager = new UploadManager(config);
+                ZYAgent.onEvent(getApplicationContext(), "拍照完毕，准备上传本地图片：" + imagePath);
+
+                String uploadKey = BuildConfig.QINIU_IMAGE_UPLOAD_PATH + meeting.getId() + "/" + Preferences.getUserId() + "/" + imagePath.substring(imagePath.lastIndexOf('/') + 1);
+                uploadManager.put(new File(imagePath), uploadKey, token, meetingImageUpCompletionHandler, new UploadOptions(null, null, true, new UpProgressHandler() {
+                    @Override
+                    public void progress(final String key, final double percent) {
+                    }
+                }, null));
+            }
+        });
+    }
+
+    private UpCompletionHandler meetingImageUpCompletionHandler = new UpCompletionHandler() {
+        @Override
+        public void complete(String key, ResponseInfo info, JSONObject response) {
+            if (info.isNetworkBroken() || info.isServerError()) {
+                ZYAgent.onEvent(getApplicationContext(), "参会人直播图像上传七牛云失败");
+                return;
+            }
+            if (info.isOK()) {
+                String meetingImageUrl = BuildConfig.QINIU_IMAGE_DOMAIN + key;
+                ZYAgent.onEvent(getApplicationContext(), "参会人直播图像上传七牛云成功，地址：" + meetingImageUrl);
+                uploadMeetingImageToServer(meeting.getId(), meetingImageUrl);
+            } else {
+                ZYAgent.onEvent(getApplicationContext(), "参会人直播图像上传七牛云失败");
+            }
+        }
+    };
+
+    /**
+     * 上传参会人参会时图片到Server
+     *
+     * @param meetingId
+     * @param qiniuImageUrl
+     */
+    public void uploadMeetingImageToServer(String meetingId, String qiniuImageUrl) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("meetingId", meetingId);
+        params.put("imgUrl", qiniuImageUrl);
+        params.put("ts", System.currentTimeMillis());
+        ApiClient.getInstance().meetingScreenshot(this, params, uploadMeetingImageToServerCallback);
+    }
+
+    private OkHttpCallback<Bucket<MeetingScreenShot>> uploadMeetingImageToServerCallback = new OkHttpCallback<Bucket<MeetingScreenShot>>() {
+
+        @Override
+        public void onSuccess(Bucket<MeetingScreenShot> meetingScreenShotBucket) {
+            ZYAgent.onEvent(getApplicationContext(), "参会人直播图像上传服务器成功");
+        }
+
+        @Override
+        public void onFailure(int errorCode, BaseException exception) {
+            super.onFailure(errorCode, exception);
+            ZYAgent.onEvent(getApplicationContext(), "参会人直播图像上传服务器失败，错误提示: " + errorCode + ", Excepton: " + exception.getMessage());
+        }
+    };
+
+    private OkHttpCallback joinMeetingCallback(int uid) {
         return new OkHttpCallback<Bucket<HostUser>>() {
 
             @Override
@@ -1161,7 +1263,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                } else if (localSurfaceView == null && remoteAudienceSurfaceView != null){
+                } else if (localSurfaceView == null && remoteAudienceSurfaceView != null) {
                     audienceView.removeAllViews();
                     audienceNameText.setText("");
                     audienceLayout.setVisibility(View.GONE);
@@ -1248,11 +1350,12 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
         event().removeEventHandler(this);
 
     }
+
     @Override
     protected void onStart() {
         super.onStart();
-        if(JoinSuc){
-            if (TextUtils.isEmpty(meetingJoinTraceId)){
+        if (JoinSuc) {
+            if (TextUtils.isEmpty(meetingJoinTraceId)) {
                 doTEnterChannel();
             }
         }
@@ -1267,16 +1370,16 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 
     }
 
-    private void doTEnterChannel(){
+    private void doTEnterChannel() {
         HashMap<String, Object> params = new HashMap<String, Object>();
         params.put("status", 1);
         params.put("type", 2);
-        params.put("meetingId", ((MeetingJoin)(getIntent().getParcelableExtra("meeting"))).getMeeting().getId());
+        params.put("meetingId", ((MeetingJoin) (getIntent().getParcelableExtra("meeting"))).getMeeting().getId());
         ApiClient.getInstance().meetingJoinStats(TAG, meetingJoinStatsCallback, params);
 
     }
 
-    private void doTLeaveChannel(){
+    private void doTLeaveChannel() {
         if (!TextUtils.isEmpty(meetingJoinTraceId)) {
             HashMap<String, Object> params = new HashMap<String, Object>();
             params.put("meetingJoinTraceId", meetingJoinTraceId);
@@ -1286,9 +1389,10 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
             ApiClient.getInstance().meetingJoinStats(TAG, meetingJoinStatsCallback, params);
         }
     }
+
     private void doLeaveChannel() {
-            worker().leaveChannel(config().mChannel);
-            worker().preview(false, null, 0);
+        worker().leaveChannel(config().mChannel);
+        worker().preview(false, null, 0);
     }
 
     @Override
@@ -1509,7 +1613,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(ChatHandler.hasMessages(22)){
+        if (ChatHandler.hasMessages(22)) {
             ChatHandler.removeMessages(22);
         }
         subscription.unsubscribe();
@@ -1525,21 +1629,22 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 //        }
         TCAgent.onPageEnd(this, "MeetingAudienceActivity");
 
-        if (timer != null && timerTask != null) {
-            timer.cancel();
-            timerTask.cancel();
+        if (takePhotoTimer != null && takePhotoTimerTask != null) {
+            takePhotoTimer.cancel();
+            takePhotoTimerTask.cancel();
         }
 
 //        BaseApplication.getInstance().deInitWorkerThread();
     }
-    private void initFragment(){
+
+    private void initFragment() {
         hideFragment = true;
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.show(fragment);
         fragmentTransaction.commitAllowingStateLoss();
     }
 
-    private void hideFragment(){
+    private void hideFragment() {
         hideFragment = false;
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.hide(fragment);

@@ -443,4 +443,16 @@ public class ApiClient {
         okHttpUtil.post(API_DOMAIN_NAME + "/osg/app/meeting/" + meetingId + "/leave/temp", getCommonHead(), params, callback);
     }
 
+    /**
+     * 会议参会人摄像头抓拍
+     * /osg/app/meeting/screenshot
+     *
+     * @param tag
+     * @param values
+     * @param callback
+     */
+    public void meetingScreenshot(Object tag, Map<String, Object> values, OkHttpCallback callback) {
+        okHttpUtil.postJson(API_DOMAIN_NAME + "/osg/app/meeting/screenshot", getCommonHead(), JSON.toJSONString(values), callback, tag);
+    }
+
 }

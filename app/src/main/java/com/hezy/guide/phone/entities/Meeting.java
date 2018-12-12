@@ -5,6 +5,11 @@ import android.os.Parcelable;
 
 public class Meeting implements Parcelable, Entity {
 
+    /**
+     * 抓拍频次，单位秒，0是不需要抓拍
+     */
+    public static final int SCREENSHOTFREQUENCY_INVALID = 0;
+
     private String id;
 
     private String title;
@@ -17,6 +22,9 @@ public class Meeting implements Parcelable, Entity {
 
     private int totalAttendance;
 
+    /**
+     * 抓拍频次，单位秒，0是不需要抓拍
+     */
     private int screenshotFrequency;
 
     private int meetingProcess;

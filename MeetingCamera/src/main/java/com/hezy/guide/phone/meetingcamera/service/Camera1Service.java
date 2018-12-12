@@ -8,7 +8,6 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.SurfaceHolder;
-import android.widget.Toast;
 
 import com.hezy.guide.phone.meetingcamera.camera.CameraHelper;
 
@@ -93,7 +92,7 @@ public class Camera1Service extends Service {
         if (mCamera == null) {
             Log.i(TAG, "没有检测到摄像头，请检查摄像头设备");
             if (getiTakePictureCallback() != null) {
-                getiTakePictureCallback().onTakePictureDone();
+                getiTakePictureCallback().onTakePictureDone("");
             }
             return;
         }
@@ -152,6 +151,7 @@ public class Camera1Service extends Service {
                         public void onPictureTaken(final byte[] data, Camera camera) {//是否保存原始图片的信息
                             if (data != null) {
                                 Log.i(TAG, "raw无压缩原文件：data=" + data + "，大小：" + data.length);
+                                mCamera.unlock();
                                 new Thread(new Runnable() {
                                     @Override
                                     public void run() {
@@ -207,12 +207,11 @@ public class Camera1Service extends Service {
                 e.printStackTrace();
             }
 
-            mCamera.unlock();
             String msg = "照片文件存储在：" + mOutputFile.getPath() + ", 文件大小：" + mOutputFile.length();
             Log.i(TAG, msg);
-            Log.i(TAG, "拍照完成");
+
             if (getiTakePictureCallback() != null) {
-                getiTakePictureCallback().onTakePictureDone();
+                getiTakePictureCallback().onTakePictureDone(mOutputFile.getPath());
             }
         }
     }
@@ -220,7 +219,7 @@ public class Camera1Service extends Service {
     private static ITakePictureCallback iTakePictureCallback;
 
     public interface ITakePictureCallback {
-        void onTakePictureDone();
+        void onTakePictureDone(String pictureLocalPath);
     }
 
 }

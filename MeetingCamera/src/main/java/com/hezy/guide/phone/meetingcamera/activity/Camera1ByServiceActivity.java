@@ -109,7 +109,18 @@ public class Camera1ByServiceActivity extends Activity implements Camera1Service
     };
 
     @Override
-    public void onTakePictureDone() {
+    public void onTakePictureDone(String pictureLocalPath) {
+        Intent intent = new Intent();
+        intent.putExtra("pictureLocalPath", pictureLocalPath);
+        setResult(8011, intent);
         this.finish();
+        overridePendingTransition(0, 0);
+    }
+
+    /**
+     * 防止拍照时按回退键，导致拍照失败的风险
+     */
+    @Override
+    public void onBackPressed() {
     }
 }
