@@ -455,4 +455,11 @@ public class ApiClient {
         okHttpUtil.postJson(API_DOMAIN_NAME + "/osg/app/meeting/screenshot", getCommonHead(), JSON.toJSONString(values), callback, tag);
     }
 
+    /**
+     * 获取该用户是否是会议管理员
+     * /osg/app/user/meeting/admin
+     */
+    public void requestMeetingAdmin(Object tag, OkHttpCallback callback){
+        okHttpUtil.get(API_DOMAIN_NAME + "/osg/app/user/meeting/admin", getCommonHead(), null, callback);
+    }
 }

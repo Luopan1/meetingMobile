@@ -8,22 +8,22 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hezy.guide.phone.ApiClient;
 import com.hezy.guide.phone.BaseException;
 import com.hezy.guide.phone.BuildConfig;
-import com.hezy.guide.phone.Constant;
 import com.hezy.guide.phone.R;
+import com.hezy.guide.phone.entities.Bucket;
+import com.hezy.guide.phone.entities.MeeetingAdmin;
 import com.hezy.guide.phone.entities.Version;
 import com.hezy.guide.phone.entities.base.BaseBean;
 import com.hezy.guide.phone.event.ResolutionChangeEvent;
 import com.hezy.guide.phone.persistence.Preferences;
-import com.hezy.guide.phone.utils.Login.LoginHelper;
 import com.hezy.guide.phone.utils.OkHttpCallback;
 import com.hezy.guide.phone.utils.RxBus;
-import com.hezy.guide.phone.wxapi.WXEntryActivity;
 
 import io.agora.openlive.model.ConstantApp;
 
@@ -34,6 +34,7 @@ import io.agora.openlive.model.ConstantApp;
 public class SettingActivity extends BasicActivity {
 
     private SharedPreferences pref;
+    private LinearLayout meeting_manager_layout;
 
     @Override
     public String getStatisticsTag() {
@@ -46,6 +47,9 @@ public class SettingActivity extends BasicActivity {
         setContentView(R.layout.activity_setting);
 
         pref = PreferenceManager.getDefaultSharedPreferences(this);
+
+        meeting_manager_layout = findViewById(R.id.meeting_manager_layout);
+        checkAdminAccount();
 
         findViewById(R.id.mIvLeft).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,6 +84,45 @@ public class SettingActivity extends BasicActivity {
 
         int prefIndex = pref.getInt(ConstantApp.PrefManager.PREF_PROPERTY_PROFILE_IDX, ConstantApp.DEFAULT_PROFILE_IDX);
         ((TextView) findViewById(R.id.resolution_text)).setText(resolutionText(prefIndex));
+    }
+
+    /**
+     * 检测当前账户是否为会议管理员。如是显示"会议管理"功能
+     */
+    private void checkAdminAccount() {
+        apiClient.requestMeetingAdmin(this, requestMeetingAdminCallback);
+    }
+
+    private OkHttpCallback<Bucket<MeeetingAdmin>> requestMeetingAdminCallback = new OkHttpCallback<Bucket<MeeetingAdmin>>() {
+        @Override
+        public void onSuccess(Bucket<MeeetingAdmin> entity) {
+            MeeetingAdmin meeetingAdmin = entity.getData();
+            if (meeetingAdmin.isMeetingAdmin())
+                showMeetingAdminLayout(meeetingAdmin.getMeetingMgrUrl());
+            else
+                hideMeetingAdminLayout();
+        }
+
+        @Override
+        public void onFailure(int errorCode, BaseException exception) {
+            super.onFailure(errorCode, exception);
+            hideMeetingAdminLayout();
+        }
+    };
+
+    private void showMeetingAdminLayout(String meetingMgrUrl) {
+        meeting_manager_layout.setVisibility(View.VISIBLE);
+        meeting_manager_layout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MeetingManagementActivity.startMeetingManagementActivity(SettingActivity.this, meetingMgrUrl);
+            }
+        });
+    }
+
+    private void hideMeetingAdminLayout() {
+        meeting_manager_layout.setVisibility(View.GONE);
+        meeting_manager_layout.setOnClickListener(null);
     }
 
     private void versionCheck() {

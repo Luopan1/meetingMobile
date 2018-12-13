@@ -116,7 +116,7 @@
             android:name="io.agora.openlive.ui.LiveRoomActivity"
             android:configChanges="keyboard|keyboardHidden|navigation|orientation|screenSize|fontScale"
             android:screenOrientation="landscape"
-            android:theme="@style/FullscreenTheme"/>
+            android:theme="@style/FullscreenTheme" />
 
         <activity
             android:name="io.agora.openlive.ui.MeetingInitActivity"
@@ -175,11 +175,15 @@
             android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"
             android:screenOrientation="portrait" />
 
-        <activity android:name=".business.UpdateActivity"/>
-        <activity android:name=".business.ChatActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".business.ViewPagerActivity"/>
-        <activity android:name=".business.ImageBrowerActivity"/>
+        <activity android:name=".business.UpdateActivity" />
+        <activity
+            android:name=".business.ChatActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".business.ViewPagerActivity" />
+        <activity android:name=".business.ImageBrowerActivity" />
+        <activity
+            android:name=".business.MeetingManagementActivity"
+            android:theme="@style/NoTitle" />
 
         <receiver android:name=".receiver.PhoneReceiver">
             <intent-filter>
@@ -194,14 +198,14 @@
         <service android:name=".service.WSService" />
         <!--服务结束-->
         <provider
-            android:authorities="com.hezy.guide.phone.fileprovider"
             android:name="android.support.v4.content.FileProvider"
-            android:grantUriPermissions="true"
-            android:exported="false">
+            android:authorities="com.hezy.guide.phone.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                tools:replace="android:resource"
-                android:resource="@xml/filepaths"/>
+                android:resource="@xml/filepaths"
+                tools:replace="android:resource" />
         </provider>
         <!-- TD统计 开始-->
         <service
