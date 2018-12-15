@@ -96,8 +96,8 @@ public class AudienceRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
         }
 
         if (force || mItemWidth == 0 || mItemHeight == 0) {
-            mItemWidth = 300;
-            mItemHeight = 168;
+            mItemWidth = 200;
+            mItemHeight = 112;
         }
     }
 

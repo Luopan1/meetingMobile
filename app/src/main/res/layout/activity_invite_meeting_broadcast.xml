@@ -20,13 +20,11 @@
             android:layout_height="match_parent" />
 
         <TextView
-            android:id="@+id/broadcaster_tips"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:textColor="@color/white"
-            android:textSize="@dimen/my_sp_30"
-            tools:text="等待主持人进入..." />
+            android:textSize="@dimen/my_sp_30" />
 
         <ImageView
             android:id="@+id/doc_image"
@@ -158,7 +156,6 @@
                 android:id="@+id/broadcaster_small_view"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/my_px_340"
-                android:layout_marginBottom="@dimen/my_px_20"
                 android:background="@android:color/black"
                 android:visibility="gone"
                 tools:visibility="visible" />
@@ -229,6 +226,7 @@
             android:id="@+id/audience_list"
             android:layout_width="@dimen/my_px_458"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:layout_gravity="bottom" />
 
     </LinearLayout>

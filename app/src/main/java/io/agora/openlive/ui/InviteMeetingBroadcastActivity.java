@@ -56,6 +56,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 import io.agora.AgoraAPI;
@@ -83,7 +84,7 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
     private int memberCount;
 
     private FrameLayout broadcasterView, broadcasterSmallView;
-    private TextView broadcasterNameText, broadcasterTipsText;
+    private TextView broadcasterNameText;
     private Button finishMeetingButton, pptButton, previewButton, nextButton, exitDocButton;
     private ImageButton muteAudioButton, fullScreenButton;
     private ImageView docImage;
@@ -134,7 +135,6 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
 
         audienceRecyclerView = findViewById(R.id.audience_list);
 
-        broadcasterTipsText = findViewById(R.id.broadcast_tips);
         broadcasterNameText = findViewById(R.id.broadcaster_name);
         broadcasterNameText.setText("主持人：" + meetingJoin.getHostUser().getHostUserName());
         broadcasterView = findViewById(R.id.broadcaster_view);
@@ -256,7 +256,7 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
             }, meetingJoin.getMeeting().getId());
         });
 
-        doConfigEngine(Constants.CLIENT_ROLE_BROADCASTER);
+        worker().configEngine(Constants.CLIENT_ROLE_BROADCASTER, Constants.VIDEO_PROFILE_360P);
 
         localBroadcasterSurfaceView = RtcEngine.CreateRendererView(getApplicationContext());
         rtcEngine().setupLocalVideo(new VideoCanvas(localBroadcasterSurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, config().mUid));
@@ -470,7 +470,7 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
         params.put("meetingId", meetingJoin.getMeeting().getId());
         params.put("status", 1);
         params.put("type", 1);
-        ApiClient.getInstance().meetingJoinStats(TAG, meetingJoinStatsCallback(false), params);
+        ApiClient.getInstance().meetingJoinStats(TAG, meetingJoinStatsCallback(), params);
 
     }
 
@@ -608,8 +608,20 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
 
             }
         });
+        TextView nameText = view.findViewById(R.id.name);
+        nameText.setText(material.getName());
         TextView timeText = view.findViewById(R.id.time);
         timeText.setText(material.getCreateDate() + "创建");
+        view.findViewById(R.id.use_doc).setOnClickListener(v -> {
+            currentMaterial = material;
+            Collections.sort(currentMaterial.getMeetingMaterialsPublishList(), (o1, o2) -> (o1.getPriority() < o2.getPriority()) ? -1 : 1);
+            ApiClient.getInstance().meetingSetMaterial(TAG, setMaterialCallback, meetingJoin.getMeeting().getId(), currentMaterial.getId());
+        });
+        view.findViewById(R.id.exit_preview).setOnClickListener(v -> {
+            if (pptDetailDialog.isShowing()) {
+                pptDetailDialog.dismiss();
+            }
+        });
         AlertDialog.Builder builder = new AlertDialog.Builder(InviteMeetingBroadcastActivity.this, R.style.MyDialog);
         builder.setView(view);
         pptDetailDialog = builder.create();
@@ -701,13 +713,6 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
         }
     };
 
-    private void doConfigEngine(int cRole) {
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-        int prefIndex = pref.getInt(ConstantApp.PrefManager.PREF_PROPERTY_PROFILE_IDX, ConstantApp.DEFAULT_PROFILE_IDX);
-        int vProfile = ConstantApp.VIDEO_PROFILES[prefIndex - 2];
-        worker().configEngine(cRole, vProfile);
-    }
-
     @Override
     protected void deInitUIandEvent() {
         doLeaveChannel();
@@ -721,13 +726,13 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
         worker().leaveChannel(config().mChannel);
         worker().preview(false, null, 0);
         if (!TextUtils.isEmpty(meetingJoinTraceId)) {
-            HashMap<String, Object> params = new HashMap<String, Object>();
+            HashMap<String, Object> params = new HashMap<>();
             params.put("meetingJoinTraceId", meetingJoinTraceId);
             params.put("meetingId", meetingJoin.getMeeting().getId());
             params.put("status", 2);
             params.put("type", 1);
             params.put("leaveType", 1);
-            ApiClient.getInstance().meetingJoinStats(TAG, meetingJoinStatsCallback(false), params);
+            ApiClient.getInstance().meetingJoinStats(TAG, meetingJoinStatsCallback(), params);
         }
     }
 
@@ -752,7 +757,7 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
 
     private String meetingJoinTraceId;
 
-    private OkHttpCallback meetingJoinStatsCallback(boolean isRestart){
+    private OkHttpCallback meetingJoinStatsCallback(){
         return new OkHttpCallback<Bucket<MeetingJoinStats>>() {
 
             @Override
