@@ -29,7 +29,10 @@ public class Camera1ByServiceActivity extends Activity implements Camera1Service
     private Camera1Service camera1Service;
 
     private boolean mBound = false;
+    //会议实况图片压缩率，设置为2的指数。手机端默认压缩率是16
+    private int imageCompressionRatio = 16;
 
+    public static final String KEY_IMAGE_COMPRESSION_RATIO = "CODE_REQUEST_TAKEPHOTO";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +43,8 @@ public class Camera1ByServiceActivity extends Activity implements Camera1Service
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.surface_view);
+
+        imageCompressionRatio = getIntent().getIntExtra(KEY_IMAGE_COMPRESSION_RATIO, imageCompressionRatio);
 
         //初始化surfaceview
         mySurfaceView = (SurfaceView) findViewById(R.id.camera_surfaceview);
@@ -55,6 +60,7 @@ public class Camera1ByServiceActivity extends Activity implements Camera1Service
         public void surfaceCreated(SurfaceHolder holder) {
 
             Intent cameraServiceIntent = new Intent(Camera1ByServiceActivity.this, Camera1Service.class);
+            cameraServiceIntent.putExtra(KEY_IMAGE_COMPRESSION_RATIO, imageCompressionRatio);
             bindService(cameraServiceIntent, mConnection, Context.BIND_AUTO_CREATE);
 
         }

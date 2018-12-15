@@ -27,6 +27,11 @@ public class Meeting implements Parcelable, Entity {
      */
     private int screenshotFrequency;
 
+    /**
+     * 会议实况图片压缩率，设置为2的指数。手机端默认压缩率是16
+     */
+    private int screenshotCompressionRatio;
+
     private int meetingProcess;
 
     private int approved;
@@ -103,6 +108,14 @@ public class Meeting implements Parcelable, Entity {
         this.approved = approved;
     }
 
+    public int getScreenshotCompressionRatio() {
+        return (screenshotCompressionRatio == 0 || screenshotCompressionRatio == 1) ? 16 : screenshotCompressionRatio;
+    }
+
+    public void setScreenshotCompressionRatio(int screenshotCompressionRatio) {
+        this.screenshotCompressionRatio = screenshotCompressionRatio;
+    }
+
     @Override
     public String toString() {
         return "Meeting{" +
@@ -113,6 +126,7 @@ public class Meeting implements Parcelable, Entity {
                 ", totalParticipants=" + totalParticipants +
                 ", totalAttendance=" + totalAttendance +
                 ", screenshotFrequency=" + screenshotFrequency +
+                ", screenshotCompressionRatio=" + screenshotCompressionRatio +
                 ", meetingProcess=" + meetingProcess +
                 ", approved=" + approved +
                 '}';
@@ -128,6 +142,7 @@ public class Meeting implements Parcelable, Entity {
         if (totalParticipants != meeting.totalParticipants) return false;
         if (totalAttendance != meeting.totalAttendance) return false;
         if (screenshotFrequency != meeting.screenshotFrequency) return false;
+        if (screenshotCompressionRatio != meeting.screenshotCompressionRatio) return false;
         if (meetingProcess != meeting.meetingProcess) return false;
         if (approved != meeting.approved) return false;
         if (id != null ? !id.equals(meeting.id) : meeting.id != null) return false;
@@ -146,6 +161,7 @@ public class Meeting implements Parcelable, Entity {
         result = 31 * result + totalParticipants;
         result = 31 * result + totalAttendance;
         result = 31 * result + screenshotFrequency;
+        result = 31 * result + screenshotCompressionRatio;
         result = 31 * result + meetingProcess;
         result = 31 * result + approved;
         return result;
@@ -165,6 +181,7 @@ public class Meeting implements Parcelable, Entity {
         dest.writeInt(this.totalParticipants);
         dest.writeInt(this.totalAttendance);
         dest.writeInt(this.screenshotFrequency);
+        dest.writeInt(this.screenshotCompressionRatio);
         dest.writeInt(this.meetingProcess);
         dest.writeInt(this.approved);
     }
@@ -180,6 +197,7 @@ public class Meeting implements Parcelable, Entity {
         this.totalParticipants = in.readInt();
         this.totalAttendance = in.readInt();
         this.screenshotFrequency = in.readInt();
+        this.screenshotCompressionRatio = in.readInt();
         this.meetingProcess = in.readInt();
         this.approved = in.readInt();
     }

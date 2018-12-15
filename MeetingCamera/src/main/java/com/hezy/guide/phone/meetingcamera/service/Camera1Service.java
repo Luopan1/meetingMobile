@@ -11,6 +11,7 @@ import android.os.IBinder;
 import android.util.Log;
 import android.view.SurfaceHolder;
 
+import com.hezy.guide.phone.meetingcamera.activity.Camera1ByServiceActivity;
 import com.hezy.guide.phone.meetingcamera.camera.CameraHelper;
 
 import java.io.ByteArrayOutputStream;
@@ -33,6 +34,9 @@ public class Camera1Service extends Service {
     private File mOutputFile;
     private final IBinder mBinder = new LocalBinder();
 
+    //会议实况图片压缩率，设置为2的指数。手机端默认压缩率是16
+    private int imageCompressionRatio = 16;
+
     public static ITakePictureCallback getiTakePictureCallback() {
         return iTakePictureCallback;
     }
@@ -44,6 +48,7 @@ public class Camera1Service extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         Log.i(TAG, "server 已绑定");
+        imageCompressionRatio = intent.getIntExtra(Camera1ByServiceActivity.KEY_IMAGE_COMPRESSION_RATIO, imageCompressionRatio);
         return mBinder;
     }
 
@@ -178,7 +183,7 @@ public class Camera1Service extends Service {
         //压缩图片
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
-        options.inSampleSize = 8;
+        options.inSampleSize = imageCompressionRatio;
         options.inJustDecodeBounds = false;
         Bitmap afterBitmap = BitmapFactory.decodeByteArray(fileBytes, 0, fileBytes.length, options);
 
