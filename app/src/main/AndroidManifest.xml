@@ -137,6 +137,17 @@
             android:screenOrientation="landscape"
             android:theme="@style/FullscreenTheme" />
         <activity
+            android:name="io.agora.openlive.ui.InviteMeetingBroadcastActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="landscape"
+            android:theme="@style/FullscreenTheme" />
+        <activity
+            android:name="io.agora.openlive.ui.InviteMeetingAudienceActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="landscape"
+            android:theme="@style/FullscreenTheme" />
+
+        <activity
             android:name=".business.LinkEntryActivity"
             android:screenOrientation="landscape"
             android:theme="@style/FullscreenTheme">

@@ -98,7 +98,20 @@ public class MeetingInitActivity extends BaseActivity {
     }
 
     public void forwardToLiveRoom(int cRole) {
-        Intent intent = new Intent(MeetingInitActivity.this, (cRole == 1) ? MeetingBroadcastActivity.class : MeetingAudienceActivity.class);
+        Intent intent;
+        if (cRole == 1) {
+            if (meetingJoin.getMeeting().getType() == 0) {
+                intent = new Intent(MeetingInitActivity.this, MeetingBroadcastActivity.class);
+            } else {
+                intent = new Intent(MeetingInitActivity.this, InviteMeetingBroadcastActivity.class);
+            }
+        } else {
+//            if (meetingJoin.getMeeting().getType() == 0) {
+//                intent = new Intent(MeetingInitActivity.this, MeetingAudienceActivity.class);
+//            } else {
+            intent = new Intent(MeetingInitActivity.this, InviteMeetingAudienceActivity.class);
+//            }
+        }
         intent.putExtra("meeting", meetingJoin);
         intent.putExtra("agora", agora);
         startActivity(intent);

@@ -31,6 +31,8 @@ public class Meeting implements Parcelable, Entity {
 
     private int approved;
 
+    private int type;
+
     public String getId() {
         return id;
     }
@@ -103,6 +105,14 @@ public class Meeting implements Parcelable, Entity {
         this.approved = approved;
     }
 
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
     @Override
     public String toString() {
         return "Meeting{" +
@@ -115,6 +125,7 @@ public class Meeting implements Parcelable, Entity {
                 ", screenshotFrequency=" + screenshotFrequency +
                 ", meetingProcess=" + meetingProcess +
                 ", approved=" + approved +
+                ", type=" + type +
                 '}';
     }
 
@@ -130,6 +141,7 @@ public class Meeting implements Parcelable, Entity {
         if (screenshotFrequency != meeting.screenshotFrequency) return false;
         if (meetingProcess != meeting.meetingProcess) return false;
         if (approved != meeting.approved) return false;
+        if (type != meeting.type) return false;
         if (id != null ? !id.equals(meeting.id) : meeting.id != null) return false;
         if (title != null ? !title.equals(meeting.title) : meeting.title != null) return false;
         if (description != null ? !description.equals(meeting.description) : meeting.description != null)
@@ -148,6 +160,7 @@ public class Meeting implements Parcelable, Entity {
         result = 31 * result + screenshotFrequency;
         result = 31 * result + meetingProcess;
         result = 31 * result + approved;
+        result = 31 * result + type;
         return result;
     }
 
@@ -167,6 +180,7 @@ public class Meeting implements Parcelable, Entity {
         dest.writeInt(this.screenshotFrequency);
         dest.writeInt(this.meetingProcess);
         dest.writeInt(this.approved);
+        dest.writeInt(this.type);
     }
 
     public Meeting() {
@@ -182,6 +196,7 @@ public class Meeting implements Parcelable, Entity {
         this.screenshotFrequency = in.readInt();
         this.meetingProcess = in.readInt();
         this.approved = in.readInt();
+        this.type = in.readInt();
     }
 
     public static final Creator<Meeting> CREATOR = new Creator<Meeting>() {
