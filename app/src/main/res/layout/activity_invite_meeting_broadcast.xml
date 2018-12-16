@@ -155,9 +155,10 @@
 
             <FrameLayout
                 android:id="@+id/broadcaster_small_view"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/my_px_340"
+                android:layout_width="@dimen/my_px_417"
+                android:layout_height="@dimen/my_px_234"
                 android:background="@android:color/black"
+                android:layout_marginLeft="@dimen/my_px_90"
                 android:visibility="gone"
                 tools:visibility="visible" />
 

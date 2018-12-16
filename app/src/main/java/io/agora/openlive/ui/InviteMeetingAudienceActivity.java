@@ -131,18 +131,6 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
 
         audienceRecyclerView = findViewById(R.id.audience_list);
 
-//        audienceRecyclerView = findViewById(R.id.audience_list);
-//        FocusFixedGridLayoutManager gridlayoutManager = new FocusFixedGridLayoutManager(this, 2, true); // 解决快速长按焦点丢失问题.
-//        gridlayoutManager.setOrientation(GridLayoutManager.VERTICAL);
-//        audienceRecyclerView.setLayoutManager(gridlayoutManager);
-//        audienceRecyclerView.setFocusable(false);
-//        audienceRecyclerView.addItemDecoration(new SpaceItemDecoration(0, 0, 24, 24));
-//        audienceRecyclerView.setOnItemListener(this);
-//        audienceRecyclerView.setSelectedItemAtCentered(false); // 设置item在中间移动.
-//        audienceRecyclerView.setSelectedItemOffset((int) (getResources().getDimension(R.dimen.my_px_8)), (int) (getResources().getDimension(R.dimen.my_px_8)));
-//        audienceListAdapter = new AudienceListAdapter(this, surfaceViews);
-//        audienceRecyclerView.setAdapter(new GeneralAdapter(audienceListAdapter));
-
         broadcasterView = findViewById(R.id.broadcaster_view);
         broadcastTipsText = findViewById(R.id.broadcaster_tips);
         broadcastNameText = findViewById(R.id.broadcaster_name);
