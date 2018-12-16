@@ -792,6 +792,7 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
             surfaceViewHashMap.put(uid, remoteAudienceSurfaceView);
             rtcEngine().setupRemoteVideo(new VideoCanvas(remoteAudienceSurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, uid));
 
+            audienceRecyclerView.setVisibility(View.VISIBLE);
             audienceRecyclerView.initViewContainer(getApplicationContext(), config().mUid, surfaceViewHashMap);
 
             agoraAPI.getUserAttr(String.valueOf(uid), "uname");
@@ -810,6 +811,10 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
             surfaceViewHashMap.remove(uid);
 
             audienceRecyclerView.initViewContainer(getApplicationContext(), config().mUid, surfaceViewHashMap);
+
+            if (surfaceViewHashMap.isEmpty()) {
+                audienceRecyclerView.setVisibility(View.GONE);
+            }
 
             if (BuildConfig.DEBUG)
                 Toast.makeText(InviteMeetingBroadcastActivity.this, uid + "退出了", Toast.LENGTH_SHORT).show();
