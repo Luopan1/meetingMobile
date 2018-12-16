@@ -740,12 +740,17 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
             if (isFinishing()) {
                 return;
             }
-            surfaceViewHashMap.remove(uid);
+            if (uid == Integer.parseInt(meetingJoin.getHostUser().getClientUid())) {
+                broadcastTipsText.setVisibility(View.VISIBLE);
+            } else {
+                surfaceViewHashMap.remove(uid);
 
-            audienceRecyclerView.initViewContainer(getApplicationContext(), config().mUid, surfaceViewHashMap); // first is now full view
+                audienceRecyclerView.initViewContainer(getApplicationContext(), config().mUid, surfaceViewHashMap); // first is now full view
 
-            if (surfaceViewHashMap.isEmpty()) {
-                audienceRecyclerView.setVisibility(View.GONE);
+                if (surfaceViewHashMap.isEmpty()) {
+                    audienceRecyclerView.setVisibility(View.GONE);
+                }
+
             }
 
         });

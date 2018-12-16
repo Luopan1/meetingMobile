@@ -5,7 +5,6 @@
     android:layout_height="match_parent"
     android:layout_gravity="center_vertical"
     android:keepScreenOn="true"
-    android:orientation="horizontal"
     tools:context="io.agora.openlive.ui.InviteMeetingBroadcastActivity">
 
     <FrameLayout
