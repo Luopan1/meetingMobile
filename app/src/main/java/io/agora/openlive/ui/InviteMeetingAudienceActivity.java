@@ -526,6 +526,7 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                     rtcEngine().setupLocalVideo(new VideoCanvas(localAudienceSurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, config().mUid));
                     worker().preview(true, localAudienceSurfaceView, config().mUid);
 
+                    audienceRecyclerView.setVisibility(View.VISIBLE);
                     audienceRecyclerView.initViewContainer(getApplicationContext(), config().mUid, surfaceViewHashMap); // first is now full view
 
                     if ("true".equals(agora.getIsTest())) {
@@ -742,6 +743,11 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
             surfaceViewHashMap.remove(uid);
 
             audienceRecyclerView.initViewContainer(getApplicationContext(), config().mUid, surfaceViewHashMap); // first is now full view
+
+            if (surfaceViewHashMap.isEmpty()) {
+                audienceRecyclerView.setVisibility(View.GONE);
+            }
+
         });
     }
 
