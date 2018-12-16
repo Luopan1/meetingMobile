@@ -236,6 +236,10 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
         finishMeetingButton = findViewById(R.id.finish_meeting);
         finishMeetingButton.setOnClickListener(view -> showDialog(1, "确定结束会议吗？", "暂时离开", "结束会议", null));
 
+        findViewById(R.id.exit).setOnClickListener(view -> {
+            showDialog(1, "确定退出会议吗？", "取消", "确定", null);
+        });
+
         fullScreenButton = findViewById(R.id.full_screen);
         fullScreenButton.setOnClickListener(view -> {
 
@@ -537,6 +541,11 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
     private AlertDialog pptAlertDialog, pptDetailDialog;
     private void showPPTListDialog(ArrayList<Material> materials) {
         View view = View.inflate(this, R.layout.dialog_ppt_list, null);
+        view.findViewById(R.id.exit).setOnClickListener(v -> {
+            if (pptAlertDialog.isShowing()) {
+                pptAlertDialog.dismiss();
+            }
+        });
         RecyclerView recyclerViewTV = view.findViewById(R.id.meeting_doc_list);
         FocusFixedLinearLayoutManager gridlayoutManager = new FocusFixedLinearLayoutManager(this); // 解决快速长按焦点丢失问题.
         gridlayoutManager.setOrientation(GridLayoutManager.HORIZONTAL);
