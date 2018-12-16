@@ -481,8 +481,8 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                         agoraAPI.queryUserStatus(broadcasterId);
 
                         remoteBroadcasterSurfaceView = RtcEngine.CreateRendererView(getApplicationContext());
-                        remoteBroadcasterSurfaceView.setZOrderOnTop(true);
-                        remoteBroadcasterSurfaceView.setZOrderMediaOverlay(true);
+                        remoteBroadcasterSurfaceView.setZOrderOnTop(false);
+                        remoteBroadcasterSurfaceView.setZOrderMediaOverlay(false);
                         rtcEngine().setupRemoteVideo(new VideoCanvas(remoteBroadcasterSurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, uid));
 
                         broadcastTipsText.setVisibility(View.GONE);
