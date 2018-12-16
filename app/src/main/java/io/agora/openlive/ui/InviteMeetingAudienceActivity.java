@@ -156,6 +156,10 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
             showDialog(1, "确定退出会议吗？", "取消", "确定", null);
         });
 
+        findViewById(R.id.exit).setOnClickListener(view -> {
+            showDialog(1, "确定退出会议吗？", "取消", "确定", null);
+        });
+
         worker().configEngine(Constants.CLIENT_ROLE_BROADCASTER, Constants.VIDEO_PROFILE_180P);
 
         agoraAPI = AgoraAPIOnlySignal.getInstance(this, agora.getAppID());
