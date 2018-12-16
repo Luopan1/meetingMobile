@@ -224,22 +224,15 @@
             </LinearLayout>
         </LinearLayout>
 
-        <LinearLayout
+        <io.agora.openlive.ui.AudienceRecyclerView
+            android:id="@+id/audience_list"
             android:layout_width="@dimen/my_px_458"
             android:layout_height="wrap_content"
-            android:background="@color/transparent_60_black"
-            android:orientation="vertical"
             android:layout_gravity="bottom"
-            android:padding="@dimen/my_px_24">
-
-            <io.agora.openlive.ui.AudienceRecyclerView
-                android:id="@+id/audience_list"
-                android:layout_width="@dimen/my_px_458"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                tools:visibility="visible" />
-
-        </LinearLayout>
+            android:padding="@dimen/my_px_24"
+            android:background="@color/transparent_60_black"
+            android:visibility="gone"
+            tools:visibility="visible" />
 
     </LinearLayout>
 
