@@ -264,8 +264,8 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
 
         localBroadcasterSurfaceView = RtcEngine.CreateRendererView(getApplicationContext());
         rtcEngine().setupLocalVideo(new VideoCanvas(localBroadcasterSurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, config().mUid));
-        localBroadcasterSurfaceView.setZOrderOnTop(true);
-        localBroadcasterSurfaceView.setZOrderMediaOverlay(true);
+        localBroadcasterSurfaceView.setZOrderOnTop(false);
+        localBroadcasterSurfaceView.setZOrderMediaOverlay(false);
         broadcasterView.addView(localBroadcasterSurfaceView);
 
         worker().preview(true, localBroadcasterSurfaceView, config().mUid);
