@@ -510,7 +510,7 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                         if (BuildConfig.DEBUG) {
                             Toast.makeText(InviteMeetingAudienceActivity.this, "参会人" + uid + "加入", Toast.LENGTH_SHORT).show();
                         }
-                        agoraAPI.getUserAttr(String.valueOf(uid), "uname");
+//                        agoraAPI.getUserAttr(String.valueOf(uid), "uname");
 
                         SurfaceView remoteAudienceSurfaceView = RtcEngine.CreateRendererView(getApplicationContext());
                         remoteAudienceSurfaceView.setZOrderOnTop(true);

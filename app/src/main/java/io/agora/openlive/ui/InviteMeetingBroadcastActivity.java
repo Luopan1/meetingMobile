@@ -804,7 +804,7 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
             audienceRecyclerView.setVisibility(View.VISIBLE);
             audienceRecyclerView.initViewContainer(getApplicationContext(), config().mUid, surfaceViewHashMap);
 
-            agoraAPI.getUserAttr(String.valueOf(uid), "uname");
+//            agoraAPI.getUserAttr(String.valueOf(uid), "uname");
 
         });
     }
