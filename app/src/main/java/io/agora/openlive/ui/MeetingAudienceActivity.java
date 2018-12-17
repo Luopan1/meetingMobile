@@ -973,7 +973,9 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
         takePhotoTimerTask = new TimerTask() {
             @Override
             public void run() {
-                startActivityForResult(new Intent(MeetingAudienceActivity.this, Camera1ByServiceActivity.class), CODE_REQUEST_TAKEPHOTO);
+                Intent intent = new Intent(MeetingAudienceActivity.this, Camera1ByServiceActivity.class);
+                intent.putExtra(Camera1ByServiceActivity.KEY_IMAGE_COMPRESSION_RATIO, meeting.getScreenshotCompressionRatio());
+                startActivityForResult(intent, CODE_REQUEST_TAKEPHOTO);
                 overridePendingTransition(0, 0);
             }
         };

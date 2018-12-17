@@ -2,6 +2,8 @@ package com.hezy.guide.phone.meetingcamera.service;
 
 import android.app.Service;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.os.Binder;
@@ -9,8 +11,10 @@ import android.os.IBinder;
 import android.util.Log;
 import android.view.SurfaceHolder;
 
+import com.hezy.guide.phone.meetingcamera.activity.Camera1ByServiceActivity;
 import com.hezy.guide.phone.meetingcamera.camera.CameraHelper;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -30,6 +34,9 @@ public class Camera1Service extends Service {
     private File mOutputFile;
     private final IBinder mBinder = new LocalBinder();
 
+    //会议实况图片压缩率，设置为2的指数。手机端默认压缩率是16
+    private int imageCompressionRatio = 16;
+
     public static ITakePictureCallback getiTakePictureCallback() {
         return iTakePictureCallback;
     }
@@ -41,6 +48,7 @@ public class Camera1Service extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         Log.i(TAG, "server 已绑定");
+        imageCompressionRatio = intent.getIntExtra(Camera1ByServiceActivity.KEY_IMAGE_COMPRESSION_RATIO, imageCompressionRatio);
         return mBinder;
     }
 
@@ -155,7 +163,7 @@ public class Camera1Service extends Service {
                                 new Thread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        savePicture(data);
+                                        savePicture(compressImage(data));
                                     }
                                 }).start();
                             } else {
@@ -170,11 +178,35 @@ public class Camera1Service extends Service {
         });
     }
 
+    private byte[] compressImage(byte[] fileBytes) {
+        Log.i(TAG, "参会人图像压缩前大小：" + fileBytes.length);
+        //压缩图片
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        options.inSampleSize = imageCompressionRatio;
+        options.inJustDecodeBounds = false;
+        Bitmap afterBitmap = BitmapFactory.decodeByteArray(fileBytes, 0, fileBytes.length, options);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        afterBitmap.compress(Bitmap.CompressFormat.PNG, 70, baos);
+        byte[] bytes = baos.toByteArray();
+        Log.i(TAG, "参会人图像压缩后大小：" + bytes.length);
+
+        // 先判断是否已经回收
+        if (afterBitmap != null && !afterBitmap.isRecycled()) {
+            // 回收并且置为null
+            afterBitmap.recycle();
+            afterBitmap = null;
+        }
+        System.gc();
+
+        return bytes;
+    }
 
     private Camera.PictureCallback pictureJPEGCallback = new Camera.PictureCallback() {
         @Override
         public void onPictureTaken(byte[] data, Camera camera) {
-            savePicture(data);
+            savePicture(compressImage(data));
         }
     };
 
