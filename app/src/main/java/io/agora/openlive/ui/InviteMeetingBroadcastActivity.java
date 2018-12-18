@@ -25,6 +25,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -83,6 +84,7 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
     private String channelName;
     private int memberCount;
 
+    private LinearLayout docLayout;
     private FrameLayout broadcasterView, broadcasterSmallView;
     private TextView broadcasterNameText;
     private Button finishMeetingButton, pptButton, previewButton, nextButton, exitDocButton;
@@ -135,6 +137,7 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
 
         audienceRecyclerView = findViewById(R.id.audience_list);
 
+        docLayout = findViewById(R.id.doc_layout);
         broadcasterNameText = findViewById(R.id.broadcaster_name);
         broadcasterNameText.setText("主持人：" + meetingJoin.getHostUser().getHostUserName());
         broadcasterView = findViewById(R.id.broadcaster_view);
@@ -234,10 +237,10 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
         });
 
         finishMeetingButton = findViewById(R.id.finish_meeting);
-        finishMeetingButton.setOnClickListener(view -> showDialog(1, "确定结束会议吗？", "暂时离开", "结束会议", null));
+        finishMeetingButton.setOnClickListener(view -> showDialog(1, "确定结束会议吗？", "暂时离开", "结束会议"));
 
         findViewById(R.id.exit).setOnClickListener(view -> {
-            showDialog(1, "确定退出会议吗？", "取消", "确定", null);
+            showDialog(1, "确定结束会议吗？", "暂时离开", "结束会议");
         });
 
         fullScreenButton = findViewById(R.id.full_screen);
@@ -480,7 +483,7 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
 
     private Dialog dialog;
 
-    private void showDialog(final int type, final String title, final String leftText, final String rightText, final Audience audience) {
+    private void showDialog(final int type, final String title, final String leftText, final String rightText) {
         View view = View.inflate(this, R.layout.dialog_selector, null);
         TextView titleText = view.findViewById(R.id.title);
         titleText.setText(title);
@@ -653,9 +656,7 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
             broadcasterSmallView.removeAllViews();
             broadcasterSmallView.addView(localBroadcasterSurfaceView);
 
-            previewButton.setVisibility(View.VISIBLE);
-            nextButton.setVisibility(View.VISIBLE);
-            exitDocButton.setVisibility(View.VISIBLE);
+            docLayout.setVisibility(View.VISIBLE);
 
             docImage.setVisibility(View.VISIBLE);
 
@@ -927,7 +928,7 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
 
     @Override
     public void onBackPressed() {
-        showDialog(1, "确定结束会议吗？", "暂时离开", "结束会议", null);
+        showDialog(1, "确定结束会议吗？", "暂时离开", "结束会议");
     }
 
 
