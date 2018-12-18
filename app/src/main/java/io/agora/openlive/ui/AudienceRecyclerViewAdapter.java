@@ -148,11 +148,11 @@ public class AudienceRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
 
     @Override
     public int getItemCount() {
-        int sizeLimit = mUsers.size();
-        if (sizeLimit >= ConstantApp.MAX_PEER_COUNT + 1) {
-            sizeLimit = ConstantApp.MAX_PEER_COUNT + 1;
-        }
-        return sizeLimit;
+//        int sizeLimit = mUsers.size();
+//        if (sizeLimit >= ConstantApp.MAX_PEER_COUNT + 1) {
+//            sizeLimit = ConstantApp.MAX_PEER_COUNT + 1;
+//        }
+        return mUsers.size();
     }
 
     public VideoStatusData getItem(int position) {

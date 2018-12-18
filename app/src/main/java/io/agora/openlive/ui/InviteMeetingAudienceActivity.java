@@ -517,6 +517,9 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                         remoteAudienceSurfaceView.setZOrderMediaOverlay(true);
                         surfaceViewHashMap.put(uid, remoteAudienceSurfaceView);
                         rtcEngine().setupRemoteVideo(new VideoCanvas(remoteAudienceSurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, uid));
+
+                        audienceRecyclerView.setVisibility(View.VISIBLE);
+                        audienceRecyclerView.initViewContainer(getApplicationContext(), config().mUid, surfaceViewHashMap); // first is now full view
                     }
                 } else {
                     SurfaceView localAudienceSurfaceView = RtcEngine.CreateRendererView(getApplicationContext());

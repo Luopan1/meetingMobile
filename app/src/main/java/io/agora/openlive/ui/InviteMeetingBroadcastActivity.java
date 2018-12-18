@@ -88,7 +88,7 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
     private FrameLayout broadcasterView, broadcasterSmallView;
     private TextView broadcasterNameText;
     private Button finishMeetingButton, pptButton, previewButton, nextButton, exitDocButton;
-    private ImageButton muteAudioButton, fullScreenButton;
+    private ImageButton muteAudioButton, fullScreenButton, switchCameraButton;
     private ImageView docImage;
     private TextView pageText;
     private SurfaceView localBroadcasterSurfaceView;
@@ -243,9 +243,13 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
             showDialog(1, "确定结束会议吗？", "暂时离开", "结束会议");
         });
 
+        switchCameraButton = findViewById(R.id.camera_switch);
+
         fullScreenButton = findViewById(R.id.full_screen);
         fullScreenButton.setOnClickListener(view -> {
+            if (currentMaterial != null) {
 
+            }
         });
         pptButton = findViewById(R.id.meeting_doc);
         pptButton.setOnClickListener(view -> {
@@ -493,7 +497,6 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
         leftButton.setOnClickListener((View) -> {
             dialog.cancel();
             if (type == 1) {
-
                 HashMap<String, String> params = new HashMap<String, String>();
                 params.put("clientUid", "" + config().mUid);
                 params.put("hostUserId", Preferences.getUserId());

@@ -156,8 +156,8 @@
                 android:id="@+id/broadcaster_small_view"
                 android:layout_width="@dimen/my_px_417"
                 android:layout_height="@dimen/my_px_234"
-                android:background="@android:color/black"
                 android:layout_marginLeft="@dimen/my_px_90"
+                android:background="@android:color/black"
                 android:visibility="gone"
                 tools:visibility="visible" />
 
@@ -211,25 +211,31 @@
                     android:src="@drawable/ic_unmuted" />
 
                 <ImageButton
+                    android:id="@+id/camera_switch"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginLeft="8dp"
+                    android:background="@drawable/bg_meeting_mute_selector"
+                    android:src="@drawable/ic_switch_camera" />
+
+                <ImageButton
                     android:id="@+id/full_screen"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_marginLeft="8dp"
                     android:background="@drawable/bg_meeting_mute_selector"
-                    android:src="@drawable/ic_full_screen"
-                    android:visibility="visible"
-                    tools:visibility="visible" />
+                    android:src="@drawable/ic_full_screen" />
 
             </LinearLayout>
         </LinearLayout>
 
         <io.agora.openlive.ui.AudienceRecyclerView
             android:id="@+id/audience_list"
-            android:layout_width="@dimen/my_px_458"
+            android:layout_width="@dimen/my_px_687"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:padding="@dimen/my_px_24"
             android:background="@color/transparent_60_black"
+            android:padding="@dimen/my_px_24"
             android:visibility="gone"
             tools:visibility="visible" />
 
