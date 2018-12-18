@@ -147,14 +147,20 @@
                     android:src="@drawable/ic_unmuted" />
 
                 <ImageButton
+                    android:id="@+id/camera_switch"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginLeft="8dp"
+                    android:background="@drawable/bg_meeting_mute_selector"
+                    android:src="@drawable/ic_switch_camera" />
+
+                <ImageButton
                     android:id="@+id/full_screen"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_marginLeft="8dp"
                     android:background="@drawable/bg_meeting_mute_selector"
-                    android:src="@drawable/ic_full_screen"
-                    android:visibility="gone"
-                    tools:visibility="visible" />
+                    android:src="@drawable/ic_full_screen" />
 
             </LinearLayout>
         </LinearLayout>

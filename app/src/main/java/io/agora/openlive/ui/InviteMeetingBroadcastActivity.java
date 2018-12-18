@@ -84,6 +84,10 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
     private String channelName;
     private int memberCount;
 
+    private boolean isMuted = false;
+
+    private boolean isFullScreen = false;
+
     private LinearLayout docLayout;
     private FrameLayout broadcasterView, broadcasterSmallView;
     private TextView broadcasterNameText;
@@ -120,8 +124,6 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
         super.onPause();
         TCAgent.onPageEnd(this, "视频通话");
     }
-
-    private boolean isMuted = false;
 
     @Override
     protected void initUIandEvent() {
@@ -244,11 +246,36 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
         });
 
         switchCameraButton = findViewById(R.id.camera_switch);
+        switchCameraButton.setOnClickListener(view -> {
+            rtcEngine().switchCamera();
+        });
 
         fullScreenButton = findViewById(R.id.full_screen);
         fullScreenButton.setOnClickListener(view -> {
-            if (currentMaterial != null) {
-
+            if (!isFullScreen) {
+                fullScreenButton.setImageResource(R.drawable.ic_full_screened);
+                pptButton.setVisibility(View.GONE);
+                finishMeetingButton.setVisibility(View.GONE);
+                muteAudioButton.setVisibility(View.GONE);
+                audienceRecyclerView.initViewContainer(getApplicationContext(), config().mUid, new HashMap<>());
+                audienceRecyclerView.setVisibility(View.GONE);
+                switchCameraButton.setVisibility(View.GONE);
+                if (currentMaterial != null) {
+                    broadcasterSmallView.setVisibility(View.GONE);
+                }
+                isFullScreen = true;
+            } else {
+                fullScreenButton.setImageResource(R.drawable.ic_full_screen);
+                pptButton.setVisibility(View.VISIBLE);
+                finishMeetingButton.setVisibility(View.VISIBLE);
+                muteAudioButton.setVisibility(View.VISIBLE);
+                switchCameraButton.setVisibility(View.VISIBLE);
+                audienceRecyclerView.setVisibility(View.VISIBLE);
+                audienceRecyclerView.initViewContainer(getApplicationContext(), config().mUid, surfaceViewHashMap);
+                if (currentMaterial != null) {
+                    broadcasterSmallView.setVisibility(View.VISIBLE);
+                }
+                isFullScreen = false;
             }
         });
         pptButton = findViewById(R.id.meeting_doc);
@@ -652,7 +679,9 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
             if (pptAlertDialog.isShowing()) {
                 pptAlertDialog.dismiss();
             }
-
+            if (!pptDetailDialog.isShowing()) {
+                pptDetailDialog.show();
+            }
             broadcasterView.removeAllViews();
             broadcasterView.setVisibility(View.GONE);
             broadcasterSmallView.setVisibility(View.VISIBLE);

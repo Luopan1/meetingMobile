@@ -74,7 +74,7 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
 
     private FrameLayout broadcasterView, broadcasterSmallView;
     private TextView broadcastNameText, broadcastTipsText;
-    private ImageButton muteAudioButton;
+    private ImageButton muteAudioButton, fullScreenButton, switchCameraButton;
     private Button exitButton;
     private ImageView docImage;
     private TextView pageText;
@@ -82,6 +82,8 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
     private String channelName;
 
     private boolean isMuted = false;
+
+    private boolean isFullScreen = false;
 
     private static final String DOC_INFO = "doc_info";
 
@@ -149,6 +151,38 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                 muteAudioButton.setImageResource(R.drawable.ic_unmuted);
             }
             rtcEngine().muteLocalAudioStream(isMuted);
+        });
+
+        switchCameraButton = findViewById(R.id.camera_switch);
+        switchCameraButton.setOnClickListener(view -> {
+            rtcEngine().switchCamera();
+        });
+
+        fullScreenButton = findViewById(R.id.full_screen);
+        fullScreenButton.setOnClickListener(view -> {
+            if (!isFullScreen) {
+                fullScreenButton.setImageResource(R.drawable.ic_full_screened);
+                exitButton.setVisibility(View.GONE);
+                muteAudioButton.setVisibility(View.GONE);
+                audienceRecyclerView.initViewContainer(getApplicationContext(), config().mUid, new HashMap<>());
+                audienceRecyclerView.setVisibility(View.GONE);
+                switchCameraButton.setVisibility(View.GONE);
+                if (currentMaterial != null) {
+                    broadcasterSmallView.setVisibility(View.GONE);
+                }
+                isFullScreen = true;
+            } else {
+                fullScreenButton.setImageResource(R.drawable.ic_full_screen);
+                exitButton.setVisibility(View.VISIBLE);
+                muteAudioButton.setVisibility(View.VISIBLE);
+                switchCameraButton.setVisibility(View.VISIBLE);
+                audienceRecyclerView.setVisibility(View.VISIBLE);
+                audienceRecyclerView.initViewContainer(getApplicationContext(), config().mUid, surfaceViewHashMap);
+                if (currentMaterial != null) {
+                    broadcasterSmallView.setVisibility(View.VISIBLE);
+                }
+                isFullScreen = false;
+            }
         });
 
         exitButton = findViewById(R.id.finish_meeting);
@@ -627,10 +661,6 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
             public void onClick(View view) {
                 dialog.cancel();
                 if (type == 1) {
-                    agoraAPI.setAttr("uname", null);
-
-                    worker().getRtcEngine().setClientRole(Constants.CLIENT_ROLE_AUDIENCE);
-
                     if (!TextUtils.isEmpty(meetingHostJoinTraceId)) {
                         HashMap<String, Object> params = new HashMap<String, Object>();
                         params.put("meetingHostJoinTraceId", meetingHostJoinTraceId);
@@ -639,13 +669,6 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                         params.put("type", 2);
                         params.put("leaveType", 1);
                         ApiClient.getInstance().meetingHostStats(TAG, meetingHostJoinTraceCallback, params);
-                    }
-                    try {
-                        JSONObject jsonObject = new JSONObject();
-                        jsonObject.put("finish", true);
-                        agoraAPI.messageInstantSend(broadcasterId, 0, jsonObject.toString(), "");
-                    } catch (Exception e) {
-                        e.printStackTrace();
                     }
                     doLeaveChannel();
                     if (agoraAPI.getStatus() == 2) {
