@@ -195,6 +195,7 @@
         <activity
             android:name=".business.MeetingManagementActivity"
             android:theme="@style/NoTitle" />
+        <activity android:name=".business.ForumActivity" />
 
         <receiver android:name=".receiver.PhoneReceiver">
             <intent-filter>

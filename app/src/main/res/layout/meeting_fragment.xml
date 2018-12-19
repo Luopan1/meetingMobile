@@ -48,6 +48,18 @@
             android:theme="@style/MeetingTypeUnFocus"
             app:layout_constraintBottom_toBottomOf="@+id/tv_meeting_private"
             app:layout_constraintStart_toEndOf="@+id/tv_meeting_private" />
+
+        <ImageButton
+            android:id="@+id/ib_meeting_forum"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/my_px_37"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="@dimen/my_px_183"
+            android:background="@drawable/bg_ic_meeting_forum"
+            android:src="@drawable/ic_meeting_forum"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
     </android.support.constraint.ConstraintLayout>
 
     <android.support.v4.widget.SwipeRefreshLayout

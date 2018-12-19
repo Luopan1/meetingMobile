@@ -20,6 +20,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -61,7 +62,9 @@ public class MeetingsFragment extends BaseFragment {
     private RecyclerView recyclerView;
     private LinearLayoutManager mLayoutManager;
     private MeetingAdapter meetingAdapter;
-    private TextView emptyText, tv_meeting_public, tv_meeting_private, tv_meeting_forum;
+    private TextView emptyText, tv_meeting_public, tv_meeting_private;
+    //tv_meeting_forum
+    private ImageButton ib_meeting_forum;
     private AppBarLayout appBarLayout;
     private Dialog dialog;
     private Forum forum;
@@ -220,10 +223,12 @@ public class MeetingsFragment extends BaseFragment {
         emptyText = view.findViewById(R.id.emptyView);
         tv_meeting_public = view.findViewById(R.id.tv_meeting_public);
         tv_meeting_private = view.findViewById(R.id.tv_meeting_private);
-        tv_meeting_forum = view.findViewById(R.id.tv_meeting_forum);
+//        tv_meeting_forum = view.findViewById(R.id.tv_meeting_forum);
         tv_meeting_public.setOnClickListener(tvMeetingOnClickListener);
         tv_meeting_private.setOnClickListener(tvMeetingOnClickListener);
-        tv_meeting_forum.setOnClickListener(tvMeetingOnClickListener);
+//        tv_meeting_forum.setOnClickListener(tvMeetingOnClickListener);
+        ib_meeting_forum = view.findViewById(R.id.ib_meeting_forum);
+        ib_meeting_forum.setOnClickListener(tvMeetingOnClickListener);
         recyclerView.addOnScrollListener(recyclerViewScrollListener);
         return view;
     }
@@ -262,6 +267,9 @@ public class MeetingsFragment extends BaseFragment {
                 case R.id.tv_meeting_forum:
                     showMeeting(TYPE_FORUM_MEETING);
                     break;
+                case R.id.ib_meeting_forum:
+                    startActivity(new Intent(mContext, ForumActivity.class));
+                    break;
             }
         }
     };
@@ -299,7 +307,6 @@ public class MeetingsFragment extends BaseFragment {
 
     private void showForumMeeting() {
         initForumPage();
-        showForumMeetingView();
         currentMeetingListPageIndex = TYPE_FORUM_MEETING;
         requestForum(null);
     }
@@ -307,19 +314,11 @@ public class MeetingsFragment extends BaseFragment {
     private void showPublicMeetingView() {
         TextViewCompat.setTextAppearance(tv_meeting_public, R.style.MeetingTypeFocus);
         TextViewCompat.setTextAppearance(tv_meeting_private, R.style.MeetingTypeUnFocus);
-        TextViewCompat.setTextAppearance(tv_meeting_forum, R.style.MeetingTypeUnFocus);
     }
 
     private void showPrivateMeetingView() {
         TextViewCompat.setTextAppearance(tv_meeting_public, R.style.MeetingTypeUnFocus);
         TextViewCompat.setTextAppearance(tv_meeting_private, R.style.MeetingTypeFocus);
-        TextViewCompat.setTextAppearance(tv_meeting_forum, R.style.MeetingTypeUnFocus);
-    }
-
-    private void showForumMeetingView() {
-        TextViewCompat.setTextAppearance(tv_meeting_public, R.style.MeetingTypeUnFocus);
-        TextViewCompat.setTextAppearance(tv_meeting_private, R.style.MeetingTypeUnFocus);
-        TextViewCompat.setTextAppearance(tv_meeting_forum, R.style.MeetingTypeFocus);
     }
 
     /**
