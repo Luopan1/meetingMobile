@@ -1623,6 +1623,9 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
         if (ChatHandler.hasMessages(22)) {
             ChatHandler.removeMessages(22);
         }
+        if (ChatHandler.hasMessages(23)) {
+            ChatHandler.removeMessages(23);
+        }
         subscription.unsubscribe();
 //        if (WSService.isOnline()) {
 //            //当前状态在线,可切换离线
