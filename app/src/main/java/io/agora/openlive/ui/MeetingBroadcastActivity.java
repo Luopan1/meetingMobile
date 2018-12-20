@@ -132,6 +132,10 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
 //            Log.v("llchat9898",llChat.getWidth()+"*******前");
+            if(msg.what == 23){
+                llChat.setVisibility(View.INVISIBLE);
+                return;
+            }
             if(msg.what == 22){
                 Log.v("llchat989890",tvChat.getWidth()+"****tvChat***后");
                 FrameLayout.LayoutParams params =new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT,FrameLayout.LayoutParams.WRAP_CONTENT);
@@ -165,6 +169,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                 }else {
                     llMsg.setVisibility(View.GONE);
                     llChat.setVisibility(View.VISIBLE);
+                    ChatHandler.sendEmptyMessageDelayed(23,5100);
 
                     tvChat.setVisibility(View.VISIBLE);
                 }
@@ -335,8 +340,8 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                         llMsg.setVisibility(View.VISIBLE);
 
                 }else {
-                    if(!tvChat.getText().toString().isEmpty())
-                    llChat.setVisibility(View.VISIBLE);
+//                    if(!tvChat.getText().toString().isEmpty())
+//                    llChat.setVisibility(View.VISIBLE);
 
                 }
             }
@@ -442,8 +447,8 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
             pageText.setVisibility(View.GONE);
             isFullScreen = false;
             llMsg.setVisibility(View.GONE);
-            if(!tvChat.getText().toString().isEmpty())
-            llChat.setVisibility(View.VISIBLE);
+//            if(!tvChat.getText().toString().isEmpty())
+//            llChat.setVisibility(View.VISIBLE);
 
             broadcasterSmallView.removeView(localBroadcasterSurfaceView);
             broadcasterSmallLayout.setVisibility(View.GONE);
@@ -534,8 +539,8 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                     }
                 }
                 llMsg.setVisibility(View.GONE);
-                if(!tvChat.getText().toString().isEmpty())
-                llChat.setVisibility(View.VISIBLE);
+//                if(!tvChat.getText().toString().isEmpty())
+//                llChat.setVisibility(View.VISIBLE);
                 disCussButton.setVisibility(View.VISIBLE);
                 docButton.setVisibility(View.VISIBLE);
                 muteButton.setVisibility(View.VISIBLE);
@@ -1276,8 +1281,8 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                         if(!tvContent.getText().toString().isEmpty())
                         llMsg.setVisibility(View.VISIBLE);
                     }else {
-                        if(!tvChat.getText().toString().isEmpty())
-                        llChat.setVisibility(View.VISIBLE);
+//                        if(!tvChat.getText().toString().isEmpty())
+//                        llChat.setVisibility(View.VISIBLE);
                     }
                 }
             });
@@ -1291,8 +1296,10 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                         if(!tvContent.getText().toString().isEmpty())
                         llMsg.setVisibility(View.VISIBLE);
                     }else {
-                        if(!tvChat.getText().toString().isEmpty())
-                        llChat.setVisibility(View.VISIBLE);
+                        if(!tvChat.getText().toString().isEmpty()){
+//                            llChat.setVisibility(View.VISIBLE);
+                        }
+
                     }
                 }
             });
