@@ -89,7 +89,7 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
     private boolean isFullScreen = false;
 
     private LinearLayout docLayout;
-    private FrameLayout broadcasterView, broadcasterSmallView;
+    private FrameLayout broadcasterView; //, broadcasterSmallView;
     private TextView broadcasterNameText;
     private Button finishMeetingButton, pptButton, previewButton, nextButton, exitDocButton;
     private ImageButton muteAudioButton, fullScreenButton, switchCameraButton;
@@ -143,7 +143,7 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
         broadcasterNameText = findViewById(R.id.broadcaster_name);
         broadcasterNameText.setText("主持人：" + meetingJoin.getHostUser().getHostUserName());
         broadcasterView = findViewById(R.id.broadcaster_view);
-        broadcasterSmallView = findViewById(R.id.broadcaster_small_view);
+//        broadcasterSmallView = findViewById(R.id.broadcaster_small_view);
         docImage = findViewById(R.id.doc_image);
         pageText = findViewById(R.id.page);
 
@@ -215,8 +215,8 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
             nextButton.setVisibility(View.GONE);
             exitDocButton.setVisibility(View.GONE);
 
-            broadcasterSmallView.removeView(localBroadcasterSurfaceView);
-            broadcasterSmallView.setVisibility(View.GONE);
+//            broadcasterSmallView.removeView(localBroadcasterSurfaceView);
+//            broadcasterSmallView.setVisibility(View.GONE);
             broadcasterView.setVisibility(View.VISIBLE);
             broadcasterView.removeAllViews();
             broadcasterView.addView(localBroadcasterSurfaceView);
@@ -258,10 +258,10 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
                 finishMeetingButton.setVisibility(View.GONE);
                 muteAudioButton.setVisibility(View.GONE);
                 audienceRecyclerView.initViewContainer(getApplicationContext(), config().mUid, new HashMap<>());
-                audienceRecyclerView.setVisibility(View.GONE);
+                audienceRecyclerView.setVisibility(View.INVISIBLE);
                 switchCameraButton.setVisibility(View.GONE);
                 if (currentMaterial != null) {
-                    broadcasterSmallView.setVisibility(View.GONE);
+//                    broadcasterSmallView.setVisibility(View.GONE);
                 }
                 isFullScreen = true;
             } else {
@@ -273,7 +273,7 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
                 audienceRecyclerView.setVisibility(View.VISIBLE);
                 audienceRecyclerView.initViewContainer(getApplicationContext(), config().mUid, surfaceViewHashMap);
                 if (currentMaterial != null) {
-                    broadcasterSmallView.setVisibility(View.VISIBLE);
+//                    broadcasterSmallView.setVisibility(View.VISIBLE);
                 }
                 isFullScreen = false;
             }
@@ -684,9 +684,9 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
             }
             broadcasterView.removeAllViews();
             broadcasterView.setVisibility(View.GONE);
-            broadcasterSmallView.setVisibility(View.VISIBLE);
-            broadcasterSmallView.removeAllViews();
-            broadcasterSmallView.addView(localBroadcasterSurfaceView);
+//            broadcasterSmallView.setVisibility(View.VISIBLE);
+//            broadcasterSmallView.removeAllViews();
+//            broadcasterSmallView.addView(localBroadcasterSurfaceView);
 
             docLayout.setVisibility(View.VISIBLE);
 
@@ -855,7 +855,7 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
             audienceRecyclerView.initViewContainer(getApplicationContext(), config().mUid, surfaceViewHashMap);
 
             if (surfaceViewHashMap.isEmpty()) {
-                audienceRecyclerView.setVisibility(View.GONE);
+                audienceRecyclerView.setVisibility(View.INVISIBLE);
             }
 
             if (BuildConfig.DEBUG)

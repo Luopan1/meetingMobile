@@ -72,11 +72,11 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
 
     private final HashMap<Integer, SurfaceView> surfaceViewHashMap = new HashMap<Integer, SurfaceView>();
 
-    private FrameLayout broadcasterView;// broadcasterSmallView;
+    private FrameLayout broadcasterView, broadcasterFullView;
     private TextView broadcastNameText, broadcastTipsText;
     private ImageButton muteAudioButton, fullScreenButton, switchCameraButton;
     private Button exitButton;
-    private ImageView docImage;
+    private ImageView docImage, fullDocImage;
     private TextView pageText;
 
     private String channelName;
@@ -134,11 +134,12 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
         audienceRecyclerView = findViewById(R.id.audience_list);
 
         broadcasterView = findViewById(R.id.broadcaster_view);
+        broadcasterFullView = findViewById(R.id.broadcaster1_view);
         broadcastTipsText = findViewById(R.id.broadcaster_tips);
         broadcastNameText = findViewById(R.id.broadcaster_name);
         broadcastNameText.setText("主持人：" + meetingJoin.getHostUser().getHostUserName());
-//        broadcasterSmallView = findViewById(R.id.broadcaster_small_view);
         docImage = findViewById(R.id.doc_image);
+        fullDocImage = findViewById(R.id.doc1_image);
         pageText = findViewById(R.id.page);
 
         muteAudioButton = findViewById(R.id.mute_audio);
@@ -167,9 +168,12 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                 audienceRecyclerView.initViewContainer(getApplicationContext(), config().mUid, new HashMap<>());
                 audienceRecyclerView.setVisibility(View.GONE);
                 switchCameraButton.setVisibility(View.GONE);
-//                if (currentMaterial != null) {
-//                    broadcasterSmallView.setVisibility(View.GONE);
-//                }
+                if (currentMaterial != null) {
+                    docImage.setVisibility(View.GONE);
+                    fullDocImage.setVisibility(View.VISIBLE);
+                    Picasso.with(this).load(currentMaterial.getMeetingMaterialsPublishList().get(doc_index).getUrl()).into(fullDocImage);
+                }
+
                 isFullScreen = true;
             } else {
                 fullScreenButton.setImageResource(R.drawable.ic_full_screen);
