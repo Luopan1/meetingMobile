@@ -89,11 +89,11 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
     private boolean isFullScreen = false;
 
     private LinearLayout docLayout;
-    private FrameLayout broadcasterView; //, broadcasterSmallView;
+    private FrameLayout broadcasterView, broadcasterFullView;
     private TextView broadcasterNameText;
     private Button finishMeetingButton, pptButton, previewButton, nextButton, exitDocButton;
     private ImageButton muteAudioButton, fullScreenButton, switchCameraButton;
-    private ImageView docImage;
+    private ImageView docImage, docFullImage;
     private TextView pageText;
     private SurfaceView localBroadcasterSurfaceView;
     private AudienceRecyclerView audienceRecyclerView;
@@ -143,8 +143,9 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
         broadcasterNameText = findViewById(R.id.broadcaster_name);
         broadcasterNameText.setText("主持人：" + meetingJoin.getHostUser().getHostUserName());
         broadcasterView = findViewById(R.id.broadcaster_view);
-//        broadcasterSmallView = findViewById(R.id.broadcaster_small_view);
+        broadcasterFullView = findViewById(R.id.broadcaster1_view);
         docImage = findViewById(R.id.doc_image);
+        docFullImage = findViewById(R.id.doc1_image);
         pageText = findViewById(R.id.page);
 
         previewButton = findViewById(R.id.preview);
@@ -262,8 +263,15 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
                 audienceRecyclerView.initViewContainer(getApplicationContext(), config().mUid, new HashMap<>());
                 audienceRecyclerView.setVisibility(View.INVISIBLE);
                 switchCameraButton.setVisibility(View.GONE);
-                if (currentMaterial != null) {
-//                    broadcasterSmallView.setVisibility(View.GONE);
+                if (currentMaterial == null) {
+                    broadcasterFullView.setVisibility(View.VISIBLE);
+                    broadcasterView.removeView(localBroadcasterSurfaceView);
+                    broadcasterView.setVisibility(View.GONE);
+                    broadcasterFullView.addView(localBroadcasterSurfaceView);
+                } else {
+                    docImage.setVisibility(View.GONE);
+                    docFullImage.setVisibility(View.VISIBLE);
+                    Picasso.with(this).load(currentMaterial.getMeetingMaterialsPublishList().get(position).getUrl()).into(docFullImage);
                 }
                 isFullScreen = true;
             } else {
@@ -274,8 +282,14 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
                 switchCameraButton.setVisibility(View.VISIBLE);
                 audienceRecyclerView.setVisibility(View.VISIBLE);
                 audienceRecyclerView.initViewContainer(getApplicationContext(), config().mUid, surfaceViewHashMap);
-                if (currentMaterial != null) {
-//                    broadcasterSmallView.setVisibility(View.VISIBLE);
+                if (currentMaterial == null) {
+                    broadcasterFullView.removeView(localBroadcasterSurfaceView);
+                    broadcasterFullView.setVisibility(View.GONE);
+                    broadcasterView.setVisibility(View.VISIBLE);
+                    broadcasterView.addView(localBroadcasterSurfaceView);
+                } else {
+                    docImage.setVisibility(View.VISIBLE);
+                    docFullImage.setVisibility(View.GONE);
                 }
                 isFullScreen = false;
             }
@@ -516,7 +530,7 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
 
     private Dialog exitDialog;
 
-    private void showExitDialog(){
+    private void showExitDialog() {
         View contentView = View.inflate(this, R.layout.dialog_exit_meeting, null);
         TextView finishTips = contentView.findViewById(R.id.finish_meeting_tips);
         Button tempLeaveButton = contentView.findViewById(R.id.left);
@@ -538,7 +552,7 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
         });
         Button finishMeetingButton = contentView.findViewById(R.id.right);
         finishMeetingButton.setOnClickListener(view -> {
-            if(finishTips.getVisibility() == View.VISIBLE) {
+            if (finishTips.getVisibility() == View.VISIBLE) {
                 ApiClient.getInstance().finishMeeting(TAG, meetingJoin.getMeeting().getId(), memberCount, finishMeetingCallback);
                 exitDialog.cancel();
             } else {
@@ -559,6 +573,7 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
     };
 
     private AlertDialog pptAlertDialog, pptDetailDialog;
+
     private void showPPTListDialog(ArrayList<Material> materials) {
         View view = View.inflate(this, R.layout.dialog_ppt_list, null);
         view.findViewById(R.id.exit).setOnClickListener(v -> {
@@ -786,7 +801,7 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
 
     private String meetingJoinTraceId;
 
-    private OkHttpCallback meetingJoinStatsCallback(){
+    private OkHttpCallback meetingJoinStatsCallback() {
         return new OkHttpCallback<Bucket<MeetingJoinStats>>() {
 
             @Override

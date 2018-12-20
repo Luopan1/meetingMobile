@@ -123,14 +123,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:gravity="center_horizontal"
         android:background="@drawable/bg_buttom_meeting"
+        android:gravity="center_horizontal"
         android:orientation="horizontal"
-        android:layout_marginBottom="23dp"
-        android:paddingLeft="@dimen/my_px_90"
-        android:paddingTop="@dimen/my_px_20"
-        android:paddingRight="@dimen/my_px_30"
-        android:paddingBottom="@dimen/my_px_24">
+        android:paddingTop="20dp"
+        android:paddingBottom="30dp">
 
         <ImageButton
             android:id="@+id/full_screen"
