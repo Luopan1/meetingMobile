@@ -96,8 +96,8 @@ public class AudienceRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
         }
 
         if (force || mItemWidth == 0 || mItemHeight == 0) {
-            mItemWidth = 300;
-            mItemHeight = 168;
+            mItemWidth = 250;
+            mItemHeight = 140;
         }
     }
 
@@ -148,10 +148,6 @@ public class AudienceRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
 
     @Override
     public int getItemCount() {
-//        int sizeLimit = mUsers.size();
-//        if (sizeLimit >= ConstantApp.MAX_PEER_COUNT + 1) {
-//            sizeLimit = ConstantApp.MAX_PEER_COUNT + 1;
-//        }
         return mUsers.size();
     }
 

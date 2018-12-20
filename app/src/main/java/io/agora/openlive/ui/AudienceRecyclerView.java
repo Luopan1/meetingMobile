@@ -51,14 +51,8 @@ public class AudienceRecyclerView extends RecyclerView {
 
         this.setAdapter(audienceRecyclerViewAdapter);
 
-        this.setLayoutManager(new GridLayoutManager(context, 2, RecyclerView.VERTICAL, false));
+        this.setLayoutManager(new GridLayoutManager(context, 3, RecyclerView.VERTICAL, false));
 
-//        int count = uids.size();
-//        if (count <= 2) { // only local full view or or with one peer
-//            this.setLayoutManager(new LinearLayoutManager(context, RecyclerView.VERTICAL, false));
-//        } else if (count > 2 && count <= 4) {
-//            this.setLayoutManager(new GridLayoutManager(context, 2, RecyclerView.VERTICAL, false));
-//        }
 
         audienceRecyclerViewAdapter.notifyDataSetChanged();
     }
