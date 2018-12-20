@@ -213,6 +213,11 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
 
             docLayout.setVisibility(View.GONE);
 
+            if (localBroadcasterSurfaceView.getParent() != null) {
+                ((FrameLayout) localBroadcasterSurfaceView.getParent()).removeView(localBroadcasterSurfaceView);
+                Log.v("add view", "移除ppt界面");
+            }
+
             broadcasterView.setVisibility(View.VISIBLE);
             broadcasterView.removeAllViews();
             broadcasterView.addView(localBroadcasterSurfaceView);
