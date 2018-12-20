@@ -195,7 +195,13 @@
         <activity
             android:name=".business.MeetingManagementActivity"
             android:theme="@style/NoTitle" />
-        <activity android:name=".business.ForumActivity" />
+        <activity
+            android:name=".business.ForumActivity"
+            android:alwaysRetainTaskState="true"
+            android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"
+            android:screenOrientation="portrait"
+            android:theme="@style/NoTitle"
+            android:windowSoftInputMode="adjustPan" />
 
         <receiver android:name=".receiver.PhoneReceiver">
             <intent-filter>
