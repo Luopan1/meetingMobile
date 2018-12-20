@@ -88,7 +88,6 @@
             android:layout_width="0dp"
             android:layout_height="220dp"
             android:layout_marginLeft="14dp"
-            android:layout_marginRight="3dp"
             android:layout_weight="1.0"
             android:background="@android:color/black">
 
@@ -110,7 +109,6 @@
             android:id="@+id/audience_list"
             android:layout_width="0dp"
             android:layout_height="220dp"
-            android:layout_marginLeft="3dp"
             android:layout_marginRight="14dp"
             android:layout_weight="1.0"
             android:visibility="invisible"
