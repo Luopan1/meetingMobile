@@ -245,7 +245,6 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
 
         findViewById(R.id.exit).setOnClickListener(view -> {
             showExitDialog();
-
         });
 
         switchCameraButton = findViewById(R.id.camera_switch);
@@ -314,8 +313,8 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
 
         localBroadcasterSurfaceView = RtcEngine.CreateRendererView(getApplicationContext());
         rtcEngine().setupLocalVideo(new VideoCanvas(localBroadcasterSurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, config().mUid));
-        localBroadcasterSurfaceView.setZOrderOnTop(false);
-        localBroadcasterSurfaceView.setZOrderMediaOverlay(false);
+        localBroadcasterSurfaceView.setZOrderOnTop(true);
+        localBroadcasterSurfaceView.setZOrderMediaOverlay(true);
         broadcasterView.addView(localBroadcasterSurfaceView);
 
         worker().preview(true, localBroadcasterSurfaceView, config().mUid);

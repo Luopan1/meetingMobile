@@ -491,17 +491,13 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                         agoraAPI.queryUserStatus(broadcasterId);
 
                         remoteBroadcasterSurfaceView = RtcEngine.CreateRendererView(getApplicationContext());
-                        remoteBroadcasterSurfaceView.setZOrderOnTop(false);
-                        remoteBroadcasterSurfaceView.setZOrderMediaOverlay(false);
+                        remoteBroadcasterSurfaceView.setZOrderOnTop(true);
+                        remoteBroadcasterSurfaceView.setZOrderMediaOverlay(true);
                         rtcEngine().setupRemoteVideo(new VideoCanvas(remoteBroadcasterSurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, uid));
 
                         broadcastTipsText.setVisibility(View.GONE);
 
                         if (currentMaterial != null) {
-//                            broadcasterSmallView.setVisibility(View.VISIBLE);
-//                            broadcasterSmallView.removeAllViews();
-//                            broadcasterSmallView.addView(remoteBroadcasterSurfaceView);
-
                             broadcasterView.setVisibility(View.GONE);
                             pageText.setVisibility(View.VISIBLE);
                             docImage.setVisibility(View.VISIBLE);
@@ -511,7 +507,6 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                         } else {
                             docImage.setVisibility(View.GONE);
                             pageText.setVisibility(View.GONE);
-//                            broadcasterSmallView.setVisibility(View.GONE);
                             broadcasterView.setVisibility(View.VISIBLE);
                             broadcasterView.removeAllViews();
                             broadcasterView.addView(remoteBroadcasterSurfaceView);
