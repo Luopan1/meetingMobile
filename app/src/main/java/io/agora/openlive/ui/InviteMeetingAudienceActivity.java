@@ -72,11 +72,11 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
 
     private final HashMap<Integer, SurfaceView> surfaceViewHashMap = new HashMap<Integer, SurfaceView>();
 
-    private FrameLayout broadcasterView, broadcasterSmallView;
+    private FrameLayout broadcasterView, broadcasterFullView;
     private TextView broadcastNameText, broadcastTipsText;
     private ImageButton muteAudioButton, fullScreenButton, switchCameraButton;
     private Button exitButton;
-    private ImageView docImage;
+    private ImageView docImage, fullDocImage;
     private TextView pageText;
 
     private String channelName;
@@ -134,11 +134,12 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
         audienceRecyclerView = findViewById(R.id.audience_list);
 
         broadcasterView = findViewById(R.id.broadcaster_view);
+        broadcasterFullView = findViewById(R.id.broadcaster1_view);
         broadcastTipsText = findViewById(R.id.broadcaster_tips);
         broadcastNameText = findViewById(R.id.broadcaster_name);
         broadcastNameText.setText("主持人：" + meetingJoin.getHostUser().getHostUserName());
-        broadcasterSmallView = findViewById(R.id.broadcaster_small_view);
         docImage = findViewById(R.id.doc_image);
+        fullDocImage = findViewById(R.id.doc1_image);
         pageText = findViewById(R.id.page);
 
         muteAudioButton = findViewById(R.id.mute_audio);
@@ -168,8 +169,11 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                 audienceRecyclerView.setVisibility(View.GONE);
                 switchCameraButton.setVisibility(View.GONE);
                 if (currentMaterial != null) {
-                    broadcasterSmallView.setVisibility(View.GONE);
+                    docImage.setVisibility(View.GONE);
+                    fullDocImage.setVisibility(View.VISIBLE);
+                    Picasso.with(this).load(currentMaterial.getMeetingMaterialsPublishList().get(doc_index).getUrl()).into(fullDocImage);
                 }
+
                 isFullScreen = true;
             } else {
                 fullScreenButton.setImageResource(R.drawable.ic_full_screen);
@@ -178,9 +182,9 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                 switchCameraButton.setVisibility(View.VISIBLE);
                 audienceRecyclerView.setVisibility(View.VISIBLE);
                 audienceRecyclerView.initViewContainer(getApplicationContext(), config().mUid, surfaceViewHashMap);
-                if (currentMaterial != null) {
-                    broadcasterSmallView.setVisibility(View.VISIBLE);
-                }
+//                if (currentMaterial != null) {
+//                    broadcasterSmallView.setVisibility(View.VISIBLE);
+//                }
                 isFullScreen = false;
             }
         });
@@ -333,8 +337,6 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                         if (jsonObject.has("finish")) {
                             boolean finish = jsonObject.getBoolean("finish");
                             if (finish) {
-                                agoraAPI.setAttr("uname", null);
-
                                 if (!TextUtils.isEmpty(meetingHostJoinTraceId)) {
                                     HashMap<String, Object> params = new HashMap<String, Object>();
                                     params.put("meetingHostJoinTraceId", meetingHostJoinTraceId);
@@ -361,34 +363,6 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                             Toast.makeText(InviteMeetingAudienceActivity.this, "onMessageChannelReceive 收到" + account + "发的频道消息" + msg, Toast.LENGTH_SHORT).show();
                         }
                         JSONObject jsonObject = new JSONObject(msg);
-                        if (jsonObject.has("material_id") && jsonObject.has("doc_index")) {
-                            doc_index = jsonObject.getInt("doc_index");
-                            String materialId = jsonObject.getString("material_id");
-
-                            if (currentMaterial != null) {
-                                if (!materialId.equals(currentMaterial.getId())) {
-                                    ApiClient.getInstance().meetingMaterial(TAG, meetingMaterialCallback, materialId);
-                                } else {
-                                    if (remoteBroadcasterSurfaceView != null) {
-                                        broadcasterView.removeView(remoteBroadcasterSurfaceView);
-                                        broadcasterView.setVisibility(View.GONE);
-
-                                        if (broadcasterSmallView.getChildCount() == 0) {
-                                            broadcasterSmallView.setVisibility(View.VISIBLE);
-                                            broadcasterSmallView.removeAllViews();
-                                            broadcasterSmallView.addView(remoteBroadcasterSurfaceView);
-                                        }
-                                    }
-                                    pageText.setVisibility(View.VISIBLE);
-                                    docImage.setVisibility(View.VISIBLE);
-                                    MeetingMaterialsPublish currentMaterialPublish = currentMaterial.getMeetingMaterialsPublishList().get(doc_index);
-                                    pageText.setText("第" + currentMaterialPublish.getPriority() + "/" + currentMaterial.getMeetingMaterialsPublishList().size() + "页");
-                                    Picasso.with(InviteMeetingAudienceActivity.this).load(currentMaterialPublish.getUrl()).into(docImage);
-                                }
-                            } else {
-                                ApiClient.getInstance().meetingMaterial(TAG, meetingMaterialCallback, materialId);
-                            }
-                        }
                         if (jsonObject.has("finish_meeting")) {
                             boolean finishMeeting = jsonObject.getBoolean("finish_meeting");
                             if (finishMeeting) {
@@ -434,11 +408,11 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                                                 broadcasterView.removeView(remoteBroadcasterSurfaceView);
                                                 broadcasterView.setVisibility(View.GONE);
 
-                                                if (broadcasterSmallView.getChildCount() == 0) {
-                                                    broadcasterSmallView.setVisibility(View.VISIBLE);
-                                                    broadcasterSmallView.removeAllViews();
-                                                    broadcasterSmallView.addView(remoteBroadcasterSurfaceView);
-                                                }
+//                                                if (broadcasterSmallView.getChildCount() == 0) {
+//                                                    broadcasterSmallView.setVisibility(View.VISIBLE);
+//                                                    broadcasterSmallView.removeAllViews();
+//                                                    broadcasterSmallView.addView(remoteBroadcasterSurfaceView);
+//                                                }
                                             }
                                             pageText.setVisibility(View.VISIBLE);
                                             docImage.setVisibility(View.VISIBLE);
@@ -454,21 +428,23 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                                 e.printStackTrace();
                             }
                         } else {
-                            broadcasterSmallView.removeAllViews();
-                            if (remoteBroadcasterSurfaceView != null) {
-                                broadcasterSmallView.removeView(remoteBroadcasterSurfaceView);
-                            }
-                            broadcasterSmallView.setVisibility(View.GONE);
-
                             pageText.setVisibility(View.GONE);
                             docImage.setVisibility(View.GONE);
 
                             currentMaterial = null;
 
+                            surfaceViewHashMap.remove(broadcasterId);
+                            audienceRecyclerView.initViewContainer(getApplicationContext(), config().mUid, surfaceViewHashMap);
+
                             broadcasterView.setVisibility(View.VISIBLE);
                             broadcasterView.removeAllViews();
                             if (remoteBroadcasterSurfaceView != null) {
+                                if (remoteBroadcasterSurfaceView.getParent() != null) {
+                                    ((FrameLayout) remoteBroadcasterSurfaceView.getParent()).removeView(remoteBroadcasterSurfaceView);
+                                    Log.v("add view", "移除ppt界面");
+                                }
                                 broadcasterView.addView(remoteBroadcasterSurfaceView);
+                                Log.v("add view", "ppt退出");
                             }
                         }
                     }
@@ -515,17 +491,13 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                         agoraAPI.queryUserStatus(broadcasterId);
 
                         remoteBroadcasterSurfaceView = RtcEngine.CreateRendererView(getApplicationContext());
-                        remoteBroadcasterSurfaceView.setZOrderOnTop(false);
-                        remoteBroadcasterSurfaceView.setZOrderMediaOverlay(false);
+                        remoteBroadcasterSurfaceView.setZOrderOnTop(true);
+                        remoteBroadcasterSurfaceView.setZOrderMediaOverlay(true);
                         rtcEngine().setupRemoteVideo(new VideoCanvas(remoteBroadcasterSurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, uid));
 
                         broadcastTipsText.setVisibility(View.GONE);
 
                         if (currentMaterial != null) {
-                            broadcasterSmallView.setVisibility(View.VISIBLE);
-                            broadcasterSmallView.removeAllViews();
-                            broadcasterSmallView.addView(remoteBroadcasterSurfaceView);
-
                             broadcasterView.setVisibility(View.GONE);
                             pageText.setVisibility(View.VISIBLE);
                             docImage.setVisibility(View.VISIBLE);
@@ -535,7 +507,6 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                         } else {
                             docImage.setVisibility(View.GONE);
                             pageText.setVisibility(View.GONE);
-                            broadcasterSmallView.setVisibility(View.GONE);
                             broadcasterView.setVisibility(View.VISIBLE);
                             broadcasterView.removeAllViews();
                             broadcasterView.addView(remoteBroadcasterSurfaceView);
@@ -596,11 +567,9 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                 broadcasterView.removeView(remoteBroadcasterSurfaceView);
                 broadcasterView.setVisibility(View.GONE);
 
-                if (broadcasterSmallView.getChildCount() == 0) {
-                    broadcasterSmallView.setVisibility(View.VISIBLE);
-                    broadcasterSmallView.removeAllViews();
-                    broadcasterSmallView.addView(remoteBroadcasterSurfaceView);
-                }
+                surfaceViewHashMap.put(Integer.parseInt(broadcasterId), remoteBroadcasterSurfaceView);
+                audienceRecyclerView.initViewContainer(getApplicationContext(), config().mUid, surfaceViewHashMap);
+
             }
 
             pageText.setVisibility(View.VISIBLE);

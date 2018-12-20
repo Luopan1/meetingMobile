@@ -7,6 +7,9 @@ import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.SurfaceView;
 
+import com.hezy.guide.phone.R;
+import com.hezy.guide.phone.view.SpaceItemDecoration;
+
 import java.util.HashMap;
 
 import io.agora.openlive.model.VideoStatusData;
@@ -51,14 +54,9 @@ public class AudienceRecyclerView extends RecyclerView {
 
         this.setAdapter(audienceRecyclerViewAdapter);
 
-        this.setLayoutManager(new GridLayoutManager(context, 2, RecyclerView.VERTICAL, false));
+        this.setLayoutManager(new GridLayoutManager(context, 3, RecyclerView.VERTICAL, false));
 
-//        int count = uids.size();
-//        if (count <= 2) { // only local full view or or with one peer
-//            this.setLayoutManager(new LinearLayoutManager(context, RecyclerView.VERTICAL, false));
-//        } else if (count > 2 && count <= 4) {
-//            this.setLayoutManager(new GridLayoutManager(context, 2, RecyclerView.VERTICAL, false));
-//        }
+        this.addItemDecoration(new SpaceItemDecoration((int) (getResources().getDimension(R.dimen.my_px_12)), 0, (int) (getResources().getDimension(R.dimen.my_px_12)), 0));
 
         audienceRecyclerViewAdapter.notifyDataSetChanged();
     }

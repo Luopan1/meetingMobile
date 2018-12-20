@@ -130,6 +130,10 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
+            if(msg.what == 23){
+                llChat.setVisibility(View.INVISIBLE);
+                return;
+            }
             if (msg.what == 22) {
                 Log.v("llchat989890", tvChat.getWidth() + "****tvChat***后");
                 FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
@@ -163,6 +167,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                 } else {
                     llMsg.setVisibility(View.GONE);
                     llChat.setVisibility(View.VISIBLE);
+                    ChatHandler.sendEmptyMessageDelayed(23, 5100);
                     tvChat.setVisibility(View.VISIBLE);
                 }
             }
@@ -293,8 +298,8 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                         llMsg.setVisibility(View.VISIBLE);
 
                 } else {
-                    if (!tvChat.getText().toString().isEmpty())
-                        llChat.setVisibility(View.VISIBLE);
+//                    if (!tvChat.getText().toString().isEmpty())
+//                        llChat.setVisibility(View.VISIBLE);
 
                 }
             }
@@ -314,8 +319,8 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                     if (!tvContent.getText().toString().isEmpty())
                         llMsg.setVisibility(View.VISIBLE);
                 } else {
-                    if (!tvChat.getText().toString().isEmpty())
-                        llChat.setVisibility(View.VISIBLE);
+//                    if (!tvChat.getText().toString().isEmpty())
+//                        llChat.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -388,8 +393,8 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                     broadcasterSmallLayout.setVisibility(View.VISIBLE);
                 }
                 llMsg.setVisibility(View.GONE);
-                if (!tvChat.getText().toString().isEmpty())
-                    llChat.setVisibility(View.VISIBLE);
+//                if (!tvChat.getText().toString().isEmpty())
+//                    llChat.setVisibility(View.VISIBLE);
                 disCussButton.setVisibility(View.VISIBLE);
                 isFullScreen = false;
             }
@@ -1617,6 +1622,9 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
         super.onDestroy();
         if (ChatHandler.hasMessages(22)) {
             ChatHandler.removeMessages(22);
+        }
+        if (ChatHandler.hasMessages(23)) {
+            ChatHandler.removeMessages(23);
         }
         subscription.unsubscribe();
 //        if (WSService.isOnline()) {
