@@ -582,8 +582,8 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
 
         exitButton = findViewById(R.id.exit);
         exitButton.setOnClickListener(view -> {
-            showDialog(1, "确定结束会议吗？", "暂时离开", "结束会议", null);
-            showExitDialog(null);
+//            showDialog(1, "确定结束会议吗？", "暂时离开", "结束会议", null);
+            showExitDialog();
         });
 
         stopButton = findViewById(R.id.stop_audience);
@@ -1053,7 +1053,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
         }
     };
 
-    private void showExitDialog(Audience audience){
+    private void showExitDialog(){
         View contentView = View.inflate(this, R.layout.dialog_exit_meeting, null);
         TextView finishTips = contentView.findViewById(R.id.finish_meeting_tips);
         Button tempLeaveButton = contentView.findViewById(R.id.left);
@@ -1666,7 +1666,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
     @Override
     public void onBackPressed() {
 //        showDialog(1, "确定结束会议吗？", "暂时离开", "结束会议", null);
-        showExitDialog(null);
+        showExitDialog();
     }
 
     @Override
