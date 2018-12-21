@@ -37,15 +37,16 @@
             app:layout_constraintStart_toEndOf="@+id/tv_meeting_public" />
 
         <TextView
-            android:id="@+id/tv_meeting_forum"
+            android:id="@+id/tv_meeting_owner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/my_px_29"
             android:layout_marginLeft="@dimen/my_px_29"
             android:layout_marginBottom="0dp"
             android:layout_toRightOf="@+id/tv_meeting_private"
-            android:text="讨论区"
+            android:text="我的会议"
             android:theme="@style/MeetingTypeUnFocus"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@+id/tv_meeting_private"
             app:layout_constraintStart_toEndOf="@+id/tv_meeting_private" />
 

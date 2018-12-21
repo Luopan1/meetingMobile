@@ -3,6 +3,7 @@ package com.hezy.guide.phone.business;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.http.SslError;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
@@ -11,6 +12,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.webkit.JavascriptInterface;
 import android.webkit.JsResult;
+import android.webkit.SslErrorHandler;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -62,6 +64,7 @@ public class MeetingManagementActivity extends AppCompatActivity {
         webview_meetingmanagement.setWebViewClient(webViewClient);
 
         WebSettings webSettings = webview_meetingmanagement.getSettings();
+        webSettings.setLoadWithOverviewMode(true);
         webSettings.setJavaScriptEnabled(true);//允许使用js
 
         /**
@@ -97,7 +100,14 @@ public class MeetingManagementActivity extends AppCompatActivity {
 
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            return super.shouldOverrideUrlLoading(view, url);
+            view.loadUrl(url);
+            return true;
+        }
+
+        @Override
+        public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+            super.onReceivedSslError(view, handler, error);
+            handler.proceed();
         }
     };
 

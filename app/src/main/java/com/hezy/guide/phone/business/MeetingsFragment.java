@@ -24,7 +24,6 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.hezy.guide.phone.ApiClient;
 import com.hezy.guide.phone.BaseException;
 import com.hezy.guide.phone.R;
 import com.hezy.guide.phone.business.adapter.ForumMeetingAdapter;
@@ -33,8 +32,8 @@ import com.hezy.guide.phone.business.adapter.MeetingAdapter;
 import com.hezy.guide.phone.entities.Agora;
 import com.hezy.guide.phone.entities.Bucket;
 import com.hezy.guide.phone.entities.ChatMesData;
-import com.hezy.guide.phone.entities.Forum;
 import com.hezy.guide.phone.entities.ForumMeeting;
+import com.hezy.guide.phone.entities.MeeetingAdmin;
 import com.hezy.guide.phone.entities.Meeting;
 import com.hezy.guide.phone.entities.MeetingJoin;
 import com.hezy.guide.phone.entities.base.BaseArrayBean;
@@ -43,14 +42,12 @@ import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.utils.Logger;
 import com.hezy.guide.phone.utils.OkHttpCallback;
 import com.hezy.guide.phone.utils.RxBus;
-import com.hezy.guide.phone.utils.ToastUtils;
 import com.hezy.guide.phone.utils.UIDUtil;
-import com.hezy.guide.phone.utils.listener.RecyclerViewScrollListener;
-import com.hezy.guide.phone.utils.statistics.ZYAgent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import io.agora.openlive.ui.MeetingInitActivity;
 import rx.Subscription;
@@ -62,45 +59,24 @@ public class MeetingsFragment extends BaseFragment {
     private RecyclerView recyclerView;
     private LinearLayoutManager mLayoutManager;
     private MeetingAdapter meetingAdapter;
-    private TextView emptyText, tv_meeting_public, tv_meeting_private;
-    //tv_meeting_forum
+    private TextView emptyText, tv_meeting_public, tv_meeting_private, tv_meeting_owner;
     private ImageButton ib_meeting_forum;
     private AppBarLayout appBarLayout;
     private Dialog dialog;
-    private Forum forum;
     private ForumMeetingAdapter forumMeetingAdapter;
     private ArrayList<ForumMeeting> forumMeetingList = new ArrayList<>();
 
     public static final int TYPE_PUBLIC_MEETING = 0;
     public static final int TYPE_PRIVATE_MEETING = 1;
-    public static final int TYPE_FORUM_MEETING = 2;
+    public static final int TYPE_OWNER_MEETING = 2;
+    public static final int TYPE_FORUM_MEETING = 3;
     private final int SEARCH_REQUEST_CODE = 1001;
     public static final String KEY_MEETING_TYPE = "meetingType";
     private int currentMeetingListPageIndex = TYPE_PUBLIC_MEETING;
 
-    //分页信息
-    private final int PAGE_SIZE = 20;
-    private final int PAGE_NO = 1;
-    private int pageNo = PAGE_NO;
-
     @Override
     public String getStatisticsTag() {
         return "会议列表";
-    }
-
-    private void initForumPage() {
-        pageNo = PAGE_NO;
-        forumMeetingAdapter.clearData();
-        recyclerView.setAdapter(forumMeetingAdapter);
-    }
-
-    private boolean nextPage() {
-        if (pageNo >= forum.getTotalPage()) {
-            ToastUtils.showToast("没有更多数据了！");
-            return false;
-        }
-        pageNo += PAGE_NO;
-        return true;
     }
 
     private MeetingAdapter.OnItemClickListener onMeetingListItemClickListener = (view, meeting) -> {
@@ -156,7 +132,11 @@ public class MeetingsFragment extends BaseFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         forumMeetingAdapter = new ForumMeetingAdapter(mContext, onForumMeetingItemClickListener);
         forumMeetingAdapter.addData(forumMeetingList);
+
+        //设置会议tag
         showMeeting(currentMeetingListPageIndex);
+        checkAdminAccount();
+
         subscription = RxBus.handleMessage(o -> {
             if (o instanceof ForumSendEvent) {
                 ChatMesData.PageDataEntity entity = ((ForumSendEvent) o).getEntity();
@@ -174,6 +154,30 @@ public class MeetingsFragment extends BaseFragment {
         });
         super.onActivityCreated(savedInstanceState);
     }
+
+    /**
+     * 检测当前账户是否为会议管理员。如是显示"会议管理"功能
+     */
+    private void checkAdminAccount() {
+        apiClient.requestMeetingAdmin(this, requestMeetingAdminCallback);
+    }
+
+    private OkHttpCallback<Bucket<MeeetingAdmin>> requestMeetingAdminCallback = new OkHttpCallback<Bucket<MeeetingAdmin>>() {
+        @Override
+        public void onSuccess(Bucket<MeeetingAdmin> entity) {
+            MeeetingAdmin meeetingAdmin = entity.getData();
+            if (meeetingAdmin.isMeetingAdmin())
+                showOwnerMeeting(meeetingAdmin.getMeetingMgrUrl());
+            else
+                hideOwnerMeeting();
+        }
+
+        @Override
+        public void onFailure(int errorCode, BaseException exception) {
+            super.onFailure(errorCode, exception);
+            hideOwnerMeeting();
+        }
+    };
 
     @Override
     public void onDestroyView() {
@@ -223,29 +227,13 @@ public class MeetingsFragment extends BaseFragment {
         emptyText = view.findViewById(R.id.emptyView);
         tv_meeting_public = view.findViewById(R.id.tv_meeting_public);
         tv_meeting_private = view.findViewById(R.id.tv_meeting_private);
-//        tv_meeting_forum = view.findViewById(R.id.tv_meeting_forum);
+        tv_meeting_owner = view.findViewById(R.id.tv_meeting_owner);
         tv_meeting_public.setOnClickListener(tvMeetingOnClickListener);
         tv_meeting_private.setOnClickListener(tvMeetingOnClickListener);
-//        tv_meeting_forum.setOnClickListener(tvMeetingOnClickListener);
         ib_meeting_forum = view.findViewById(R.id.ib_meeting_forum);
         ib_meeting_forum.setOnClickListener(tvMeetingOnClickListener);
-        recyclerView.addOnScrollListener(recyclerViewScrollListener);
         return view;
     }
-
-    /**
-     * 滑动到底部分页监听
-     */
-    private RecyclerViewScrollListener recyclerViewScrollListener = new RecyclerViewScrollListener() {
-        @Override
-        public void onScrollToBottom() {
-            if (TYPE_FORUM_MEETING == currentMeetingListPageIndex) {
-                if (nextPage()) {
-                    requestForum(null);
-                }
-            }
-        }
-    };
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -263,9 +251,6 @@ public class MeetingsFragment extends BaseFragment {
                     break;
                 case R.id.tv_meeting_private:
                     showMeeting(TYPE_PRIVATE_MEETING);
-                    break;
-                case R.id.tv_meeting_forum:
-                    showMeeting(TYPE_FORUM_MEETING);
                     break;
                 case R.id.ib_meeting_forum:
                     startActivity(new Intent(mContext, ForumActivity.class));
@@ -287,38 +272,35 @@ public class MeetingsFragment extends BaseFragment {
             case TYPE_PRIVATE_MEETING:
                 showPrivateMeeting();
                 break;
-            case TYPE_FORUM_MEETING:
-                showForumMeeting();
-                break;
         }
     }
 
     private void showPublicMeeting() {
-        showPublicMeetingView();
+        TextViewCompat.setTextAppearance(tv_meeting_public, R.style.MeetingTypeFocus);
+        TextViewCompat.setTextAppearance(tv_meeting_private, R.style.MeetingTypeUnFocus);
         currentMeetingListPageIndex = TYPE_PUBLIC_MEETING;
         requestMeetings(TYPE_PUBLIC_MEETING);
     }
 
     private void showPrivateMeeting() {
-        showPrivateMeetingView();
+        TextViewCompat.setTextAppearance(tv_meeting_public, R.style.MeetingTypeUnFocus);
+        TextViewCompat.setTextAppearance(tv_meeting_private, R.style.MeetingTypeFocus);
         currentMeetingListPageIndex = TYPE_PRIVATE_MEETING;
         requestMeetings(TYPE_PRIVATE_MEETING);
     }
 
-    private void showForumMeeting() {
-        initForumPage();
-        currentMeetingListPageIndex = TYPE_FORUM_MEETING;
-        requestForum(null);
+    private void showOwnerMeeting(String meetingMgrUrl) {
+        tv_meeting_owner.setVisibility(View.VISIBLE);
+        tv_meeting_owner.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MeetingManagementActivity.startMeetingManagementActivity(Objects.requireNonNull(MeetingsFragment.this.getActivity()).getApplicationContext(), meetingMgrUrl);
+            }
+        });
     }
 
-    private void showPublicMeetingView() {
-        TextViewCompat.setTextAppearance(tv_meeting_public, R.style.MeetingTypeFocus);
-        TextViewCompat.setTextAppearance(tv_meeting_private, R.style.MeetingTypeUnFocus);
-    }
-
-    private void showPrivateMeetingView() {
-        TextViewCompat.setTextAppearance(tv_meeting_public, R.style.MeetingTypeUnFocus);
-        TextViewCompat.setTextAppearance(tv_meeting_private, R.style.MeetingTypeFocus);
+    private void hideOwnerMeeting() {
+        tv_meeting_owner.setVisibility(View.GONE);
     }
 
     /**
@@ -329,25 +311,6 @@ public class MeetingsFragment extends BaseFragment {
     private void requestMeetings(int type) {
         swipeRefreshLayout.setRefreshing(true);
         apiClient.getAllMeeting(TAG, null, type, meetingsCallback);
-    }
-
-    /**
-     * 请求讨论组会议数据
-     *
-     * @param title
-     */
-    private void requestForum(String title) {
-        if (title == null || title.equals("")) {
-            title = null;
-        }
-        swipeRefreshLayout.setRefreshing(true);
-        Map<String, String> params = new HashMap<>();
-        params.put(ApiClient.PAGE_NO, String.valueOf(pageNo));
-        params.put(ApiClient.PAGE_SIZE, String.valueOf(PAGE_SIZE));
-        if (title != null) {
-            params.put("title", title);
-        }
-        apiClient.getAllForumMeeting(TAG, params, forumMeetingsCallback);
     }
 
     private OkHttpCallback meetingsCallback = new OkHttpCallback<BaseArrayBean<Meeting>>() {
@@ -387,39 +350,6 @@ public class MeetingsFragment extends BaseFragment {
         recyclerView.setVisibility(View.GONE);
         emptyText.setVisibility(View.VISIBLE);
     }
-
-
-    private OkHttpCallback forumMeetingsCallback = new OkHttpCallback<Bucket<Forum>>() {
-
-        @Override
-        public void onSuccess(Bucket<Forum> entity) {
-            forum = entity.getData();
-            forumMeetingList.clear();
-            forumMeetingList = forum.getPageData();
-            if (forumMeetingList.size() == 0) {
-                recyclerView.setVisibility(View.GONE);
-                emptyText.setVisibility(View.VISIBLE);
-                return;
-            }
-            recyclerView.setVisibility(View.VISIBLE);
-            emptyText.setVisibility(View.GONE);
-
-            forumMeetingAdapter.addData(forumMeetingList);
-        }
-
-        @Override
-        public void onFailure(int errorCode, BaseException exception) {
-            super.onFailure(errorCode, exception);
-            ZYAgent.onEvent(getActivity().getApplicationContext(), exception.getMessage());
-            ToastUtils.showToast("请求讨论区数据失败");
-        }
-
-        @Override
-        public void onFinish() {
-            super.onFinish();
-            swipeRefreshLayout.setRefreshing(false);
-        }
-    };
 
     private void initDialog(final Meeting meeting) {
         View view = View.inflate(mContext, R.layout.dialog_meeting_code, null);
