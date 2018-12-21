@@ -34,9 +34,11 @@ import com.hezy.guide.phone.entities.MeetingJoin;
 import com.hezy.guide.phone.entities.MeetingJoinStats;
 import com.hezy.guide.phone.entities.MeetingMaterialsPublish;
 import com.hezy.guide.phone.persistence.Preferences;
+import com.hezy.guide.phone.utils.DensityUtil;
 import com.hezy.guide.phone.utils.OkHttpCallback;
 import com.hezy.guide.phone.utils.UIDUtil;
 import com.hezy.guide.phone.utils.statistics.ZYAgent;
+import com.hezy.guide.phone.view.SpaceItemDecoration;
 import com.squareup.picasso.Picasso;
 import com.tendcloud.tenddata.TCAgent;
 
@@ -132,6 +134,7 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
 
 
         audienceRecyclerView = findViewById(R.id.audience_list);
+        audienceRecyclerView.addItemDecoration(new SpaceItemDecoration(DensityUtil.dip2px(getApplicationContext(), 3), 0, 0, DensityUtil.dip2px(getApplicationContext(), 3)));
 
         broadcasterView = findViewById(R.id.broadcaster_view);
         broadcasterFullView = findViewById(R.id.broadcaster1_view);

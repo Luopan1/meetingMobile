@@ -3,20 +3,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_gravity="center_vertical"
     android:keepScreenOn="true"
     tools:context="io.agora.openlive.ui.InviteMeetingAudienceActivity">
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@android:color/black"
-        tools:visibility="visible">
+        android:background="@drawable/bg_invite_meeting">
 
         <FrameLayout
             android:id="@+id/broadcaster1_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            tools:visibility="visible"/>
 
         <ImageView
             android:id="@+id/doc1_image"
@@ -135,11 +135,8 @@
         android:gravity="center_horizontal"
         android:background="@drawable/bg_buttom_meeting"
         android:orientation="horizontal"
-        android:layout_marginBottom="23dp"
-        android:paddingLeft="@dimen/my_px_90"
-        android:paddingTop="@dimen/my_px_20"
-        android:paddingRight="@dimen/my_px_30"
-        android:paddingBottom="@dimen/my_px_24">
+        android:paddingTop="20dp"
+        android:paddingBottom="20dp">
 
         <ImageButton
             android:id="@+id/full_screen"
