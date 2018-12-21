@@ -91,7 +91,8 @@
             <FrameLayout
                 android:id="@+id/broadcaster_view"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:background="#6e6e6e" />
 
             <ImageView
                 android:id="@+id/doc_image"
