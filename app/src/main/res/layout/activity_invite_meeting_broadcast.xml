@@ -3,15 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_gravity="center_vertical"
-    android:keepScreenOn="true"
-    tools:context="io.agora.openlive.ui.InviteMeetingBroadcastActivity">
+    android:keepScreenOn="true">
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@android:color/black"
-        tools:visibility="visible">
+        android:background="@drawable/bg_invite_meeting">
 
         <FrameLayout
             android:id="@+id/broadcaster1_view"
@@ -125,7 +122,7 @@
         android:gravity="center_horizontal"
         android:orientation="horizontal"
         android:paddingTop="20dp"
-        android:paddingBottom="30dp">
+        android:paddingBottom="20dp">
 
         <ImageButton
             android:id="@+id/full_screen"

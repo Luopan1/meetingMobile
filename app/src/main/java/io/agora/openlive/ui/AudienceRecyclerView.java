@@ -8,6 +8,7 @@ import android.util.AttributeSet;
 import android.view.SurfaceView;
 
 import com.hezy.guide.phone.R;
+import com.hezy.guide.phone.utils.DensityUtil;
 import com.hezy.guide.phone.view.SpaceItemDecoration;
 
 import java.util.HashMap;
@@ -55,8 +56,6 @@ public class AudienceRecyclerView extends RecyclerView {
         this.setAdapter(audienceRecyclerViewAdapter);
 
         this.setLayoutManager(new GridLayoutManager(context, 3, RecyclerView.VERTICAL, false));
-
-        this.addItemDecoration(new SpaceItemDecoration((int) (getResources().getDimension(R.dimen.my_px_12)), 0, (int) (getResources().getDimension(R.dimen.my_px_12)), 0));
 
         audienceRecyclerViewAdapter.notifyDataSetChanged();
     }
