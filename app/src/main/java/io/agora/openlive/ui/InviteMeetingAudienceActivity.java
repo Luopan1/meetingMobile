@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.SurfaceView;
@@ -134,6 +136,7 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
 
 
         audienceRecyclerView = findViewById(R.id.audience_list);
+        audienceRecyclerView.setLayoutManager(new GridLayoutManager(getApplicationContext(), 3, RecyclerView.VERTICAL, false));
         audienceRecyclerView.addItemDecoration(new SpaceItemDecoration(DensityUtil.dip2px(getApplicationContext(), 3), 0, 0, DensityUtil.dip2px(getApplicationContext(), 3)));
 
         broadcasterView = findViewById(R.id.broadcaster_view);
@@ -171,12 +174,16 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                 audienceRecyclerView.initViewContainer(getApplicationContext(), config().mUid, new HashMap<>());
                 audienceRecyclerView.setVisibility(View.GONE);
                 switchCameraButton.setVisibility(View.GONE);
-                if (currentMaterial != null) {
+                if (currentMaterial == null) {
+                    broadcasterFullView.setVisibility(View.VISIBLE);
+                    broadcasterView.removeView(remoteBroadcasterSurfaceView);
+                    broadcasterView.setVisibility(View.GONE);
+                    broadcasterFullView.addView(remoteBroadcasterSurfaceView);
+                } else {
                     docImage.setVisibility(View.GONE);
                     fullDocImage.setVisibility(View.VISIBLE);
                     Picasso.with(this).load(currentMaterial.getMeetingMaterialsPublishList().get(doc_index).getUrl()).into(fullDocImage);
                 }
-
                 isFullScreen = true;
             } else {
                 fullScreenButton.setImageResource(R.drawable.ic_full_screen);
@@ -185,9 +192,15 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                 switchCameraButton.setVisibility(View.VISIBLE);
                 audienceRecyclerView.setVisibility(View.VISIBLE);
                 audienceRecyclerView.initViewContainer(getApplicationContext(), config().mUid, surfaceViewHashMap);
-//                if (currentMaterial != null) {
-//                    broadcasterSmallView.setVisibility(View.VISIBLE);
-//                }
+                if (currentMaterial == null) {
+                    broadcasterFullView.removeView(remoteBroadcasterSurfaceView);
+                    broadcasterFullView.setVisibility(View.GONE);
+                    broadcasterView.setVisibility(View.VISIBLE);
+                    broadcasterView.addView(remoteBroadcasterSurfaceView);
+                } else {
+                    docImage.setVisibility(View.VISIBLE);
+                    fullDocImage.setVisibility(View.GONE);
+                }
                 isFullScreen = false;
             }
         });
@@ -491,8 +504,6 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                             Toast.makeText(InviteMeetingAudienceActivity.this, "主持人" + uid + "回来了", Toast.LENGTH_SHORT).show();
                         }
 
-                        agoraAPI.queryUserStatus(broadcasterId);
-
                         remoteBroadcasterSurfaceView = RtcEngine.CreateRendererView(getApplicationContext());
                         remoteBroadcasterSurfaceView.setZOrderOnTop(true);
                         remoteBroadcasterSurfaceView.setZOrderMediaOverlay(true);
@@ -507,6 +518,9 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                             MeetingMaterialsPublish currentMaterialPublish = currentMaterial.getMeetingMaterialsPublishList().get(doc_index);
                             pageText.setText("第" + currentMaterialPublish.getPriority() + "/" + currentMaterial.getMeetingMaterialsPublishList().size() + "页");
                             Picasso.with(InviteMeetingAudienceActivity.this).load(currentMaterialPublish.getUrl()).into(docImage);
+
+                            surfaceViewHashMap.put(uid, remoteBroadcasterSurfaceView);
+                            audienceRecyclerView.initViewContainer(getApplicationContext(), config().mUid, surfaceViewHashMap);
                         } else {
                             docImage.setVisibility(View.GONE);
                             pageText.setVisibility(View.GONE);
@@ -518,8 +532,6 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                         if (BuildConfig.DEBUG) {
                             Toast.makeText(InviteMeetingAudienceActivity.this, "参会人" + uid + "加入", Toast.LENGTH_SHORT).show();
                         }
-//                        agoraAPI.getUserAttr(String.valueOf(uid), "uname");
-
                         SurfaceView remoteAudienceSurfaceView = RtcEngine.CreateRendererView(getApplicationContext());
                         remoteAudienceSurfaceView.setZOrderOnTop(true);
                         remoteAudienceSurfaceView.setZOrderMediaOverlay(true);
@@ -740,15 +752,22 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
             }
             if (uid == Integer.parseInt(meetingJoin.getHostUser().getClientUid())) {
                 broadcastTipsText.setVisibility(View.VISIBLE);
+                if (currentMaterial != null) {
+                    currentMaterial = null;
+                    docImage.setVisibility(View.GONE);
+                    fullDocImage.setVisibility(View.GONE);
+                } else {
+
+                }
+                surfaceViewHashMap.remove(uid);
+                audienceRecyclerView.initViewContainer(getApplicationContext(), config().mUid, surfaceViewHashMap);
             } else {
                 surfaceViewHashMap.remove(uid);
-
-                audienceRecyclerView.initViewContainer(getApplicationContext(), config().mUid, surfaceViewHashMap); // first is now full view
+                audienceRecyclerView.initViewContainer(getApplicationContext(), config().mUid, surfaceViewHashMap);
 
                 if (surfaceViewHashMap.isEmpty()) {
                     audienceRecyclerView.setVisibility(View.GONE);
                 }
-
             }
 
         });

@@ -139,6 +139,7 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
         config().mUid = Integer.parseInt(UIDUtil.generatorUID(Preferences.getUserId()));
 
         audienceRecyclerView = findViewById(R.id.audience_list);
+        audienceRecyclerView.setLayoutManager(new GridLayoutManager(getApplicationContext(), 3, RecyclerView.VERTICAL, false));
         audienceRecyclerView.addItemDecoration(new SpaceItemDecoration(DensityUtil.dip2px(getApplicationContext(), 3), 0, 0, DensityUtil.dip2px(getApplicationContext(), 3)));
 
         docLayout = findViewById(R.id.doc_layout);
