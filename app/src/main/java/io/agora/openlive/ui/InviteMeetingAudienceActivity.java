@@ -869,6 +869,18 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
     }
 
     @Override
+    protected void onUserLeaveHint() {
+        super.onUserLeaveHint();
+
+        doLeaveChannel();
+        if (agoraAPI.getStatus() == 2) {
+            agoraAPI.logout();
+        }
+
+        finish();
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
 

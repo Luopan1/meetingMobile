@@ -1241,19 +1241,6 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 
                     worker().getRtcEngine().setClientRole(Constants.CLIENT_ROLE_AUDIENCE);
 
-//                    try {
-//                        JSONObject jsonObject = new JSONObject();
-//                        jsonObject.put("handsUp", handsUp);
-//                        jsonObject.put("uid", config().mUid);
-//                        jsonObject.put("uname", audienceName);
-//                        jsonObject.put("callStatus", 0);
-//                        jsonObject.put("auditStatus", Preferences.getUserAuditStatus());
-//                        jsonObject.put("postTypeName", Preferences.getUserPostType());
-//                        agoraAPI.messageInstantSend(broadcastId, 0, jsonObject.toString(), "");
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
-//                    }
-
                     if (!TextUtils.isEmpty(meetingHostJoinTraceId)) {
                         HashMap<String, Object> params = new HashMap<String, Object>();
                         params.put("meetingHostJoinTraceId", meetingHostJoinTraceId);
@@ -1300,27 +1287,6 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                 }
 
                 agoraAPI.channelDelAttr(channelName, CALLING_AUDIENCE);
-
-//                try {
-//                    JSONObject jsonObject = new JSONObject();
-//                    jsonObject.put("finish", true);
-//                    agoraAPI.messageInstantSend(broadcastId, 0, jsonObject.toString(), "");
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-
-//                try {
-//                    JSONObject jsonObject = new JSONObject();
-//                    jsonObject.put("handsUp", handsUp);
-//                    jsonObject.put("uid", config().mUid);
-//                    jsonObject.put("uname", audienceName);
-//                    jsonObject.put("callStatus", 0);
-//                    jsonObject.put("auditStatus", Preferences.getUserAuditStatus());
-//                    jsonObject.put("postTypeName", Preferences.getUserPostType());
-//                    agoraAPI.messageInstantSend(broadcastId, 0, jsonObject.toString(), "");
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
 
                 handsUp = false;
                 requestTalkButton.setText("我要发言");
@@ -1375,6 +1341,23 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
         super.onStop();
         doTLeaveChannel();
 
+    }
+
+    @Override
+    protected void onUserLeaveHint() {
+        super.onUserLeaveHint();
+
+        worker().getRtcEngine().setClientRole(Constants.CLIENT_ROLE_AUDIENCE);
+
+        doLeaveChannel();
+        doTLeaveChannel();
+        if (agoraAPI.getStatus() == 2) {
+            agoraAPI.setAttr("uname", null);
+            agoraAPI.channelDelAttr(channelName, CALLING_AUDIENCE);
+            agoraAPI.logout();
+        }
+
+        finish();
     }
 
     private void doTEnterChannel() {

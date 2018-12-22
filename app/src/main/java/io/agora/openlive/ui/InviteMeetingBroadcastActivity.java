@@ -967,6 +967,17 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
         showExitDialog();
     }
 
+    @Override
+    protected void onUserLeaveHint() {
+        super.onUserLeaveHint();
+
+        doLeaveChannel();
+        if (agoraAPI.getStatus() == 2) {
+            agoraAPI.logout();
+        }
+
+        finish();
+    }
 
     @Override
     protected void onDestroy() {

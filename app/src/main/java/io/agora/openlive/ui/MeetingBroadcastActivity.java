@@ -1657,11 +1657,20 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
 
     }
 
-//    @Override
-//    protected void onUserLeaveHint() {
-//        super.onUserLeaveHint();
-//        doLeaveChannel();
-//    }
+    @Override
+    protected void onUserLeaveHint() {
+        super.onUserLeaveHint();
+
+        doLeaveChannel();
+        doTLeaveChannel();
+        if (agoraAPI.getStatus() == 2) {
+            agoraAPI.setAttr("uname", null);
+            agoraAPI.channelDelAttr(channelName, CALLING_AUDIENCE);
+            agoraAPI.logout();
+        }
+
+        finish();
+    }
 
     @Override
     public void onBackPressed() {
