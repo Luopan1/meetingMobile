@@ -76,11 +76,13 @@ public class AudienceVideoAdapter extends RecyclerView.Adapter<AudienceVideoAdap
             holder.volumeImage.setVisibility(View.VISIBLE);
         }
 
-        if (holder.videoLayout.getChildCount() == 0) {
-            SurfaceView surfaceView = audienceVideo.getSurfaceView();
-            stripSurfaceView(surfaceView);
-            holder.videoLayout.addView(surfaceView, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        }
+        if (holder.videoLayout.getChildCount() > 0) {
+            holder.videoLayout.removeAllViews();
+         }
+        final SurfaceView surfaceView = audienceVideo.getSurfaceView();
+        stripSurfaceView(surfaceView);
+        holder.videoLayout.addView(surfaceView, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+
     }
 
     private void stripSurfaceView(SurfaceView view) {
