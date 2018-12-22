@@ -27,6 +27,7 @@ import com.hezy.guide.phone.BuildConfig;
 import com.hezy.guide.phone.R;
 import com.hezy.guide.phone.entities.Agora;
 import com.hezy.guide.phone.entities.Audience;
+import com.hezy.guide.phone.entities.AudienceVideo;
 import com.hezy.guide.phone.entities.Bucket;
 import com.hezy.guide.phone.entities.HostUser;
 import com.hezy.guide.phone.entities.Material;
@@ -49,6 +50,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
@@ -72,9 +74,11 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
     private Material currentMaterial;
     private int doc_index = 0;
 
-    private AudienceRecyclerView audienceRecyclerView;
+    private RecyclerView audienceRecyclerView;
+    private AudienceVideoAdapter audienceVideoAdapter;
 
-    private final HashMap<Integer, SurfaceView> surfaceViewHashMap = new HashMap<Integer, SurfaceView>();
+//    private final HashMap<Integer, SurfaceView> surfaceViewHashMap = new HashMap<Integer, SurfaceView>();
+    private ArrayList<AudienceVideo> audienceVideos = new ArrayList<AudienceVideo>();
 
     private FrameLayout broadcasterView, broadcasterFullView;
     private TextView broadcastNameText, broadcastTipsText;
@@ -134,10 +138,11 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
 
         config().mUid = Integer.parseInt(UIDUtil.generatorUID(Preferences.getUserId()));
 
-
         audienceRecyclerView = findViewById(R.id.audience_list);
         audienceRecyclerView.setLayoutManager(new GridLayoutManager(getApplicationContext(), 3, RecyclerView.VERTICAL, false));
         audienceRecyclerView.addItemDecoration(new SpaceItemDecoration(DensityUtil.dip2px(getApplicationContext(), 3), 0, 0, DensityUtil.dip2px(getApplicationContext(), 3)));
+        audienceVideoAdapter = new AudienceVideoAdapter(this, audienceVideos);
+        audienceRecyclerView.setAdapter(audienceVideoAdapter);
 
         broadcasterView = findViewById(R.id.broadcaster_view);
         broadcasterFullView = findViewById(R.id.broadcaster1_view);
@@ -171,8 +176,7 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                 fullScreenButton.setImageResource(R.drawable.ic_full_screened);
                 exitButton.setVisibility(View.GONE);
                 muteAudioButton.setVisibility(View.GONE);
-                audienceRecyclerView.initViewContainer(getApplicationContext(), config().mUid, new HashMap<>());
-                audienceRecyclerView.setVisibility(View.GONE);
+                audienceRecyclerView.setVisibility(View.INVISIBLE);
                 switchCameraButton.setVisibility(View.GONE);
                 if (currentMaterial == null) {
                     broadcasterFullView.setVisibility(View.VISIBLE);
@@ -191,7 +195,6 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                 muteAudioButton.setVisibility(View.VISIBLE);
                 switchCameraButton.setVisibility(View.VISIBLE);
                 audienceRecyclerView.setVisibility(View.VISIBLE);
-                audienceRecyclerView.initViewContainer(getApplicationContext(), config().mUid, surfaceViewHashMap);
                 if (currentMaterial == null) {
                     broadcasterFullView.removeView(remoteBroadcasterSurfaceView);
                     broadcasterFullView.setVisibility(View.GONE);
@@ -423,12 +426,9 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                                             if (remoteBroadcasterSurfaceView != null) {
                                                 broadcasterView.removeView(remoteBroadcasterSurfaceView);
                                                 broadcasterView.setVisibility(View.GONE);
-
-//                                                if (broadcasterSmallView.getChildCount() == 0) {
-//                                                    broadcasterSmallView.setVisibility(View.VISIBLE);
-//                                                    broadcasterSmallView.removeAllViews();
-//                                                    broadcasterSmallView.addView(remoteBroadcasterSurfaceView);
-//                                                }
+//
+//                                                surfaceViewHashMap.put(Integer.parseInt(broadcasterId), remoteBroadcasterSurfaceView);
+//                                                audienceRecyclerView.initViewContainer(getApplicationContext(), config().mUid, surfaceViewHashMap);
                                             }
                                             pageText.setVisibility(View.VISIBLE);
                                             docImage.setVisibility(View.VISIBLE);
@@ -449,8 +449,12 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
 
                             currentMaterial = null;
 
-                            surfaceViewHashMap.remove(broadcasterId);
-                            audienceRecyclerView.initViewContainer(getApplicationContext(), config().mUid, surfaceViewHashMap);
+                            AudienceVideo audienceVideo = new AudienceVideo();
+                            audienceVideo.setBroadcaster(true);
+                            audienceVideo.setMuted(false);
+                            audienceVideo.setName("主持人");
+                            audienceVideo.setSurfaceView(remoteBroadcasterSurfaceView);
+                            audienceVideoAdapter.deleteItem(audienceVideo);
 
                             broadcasterView.setVisibility(View.VISIBLE);
                             broadcasterView.removeAllViews();
@@ -505,8 +509,8 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                         }
 
                         remoteBroadcasterSurfaceView = RtcEngine.CreateRendererView(getApplicationContext());
-                        remoteBroadcasterSurfaceView.setZOrderOnTop(true);
-                        remoteBroadcasterSurfaceView.setZOrderMediaOverlay(true);
+                        remoteBroadcasterSurfaceView.setZOrderOnTop(false);
+                        remoteBroadcasterSurfaceView.setZOrderMediaOverlay(false);
                         rtcEngine().setupRemoteVideo(new VideoCanvas(remoteBroadcasterSurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, uid));
 
                         broadcastTipsText.setVisibility(View.GONE);
@@ -519,8 +523,12 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                             pageText.setText("第" + currentMaterialPublish.getPriority() + "/" + currentMaterial.getMeetingMaterialsPublishList().size() + "页");
                             Picasso.with(InviteMeetingAudienceActivity.this).load(currentMaterialPublish.getUrl()).into(docImage);
 
-                            surfaceViewHashMap.put(uid, remoteBroadcasterSurfaceView);
-                            audienceRecyclerView.initViewContainer(getApplicationContext(), config().mUid, surfaceViewHashMap);
+                            AudienceVideo audienceVideo = new AudienceVideo();
+                            audienceVideo.setName("主持人");
+                            audienceVideo.setMuted(false);
+                            audienceVideo.setBroadcaster(true);
+                            audienceVideo.setSurfaceView(remoteBroadcasterSurfaceView);
+                            audienceVideos.add(audienceVideo);
                         } else {
                             docImage.setVisibility(View.GONE);
                             pageText.setVisibility(View.GONE);
@@ -535,22 +543,32 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                         SurfaceView remoteAudienceSurfaceView = RtcEngine.CreateRendererView(getApplicationContext());
                         remoteAudienceSurfaceView.setZOrderOnTop(true);
                         remoteAudienceSurfaceView.setZOrderMediaOverlay(true);
-                        surfaceViewHashMap.put(uid, remoteAudienceSurfaceView);
                         rtcEngine().setupRemoteVideo(new VideoCanvas(remoteAudienceSurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, uid));
 
                         audienceRecyclerView.setVisibility(View.VISIBLE);
-                        audienceRecyclerView.initViewContainer(getApplicationContext(), config().mUid, surfaceViewHashMap); // first is now full view
+
+                        AudienceVideo audienceVideo = new AudienceVideo();
+                        audienceVideo.setName("参会人");
+                        audienceVideo.setMuted(false);
+                        audienceVideo.setBroadcaster(false);
+                        audienceVideo.setSurfaceView(remoteAudienceSurfaceView);
+                        audienceVideoAdapter.insertItem(audienceVideo);
                     }
                 } else {
                     SurfaceView localAudienceSurfaceView = RtcEngine.CreateRendererView(getApplicationContext());
                     localAudienceSurfaceView.setZOrderOnTop(true);
                     localAudienceSurfaceView.setZOrderMediaOverlay(true);
-                    surfaceViewHashMap.put(config().mUid, localAudienceSurfaceView);
                     rtcEngine().setupLocalVideo(new VideoCanvas(localAudienceSurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, config().mUid));
                     worker().preview(true, localAudienceSurfaceView, config().mUid);
 
                     audienceRecyclerView.setVisibility(View.VISIBLE);
-                    audienceRecyclerView.initViewContainer(getApplicationContext(), config().mUid, surfaceViewHashMap); // first is now full view
+
+                    AudienceVideo audienceVideo = new AudienceVideo();
+                    audienceVideo.setName("参会人");
+                    audienceVideo.setMuted(false);
+                    audienceVideo.setBroadcaster(false);
+                    audienceVideo.setSurfaceView(localAudienceSurfaceView);
+                    audienceVideoAdapter.insertItem(audienceVideo);
 
                     if ("true".equals(agora.getIsTest())) {
                         worker().joinChannel(null, channelName, config().mUid);
@@ -582,9 +600,12 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                 broadcasterView.removeView(remoteBroadcasterSurfaceView);
                 broadcasterView.setVisibility(View.GONE);
 
-                surfaceViewHashMap.put(Integer.parseInt(broadcasterId), remoteBroadcasterSurfaceView);
-                audienceRecyclerView.initViewContainer(getApplicationContext(), config().mUid, surfaceViewHashMap);
-
+                AudienceVideo audienceVideo = new AudienceVideo();
+                audienceVideo.setName("参会人");
+                audienceVideo.setMuted(false);
+                audienceVideo.setBroadcaster(false);
+                audienceVideo.setSurfaceView(remoteBroadcasterSurfaceView);
+                audienceVideoAdapter.insertItem(audienceVideo);
             }
 
             pageText.setVisibility(View.VISIBLE);
@@ -759,13 +780,21 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                 } else {
 
                 }
-                surfaceViewHashMap.remove(uid);
-                audienceRecyclerView.initViewContainer(getApplicationContext(), config().mUid, surfaceViewHashMap);
+                AudienceVideo audienceVideo = new AudienceVideo();
+                audienceVideo.setName("主持人");
+                audienceVideo.setMuted(false);
+                audienceVideo.setBroadcaster(true);
+                audienceVideo.setSurfaceView(remoteBroadcasterSurfaceView);
+                audienceVideoAdapter.deleteItem(audienceVideo);
             } else {
-                surfaceViewHashMap.remove(uid);
-                audienceRecyclerView.initViewContainer(getApplicationContext(), config().mUid, surfaceViewHashMap);
+                AudienceVideo audienceVideo = new AudienceVideo();
+                audienceVideo.setName("主持人");
+                audienceVideo.setMuted(false);
+                audienceVideo.setBroadcaster(true);
+                audienceVideo.setSurfaceView(remoteBroadcasterSurfaceView);
+                audienceVideoAdapter.deleteItem(audienceVideo);
 
-                if (surfaceViewHashMap.isEmpty()) {
+                if (audienceVideoAdapter.getItemCount() == 0) {
                     audienceRecyclerView.setVisibility(View.GONE);
                 }
             }

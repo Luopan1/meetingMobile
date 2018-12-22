@@ -116,7 +116,7 @@
 
         </FrameLayout>
 
-        <io.agora.openlive.ui.AudienceRecyclerView
+        <android.support.v7.widget.RecyclerView
             android:id="@+id/audience_list"
             android:layout_width="0dp"
             android:layout_height="220dp"
