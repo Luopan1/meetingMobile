@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.SurfaceView;
 import android.view.View;
@@ -23,6 +24,8 @@ import com.hezy.guide.phone.utils.helper.ImageHelper;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class AudienceVideoAdapter extends RecyclerView.Adapter<AudienceVideoAdapter.AudienceVideoViewHolder> {
@@ -35,12 +38,12 @@ public class AudienceVideoAdapter extends RecyclerView.Adapter<AudienceVideoAdap
         this.audienceVideos = audienceVideos;
     }
 
-    public void insertItem(AudienceVideo audienceVideo){
-        this.audienceVideos.add(audienceVideo);
+    public  synchronized void insertItem(AudienceVideo audienceVideo) {
+        this.audienceVideos.add(audienceVideos.size(), audienceVideo);
         notifyItemInserted(audienceVideos.size());
     }
 
-    public void deleteItem(AudienceVideo audienceVideo) {
+    public synchronized void deleteItem(AudienceVideo audienceVideo) {
         int position = audienceVideos.indexOf(audienceVideo);
         this.audienceVideos.remove(audienceVideo);
         notifyItemRemoved(position);
@@ -53,9 +56,21 @@ public class AudienceVideoAdapter extends RecyclerView.Adapter<AudienceVideoAdap
     }
 
     @Override
-    public void onBindViewHolder(@NonNull AudienceVideoViewHolder holder, final int position) {
-        AudienceVideo audienceVideo = audienceVideos.get(position);
+    public void onBindViewHolder(@NonNull final AudienceVideoViewHolder holder, final int position) {
+        final AudienceVideo audienceVideo = audienceVideos.get(position);
         holder.nameText.setText(audienceVideo.getName());
+
+        if (audienceVideo.isBroadcaster()) {
+            holder.labelText.setVisibility(View.VISIBLE);
+        } else {
+            holder.labelText.setVisibility(View.GONE);
+        }
+
+        if (audienceVideo.isMuted()) {
+            holder.volumeImage.setVisibility(View.GONE);
+        } else {
+            holder.volumeImage.setVisibility(View.VISIBLE);
+        }
 
         if (holder.videoLayout.getChildCount() == 0) {
             SurfaceView surfaceView = audienceVideo.getSurfaceView();

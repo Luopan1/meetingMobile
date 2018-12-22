@@ -140,7 +140,7 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
 
         audienceRecyclerView = findViewById(R.id.audience_list);
         audienceRecyclerView.setLayoutManager(new GridLayoutManager(getApplicationContext(), 3, RecyclerView.VERTICAL, false));
-        audienceRecyclerView.addItemDecoration(new SpaceItemDecoration(DensityUtil.dip2px(getApplicationContext(), 3), 0, 0, DensityUtil.dip2px(getApplicationContext(), 3)));
+        audienceRecyclerView.addItemDecoration(new SpaceItemDecoration(DensityUtil.dip2px(getApplicationContext(), 4), 0, 0, DensityUtil.dip2px(getApplicationContext(), 4)));
         audienceVideoAdapter = new AudienceVideoAdapter(this, audienceVideos);
         audienceRecyclerView.setAdapter(audienceVideoAdapter);
 
@@ -426,9 +426,6 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                                             if (remoteBroadcasterSurfaceView != null) {
                                                 broadcasterView.removeView(remoteBroadcasterSurfaceView);
                                                 broadcasterView.setVisibility(View.GONE);
-//
-//                                                surfaceViewHashMap.put(Integer.parseInt(broadcasterId), remoteBroadcasterSurfaceView);
-//                                                audienceRecyclerView.initViewContainer(getApplicationContext(), config().mUid, surfaceViewHashMap);
                                             }
                                             pageText.setVisibility(View.VISIBLE);
                                             docImage.setVisibility(View.VISIBLE);
@@ -452,7 +449,7 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                             AudienceVideo audienceVideo = new AudienceVideo();
                             audienceVideo.setBroadcaster(true);
                             audienceVideo.setMuted(false);
-                            audienceVideo.setName("主持人");
+                            audienceVideo.setName("主持人" + broadcasterId);
                             audienceVideo.setSurfaceView(remoteBroadcasterSurfaceView);
                             audienceVideoAdapter.deleteItem(audienceVideo);
 
@@ -524,11 +521,11 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                             Picasso.with(InviteMeetingAudienceActivity.this).load(currentMaterialPublish.getUrl()).into(docImage);
 
                             AudienceVideo audienceVideo = new AudienceVideo();
-                            audienceVideo.setName("主持人");
+                            audienceVideo.setName("主持人" + broadcasterId);
                             audienceVideo.setMuted(false);
                             audienceVideo.setBroadcaster(true);
                             audienceVideo.setSurfaceView(remoteBroadcasterSurfaceView);
-                            audienceVideos.add(audienceVideo);
+                            audienceVideoAdapter.insertItem(audienceVideo);
                         } else {
                             docImage.setVisibility(View.GONE);
                             pageText.setVisibility(View.GONE);
@@ -548,7 +545,7 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                         audienceRecyclerView.setVisibility(View.VISIBLE);
 
                         AudienceVideo audienceVideo = new AudienceVideo();
-                        audienceVideo.setName("参会人");
+                        audienceVideo.setName("参会人" + uid);
                         audienceVideo.setMuted(false);
                         audienceVideo.setBroadcaster(false);
                         audienceVideo.setSurfaceView(remoteAudienceSurfaceView);
@@ -564,7 +561,7 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                     audienceRecyclerView.setVisibility(View.VISIBLE);
 
                     AudienceVideo audienceVideo = new AudienceVideo();
-                    audienceVideo.setName("参会人");
+                    audienceVideo.setName("参会人" + config().mUid);
                     audienceVideo.setMuted(false);
                     audienceVideo.setBroadcaster(false);
                     audienceVideo.setSurfaceView(localAudienceSurfaceView);
@@ -601,7 +598,7 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                 broadcasterView.setVisibility(View.GONE);
 
                 AudienceVideo audienceVideo = new AudienceVideo();
-                audienceVideo.setName("参会人");
+                audienceVideo.setName("主持人" + broadcasterId);
                 audienceVideo.setMuted(false);
                 audienceVideo.setBroadcaster(false);
                 audienceVideo.setSurfaceView(remoteBroadcasterSurfaceView);
@@ -777,20 +774,21 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                     currentMaterial = null;
                     docImage.setVisibility(View.GONE);
                     fullDocImage.setVisibility(View.GONE);
+
+                    AudienceVideo audienceVideo = new AudienceVideo();
+                    audienceVideo.setName("主持人" + uid);
+                    audienceVideo.setMuted(false);
+                    audienceVideo.setBroadcaster(true);
+                    audienceVideo.setSurfaceView(remoteBroadcasterSurfaceView);
+                    audienceVideoAdapter.deleteItem(audienceVideo);
                 } else {
 
                 }
-                AudienceVideo audienceVideo = new AudienceVideo();
-                audienceVideo.setName("主持人");
-                audienceVideo.setMuted(false);
-                audienceVideo.setBroadcaster(true);
-                audienceVideo.setSurfaceView(remoteBroadcasterSurfaceView);
-                audienceVideoAdapter.deleteItem(audienceVideo);
             } else {
                 AudienceVideo audienceVideo = new AudienceVideo();
-                audienceVideo.setName("主持人");
+                audienceVideo.setName("参会人" + uid);
                 audienceVideo.setMuted(false);
-                audienceVideo.setBroadcaster(true);
+                audienceVideo.setBroadcaster(false);
                 audienceVideo.setSurfaceView(remoteBroadcasterSurfaceView);
                 audienceVideoAdapter.deleteItem(audienceVideo);
 

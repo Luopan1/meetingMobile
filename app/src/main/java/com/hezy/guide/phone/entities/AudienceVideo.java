@@ -53,15 +53,13 @@ public class AudienceVideo {
 
         if (broadcaster != that.broadcaster) return false;
         if (muted != that.muted) return false;
-        if (name != null ? !name.equals(that.name) : that.name != null) return false;
-        return surfaceView != null ? surfaceView.equals(that.surfaceView) : that.surfaceView == null;
+        return name.equals(that.name);
     }
 
     @Override
     public int hashCode() {
-        int result = name != null ? name.hashCode() : 0;
+        int result = name.hashCode();
         result = 31 * result + (broadcaster ? 1 : 0);
-        result = 31 * result + (surfaceView != null ? surfaceView.hashCode() : 0);
         result = 31 * result + (muted ? 1 : 0);
         return result;
     }
