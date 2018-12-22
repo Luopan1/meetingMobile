@@ -444,14 +444,15 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                             pageText.setVisibility(View.GONE);
                             docImage.setVisibility(View.GONE);
 
-                            currentMaterial = null;
-
-                            AudienceVideo audienceVideo = new AudienceVideo();
-                            audienceVideo.setBroadcaster(true);
-                            audienceVideo.setMuted(false);
-                            audienceVideo.setName("主持人" + broadcasterId);
-                            audienceVideo.setSurfaceView(remoteBroadcasterSurfaceView);
-                            audienceVideoAdapter.deleteItem(audienceVideo);
+                            if (currentMaterial != null) {
+                                AudienceVideo audienceVideo = new AudienceVideo();
+                                audienceVideo.setMuted(false);
+                                audienceVideo.setBroadcaster(true);
+                                audienceVideo.setName("主持人" + broadcasterId);
+                                audienceVideo.setSurfaceView(remoteBroadcasterSurfaceView);
+                                audienceVideoAdapter.deleteItem(audienceVideo);
+                                currentMaterial = null;
+                            }
 
                             broadcasterView.setVisibility(View.VISIBLE);
                             broadcasterView.removeAllViews();
@@ -776,7 +777,7 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                     fullDocImage.setVisibility(View.GONE);
 
                     AudienceVideo audienceVideo = new AudienceVideo();
-                    audienceVideo.setName("主持人" + uid);
+                    audienceVideo.setName("主持人" + broadcasterId);
                     audienceVideo.setMuted(false);
                     audienceVideo.setBroadcaster(true);
                     audienceVideo.setSurfaceView(remoteBroadcasterSurfaceView);

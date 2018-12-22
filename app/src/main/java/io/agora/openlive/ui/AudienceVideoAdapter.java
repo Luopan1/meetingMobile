@@ -31,21 +31,25 @@ import java.util.List;
 public class AudienceVideoAdapter extends RecyclerView.Adapter<AudienceVideoAdapter.AudienceVideoViewHolder> {
 
     private Context context;
-    private List<AudienceVideo> audienceVideos;
+    private ArrayList<AudienceVideo> audienceVideos;
 
-    public AudienceVideoAdapter(Context context, List<AudienceVideo> audienceVideos) {
+    public AudienceVideoAdapter(Context context, ArrayList<AudienceVideo> audienceVideos) {
         this.context = context;
         this.audienceVideos = audienceVideos;
     }
 
     public  synchronized void insertItem(AudienceVideo audienceVideo) {
+        Log.v("insertItem", audienceVideo.getName() + "---" + audienceVideos.size());
         this.audienceVideos.add(audienceVideos.size(), audienceVideo);
+        Log.v("insertItem", audienceVideo.getName() + "---" + audienceVideos.size());
         notifyItemInserted(audienceVideos.size());
     }
 
     public synchronized void deleteItem(AudienceVideo audienceVideo) {
         int position = audienceVideos.indexOf(audienceVideo);
+        Log.v("deleteItem", audienceVideo.getName() + "---" + audienceVideos.size() + "---" + position);
         this.audienceVideos.remove(audienceVideo);
+        Log.v("deleteItem", audienceVideo.getName() + "---" + audienceVideos.size() + "---" + position);
         notifyItemRemoved(position);
     }
 
