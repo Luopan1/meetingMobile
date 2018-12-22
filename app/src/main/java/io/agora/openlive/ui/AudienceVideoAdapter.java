@@ -31,11 +31,10 @@ import java.util.List;
 public class AudienceVideoAdapter extends RecyclerView.Adapter<AudienceVideoAdapter.AudienceVideoViewHolder> {
 
     private Context context;
-    private ArrayList<AudienceVideo> audienceVideos;
+    private ArrayList<AudienceVideo> audienceVideos = new ArrayList<AudienceVideo>();
 
-    public AudienceVideoAdapter(Context context, ArrayList<AudienceVideo> audienceVideos) {
+    public AudienceVideoAdapter(Context context) {
         this.context = context;
-        this.audienceVideos = audienceVideos;
     }
 
     public  synchronized void insertItem(AudienceVideo audienceVideo) {

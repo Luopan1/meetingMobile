@@ -77,9 +77,6 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
     private RecyclerView audienceRecyclerView;
     private AudienceVideoAdapter audienceVideoAdapter;
 
-//    private final HashMap<Integer, SurfaceView> surfaceViewHashMap = new HashMap<Integer, SurfaceView>();
-    private ArrayList<AudienceVideo> audienceVideos = new ArrayList<AudienceVideo>();
-
     private FrameLayout broadcasterView, broadcasterFullView;
     private TextView broadcastNameText, broadcastTipsText;
     private ImageButton muteAudioButton, fullScreenButton, switchCameraButton;
@@ -141,7 +138,7 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
         audienceRecyclerView = findViewById(R.id.audience_list);
         audienceRecyclerView.setLayoutManager(new GridLayoutManager(getApplicationContext(), 3, RecyclerView.VERTICAL, false));
         audienceRecyclerView.addItemDecoration(new SpaceItemDecoration(DensityUtil.dip2px(getApplicationContext(), 4), 0, 0, DensityUtil.dip2px(getApplicationContext(), 4)));
-        audienceVideoAdapter = new AudienceVideoAdapter(this, audienceVideos);
+        audienceVideoAdapter = new AudienceVideoAdapter(this);
         audienceRecyclerView.setAdapter(audienceVideoAdapter);
 
         broadcasterView = findViewById(R.id.broadcaster_view);
@@ -790,7 +787,6 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                 audienceVideo.setName("参会人" + uid);
                 audienceVideo.setMuted(false);
                 audienceVideo.setBroadcaster(false);
-                audienceVideo.setSurfaceView(remoteBroadcasterSurfaceView);
                 audienceVideoAdapter.deleteItem(audienceVideo);
 
                 if (audienceVideoAdapter.getItemCount() == 0) {
