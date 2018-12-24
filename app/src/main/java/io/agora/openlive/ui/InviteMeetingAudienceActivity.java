@@ -207,11 +207,11 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
 
         exitButton = findViewById(R.id.finish_meeting);
         exitButton.setOnClickListener(view -> {
-            showDialog(1, "确定退出会议吗？", "取消", "确定", null);
+            showDialog(1, "确定退出会议吗？", "取消", "确定");
         });
 
         findViewById(R.id.exit).setOnClickListener(view -> {
-            showDialog(1, "确定退出会议吗？", "取消", "确定", null);
+            showDialog(1, "确定退出会议吗？", "取消", "确定");
         });
 
         worker().configEngine(Constants.CLIENT_ROLE_BROADCASTER, Constants.VIDEO_PROFILE_180P);
@@ -345,28 +345,28 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
             public void onMessageInstantReceive(final String account, final int uid, final String msg) {
                 super.onMessageInstantReceive(account, uid, msg);
                 runOnUiThread(() -> {
-                    try {
-                        if (BuildConfig.DEBUG) {
-                            Toast.makeText(InviteMeetingAudienceActivity.this, "onMessageInstantReceive 收到主持人" + account + "发来的消息" + msg, Toast.LENGTH_SHORT).show();
-                        }
-                        JSONObject jsonObject = new JSONObject(msg);
-                        if (jsonObject.has("finish")) {
-                            boolean finish = jsonObject.getBoolean("finish");
-                            if (finish) {
-                                if (!TextUtils.isEmpty(meetingHostJoinTraceId)) {
-                                    HashMap<String, Object> params = new HashMap<String, Object>();
-                                    params.put("meetingHostJoinTraceId", meetingHostJoinTraceId);
-                                    params.put("status", 2);
-                                    params.put("meetingId", meetingJoin.getMeeting().getId());
-                                    params.put("type", 2);
-                                    params.put("leaveType", 1);
-                                    ApiClient.getInstance().meetingHostStats(TAG, meetingHostJoinTraceCallback, params);
-                                }
-                            }
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                    if (BuildConfig.DEBUG) {
+                        Toast.makeText(InviteMeetingAudienceActivity.this, "onMessageInstantReceive 收到主持人" + account + "发来的消息" + msg, Toast.LENGTH_SHORT).show();
                     }
+//                    try {
+//                        JSONObject jsonObject = new JSONObject(msg);
+//                        if (jsonObject.has("finish")) {
+//                            boolean finish = jsonObject.getBoolean("finish");
+//                            if (finish) {
+//                                if (!TextUtils.isEmpty(meetingJoinTraceId)) {
+//                                    HashMap<String, Object> params = new HashMap<String, Object>();
+//                                    params.put("meetingJoinTraceId", meetingJoinTraceId);
+//                                    params.put("meetingId", meetingJoin.getMeeting().getId());
+//                                    params.put("status", 2);
+//                                    params.put("type", 2);
+//                                    params.put("leaveType", 1);
+//                                    ApiClient.getInstance().meetingJoinStats(TAG, meetingJoinStatsCallback, params);
+//                                }
+//                            }
+//                        }
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
                 });
             }
 
@@ -618,70 +618,31 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
         }
     };
 
-    private String meetingHostJoinTraceId;
-
-    private OkHttpCallback meetingHostJoinTraceCallback = new OkHttpCallback<Bucket<MeetingHostingStats>>() {
-
-        @Override
-        public void onSuccess(Bucket<MeetingHostingStats> meetingHostingStatsBucket) {
-            if (TextUtils.isEmpty(meetingHostJoinTraceId)) {
-                meetingHostJoinTraceId = meetingHostingStatsBucket.getData().getId();
-            } else {
-                meetingHostJoinTraceId = null;
-            }
-        }
-
-        @Override
-        public void onFailure(int errorCode, BaseException exception) {
-            super.onFailure(errorCode, exception);
-            Toast.makeText(InviteMeetingAudienceActivity.this, errorCode + "---" + exception.getMessage(), Toast.LENGTH_SHORT).show();
-        }
-    };
-
     private Dialog dialog;
 
-    private void showDialog(final int type, final String title, final String leftText, final String rightText, final Audience audience) {
+    private void showDialog(final int type, final String title, final String leftText, final String rightText) {
         View view = View.inflate(this, R.layout.dialog_selector, null);
         TextView titleText = view.findViewById(R.id.title);
         titleText.setText(title);
 
         Button leftButton = view.findViewById(R.id.left);
         leftButton.setText(leftText);
-        leftButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.cancel();
-            }
-        });
+        leftButton.setOnClickListener(view1 -> dialog.cancel());
 
         Button rightButton = view.findViewById(R.id.right);
         rightButton.setText(rightText);
-        rightButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.cancel();
-                if (type == 1) {
-                    if (!TextUtils.isEmpty(meetingHostJoinTraceId)) {
-                        HashMap<String, Object> params = new HashMap<String, Object>();
-                        params.put("meetingHostJoinTraceId", meetingHostJoinTraceId);
-                        params.put("status", 2);
-                        params.put("meetingId", meetingJoin.getMeeting().getId());
-                        params.put("type", 2);
-                        params.put("leaveType", 1);
-                        ApiClient.getInstance().meetingHostStats(TAG, meetingHostJoinTraceCallback, params);
-                    }
-                    doLeaveChannel();
-                    if (agoraAPI.getStatus() == 2) {
-                        agoraAPI.logout();
-                    }
-                    finish();
+        rightButton.setOnClickListener(view2 -> {
+            dialog.cancel();
+            if (type == 1) {
+                doLeaveChannel();
+                if (agoraAPI.getStatus() == 2) {
+                    agoraAPI.logout();
                 }
+                finish();
             }
         });
-
         dialog = new Dialog(this, R.style.MyDialog);
         dialog.setContentView(view);
-
         Window dialogWindow = dialog.getWindow();
         WindowManager.LayoutParams lp = dialogWindow.getAttributes();
         lp.width = 740;
@@ -702,12 +663,15 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
         worker().leaveChannel(config().mChannel);
         worker().preview(false, null, 0);
 
-        HashMap<String, Object> params = new HashMap<String, Object>();
-        params.put("meetingJoinTraceId", meetingJoinTraceId);
-        params.put("meetingId", meetingJoin.getMeeting().getId());
-        params.put("status", 2);
-        params.put("type", 2);
-        ApiClient.getInstance().meetingJoinStats(TAG, meetingJoinStatsCallback, params);
+        if (!TextUtils.isEmpty(meetingJoinTraceId)) {
+            HashMap<String, Object> params = new HashMap<String, Object>();
+            params.put("meetingJoinTraceId", meetingJoinTraceId);
+            params.put("meetingId", meetingJoin.getMeeting().getId());
+            params.put("status", 2);
+            params.put("type", 2);
+            params.put("leaveType", 1);
+            ApiClient.getInstance().meetingJoinStats(TAG, meetingJoinStatsCallback, params);
+        }
     }
 
     @Override
@@ -743,8 +707,10 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
         public void onSuccess(Bucket<MeetingJoinStats> meetingJoinStatsBucket) {
             if (TextUtils.isEmpty(meetingJoinTraceId)) {
                 meetingJoinTraceId = meetingJoinStatsBucket.getData().getId();
+                Log.v("meeting_join", meetingJoinStatsBucket.toString());
             } else {
                 meetingJoinTraceId = null;
+                Log.v("meeting_join", "meeting join trace id is null");
             }
         }
     };
@@ -888,7 +854,7 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
     @Override
     public void onBackPressed() {
         if (dialog == null || !dialog.isShowing()) {
-            showDialog(1, "确定退出会议吗？", "取消", "确定", null);
+            showDialog(1, "确定退出会议吗？", "取消", "确定");
         }
     }
 
