@@ -523,12 +523,6 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
             }
         });
 
-        HashMap<String, Object> params = new HashMap<String, Object>();
-        params.put("meetingId", meetingJoin.getMeeting().getId());
-        params.put("status", 1);
-        params.put("type", 1);
-        ApiClient.getInstance().meetingJoinStats(TAG, meetingJoinStatsCallback(), params);
-
     }
 
     private Dialog exitDialog;
@@ -796,6 +790,13 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
 
             config().mUid = uid;
             channelName = channel;
+
+            HashMap<String, Object> params = new HashMap<String, Object>();
+            params.put("meetingId", meetingJoin.getMeeting().getId());
+            params.put("status", 1);
+            params.put("type", 1);
+            ApiClient.getInstance().meetingJoinStats(TAG, meetingJoinStatsCallback(), params);
+
 
             if ("true".equals(agora.getIsTest())) {
                 agoraAPI.login2(agora.getAppID(), "" + uid, "noneed_token", 0, "", 20, 30);
