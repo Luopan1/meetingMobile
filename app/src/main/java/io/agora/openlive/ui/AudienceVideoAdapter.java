@@ -50,9 +50,9 @@ public class AudienceVideoAdapter extends RecyclerView.Adapter<AudienceVideoAdap
             AudienceVideo audienceVideo = iterator.next();
             if (audienceVideo.getUid() == uid) {
                 int position = audienceVideos.indexOf(audienceVideo);
-                Log.v("delete", "1--" + audienceVideos.size() + "--position--" + position);
+//                Log.v("delete", "1--" + audienceVideos.size() + "--position--" + position);
                 iterator.remove();
-                Log.v("delete", "2--" + audienceVideos.size());
+//                Log.v("delete", "2--" + audienceVideos.size());
                 notifyItemRemoved(position);
             }
         }
