@@ -355,25 +355,6 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                     if (BuildConfig.DEBUG) {
                         Toast.makeText(InviteMeetingAudienceActivity.this, "onMessageInstantReceive 收到主持人" + account + "发来的消息" + msg, Toast.LENGTH_SHORT).show();
                     }
-//                    try {
-//                        JSONObject jsonObject = new JSONObject(msg);
-//                        if (jsonObject.has("finish")) {
-//                            boolean finish = jsonObject.getBoolean("finish");
-//                            if (finish) {
-//                                if (!TextUtils.isEmpty(meetingJoinTraceId)) {
-//                                    HashMap<String, Object> params = new HashMap<String, Object>();
-//                                    params.put("meetingJoinTraceId", meetingJoinTraceId);
-//                                    params.put("meetingId", meetingJoin.getMeeting().getId());
-//                                    params.put("status", 2);
-//                                    params.put("type", 2);
-//                                    params.put("leaveType", 1);
-//                                    ApiClient.getInstance().meetingJoinStats(TAG, meetingJoinStatsCallback, params);
-//                                }
-//                            }
-//                        }
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
-//                    }
                 });
             }
 

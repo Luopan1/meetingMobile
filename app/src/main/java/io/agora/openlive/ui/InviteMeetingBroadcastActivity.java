@@ -223,8 +223,8 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
             docLayout.setVisibility(View.GONE);
 
             AudienceVideo audienceVideo = new AudienceVideo();
+            audienceVideo.setUid(config().mUid);
             audienceVideo.setName("主持人" + config().mUid);
-            audienceVideo.setMuted(false);
             audienceVideo.setBroadcaster(true);
             audienceVideoAdapter.deleteItem(audienceVideo);
 
@@ -322,6 +322,7 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
         });
 
         worker().configEngine(Constants.CLIENT_ROLE_BROADCASTER, Constants.VIDEO_PROFILE_360P);
+        rtcEngine().enableAudioVolumeIndication(400, 3);
 
         localBroadcasterSurfaceView = RtcEngine.CreateRendererView(getApplicationContext());
         rtcEngine().setupLocalVideo(new VideoCanvas(localBroadcasterSurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, config().mUid));
@@ -713,8 +714,8 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
             Picasso.with(InviteMeetingBroadcastActivity.this).load(imageUrl).into(docImage);
 
             AudienceVideo audienceVideo = new AudienceVideo();
+            audienceVideo.setUid(config().mUid);
             audienceVideo.setName("主持人" + config().mUid);
-            audienceVideo.setMuted(false);
             audienceVideo.setBroadcaster(true);
             audienceVideo.setSurfaceView(localBroadcasterSurfaceView);
             audienceVideoAdapter.insertItem(audienceVideo);
@@ -860,8 +861,8 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
             audienceRecyclerView.setVisibility(View.VISIBLE);
 
             AudienceVideo audienceVideo = new AudienceVideo();
+            audienceVideo.setUid(uid);
             audienceVideo.setName("参会人" + uid);
-            audienceVideo.setMuted(false);
             audienceVideo.setBroadcaster(false);
             audienceVideo.setSurfaceView(remoteAudienceSurfaceView);
             audienceVideoAdapter.insertItem(audienceVideo);
@@ -877,8 +878,8 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
             }
 
             AudienceVideo audienceVideo = new AudienceVideo();
+            audienceVideo.setUid(uid);
             audienceVideo.setName("参会人" + uid);
-            audienceVideo.setMuted(false);
             audienceVideo.setBroadcaster(false);
             audienceVideoAdapter.deleteItem(audienceVideo);
 

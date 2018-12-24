@@ -52,13 +52,13 @@ public class AudienceVideoAdapter extends RecyclerView.Adapter<AudienceVideoAdap
     public void setVolumeByUid(int uid, int volume){
         for (AudienceVideo audienceVideo : audienceVideos) {
             if (audienceVideo.getUid() == uid) {
-                Log.v("update_volume", "1--" + audienceVideo.toString());
+//                Log.v("update_volume", "1--" + audienceVideo.toString());
                 audienceVideo.setVolume(volume);
                 int position = audienceVideos.indexOf(audienceVideo);
-                Log.v("update_volume", "2--" + audienceVideo.toString() + "--position--" + position);
+//                Log.v("update_volume", "2--" + audienceVideo.toString() + "--position--" + position);
                 notifyItemChanged(position, 1);
             } else {
-                Log.v("update_volume", "不是更新它");
+//                Log.v("update_volume", "不是更新它");
             }
         }
     }
@@ -66,13 +66,13 @@ public class AudienceVideoAdapter extends RecyclerView.Adapter<AudienceVideoAdap
     public void setMutedStatusByUid(int uid, boolean muted){
         for (AudienceVideo audienceVideo : audienceVideos) {
             if (audienceVideo.getUid() == uid) {
-                Log.v("update_mute", "1--" + audienceVideo.toString());
+//                Log.v("update_mute", "1--" + audienceVideo.toString());
                 audienceVideo.setMuted(muted);
                 int position = audienceVideos.indexOf(audienceVideo);
-                Log.v("update_mute", "2--" + audienceVideo.toString() + "--position--" + position);
+//                Log.v("update_mute", "2--" + audienceVideo.toString() + "--position--" + position);
                 notifyItemChanged(position, 1);
             } else {
-                Log.v("update_mute", "不是更新它");
+//                Log.v("update_mute", "不是更新它");
             }
         }
     }
