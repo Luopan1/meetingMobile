@@ -174,8 +174,8 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                 exitButton.setVisibility(View.GONE);
                 muteAudioButton.setVisibility(View.GONE);
                 switchCameraButton.setVisibility(View.GONE);
-                stripSurfaceView(remoteBroadcasterSurfaceView);
                 if (currentMaterial == null) {
+                    stripSurfaceView(remoteBroadcasterSurfaceView);
                     broadcasterView.removeAllViews();
                     broadcasterView.setVisibility(View.GONE);
                     broadcasterFullView.setVisibility(View.VISIBLE);
@@ -194,8 +194,8 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                 exitButton.setVisibility(View.VISIBLE);
                 muteAudioButton.setVisibility(View.VISIBLE);
                 switchCameraButton.setVisibility(View.VISIBLE);
-                stripSurfaceView(remoteBroadcasterSurfaceView);
                 if (currentMaterial == null) {
+                    stripSurfaceView(remoteBroadcasterSurfaceView);
                     broadcasterFullView.removeAllViews();
                     broadcasterFullView.setVisibility(View.GONE);
                     broadcasterView.setVisibility(View.VISIBLE);
