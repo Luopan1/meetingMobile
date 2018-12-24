@@ -94,7 +94,7 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
     private boolean isFullScreen = false;
 
     private LinearLayout docLayout;
-    private FrameLayout broadcasterView, broadcasterFullView;
+    private FrameLayout broadcasterView, broadcasterFullView, audienceLayout;
     private TextView broadcasterNameText;
     private Button finishMeetingButton, pptButton, previewButton, nextButton, exitDocButton;
     private ImageButton muteAudioButton, fullScreenButton, switchCameraButton;
@@ -146,6 +146,7 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
         audienceVideoAdapter = new AudienceVideoAdapter(this);
         audienceRecyclerView.setAdapter(audienceVideoAdapter);
 
+        audienceLayout = findViewById(R.id.audience_layout);
         docLayout = findViewById(R.id.doc_layout);
         broadcasterNameText = findViewById(R.id.broadcaster_name);
         broadcasterNameText.setText("主持人：" + meetingJoin.getHostUser().getHostUserName());
@@ -268,7 +269,6 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
                 pptButton.setVisibility(View.GONE);
                 finishMeetingButton.setVisibility(View.GONE);
                 muteAudioButton.setVisibility(View.GONE);
-                audienceRecyclerView.setVisibility(View.INVISIBLE);
                 switchCameraButton.setVisibility(View.GONE);
                 if (currentMaterial == null) {
                     broadcasterFullView.setVisibility(View.VISIBLE);
@@ -280,6 +280,9 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
                     docFullImage.setVisibility(View.VISIBLE);
                     Picasso.with(this).load(currentMaterial.getMeetingMaterialsPublishList().get(position).getUrl()).into(docFullImage);
                 }
+                audienceLayout.removeView(audienceRecyclerView);
+                audienceRecyclerView.setVisibility(View.GONE);
+                audienceLayout.setVisibility(View.INVISIBLE);
                 isFullScreen = true;
             } else {
                 fullScreenButton.setImageResource(R.drawable.ic_full_screen);
@@ -287,7 +290,6 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
                 finishMeetingButton.setVisibility(View.VISIBLE);
                 muteAudioButton.setVisibility(View.VISIBLE);
                 switchCameraButton.setVisibility(View.VISIBLE);
-                audienceRecyclerView.setVisibility(View.VISIBLE);
                 if (currentMaterial == null) {
                     broadcasterFullView.removeView(localBroadcasterSurfaceView);
                     broadcasterFullView.setVisibility(View.GONE);
@@ -297,6 +299,9 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
                     docImage.setVisibility(View.VISIBLE);
                     docFullImage.setVisibility(View.GONE);
                 }
+                audienceRecyclerView.setVisibility(View.VISIBLE);
+                audienceLayout.setVisibility(View.VISIBLE);
+                audienceLayout.addView(audienceRecyclerView);
                 isFullScreen = false;
             }
         });
@@ -807,7 +812,6 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
             params.put("type", 1);
             ApiClient.getInstance().meetingJoinStats(TAG, meetingJoinStatsCallback(), params);
 
-
             if ("true".equals(agora.getIsTest())) {
                 agoraAPI.login2(agora.getAppID(), "" + uid, "noneed_token", 0, "", 20, 30);
             } else {
@@ -910,12 +914,18 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
 
     @Override
     public void onUserMuteAudio(int uid, boolean muted) {
-
+        runOnUiThread(() -> {
+            audienceVideoAdapter.setMutedStatusByUid(uid, muted);
+        });
     }
 
     @Override
     public void onAudioVolumeIndication(IRtcEngineEventHandler.AudioVolumeInfo[] speakers, int totalVolume) {
-
+        runOnUiThread(() -> {
+            for (IRtcEngineEventHandler.AudioVolumeInfo audioVolumeInfo : speakers) {
+                audienceVideoAdapter.setVolumeByUid(audioVolumeInfo.uid, audioVolumeInfo.volume);
+            }
+        });
     }
 
     @Override
