@@ -585,7 +585,7 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                 AudienceVideo audienceVideo = new AudienceVideo();
                 audienceVideo.setUid(Integer.parseInt(broadcasterId));
                 audienceVideo.setName("主持人" + broadcasterId);
-                audienceVideo.setBroadcaster(false);
+                audienceVideo.setBroadcaster(true);
                 audienceVideo.setSurfaceView(remoteBroadcasterSurfaceView);
                 audienceVideoAdapter.insertItem(audienceVideo);
             }
