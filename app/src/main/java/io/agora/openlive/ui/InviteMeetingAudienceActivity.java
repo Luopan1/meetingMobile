@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.SurfaceView;
@@ -25,6 +27,7 @@ import com.hezy.guide.phone.BuildConfig;
 import com.hezy.guide.phone.R;
 import com.hezy.guide.phone.entities.Agora;
 import com.hezy.guide.phone.entities.Audience;
+import com.hezy.guide.phone.entities.AudienceVideo;
 import com.hezy.guide.phone.entities.Bucket;
 import com.hezy.guide.phone.entities.HostUser;
 import com.hezy.guide.phone.entities.Material;
@@ -47,6 +50,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
@@ -70,9 +74,8 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
     private Material currentMaterial;
     private int doc_index = 0;
 
-    private AudienceRecyclerView audienceRecyclerView;
-
-    private final HashMap<Integer, SurfaceView> surfaceViewHashMap = new HashMap<Integer, SurfaceView>();
+    private RecyclerView audienceRecyclerView;
+    private AudienceVideoAdapter audienceVideoAdapter;
 
     private FrameLayout broadcasterView, broadcasterFullView;
     private TextView broadcastNameText, broadcastTipsText;
@@ -132,9 +135,11 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
 
         config().mUid = Integer.parseInt(UIDUtil.generatorUID(Preferences.getUserId()));
 
-
         audienceRecyclerView = findViewById(R.id.audience_list);
-        audienceRecyclerView.addItemDecoration(new SpaceItemDecoration(DensityUtil.dip2px(getApplicationContext(), 3), 0, 0, DensityUtil.dip2px(getApplicationContext(), 3)));
+        audienceRecyclerView.setLayoutManager(new GridLayoutManager(getApplicationContext(), 3, RecyclerView.VERTICAL, false));
+        audienceRecyclerView.addItemDecoration(new SpaceItemDecoration(DensityUtil.dip2px(getApplicationContext(), 4), 0, 0, DensityUtil.dip2px(getApplicationContext(), 4)));
+        audienceVideoAdapter = new AudienceVideoAdapter(this);
+        audienceRecyclerView.setAdapter(audienceVideoAdapter);
 
         broadcasterView = findViewById(R.id.broadcaster_view);
         broadcasterFullView = findViewById(R.id.broadcaster1_view);
@@ -168,15 +173,18 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                 fullScreenButton.setImageResource(R.drawable.ic_full_screened);
                 exitButton.setVisibility(View.GONE);
                 muteAudioButton.setVisibility(View.GONE);
-                audienceRecyclerView.initViewContainer(getApplicationContext(), config().mUid, new HashMap<>());
-                audienceRecyclerView.setVisibility(View.GONE);
+                audienceRecyclerView.setVisibility(View.INVISIBLE);
                 switchCameraButton.setVisibility(View.GONE);
-                if (currentMaterial != null) {
+                if (currentMaterial == null) {
+                    broadcasterFullView.setVisibility(View.VISIBLE);
+                    broadcasterView.removeView(remoteBroadcasterSurfaceView);
+                    broadcasterView.setVisibility(View.GONE);
+                    broadcasterFullView.addView(remoteBroadcasterSurfaceView);
+                } else {
                     docImage.setVisibility(View.GONE);
                     fullDocImage.setVisibility(View.VISIBLE);
                     Picasso.with(this).load(currentMaterial.getMeetingMaterialsPublishList().get(doc_index).getUrl()).into(fullDocImage);
                 }
-
                 isFullScreen = true;
             } else {
                 fullScreenButton.setImageResource(R.drawable.ic_full_screen);
@@ -184,10 +192,15 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                 muteAudioButton.setVisibility(View.VISIBLE);
                 switchCameraButton.setVisibility(View.VISIBLE);
                 audienceRecyclerView.setVisibility(View.VISIBLE);
-                audienceRecyclerView.initViewContainer(getApplicationContext(), config().mUid, surfaceViewHashMap);
-//                if (currentMaterial != null) {
-//                    broadcasterSmallView.setVisibility(View.VISIBLE);
-//                }
+                if (currentMaterial == null) {
+                    broadcasterFullView.removeView(remoteBroadcasterSurfaceView);
+                    broadcasterFullView.setVisibility(View.GONE);
+                    broadcasterView.setVisibility(View.VISIBLE);
+                    broadcasterView.addView(remoteBroadcasterSurfaceView);
+                } else {
+                    docImage.setVisibility(View.VISIBLE);
+                    fullDocImage.setVisibility(View.GONE);
+                }
                 isFullScreen = false;
             }
         });
@@ -410,12 +423,6 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                                             if (remoteBroadcasterSurfaceView != null) {
                                                 broadcasterView.removeView(remoteBroadcasterSurfaceView);
                                                 broadcasterView.setVisibility(View.GONE);
-
-//                                                if (broadcasterSmallView.getChildCount() == 0) {
-//                                                    broadcasterSmallView.setVisibility(View.VISIBLE);
-//                                                    broadcasterSmallView.removeAllViews();
-//                                                    broadcasterSmallView.addView(remoteBroadcasterSurfaceView);
-//                                                }
                                             }
                                             pageText.setVisibility(View.VISIBLE);
                                             docImage.setVisibility(View.VISIBLE);
@@ -434,10 +441,15 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                             pageText.setVisibility(View.GONE);
                             docImage.setVisibility(View.GONE);
 
-                            currentMaterial = null;
-
-                            surfaceViewHashMap.remove(broadcasterId);
-                            audienceRecyclerView.initViewContainer(getApplicationContext(), config().mUid, surfaceViewHashMap);
+                            if (currentMaterial != null) {
+                                AudienceVideo audienceVideo = new AudienceVideo();
+                                audienceVideo.setMuted(false);
+                                audienceVideo.setBroadcaster(true);
+                                audienceVideo.setName("主持人" + broadcasterId);
+                                audienceVideo.setSurfaceView(remoteBroadcasterSurfaceView);
+                                audienceVideoAdapter.deleteItem(audienceVideo);
+                                currentMaterial = null;
+                            }
 
                             broadcasterView.setVisibility(View.VISIBLE);
                             broadcasterView.removeAllViews();
@@ -491,11 +503,9 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                             Toast.makeText(InviteMeetingAudienceActivity.this, "主持人" + uid + "回来了", Toast.LENGTH_SHORT).show();
                         }
 
-                        agoraAPI.queryUserStatus(broadcasterId);
-
                         remoteBroadcasterSurfaceView = RtcEngine.CreateRendererView(getApplicationContext());
-                        remoteBroadcasterSurfaceView.setZOrderOnTop(true);
-                        remoteBroadcasterSurfaceView.setZOrderMediaOverlay(true);
+                        remoteBroadcasterSurfaceView.setZOrderOnTop(false);
+                        remoteBroadcasterSurfaceView.setZOrderMediaOverlay(false);
                         rtcEngine().setupRemoteVideo(new VideoCanvas(remoteBroadcasterSurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, uid));
 
                         broadcastTipsText.setVisibility(View.GONE);
@@ -507,6 +517,13 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                             MeetingMaterialsPublish currentMaterialPublish = currentMaterial.getMeetingMaterialsPublishList().get(doc_index);
                             pageText.setText("第" + currentMaterialPublish.getPriority() + "/" + currentMaterial.getMeetingMaterialsPublishList().size() + "页");
                             Picasso.with(InviteMeetingAudienceActivity.this).load(currentMaterialPublish.getUrl()).into(docImage);
+
+                            AudienceVideo audienceVideo = new AudienceVideo();
+                            audienceVideo.setName("主持人" + broadcasterId);
+                            audienceVideo.setMuted(false);
+                            audienceVideo.setBroadcaster(true);
+                            audienceVideo.setSurfaceView(remoteBroadcasterSurfaceView);
+                            audienceVideoAdapter.insertItem(audienceVideo);
                         } else {
                             docImage.setVisibility(View.GONE);
                             pageText.setVisibility(View.GONE);
@@ -518,27 +535,35 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                         if (BuildConfig.DEBUG) {
                             Toast.makeText(InviteMeetingAudienceActivity.this, "参会人" + uid + "加入", Toast.LENGTH_SHORT).show();
                         }
-//                        agoraAPI.getUserAttr(String.valueOf(uid), "uname");
-
                         SurfaceView remoteAudienceSurfaceView = RtcEngine.CreateRendererView(getApplicationContext());
                         remoteAudienceSurfaceView.setZOrderOnTop(true);
                         remoteAudienceSurfaceView.setZOrderMediaOverlay(true);
-                        surfaceViewHashMap.put(uid, remoteAudienceSurfaceView);
                         rtcEngine().setupRemoteVideo(new VideoCanvas(remoteAudienceSurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, uid));
 
                         audienceRecyclerView.setVisibility(View.VISIBLE);
-                        audienceRecyclerView.initViewContainer(getApplicationContext(), config().mUid, surfaceViewHashMap); // first is now full view
+
+                        AudienceVideo audienceVideo = new AudienceVideo();
+                        audienceVideo.setName("参会人" + uid);
+                        audienceVideo.setMuted(false);
+                        audienceVideo.setBroadcaster(false);
+                        audienceVideo.setSurfaceView(remoteAudienceSurfaceView);
+                        audienceVideoAdapter.insertItem(audienceVideo);
                     }
                 } else {
                     SurfaceView localAudienceSurfaceView = RtcEngine.CreateRendererView(getApplicationContext());
                     localAudienceSurfaceView.setZOrderOnTop(true);
                     localAudienceSurfaceView.setZOrderMediaOverlay(true);
-                    surfaceViewHashMap.put(config().mUid, localAudienceSurfaceView);
                     rtcEngine().setupLocalVideo(new VideoCanvas(localAudienceSurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, config().mUid));
                     worker().preview(true, localAudienceSurfaceView, config().mUid);
 
                     audienceRecyclerView.setVisibility(View.VISIBLE);
-                    audienceRecyclerView.initViewContainer(getApplicationContext(), config().mUid, surfaceViewHashMap); // first is now full view
+
+                    AudienceVideo audienceVideo = new AudienceVideo();
+                    audienceVideo.setName("参会人" + config().mUid);
+                    audienceVideo.setMuted(false);
+                    audienceVideo.setBroadcaster(false);
+                    audienceVideo.setSurfaceView(localAudienceSurfaceView);
+                    audienceVideoAdapter.insertItem(audienceVideo);
 
                     if ("true".equals(agora.getIsTest())) {
                         worker().joinChannel(null, channelName, config().mUid);
@@ -570,9 +595,12 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                 broadcasterView.removeView(remoteBroadcasterSurfaceView);
                 broadcasterView.setVisibility(View.GONE);
 
-                surfaceViewHashMap.put(Integer.parseInt(broadcasterId), remoteBroadcasterSurfaceView);
-                audienceRecyclerView.initViewContainer(getApplicationContext(), config().mUid, surfaceViewHashMap);
-
+                AudienceVideo audienceVideo = new AudienceVideo();
+                audienceVideo.setName("主持人" + broadcasterId);
+                audienceVideo.setMuted(false);
+                audienceVideo.setBroadcaster(false);
+                audienceVideo.setSurfaceView(remoteBroadcasterSurfaceView);
+                audienceVideoAdapter.insertItem(audienceVideo);
             }
 
             pageText.setVisibility(View.VISIBLE);
@@ -740,15 +768,30 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
             }
             if (uid == Integer.parseInt(meetingJoin.getHostUser().getClientUid())) {
                 broadcastTipsText.setVisibility(View.VISIBLE);
+                if (currentMaterial != null) {
+                    currentMaterial = null;
+                    docImage.setVisibility(View.GONE);
+                    fullDocImage.setVisibility(View.GONE);
+
+                    AudienceVideo audienceVideo = new AudienceVideo();
+                    audienceVideo.setName("主持人" + broadcasterId);
+                    audienceVideo.setMuted(false);
+                    audienceVideo.setBroadcaster(true);
+                    audienceVideo.setSurfaceView(remoteBroadcasterSurfaceView);
+                    audienceVideoAdapter.deleteItem(audienceVideo);
+                } else {
+
+                }
             } else {
-                surfaceViewHashMap.remove(uid);
+                AudienceVideo audienceVideo = new AudienceVideo();
+                audienceVideo.setName("参会人" + uid);
+                audienceVideo.setMuted(false);
+                audienceVideo.setBroadcaster(false);
+                audienceVideoAdapter.deleteItem(audienceVideo);
 
-                audienceRecyclerView.initViewContainer(getApplicationContext(), config().mUid, surfaceViewHashMap); // first is now full view
-
-                if (surfaceViewHashMap.isEmpty()) {
+                if (audienceVideoAdapter.getItemCount() == 0) {
                     audienceRecyclerView.setVisibility(View.GONE);
                 }
-
             }
 
         });
@@ -847,6 +890,18 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
         if (dialog == null || !dialog.isShowing()) {
             showDialog(1, "确定退出会议吗？", "取消", "确定", null);
         }
+    }
+
+    @Override
+    protected void onUserLeaveHint() {
+        super.onUserLeaveHint();
+
+        doLeaveChannel();
+        if (agoraAPI.getStatus() == 2) {
+            agoraAPI.logout();
+        }
+
+        finish();
     }
 
     @Override

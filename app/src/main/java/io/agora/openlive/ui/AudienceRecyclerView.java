@@ -55,9 +55,11 @@ public class AudienceRecyclerView extends RecyclerView {
 
         this.setAdapter(audienceRecyclerViewAdapter);
 
-        this.setLayoutManager(new GridLayoutManager(context, 3, RecyclerView.VERTICAL, false));
-
         audienceRecyclerViewAdapter.notifyDataSetChanged();
+    }
+
+    public void insert(int id, SurfaceView surfaceView){
+        audienceRecyclerViewAdapter.insertItem(id, surfaceView);
     }
 
     public SurfaceView getSurfaceView(int index) {

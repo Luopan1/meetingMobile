@@ -3,6 +3,7 @@ package io.agora.openlive.ui;
 import android.app.Activity;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
@@ -102,6 +103,10 @@ public class AudienceRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
         }
     }
 
+    public void insertItem(int id, SurfaceView surfaceView) {
+
+    }
+
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = mInflater.inflate(R.layout.video_view_container, parent, false);
@@ -123,6 +128,7 @@ public class AudienceRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
 
         final VideoStatusData user = mUsers.get(position);
 
+        Log.v("onBindViewHolder", "position " + position + " " + user + " " + myHolder + " " + myHolder.itemView);
         log.debug("onBindViewHolder " + position + " " + user + " " + myHolder + " " + myHolder.itemView);
 
         FrameLayout holderView = (FrameLayout) myHolder.itemView;

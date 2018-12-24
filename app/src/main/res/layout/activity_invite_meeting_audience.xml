@@ -95,7 +95,8 @@
             <FrameLayout
                 android:id="@+id/broadcaster_view"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:background="#6e6e6e"/>
 
             <TextView
                 android:id="@+id/broadcaster_tips"
@@ -115,14 +116,13 @@
 
         </FrameLayout>
 
-        <io.agora.openlive.ui.AudienceRecyclerView
+        <android.support.v7.widget.RecyclerView
             android:id="@+id/audience_list"
             android:layout_width="0dp"
             android:layout_height="220dp"
-            android:layout_marginLeft="3dp"
             android:layout_marginRight="14dp"
             android:layout_weight="1.0"
-            android:visibility="gone"
+            android:visibility="invisible"
             tools:visibility="visible" />
 
     </LinearLayout>

@@ -35,6 +35,7 @@ import com.hezy.guide.phone.BuildConfig;
 import com.hezy.guide.phone.R;
 import com.hezy.guide.phone.entities.Agora;
 import com.hezy.guide.phone.entities.Audience;
+import com.hezy.guide.phone.entities.AudienceVideo;
 import com.hezy.guide.phone.entities.Bucket;
 import com.hezy.guide.phone.entities.Material;
 import com.hezy.guide.phone.entities.Materials;
@@ -80,7 +81,8 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
     private Material currentMaterial;
     private int position;
 
-    private final HashMap<Integer, SurfaceView> surfaceViewHashMap = new HashMap<Integer, SurfaceView>();
+    private RecyclerView audienceRecyclerView;
+    private AudienceVideoAdapter audienceVideoAdapter;
 
     private String channelName;
     private int memberCount;
@@ -97,7 +99,6 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
     private ImageView docImage, docFullImage;
     private TextView pageText;
     private SurfaceView localBroadcasterSurfaceView;
-    private AudienceRecyclerView audienceRecyclerView;
 
     private static final String DOC_INFO = "doc_info";
 
@@ -133,13 +134,15 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
         Intent intent = getIntent();
         agora = intent.getParcelableExtra("agora");
         meetingJoin = intent.getParcelableExtra("meeting");
-        ZYAgent.onEvent(getApplicationContext(), "meetingId=" + meetingJoin.getMeeting().getId());
 
         channelName = meetingJoin.getMeeting().getId();
         config().mUid = Integer.parseInt(UIDUtil.generatorUID(Preferences.getUserId()));
 
         audienceRecyclerView = findViewById(R.id.audience_list);
-        audienceRecyclerView.addItemDecoration(new SpaceItemDecoration(DensityUtil.dip2px(getApplicationContext(), 3), 0, 0, DensityUtil.dip2px(getApplicationContext(), 3)));
+        audienceRecyclerView.setLayoutManager(new GridLayoutManager(getApplicationContext(), 3, RecyclerView.VERTICAL, false));
+        audienceRecyclerView.addItemDecoration(new SpaceItemDecoration(DensityUtil.dip2px(getApplicationContext(), 4), 0, 0, DensityUtil.dip2px(getApplicationContext(), 4)));
+        audienceVideoAdapter = new AudienceVideoAdapter(this);
+        audienceRecyclerView.setAdapter(audienceVideoAdapter);
 
         docLayout = findViewById(R.id.doc_layout);
         broadcasterNameText = findViewById(R.id.broadcaster_name);
@@ -216,10 +219,11 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
 
             docLayout.setVisibility(View.GONE);
 
-            if (localBroadcasterSurfaceView.getParent() != null) {
-                ((FrameLayout) localBroadcasterSurfaceView.getParent()).removeView(localBroadcasterSurfaceView);
-                Log.v("add view", "移除ppt界面");
-            }
+            AudienceVideo audienceVideo = new AudienceVideo();
+            audienceVideo.setName("主持人" + config().mUid);
+            audienceVideo.setMuted(false);
+            audienceVideo.setBroadcaster(true);
+            audienceVideoAdapter.deleteItem(audienceVideo);
 
             broadcasterView.setVisibility(View.VISIBLE);
             broadcasterView.removeAllViews();
@@ -261,7 +265,6 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
                 pptButton.setVisibility(View.GONE);
                 finishMeetingButton.setVisibility(View.GONE);
                 muteAudioButton.setVisibility(View.GONE);
-                audienceRecyclerView.initViewContainer(getApplicationContext(), config().mUid, new HashMap<>());
                 audienceRecyclerView.setVisibility(View.INVISIBLE);
                 switchCameraButton.setVisibility(View.GONE);
                 if (currentMaterial == null) {
@@ -282,7 +285,6 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
                 muteAudioButton.setVisibility(View.VISIBLE);
                 switchCameraButton.setVisibility(View.VISIBLE);
                 audienceRecyclerView.setVisibility(View.VISIBLE);
-                audienceRecyclerView.initViewContainer(getApplicationContext(), config().mUid, surfaceViewHashMap);
                 if (currentMaterial == null) {
                     broadcasterFullView.removeView(localBroadcasterSurfaceView);
                     broadcasterFullView.setVisibility(View.GONE);
@@ -701,8 +703,12 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
             String imageUrl = ImageHelper.getThumb(currentMaterialPublish.getUrl());
             Picasso.with(InviteMeetingBroadcastActivity.this).load(imageUrl).into(docImage);
 
-            surfaceViewHashMap.put(config().mUid, localBroadcasterSurfaceView);
-            audienceRecyclerView.initViewContainer(getApplicationContext(), config().mUid, surfaceViewHashMap);
+            AudienceVideo audienceVideo = new AudienceVideo();
+            audienceVideo.setName("主持人" + config().mUid);
+            audienceVideo.setMuted(false);
+            audienceVideo.setBroadcaster(true);
+            audienceVideo.setSurfaceView(localBroadcasterSurfaceView);
+            audienceVideoAdapter.insertItem(audienceVideo);
 
             try {
                 JSONObject jsonObject = new JSONObject();
@@ -834,14 +840,16 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
             SurfaceView remoteAudienceSurfaceView = RtcEngine.CreateRendererView(getApplicationContext());
             remoteAudienceSurfaceView.setZOrderOnTop(true);
             remoteAudienceSurfaceView.setZOrderMediaOverlay(true);
-            surfaceViewHashMap.put(uid, remoteAudienceSurfaceView);
             rtcEngine().setupRemoteVideo(new VideoCanvas(remoteAudienceSurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, uid));
 
             audienceRecyclerView.setVisibility(View.VISIBLE);
-            audienceRecyclerView.initViewContainer(getApplicationContext(), config().mUid, surfaceViewHashMap);
 
-//            agoraAPI.getUserAttr(String.valueOf(uid), "uname");
-
+            AudienceVideo audienceVideo = new AudienceVideo();
+            audienceVideo.setName("参会人" + uid);
+            audienceVideo.setMuted(false);
+            audienceVideo.setBroadcaster(false);
+            audienceVideo.setSurfaceView(remoteAudienceSurfaceView);
+            audienceVideoAdapter.insertItem(audienceVideo);
         });
     }
 
@@ -853,11 +861,13 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
                 return;
             }
 
-            surfaceViewHashMap.remove(uid);
+            AudienceVideo audienceVideo = new AudienceVideo();
+            audienceVideo.setName("参会人" + uid);
+            audienceVideo.setMuted(false);
+            audienceVideo.setBroadcaster(false);
+            audienceVideoAdapter.deleteItem(audienceVideo);
 
-            audienceRecyclerView.initViewContainer(getApplicationContext(), config().mUid, surfaceViewHashMap);
-
-            if (surfaceViewHashMap.isEmpty()) {
+            if (audienceVideoAdapter.getItemCount() == 0) {
                 audienceRecyclerView.setVisibility(View.INVISIBLE);
             }
 
@@ -966,6 +976,17 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
         showExitDialog();
     }
 
+    @Override
+    protected void onUserLeaveHint() {
+        super.onUserLeaveHint();
+
+        doLeaveChannel();
+        if (agoraAPI.getStatus() == 2) {
+            agoraAPI.logout();
+        }
+
+        finish();
+    }
 
     @Override
     protected void onDestroy() {
