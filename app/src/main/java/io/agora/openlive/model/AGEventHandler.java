@@ -1,5 +1,7 @@
 package io.agora.openlive.model;
 
+import io.agora.rtc.IRtcEngineEventHandler;
+
 public interface AGEventHandler {
     void onFirstRemoteVideoDecoded(int uid, int width, int height, int elapsed);
 
@@ -12,6 +14,10 @@ public interface AGEventHandler {
     void onConnectionInterrupted();
 
     void onUserMuteVideo(int uid, boolean muted);
+
+    void onUserMuteAudio(int uid, boolean muted);
+
+    void onAudioVolumeIndication(IRtcEngineEventHandler.AudioVolumeInfo[] speakers, int totalVolume);
 
     void onLastmileQuality(int quality);
 
