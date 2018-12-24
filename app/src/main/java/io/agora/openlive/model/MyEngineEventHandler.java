@@ -69,6 +69,24 @@ public class MyEngineEventHandler {
         }
 
         @Override
+        public void onUserMuteAudio(int uid, boolean muted) {
+            Iterator<AGEventHandler> it = mEventHandlerList.keySet().iterator();
+            while (it.hasNext()) {
+                AGEventHandler handler = it.next();
+                handler.onUserMuteAudio(uid, muted);
+            }
+        }
+
+        @Override
+        public void onAudioVolumeIndication(AudioVolumeInfo[] speakers, int totalVolume) {
+            Iterator<AGEventHandler> it = mEventHandlerList.keySet().iterator();
+            while (it.hasNext()) {
+                AGEventHandler handler = it.next();
+                handler.onAudioVolumeIndication(speakers, totalVolume);
+            }
+        }
+
+        @Override
         public void onRtcStats(RtcStats stats) {
         }
 

@@ -3,20 +3,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_gravity="center_vertical"
     android:keepScreenOn="true"
     tools:context="io.agora.openlive.ui.InviteMeetingAudienceActivity">
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@android:color/black"
-        tools:visibility="visible">
+        android:background="@drawable/bg_invite_meeting">
 
         <FrameLayout
             android:id="@+id/broadcaster1_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            tools:visibility="visible" />
 
         <ImageView
             android:id="@+id/doc1_image"
@@ -95,7 +95,8 @@
             <FrameLayout
                 android:id="@+id/broadcaster_view"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_invite_meeting" />
 
             <TextView
                 android:id="@+id/broadcaster_tips"
@@ -115,15 +116,19 @@
 
         </FrameLayout>
 
-        <io.agora.openlive.ui.AudienceRecyclerView
-            android:id="@+id/audience_list"
+        <FrameLayout
+            android:id="@+id/audience_layout"
             android:layout_width="0dp"
             android:layout_height="220dp"
-            android:layout_marginLeft="3dp"
             android:layout_marginRight="14dp"
-            android:layout_weight="1.0"
-            android:visibility="gone"
-            tools:visibility="visible" />
+            android:layout_weight="1.0">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/audience_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </FrameLayout>
 
     </LinearLayout>
 
@@ -132,14 +137,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:gravity="center_horizontal"
         android:background="@drawable/bg_buttom_meeting"
+        android:gravity="center_horizontal"
         android:orientation="horizontal"
-        android:layout_marginBottom="23dp"
-        android:paddingLeft="@dimen/my_px_90"
-        android:paddingTop="@dimen/my_px_20"
-        android:paddingRight="@dimen/my_px_30"
-        android:paddingBottom="@dimen/my_px_24">
+        android:paddingTop="20dp"
+        android:paddingBottom="20dp">
 
         <ImageButton
             android:id="@+id/full_screen"

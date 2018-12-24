@@ -7,6 +7,10 @@ import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.SurfaceView;
 
+import com.hezy.guide.phone.R;
+import com.hezy.guide.phone.utils.DensityUtil;
+import com.hezy.guide.phone.view.SpaceItemDecoration;
+
 import java.util.HashMap;
 
 import io.agora.openlive.model.VideoStatusData;
@@ -51,10 +55,11 @@ public class AudienceRecyclerView extends RecyclerView {
 
         this.setAdapter(audienceRecyclerViewAdapter);
 
-        this.setLayoutManager(new GridLayoutManager(context, 3, RecyclerView.VERTICAL, false));
-
-
         audienceRecyclerViewAdapter.notifyDataSetChanged();
+    }
+
+    public void insert(int id, SurfaceView surfaceView){
+        audienceRecyclerViewAdapter.insertItem(id, surfaceView);
     }
 
     public SurfaceView getSurfaceView(int index) {

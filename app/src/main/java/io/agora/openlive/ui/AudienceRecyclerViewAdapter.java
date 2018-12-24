@@ -3,6 +3,7 @@ package io.agora.openlive.ui;
 import android.app.Activity;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
@@ -15,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.hezy.guide.phone.R;
+import com.hezy.guide.phone.utils.DensityUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -96,9 +98,13 @@ public class AudienceRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
         }
 
         if (force || mItemWidth == 0 || mItemHeight == 0) {
-            mItemWidth = 250;
-            mItemHeight = 140;
+            mItemWidth = DensityUtil.dip2px(mContext, 114);
+            mItemHeight = DensityUtil.dip2px(mContext, 70);
         }
+    }
+
+    public void insertItem(int id, SurfaceView surfaceView) {
+
     }
 
     @Override
@@ -122,6 +128,7 @@ public class AudienceRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
 
         final VideoStatusData user = mUsers.get(position);
 
+        Log.v("onBindViewHolder", "position " + position + " " + user + " " + myHolder + " " + myHolder.itemView);
         log.debug("onBindViewHolder " + position + " " + user + " " + myHolder + " " + myHolder.itemView);
 
         FrameLayout holderView = (FrameLayout) myHolder.itemView;

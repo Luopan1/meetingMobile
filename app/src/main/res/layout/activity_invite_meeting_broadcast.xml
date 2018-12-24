@@ -3,15 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_gravity="center_vertical"
-    android:keepScreenOn="true"
-    tools:context="io.agora.openlive.ui.InviteMeetingBroadcastActivity">
+    android:keepScreenOn="true">
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@android:color/black"
-        tools:visibility="visible">
+        android:background="@drawable/bg_invite_meeting">
 
         <FrameLayout
             android:id="@+id/broadcaster1_view"
@@ -95,7 +92,8 @@
             <FrameLayout
                 android:id="@+id/broadcaster_view"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:background="#6e6e6e" />
 
             <ImageView
                 android:id="@+id/doc_image"
@@ -106,15 +104,19 @@
 
         </FrameLayout>
 
-        <io.agora.openlive.ui.AudienceRecyclerView
-            android:id="@+id/audience_list"
+        <FrameLayout
+            android:id="@+id/audience_layout"
             android:layout_width="0dp"
             android:layout_height="220dp"
-            android:layout_marginLeft="3dp"
             android:layout_marginRight="14dp"
-            android:layout_weight="1.0"
-            android:visibility="invisible"
-            tools:visibility="visible" />
+            android:layout_weight="1.0">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/audience_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </FrameLayout>
 
     </LinearLayout>
 
@@ -127,7 +129,7 @@
         android:gravity="center_horizontal"
         android:orientation="horizontal"
         android:paddingTop="20dp"
-        android:paddingBottom="30dp">
+        android:paddingBottom="20dp">
 
         <ImageButton
             android:id="@+id/full_screen"

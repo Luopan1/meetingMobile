@@ -80,6 +80,7 @@ import io.agora.AgoraAPIOnlySignal;
 import io.agora.openlive.model.AGEventHandler;
 import io.agora.openlive.model.ConstantApp;
 import io.agora.rtc.Constants;
+import io.agora.rtc.IRtcEngineEventHandler;
 import io.agora.rtc.RtcEngine;
 import io.agora.rtc.video.VideoCanvas;
 import rx.Subscription;
@@ -1574,6 +1575,16 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
     }
 
     @Override
+    public void onUserMuteAudio(int uid, boolean muted) {
+
+    }
+
+    @Override
+    public void onAudioVolumeIndication(IRtcEngineEventHandler.AudioVolumeInfo[] speakers, int totalVolume) {
+
+    }
+
+    @Override
     public void onLastmileQuality(final int quality) {
         if (BuildConfig.DEBUG) {
             runOnUiThread(() -> Toast.makeText(MeetingBroadcastActivity.this, "本地网络质量报告：" + showNetQuality(quality), Toast.LENGTH_SHORT).show());
@@ -1660,11 +1671,20 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
 
     }
 
-//    @Override
-//    protected void onUserLeaveHint() {
-//        super.onUserLeaveHint();
-//        doLeaveChannel();
-//    }
+    @Override
+    protected void onUserLeaveHint() {
+        super.onUserLeaveHint();
+
+        doLeaveChannel();
+        doTLeaveChannel();
+        if (agoraAPI.getStatus() == 2) {
+            agoraAPI.setAttr("uname", null);
+            agoraAPI.channelDelAttr(channelName, CALLING_AUDIENCE);
+            agoraAPI.logout();
+        }
+
+        finish();
+    }
 
     @Override
     public void onBackPressed() {
