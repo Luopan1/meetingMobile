@@ -47,7 +47,6 @@ import com.hezy.guide.phone.utils.UIDUtil;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 import io.agora.openlive.ui.MeetingInitActivity;
 import rx.Subscription;
@@ -71,6 +70,7 @@ public class MeetingsFragment extends BaseFragment {
     public static final int TYPE_OWNER_MEETING = 2;
     public static final int TYPE_FORUM_MEETING = 3;
     private final int SEARCH_REQUEST_CODE = 1001;
+    private final int CODE_MEETING_LIST_REQUEST = 101;
     public static final String KEY_MEETING_TYPE = "meetingType";
     private int currentMeetingListPageIndex = TYPE_PUBLIC_MEETING;
 
@@ -237,9 +237,22 @@ public class MeetingsFragment extends BaseFragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == SEARCH_REQUEST_CODE) {
-            showMeeting(resultCode);
+        switch (requestCode) {
+            case SEARCH_REQUEST_CODE:
+                showMeeting(resultCode);
+                break;
+            case CODE_MEETING_LIST_REQUEST:
+                if (resultCode == TYPE_FORUM_MEETING) {
+                    startForumActivity();
+                } else {
+                    showMeeting(resultCode);
+                }
+                break;
         }
+    }
+
+    private void startForumActivity() {
+        startActivity(new Intent(mContext, ForumActivity.class));
     }
 
     private View.OnClickListener tvMeetingOnClickListener = new View.OnClickListener() {
@@ -253,7 +266,7 @@ public class MeetingsFragment extends BaseFragment {
                     showMeeting(TYPE_PRIVATE_MEETING);
                     break;
                 case R.id.ib_meeting_forum:
-                    startActivity(new Intent(mContext, ForumActivity.class));
+                    startForumActivity();
                     break;
             }
         }
@@ -294,7 +307,11 @@ public class MeetingsFragment extends BaseFragment {
         tv_meeting_owner.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MeetingManagementActivity.startMeetingManagementActivity(Objects.requireNonNull(MeetingsFragment.this.getActivity()).getApplicationContext(), meetingMgrUrl);
+//                //mockData 模拟url
+//                String url = "http://192.168.1.124";
+                Intent intent = new Intent(getActivity(), MeetingManagementActivity.class);
+                intent.putExtra(MeetingManagementActivity.KEY_MEETINGMGRURL, meetingMgrUrl);
+                startActivityForResult(intent, CODE_MEETING_LIST_REQUEST);
             }
         });
     }

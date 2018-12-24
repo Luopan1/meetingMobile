@@ -72,7 +72,19 @@
             android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"
             android:screenOrientation="portrait"
             android:theme="@style/NoTitle"
-            android:windowSoftInputMode="adjustPan" />
+            android:windowSoftInputMode="adjustPan">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="com.hezy.guide.phone"
+                    android:pathPrefix="/meeting/list"
+                    android:scheme="app" />
+            </intent-filter>
+        </activity>
 
         <activity
             android:name=".business.MeetingSearchActivity"
