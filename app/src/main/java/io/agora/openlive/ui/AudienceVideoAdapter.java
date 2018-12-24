@@ -45,14 +45,14 @@ public class AudienceVideoAdapter extends RecyclerView.Adapter<AudienceVideoAdap
     }
 
     public synchronized void deleteItem(int uid) {
-        Iterator iterator = audienceVideos.iterator();
-        if (iterator.hasNext()) {
-            AudienceVideo audienceVideo = (AudienceVideo) iterator.next();
+        Iterator<AudienceVideo> iterator = audienceVideos.iterator();
+        while (iterator.hasNext()) {
+            AudienceVideo audienceVideo = iterator.next();
             if (audienceVideo.getUid() == uid) {
                 int position = audienceVideos.indexOf(audienceVideo);
-//                Log.v("delete", "1--" + audienceVideos.size() + "--position--" + position);
-                audienceVideos.remove(audienceVideo);
-//                Log.v("delete", "2--" + audienceVideos.size());
+                Log.v("delete", "1--" + audienceVideos.size() + "--position--" + position);
+                iterator.remove();
+                Log.v("delete", "2--" + audienceVideos.size());
                 notifyItemRemoved(position);
             }
         }
