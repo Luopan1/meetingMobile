@@ -1018,6 +1018,13 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
     protected void onUserLeaveHint() {
         super.onUserLeaveHint();
 
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("clientUid", "" + config().mUid);
+        params.put("hostUserId", Preferences.getUserId());
+        params.put("hostUserName", meetingJoin.getHostUser().getHostUserName());
+        params.put("status", "2");
+        ApiClient.getInstance().meetingLeaveTemp(TAG, params, meetingTempLeaveCallback, meetingJoin.getMeeting().getId());
+
         doLeaveChannel();
         if (agoraAPI.getStatus() == 2) {
             agoraAPI.logout();
