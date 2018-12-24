@@ -95,8 +95,7 @@
             <FrameLayout
                 android:id="@+id/broadcaster_view"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/bg_invite_meeting" />
+                android:layout_height="match_parent" />
 
             <TextView
                 android:id="@+id/broadcaster_tips"

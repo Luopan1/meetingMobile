@@ -430,21 +430,14 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                             docImage.setVisibility(View.GONE);
 
                             if (currentMaterial != null) {
-                                AudienceVideo audienceVideo = new AudienceVideo();
-                                audienceVideo.setUid(Integer.parseInt(broadcasterId));
-                                audienceVideo.setBroadcaster(true);
-                                audienceVideo.setName("主持人" + broadcasterId);
-                                audienceVideoAdapter.deleteItem(audienceVideo);
                                 currentMaterial = null;
+                                audienceVideoAdapter.deleteItem(Integer.parseInt(broadcasterId));
                             }
 
                             broadcasterView.setVisibility(View.VISIBLE);
                             broadcasterView.removeAllViews();
                             if (remoteBroadcasterSurfaceView != null) {
-                                if (remoteBroadcasterSurfaceView.getParent() != null) {
-                                    ((FrameLayout) remoteBroadcasterSurfaceView.getParent()).removeView(remoteBroadcasterSurfaceView);
-                                    Log.v("add view", "移除ppt界面");
-                                }
+                                stripSurfaceView(remoteBroadcasterSurfaceView);
                                 broadcasterView.addView(remoteBroadcasterSurfaceView);
                                 Log.v("add view", "ppt退出");
                             }
@@ -732,21 +725,12 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                     currentMaterial = null;
                     docImage.setVisibility(View.GONE);
                     fullDocImage.setVisibility(View.GONE);
-
-                    AudienceVideo audienceVideo = new AudienceVideo();
-                    audienceVideo.setUid(Integer.parseInt(broadcasterId));
-                    audienceVideo.setName("主持人" + broadcasterId);
-                    audienceVideo.setBroadcaster(true);
-                    audienceVideoAdapter.deleteItem(audienceVideo);
+                    audienceVideoAdapter.deleteItem(Integer.parseInt(broadcasterId));
                 } else {
 
                 }
             } else {
-                AudienceVideo audienceVideo = new AudienceVideo();
-                audienceVideo.setUid(uid);
-                audienceVideo.setName("参会人" + uid);
-                audienceVideo.setBroadcaster(false);
-                audienceVideoAdapter.deleteItem(audienceVideo);
+                audienceVideoAdapter.deleteItem(uid);
 
                 if (audienceVideoAdapter.getItemCount() == 0) {
                     audienceRecyclerView.setVisibility(View.GONE);

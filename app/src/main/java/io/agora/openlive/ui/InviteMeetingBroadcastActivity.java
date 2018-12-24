@@ -222,11 +222,7 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
 
             docLayout.setVisibility(View.GONE);
 
-            AudienceVideo audienceVideo = new AudienceVideo();
-            audienceVideo.setUid(config().mUid);
-            audienceVideo.setName("主持人" + config().mUid);
-            audienceVideo.setBroadcaster(true);
-            audienceVideoAdapter.deleteItem(audienceVideo);
+            audienceVideoAdapter.deleteItem(config().mUid);
 
             stripSurfaceView(localBroadcasterSurfaceView);
             broadcasterView.setVisibility(View.VISIBLE);
@@ -877,11 +873,7 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
                 return;
             }
 
-            AudienceVideo audienceVideo = new AudienceVideo();
-            audienceVideo.setUid(uid);
-            audienceVideo.setName("参会人" + uid);
-            audienceVideo.setBroadcaster(false);
-            audienceVideoAdapter.deleteItem(audienceVideo);
+            audienceVideoAdapter.deleteItem(uid);
 
             if (audienceVideoAdapter.getItemCount() == 0) {
                 audienceRecyclerView.setVisibility(View.INVISIBLE);

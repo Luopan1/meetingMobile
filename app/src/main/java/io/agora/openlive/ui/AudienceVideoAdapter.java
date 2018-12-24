@@ -38,18 +38,24 @@ public class AudienceVideoAdapter extends RecyclerView.Adapter<AudienceVideoAdap
         this.context = context;
     }
 
-    public  synchronized void insertItem(AudienceVideo audienceVideo) {
+    public synchronized void insertItem(AudienceVideo audienceVideo) {
         this.audienceVideos.add(audienceVideos.size(), audienceVideo);
         notifyItemInserted(audienceVideos.size());
     }
 
-    public synchronized void deleteItem(AudienceVideo audienceVideo) {
-        int position = audienceVideos.indexOf(audienceVideo);
-        this.audienceVideos.remove(audienceVideo);
-        notifyItemRemoved(position);
+    public synchronized void deleteItem(int uid) {
+        for (AudienceVideo audienceVideo : audienceVideos) {
+            if (audienceVideo.getUid() == uid) {
+                int position = audienceVideos.indexOf(audienceVideo);
+//                Log.v("delete", "1--" + audienceVideos.size() + "--position--" + position);
+                audienceVideos.remove(audienceVideo);
+//                Log.v("delete", "2--" + audienceVideos.size());
+                notifyItemRemoved(position);
+            }
+        }
     }
 
-    public void setVolumeByUid(int uid, int volume){
+    public void setVolumeByUid(int uid, int volume) {
         for (AudienceVideo audienceVideo : audienceVideos) {
             if (audienceVideo.getUid() == uid) {
 //                Log.v("update_volume", "1--" + audienceVideo.toString());
@@ -63,7 +69,7 @@ public class AudienceVideoAdapter extends RecyclerView.Adapter<AudienceVideoAdap
         }
     }
 
-    public void setMutedStatusByUid(int uid, boolean muted){
+    public void setMutedStatusByUid(int uid, boolean muted) {
         for (AudienceVideo audienceVideo : audienceVideos) {
             if (audienceVideo.getUid() == uid) {
 //                Log.v("update_mute", "1--" + audienceVideo.toString());
@@ -108,7 +114,7 @@ public class AudienceVideoAdapter extends RecyclerView.Adapter<AudienceVideoAdap
 
         if (holder.videoLayout.getChildCount() > 0) {
             holder.videoLayout.removeAllViews();
-         }
+        }
         final SurfaceView surfaceView = audienceVideo.getSurfaceView();
         stripSurfaceView(surfaceView);
         holder.videoLayout.addView(surfaceView, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
