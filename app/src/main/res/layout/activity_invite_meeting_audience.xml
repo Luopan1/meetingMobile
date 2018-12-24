@@ -121,9 +121,7 @@
             android:layout_width="0dp"
             android:layout_height="220dp"
             android:layout_marginRight="14dp"
-            android:layout_weight="1.0"
-            android:background="#6e6e6e"
-            android:padding="1dp">
+            android:layout_weight="1.0">
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/audience_list"

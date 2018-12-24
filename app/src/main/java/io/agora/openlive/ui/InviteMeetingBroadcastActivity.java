@@ -19,6 +19,7 @@ import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -226,8 +227,9 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
             audienceVideo.setBroadcaster(true);
             audienceVideoAdapter.deleteItem(audienceVideo);
 
+            stripSurfaceView(localBroadcasterSurfaceView);
             broadcasterView.setVisibility(View.VISIBLE);
-            broadcasterView.removeAllViews(); // TODO has crash
+            broadcasterView.removeAllViews();
             broadcasterView.addView(localBroadcasterSurfaceView);
 
             currentMaterial = null;
@@ -524,6 +526,13 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
             }
         });
 
+    }
+
+    private void stripSurfaceView(SurfaceView view) {
+        ViewParent parent = view.getParent();
+        if (parent != null) {
+            ((FrameLayout) parent).removeView(view);
+        }
     }
 
     private Dialog exitDialog;
@@ -975,7 +984,6 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
         doLeaveChannel();
 
         currentMaterial = null;
-
         if (agoraAPI.getStatus() == 2) {
             agoraAPI.channelDelAttr(channelName, DOC_INFO);
             agoraAPI.logout();
