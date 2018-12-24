@@ -1540,17 +1540,6 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
             if (BuildConfig.DEBUG) {
                 Toast.makeText(MeetingBroadcastActivity.this, uid + "退出了", Toast.LENGTH_SHORT).show();
             }
-//            audienceView.removeAllViews();
-//            audienceNameText.setText("");
-//            audienceLayout.setVisibility(View.GONE);
-//
-//            fullScreenButton.setVisibility(View.GONE);
-//            audiencesButton.setVisibility(View.VISIBLE);
-//
-//            remoteAudienceSurfaceView = null;
-//
-//            currentAudience = null;
-
         });
     }
 
@@ -1688,7 +1677,6 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
 
     @Override
     public void onBackPressed() {
-//        showDialog(1, "确定结束会议吗？", "暂时离开", "结束会议", null);
         showExitDialog();
     }
 

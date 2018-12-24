@@ -1353,6 +1353,14 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 
         worker().getRtcEngine().setClientRole(Constants.CLIENT_ROLE_AUDIENCE);
 
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("finish", true);
+            agoraAPI.messageInstantSend(broadcastId, 0, jsonObject.toString(), "");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         doLeaveChannel();
         doTLeaveChannel();
         if (agoraAPI.getStatus() == 2) {
@@ -1380,6 +1388,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
             params.put("meetingId", meetingJoin.getMeeting().getId());
             params.put("status", 2);
             params.put("type", 2);
+            params.put("leaveType", 1);
             ApiClient.getInstance().meetingJoinStats(TAG, meetingJoinStatsCallback, params);
         }
     }

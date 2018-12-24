@@ -27,6 +27,7 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 
 public class AudienceVideoAdapter extends RecyclerView.Adapter<AudienceVideoAdapter.AudienceVideoViewHolder> {
@@ -44,7 +45,9 @@ public class AudienceVideoAdapter extends RecyclerView.Adapter<AudienceVideoAdap
     }
 
     public synchronized void deleteItem(int uid) {
-        for (AudienceVideo audienceVideo : audienceVideos) {
+        Iterator iterator = audienceVideos.iterator();
+        if (iterator.hasNext()) {
+            AudienceVideo audienceVideo = (AudienceVideo) iterator.next();
             if (audienceVideo.getUid() == uid) {
                 int position = audienceVideos.indexOf(audienceVideo);
 //                Log.v("delete", "1--" + audienceVideos.size() + "--position--" + position);
