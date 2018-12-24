@@ -1,16 +1,18 @@
 package com.hezy.guide.phone.business;
 
-import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
+import android.net.http.SslError;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
 import android.webkit.JavascriptInterface;
 import android.webkit.JsResult;
+import android.webkit.SslErrorHandler;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -18,6 +20,7 @@ import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
 import com.hezy.guide.phone.R;
+import com.hezy.guide.phone.utils.ToastUtils;
 
 /**
  * @author Dongce
@@ -28,7 +31,7 @@ public class MeetingManagementActivity extends AppCompatActivity {
     private WebView webview_meetingmanagement;
     private ProgressBar progressbar_meetingmanagement;
 
-    private static final String KEY_MEETINGMGRURL = "meetingMgrUrl";
+    public static final String KEY_MEETINGMGRURL = "meetingMgrUrl";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -38,12 +41,6 @@ public class MeetingManagementActivity extends AppCompatActivity {
         initView();
         initData();
         initControl();
-    }
-
-    public static void startMeetingManagementActivity(Context context, String meetingMgrUrl) {
-        Intent intent = new Intent(context, MeetingManagementActivity.class);
-        intent.putExtra(KEY_MEETINGMGRURL, meetingMgrUrl);
-        context.startActivity(intent);
     }
 
     private void initView() {
@@ -62,6 +59,7 @@ public class MeetingManagementActivity extends AppCompatActivity {
         webview_meetingmanagement.setWebViewClient(webViewClient);
 
         WebSettings webSettings = webview_meetingmanagement.getSettings();
+        webSettings.setLoadWithOverviewMode(true);
         webSettings.setJavaScriptEnabled(true);//允许使用js
 
         /**
@@ -97,7 +95,27 @@ public class MeetingManagementActivity extends AppCompatActivity {
 
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            return super.shouldOverrideUrlLoading(view, url);
+            Uri meetingListUri = Uri.parse(url);
+            if (TextUtils.equals("/meeting/list", meetingListUri.getPath())) {
+                String meetingListType = meetingListUri.getQueryParameter("type");
+                int type = meetingListType != null ? Integer.parseInt(meetingListType) : MeetingsFragment.TYPE_PUBLIC_MEETING;
+                setResult(type);
+                MeetingManagementActivity.this.finish();
+                return true;
+            } else if (TextUtils.equals("/forum", meetingListUri.getPath())) {
+                setResult(MeetingsFragment.TYPE_FORUM_MEETING);
+                MeetingManagementActivity.this.finish();
+                return true;
+            }
+            ToastUtils.showToast("程序出错，请按回退键返回，并联系管理员");
+            setResult(MeetingsFragment.TYPE_PUBLIC_MEETING);
+            return true;
+        }
+
+        @Override
+        public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+            super.onReceivedSslError(view, handler, error);
+            handler.proceed();
         }
     };
 

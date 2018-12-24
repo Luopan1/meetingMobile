@@ -168,6 +168,9 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                 } else {
                     llMsg.setVisibility(View.GONE);
                     llChat.setVisibility(View.VISIBLE);
+                    if(ChatHandler.hasMessages(23)){
+                        ChatHandler.removeMessages(23);
+                    }
                     ChatHandler.sendEmptyMessageDelayed(23, 5100);
                     tvChat.setVisibility(View.VISIBLE);
                 }

@@ -99,5 +99,7 @@
     <color name="item_forum_meeting_msg_unread">#FFEFEFEF</color>
     <color name="item_forum_meeting_msg_dividing_line">#FFD8D8D8</color>
     <color name="color_7FBAFF">#7FBAFF</color>
+    <color name="color_00FFFFFF">#00FFFFFF</color>
+
 
 </resources>
