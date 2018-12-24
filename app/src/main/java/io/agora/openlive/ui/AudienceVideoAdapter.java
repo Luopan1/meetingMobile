@@ -40,8 +40,13 @@ public class AudienceVideoAdapter extends RecyclerView.Adapter<AudienceVideoAdap
     }
 
     public synchronized void insertItem(AudienceVideo audienceVideo) {
-        this.audienceVideos.add(audienceVideos.size(), audienceVideo);
-        notifyItemInserted(audienceVideos.size());
+        if (audienceVideo.isBroadcaster()) {
+            this.audienceVideos.add(0, audienceVideo);
+            notifyItemInserted(0);
+        } else {
+            this.audienceVideos.add(audienceVideos.size(), audienceVideo);
+            notifyItemInserted(audienceVideos.size());
+        }
     }
 
     public synchronized void deleteItem(int uid) {
