@@ -12,6 +12,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.ViewParent;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -26,13 +27,11 @@ import com.hezy.guide.phone.BaseException;
 import com.hezy.guide.phone.BuildConfig;
 import com.hezy.guide.phone.R;
 import com.hezy.guide.phone.entities.Agora;
-import com.hezy.guide.phone.entities.Audience;
 import com.hezy.guide.phone.entities.AudienceVideo;
 import com.hezy.guide.phone.entities.Bucket;
 import com.hezy.guide.phone.entities.HostUser;
 import com.hezy.guide.phone.entities.Material;
 import com.hezy.guide.phone.entities.Meeting;
-import com.hezy.guide.phone.entities.MeetingHostingStats;
 import com.hezy.guide.phone.entities.MeetingJoin;
 import com.hezy.guide.phone.entities.MeetingJoinStats;
 import com.hezy.guide.phone.entities.MeetingMaterialsPublish;
@@ -50,7 +49,6 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
@@ -58,6 +56,7 @@ import io.agora.AgoraAPI;
 import io.agora.AgoraAPIOnlySignal;
 import io.agora.openlive.model.AGEventHandler;
 import io.agora.rtc.Constants;
+import io.agora.rtc.IRtcEngineEventHandler;
 import io.agora.rtc.RtcEngine;
 import io.agora.rtc.video.VideoCanvas;
 
@@ -77,7 +76,7 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
     private RecyclerView audienceRecyclerView;
     private AudienceVideoAdapter audienceVideoAdapter;
 
-    private FrameLayout broadcasterView, broadcasterFullView;
+    private FrameLayout broadcasterView, broadcasterFullView, audienceLayout;
     private TextView broadcastNameText, broadcastTipsText;
     private ImageButton muteAudioButton, fullScreenButton, switchCameraButton;
     private Button exitButton;
@@ -141,6 +140,7 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
         audienceVideoAdapter = new AudienceVideoAdapter(this);
         audienceRecyclerView.setAdapter(audienceVideoAdapter);
 
+        audienceLayout = findViewById(R.id.audience_layout);
         broadcasterView = findViewById(R.id.broadcaster_view);
         broadcasterFullView = findViewById(R.id.broadcaster1_view);
         broadcastTipsText = findViewById(R.id.broadcaster_tips);
@@ -173,27 +173,30 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                 fullScreenButton.setImageResource(R.drawable.ic_full_screened);
                 exitButton.setVisibility(View.GONE);
                 muteAudioButton.setVisibility(View.GONE);
-                audienceRecyclerView.setVisibility(View.INVISIBLE);
                 switchCameraButton.setVisibility(View.GONE);
+                stripSurfaceView(remoteBroadcasterSurfaceView);
                 if (currentMaterial == null) {
-                    broadcasterFullView.setVisibility(View.VISIBLE);
-                    broadcasterView.removeView(remoteBroadcasterSurfaceView);
+                    broadcasterView.removeAllViews();
                     broadcasterView.setVisibility(View.GONE);
+                    broadcasterFullView.setVisibility(View.VISIBLE);
                     broadcasterFullView.addView(remoteBroadcasterSurfaceView);
                 } else {
                     docImage.setVisibility(View.GONE);
                     fullDocImage.setVisibility(View.VISIBLE);
                     Picasso.with(this).load(currentMaterial.getMeetingMaterialsPublishList().get(doc_index).getUrl()).into(fullDocImage);
                 }
+                audienceLayout.removeView(audienceRecyclerView);
+                audienceRecyclerView.setVisibility(View.GONE);
+                audienceLayout.setVisibility(View.INVISIBLE);
                 isFullScreen = true;
             } else {
                 fullScreenButton.setImageResource(R.drawable.ic_full_screen);
                 exitButton.setVisibility(View.VISIBLE);
                 muteAudioButton.setVisibility(View.VISIBLE);
                 switchCameraButton.setVisibility(View.VISIBLE);
-                audienceRecyclerView.setVisibility(View.VISIBLE);
+                stripSurfaceView(remoteBroadcasterSurfaceView);
                 if (currentMaterial == null) {
-                    broadcasterFullView.removeView(remoteBroadcasterSurfaceView);
+                    broadcasterFullView.removeAllViews();
                     broadcasterFullView.setVisibility(View.GONE);
                     broadcasterView.setVisibility(View.VISIBLE);
                     broadcasterView.addView(remoteBroadcasterSurfaceView);
@@ -201,20 +204,24 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                     docImage.setVisibility(View.VISIBLE);
                     fullDocImage.setVisibility(View.GONE);
                 }
+                audienceRecyclerView.setVisibility(View.VISIBLE);
+                audienceLayout.setVisibility(View.VISIBLE);
+                audienceLayout.addView(audienceRecyclerView);
                 isFullScreen = false;
             }
         });
 
         exitButton = findViewById(R.id.finish_meeting);
         exitButton.setOnClickListener(view -> {
-            showDialog(1, "确定退出会议吗？", "取消", "确定", null);
+            showDialog(1, "确定退出会议吗？", "取消", "确定");
         });
 
         findViewById(R.id.exit).setOnClickListener(view -> {
-            showDialog(1, "确定退出会议吗？", "取消", "确定", null);
+            showDialog(1, "确定退出会议吗？", "取消", "确定");
         });
 
         worker().configEngine(Constants.CLIENT_ROLE_BROADCASTER, Constants.VIDEO_PROFILE_180P);
+        rtcEngine().enableAudioVolumeIndication(400, 3);
 
         agoraAPI = AgoraAPIOnlySignal.getInstance(this, agora.getAppID());
         agoraAPI.callbackSet(new AgoraAPI.CallBack() {
@@ -345,28 +352,28 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
             public void onMessageInstantReceive(final String account, final int uid, final String msg) {
                 super.onMessageInstantReceive(account, uid, msg);
                 runOnUiThread(() -> {
-                    try {
-                        if (BuildConfig.DEBUG) {
-                            Toast.makeText(InviteMeetingAudienceActivity.this, "onMessageInstantReceive 收到主持人" + account + "发来的消息" + msg, Toast.LENGTH_SHORT).show();
-                        }
-                        JSONObject jsonObject = new JSONObject(msg);
-                        if (jsonObject.has("finish")) {
-                            boolean finish = jsonObject.getBoolean("finish");
-                            if (finish) {
-                                if (!TextUtils.isEmpty(meetingHostJoinTraceId)) {
-                                    HashMap<String, Object> params = new HashMap<String, Object>();
-                                    params.put("meetingHostJoinTraceId", meetingHostJoinTraceId);
-                                    params.put("status", 2);
-                                    params.put("meetingId", meetingJoin.getMeeting().getId());
-                                    params.put("type", 2);
-                                    params.put("leaveType", 1);
-                                    ApiClient.getInstance().meetingHostStats(TAG, meetingHostJoinTraceCallback, params);
-                                }
-                            }
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                    if (BuildConfig.DEBUG) {
+                        Toast.makeText(InviteMeetingAudienceActivity.this, "onMessageInstantReceive 收到主持人" + account + "发来的消息" + msg, Toast.LENGTH_SHORT).show();
                     }
+//                    try {
+//                        JSONObject jsonObject = new JSONObject(msg);
+//                        if (jsonObject.has("finish")) {
+//                            boolean finish = jsonObject.getBoolean("finish");
+//                            if (finish) {
+//                                if (!TextUtils.isEmpty(meetingJoinTraceId)) {
+//                                    HashMap<String, Object> params = new HashMap<String, Object>();
+//                                    params.put("meetingJoinTraceId", meetingJoinTraceId);
+//                                    params.put("meetingId", meetingJoin.getMeeting().getId());
+//                                    params.put("status", 2);
+//                                    params.put("type", 2);
+//                                    params.put("leaveType", 1);
+//                                    ApiClient.getInstance().meetingJoinStats(TAG, meetingJoinStatsCallback, params);
+//                                }
+//                            }
+//                        }
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
                 });
             }
 
@@ -443,10 +450,9 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
 
                             if (currentMaterial != null) {
                                 AudienceVideo audienceVideo = new AudienceVideo();
-                                audienceVideo.setMuted(false);
+                                audienceVideo.setUid(Integer.parseInt(broadcasterId));
                                 audienceVideo.setBroadcaster(true);
                                 audienceVideo.setName("主持人" + broadcasterId);
-                                audienceVideo.setSurfaceView(remoteBroadcasterSurfaceView);
                                 audienceVideoAdapter.deleteItem(audienceVideo);
                                 currentMaterial = null;
                             }
@@ -489,6 +495,13 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
 
     }
 
+    private void stripSurfaceView(SurfaceView view) {
+        ViewParent parent = view.getParent();
+        if (parent != null) {
+            ((FrameLayout) parent).removeView(view);
+        }
+    }
+
     private OkHttpCallback joinMeetingCallback(int uid) {
         return new OkHttpCallback<Bucket<HostUser>>() {
 
@@ -519,8 +532,8 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                             Picasso.with(InviteMeetingAudienceActivity.this).load(currentMaterialPublish.getUrl()).into(docImage);
 
                             AudienceVideo audienceVideo = new AudienceVideo();
+                            audienceVideo.setUid(Integer.parseInt(broadcasterId));
                             audienceVideo.setName("主持人" + broadcasterId);
-                            audienceVideo.setMuted(false);
                             audienceVideo.setBroadcaster(true);
                             audienceVideo.setSurfaceView(remoteBroadcasterSurfaceView);
                             audienceVideoAdapter.insertItem(audienceVideo);
@@ -543,8 +556,8 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                         audienceRecyclerView.setVisibility(View.VISIBLE);
 
                         AudienceVideo audienceVideo = new AudienceVideo();
+                        audienceVideo.setUid(uid);
                         audienceVideo.setName("参会人" + uid);
-                        audienceVideo.setMuted(false);
                         audienceVideo.setBroadcaster(false);
                         audienceVideo.setSurfaceView(remoteAudienceSurfaceView);
                         audienceVideoAdapter.insertItem(audienceVideo);
@@ -559,8 +572,8 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                     audienceRecyclerView.setVisibility(View.VISIBLE);
 
                     AudienceVideo audienceVideo = new AudienceVideo();
+                    audienceVideo.setUid(config().mUid);
                     audienceVideo.setName("参会人" + config().mUid);
-                    audienceVideo.setMuted(false);
                     audienceVideo.setBroadcaster(false);
                     audienceVideo.setSurfaceView(localAudienceSurfaceView);
                     audienceVideoAdapter.insertItem(audienceVideo);
@@ -596,8 +609,8 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                 broadcasterView.setVisibility(View.GONE);
 
                 AudienceVideo audienceVideo = new AudienceVideo();
+                audienceVideo.setUid(Integer.parseInt(broadcasterId));
                 audienceVideo.setName("主持人" + broadcasterId);
-                audienceVideo.setMuted(false);
                 audienceVideo.setBroadcaster(false);
                 audienceVideo.setSurfaceView(remoteBroadcasterSurfaceView);
                 audienceVideoAdapter.insertItem(audienceVideo);
@@ -618,70 +631,31 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
         }
     };
 
-    private String meetingHostJoinTraceId;
-
-    private OkHttpCallback meetingHostJoinTraceCallback = new OkHttpCallback<Bucket<MeetingHostingStats>>() {
-
-        @Override
-        public void onSuccess(Bucket<MeetingHostingStats> meetingHostingStatsBucket) {
-            if (TextUtils.isEmpty(meetingHostJoinTraceId)) {
-                meetingHostJoinTraceId = meetingHostingStatsBucket.getData().getId();
-            } else {
-                meetingHostJoinTraceId = null;
-            }
-        }
-
-        @Override
-        public void onFailure(int errorCode, BaseException exception) {
-            super.onFailure(errorCode, exception);
-            Toast.makeText(InviteMeetingAudienceActivity.this, errorCode + "---" + exception.getMessage(), Toast.LENGTH_SHORT).show();
-        }
-    };
-
     private Dialog dialog;
 
-    private void showDialog(final int type, final String title, final String leftText, final String rightText, final Audience audience) {
+    private void showDialog(final int type, final String title, final String leftText, final String rightText) {
         View view = View.inflate(this, R.layout.dialog_selector, null);
         TextView titleText = view.findViewById(R.id.title);
         titleText.setText(title);
 
         Button leftButton = view.findViewById(R.id.left);
         leftButton.setText(leftText);
-        leftButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.cancel();
-            }
-        });
+        leftButton.setOnClickListener(view1 -> dialog.cancel());
 
         Button rightButton = view.findViewById(R.id.right);
         rightButton.setText(rightText);
-        rightButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.cancel();
-                if (type == 1) {
-                    if (!TextUtils.isEmpty(meetingHostJoinTraceId)) {
-                        HashMap<String, Object> params = new HashMap<String, Object>();
-                        params.put("meetingHostJoinTraceId", meetingHostJoinTraceId);
-                        params.put("status", 2);
-                        params.put("meetingId", meetingJoin.getMeeting().getId());
-                        params.put("type", 2);
-                        params.put("leaveType", 1);
-                        ApiClient.getInstance().meetingHostStats(TAG, meetingHostJoinTraceCallback, params);
-                    }
-                    doLeaveChannel();
-                    if (agoraAPI.getStatus() == 2) {
-                        agoraAPI.logout();
-                    }
-                    finish();
+        rightButton.setOnClickListener(view2 -> {
+            dialog.cancel();
+            if (type == 1) {
+                doLeaveChannel();
+                if (agoraAPI.getStatus() == 2) {
+                    agoraAPI.logout();
                 }
+                finish();
             }
         });
-
         dialog = new Dialog(this, R.style.MyDialog);
         dialog.setContentView(view);
-
         Window dialogWindow = dialog.getWindow();
         WindowManager.LayoutParams lp = dialogWindow.getAttributes();
         lp.width = 740;
@@ -702,12 +676,15 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
         worker().leaveChannel(config().mChannel);
         worker().preview(false, null, 0);
 
-        HashMap<String, Object> params = new HashMap<String, Object>();
-        params.put("meetingJoinTraceId", meetingJoinTraceId);
-        params.put("meetingId", meetingJoin.getMeeting().getId());
-        params.put("status", 2);
-        params.put("type", 2);
-        ApiClient.getInstance().meetingJoinStats(TAG, meetingJoinStatsCallback, params);
+        if (!TextUtils.isEmpty(meetingJoinTraceId)) {
+            HashMap<String, Object> params = new HashMap<String, Object>();
+            params.put("meetingJoinTraceId", meetingJoinTraceId);
+            params.put("meetingId", meetingJoin.getMeeting().getId());
+            params.put("status", 2);
+            params.put("type", 2);
+            params.put("leaveType", 1);
+            ApiClient.getInstance().meetingJoinStats(TAG, meetingJoinStatsCallback, params);
+        }
     }
 
     @Override
@@ -743,8 +720,10 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
         public void onSuccess(Bucket<MeetingJoinStats> meetingJoinStatsBucket) {
             if (TextUtils.isEmpty(meetingJoinTraceId)) {
                 meetingJoinTraceId = meetingJoinStatsBucket.getData().getId();
+                Log.v("meeting_join", meetingJoinStatsBucket.toString());
             } else {
                 meetingJoinTraceId = null;
+                Log.v("meeting_join", "meeting join trace id is null");
             }
         }
     };
@@ -774,18 +753,17 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                     fullDocImage.setVisibility(View.GONE);
 
                     AudienceVideo audienceVideo = new AudienceVideo();
+                    audienceVideo.setUid(Integer.parseInt(broadcasterId));
                     audienceVideo.setName("主持人" + broadcasterId);
-                    audienceVideo.setMuted(false);
                     audienceVideo.setBroadcaster(true);
-                    audienceVideo.setSurfaceView(remoteBroadcasterSurfaceView);
                     audienceVideoAdapter.deleteItem(audienceVideo);
                 } else {
 
                 }
             } else {
                 AudienceVideo audienceVideo = new AudienceVideo();
+                audienceVideo.setUid(uid);
                 audienceVideo.setName("参会人" + uid);
-                audienceVideo.setMuted(false);
                 audienceVideo.setBroadcaster(false);
                 audienceVideoAdapter.deleteItem(audienceVideo);
 
@@ -815,6 +793,22 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
         if (BuildConfig.DEBUG) {
             runOnUiThread(() -> Toast.makeText(InviteMeetingAudienceActivity.this, uid + " 的视频被暂停了 " + muted, Toast.LENGTH_SHORT).show());
         }
+    }
+
+    @Override
+    public void onUserMuteAudio(int uid, boolean muted) {
+        runOnUiThread(() -> {
+            audienceVideoAdapter.setMutedStatusByUid(uid, muted);
+        });
+    }
+
+    @Override
+    public void onAudioVolumeIndication(IRtcEngineEventHandler.AudioVolumeInfo[] speakers, int totalVolume) {
+        runOnUiThread(() -> {
+            for (IRtcEngineEventHandler.AudioVolumeInfo audioVolumeInfo : speakers) {
+                audienceVideoAdapter.setVolumeByUid(audioVolumeInfo.uid, audioVolumeInfo.volume);
+            }
+        });
     }
 
     @Override
@@ -888,7 +882,7 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
     @Override
     public void onBackPressed() {
         if (dialog == null || !dialog.isShowing()) {
-            showDialog(1, "确定退出会议吗？", "取消", "确定", null);
+            showDialog(1, "确定退出会议吗？", "取消", "确定");
         }
     }
 

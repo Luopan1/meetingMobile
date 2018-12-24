@@ -16,6 +16,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.hezy.guide.phone.BaseApplication;
+import com.hezy.guide.phone.BuildConfig;
 import com.hezy.guide.phone.R;
 import com.hezy.guide.phone.business.ViewPagerActivity;
 import com.hezy.guide.phone.entities.AudienceVideo;
@@ -38,18 +39,42 @@ public class AudienceVideoAdapter extends RecyclerView.Adapter<AudienceVideoAdap
     }
 
     public  synchronized void insertItem(AudienceVideo audienceVideo) {
-        Log.v("insertItem", audienceVideo.getName() + "---" + audienceVideos.size());
         this.audienceVideos.add(audienceVideos.size(), audienceVideo);
-        Log.v("insertItem", audienceVideo.getName() + "---" + audienceVideos.size());
         notifyItemInserted(audienceVideos.size());
     }
 
     public synchronized void deleteItem(AudienceVideo audienceVideo) {
         int position = audienceVideos.indexOf(audienceVideo);
-        Log.v("deleteItem", audienceVideo.getName() + "---" + audienceVideos.size() + "---" + position);
         this.audienceVideos.remove(audienceVideo);
-        Log.v("deleteItem", audienceVideo.getName() + "---" + audienceVideos.size() + "---" + position);
         notifyItemRemoved(position);
+    }
+
+    public void setVolumeByUid(int uid, int volume){
+        for (AudienceVideo audienceVideo : audienceVideos) {
+            if (audienceVideo.getUid() == uid) {
+                Log.v("update_volume", "1--" + audienceVideo.toString());
+                audienceVideo.setVolume(volume);
+                int position = audienceVideos.indexOf(audienceVideo);
+                Log.v("update_volume", "2--" + audienceVideo.toString() + "--position--" + position);
+                notifyItemChanged(position, 1);
+            } else {
+                Log.v("update_volume", "不是更新它");
+            }
+        }
+    }
+
+    public void setMutedStatusByUid(int uid, boolean muted){
+        for (AudienceVideo audienceVideo : audienceVideos) {
+            if (audienceVideo.getUid() == uid) {
+                Log.v("update_mute", "1--" + audienceVideo.toString());
+                audienceVideo.setMuted(muted);
+                int position = audienceVideos.indexOf(audienceVideo);
+                Log.v("update_mute", "2--" + audienceVideo.toString() + "--position--" + position);
+                notifyItemChanged(position, 1);
+            } else {
+                Log.v("update_mute", "不是更新它");
+            }
+        }
     }
 
     @Override
@@ -61,7 +86,13 @@ public class AudienceVideoAdapter extends RecyclerView.Adapter<AudienceVideoAdap
     @Override
     public void onBindViewHolder(@NonNull final AudienceVideoViewHolder holder, final int position) {
         final AudienceVideo audienceVideo = audienceVideos.get(position);
+
         holder.nameText.setText(audienceVideo.getName());
+        if (BuildConfig.DEBUG) {
+            holder.nameText.setVisibility(View.VISIBLE);
+        } else {
+            holder.nameText.setVisibility(View.GONE);
+        }
 
         if (audienceVideo.isBroadcaster()) {
             holder.labelText.setVisibility(View.VISIBLE);
@@ -69,7 +100,7 @@ public class AudienceVideoAdapter extends RecyclerView.Adapter<AudienceVideoAdap
             holder.labelText.setVisibility(View.GONE);
         }
 
-        if (audienceVideo.isMuted()) {
+        if (audienceVideo.isMuted() || audienceVideo.getVolume() <= 100) {
             holder.volumeImage.setVisibility(View.GONE);
         } else {
             holder.volumeImage.setVisibility(View.VISIBLE);
@@ -82,6 +113,22 @@ public class AudienceVideoAdapter extends RecyclerView.Adapter<AudienceVideoAdap
         stripSurfaceView(surfaceView);
         holder.videoLayout.addView(surfaceView, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull AudienceVideoViewHolder holder, int position, @NonNull List<Object> payloads) {
+        if (payloads.isEmpty()) {
+            onBindViewHolder(holder, position);
+        } else {
+            final AudienceVideo audienceVideo = audienceVideos.get(position);
+
+            if (audienceVideo.isMuted() || audienceVideo.getVolume() <= 100) {
+                holder.volumeImage.setVisibility(View.GONE);
+            } else {
+                holder.volumeImage.setVisibility(View.VISIBLE);
+            }
+
+        }
     }
 
     private void stripSurfaceView(SurfaceView view) {

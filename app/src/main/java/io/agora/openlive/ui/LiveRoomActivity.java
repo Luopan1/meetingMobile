@@ -46,6 +46,7 @@ import io.agora.openlive.model.AGEventHandler;
 import io.agora.openlive.model.ConstantApp;
 import io.agora.openlive.model.VideoStatusData;
 import io.agora.rtc.Constants;
+import io.agora.rtc.IRtcEngineEventHandler;
 import io.agora.rtc.RtcEngine;
 import io.agora.rtc.video.VideoCanvas;
 import rx.Subscription;
@@ -452,6 +453,16 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
                 }
             });
         }
+    }
+
+    @Override
+    public void onUserMuteAudio(int uid, boolean muted) {
+
+    }
+
+    @Override
+    public void onAudioVolumeIndication(IRtcEngineEventHandler.AudioVolumeInfo[] speakers, int totalVolume) {
+
     }
 
     @Override

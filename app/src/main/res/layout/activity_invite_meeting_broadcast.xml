@@ -104,15 +104,19 @@
 
         </FrameLayout>
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/audience_list"
+        <FrameLayout
+            android:id="@+id/audience_layout"
             android:layout_width="0dp"
             android:layout_height="220dp"
             android:layout_marginRight="14dp"
-            android:layout_weight="1.0"
-            android:visibility="invisible"
-            tools:visibility="visible" />
+            android:layout_weight="1.0">
 
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/audience_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </FrameLayout>
 
     </LinearLayout>
 

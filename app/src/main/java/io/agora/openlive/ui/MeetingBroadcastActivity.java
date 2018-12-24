@@ -80,6 +80,7 @@ import io.agora.AgoraAPIOnlySignal;
 import io.agora.openlive.model.AGEventHandler;
 import io.agora.openlive.model.ConstantApp;
 import io.agora.rtc.Constants;
+import io.agora.rtc.IRtcEngineEventHandler;
 import io.agora.rtc.RtcEngine;
 import io.agora.rtc.video.VideoCanvas;
 import rx.Subscription;
@@ -169,6 +170,9 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                 }else {
                     llMsg.setVisibility(View.GONE);
                     llChat.setVisibility(View.VISIBLE);
+                    if(ChatHandler.hasMessages(23)){
+                        ChatHandler.removeMessages(23);
+                    }
                     ChatHandler.sendEmptyMessageDelayed(23,5100);
 
                     tvChat.setVisibility(View.VISIBLE);
@@ -1568,6 +1572,16 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
         if (BuildConfig.DEBUG) {
             runOnUiThread(() -> Toast.makeText(MeetingBroadcastActivity.this, uid + " 的视频被暂停了 " + muted, Toast.LENGTH_SHORT).show());
         }
+    }
+
+    @Override
+    public void onUserMuteAudio(int uid, boolean muted) {
+
+    }
+
+    @Override
+    public void onAudioVolumeIndication(IRtcEngineEventHandler.AudioVolumeInfo[] speakers, int totalVolume) {
+
     }
 
     @Override

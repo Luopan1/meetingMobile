@@ -4,13 +4,33 @@ import android.view.SurfaceView;
 
 public class AudienceVideo {
 
+    private int uid;
+
     private String name;
+
+    private int volume;
 
     private boolean broadcaster;
 
     private SurfaceView surfaceView;
 
     private boolean muted;
+
+    public int getUid() {
+        return uid;
+    }
+
+    public void setUid(int uid) {
+        this.uid = uid;
+    }
+
+    public int getVolume() {
+        return volume;
+    }
+
+    public void setVolume(int volume) {
+        this.volume = volume;
+    }
 
     public String getName() {
         return name;
@@ -51,23 +71,25 @@ public class AudienceVideo {
 
         AudienceVideo that = (AudienceVideo) o;
 
+        if (uid != that.uid) return false;
         if (broadcaster != that.broadcaster) return false;
-        if (muted != that.muted) return false;
-        return name.equals(that.name);
+        return name != null ? name.equals(that.name) : that.name == null;
     }
 
     @Override
     public int hashCode() {
-        int result = name.hashCode();
+        int result = uid;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (broadcaster ? 1 : 0);
-        result = 31 * result + (muted ? 1 : 0);
         return result;
     }
 
     @Override
     public String toString() {
         return "AudienceVideo{" +
-                "name='" + name + '\'' +
+                "uid=" + uid +
+                ", name='" + name + '\'' +
+                ", volume=" + volume +
                 ", broadcaster=" + broadcaster +
                 ", surfaceView=" + surfaceView +
                 ", muted=" + muted +
