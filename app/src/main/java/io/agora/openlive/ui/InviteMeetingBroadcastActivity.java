@@ -227,7 +227,7 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
             audienceVideoAdapter.deleteItem(audienceVideo);
 
             broadcasterView.setVisibility(View.VISIBLE);
-            broadcasterView.removeAllViews();
+            broadcasterView.removeAllViews(); // TODO has crash
             broadcasterView.addView(localBroadcasterSurfaceView);
 
             currentMaterial = null;

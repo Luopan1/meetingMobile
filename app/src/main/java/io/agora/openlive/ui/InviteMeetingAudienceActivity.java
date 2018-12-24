@@ -224,6 +224,7 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
         });
 
         worker().configEngine(Constants.CLIENT_ROLE_BROADCASTER, Constants.VIDEO_PROFILE_180P);
+        rtcEngine().enableAudioVolumeIndication(400, 3);
 
         agoraAPI = AgoraAPIOnlySignal.getInstance(this, agora.getAppID());
         agoraAPI.callbackSet(new AgoraAPI.CallBack() {

@@ -54,9 +54,9 @@ public class AudienceVideoAdapter extends RecyclerView.Adapter<AudienceVideoAdap
             if (audienceVideo.getUid() == uid) {
                 Log.v("update_volume", "1--" + audienceVideo.toString());
                 audienceVideo.setVolume(volume);
-                Log.v("update_volume", "2--" + audienceVideo.toString());
                 int position = audienceVideos.indexOf(audienceVideo);
-                notifyItemChanged(position);
+                Log.v("update_volume", "2--" + audienceVideo.toString() + "--position--" + position);
+                notifyItemChanged(position, 1);
             } else {
                 Log.v("update_volume", "不是更新它");
             }
@@ -68,9 +68,9 @@ public class AudienceVideoAdapter extends RecyclerView.Adapter<AudienceVideoAdap
             if (audienceVideo.getUid() == uid) {
                 Log.v("update_mute", "1--" + audienceVideo.toString());
                 audienceVideo.setMuted(muted);
-                Log.v("update_mute", "2--" + audienceVideo.toString());
                 int position = audienceVideos.indexOf(audienceVideo);
-                notifyItemChanged(position);
+                Log.v("update_mute", "2--" + audienceVideo.toString() + "--position--" + position);
+                notifyItemChanged(position, 1);
             } else {
                 Log.v("update_mute", "不是更新它");
             }
@@ -100,7 +100,7 @@ public class AudienceVideoAdapter extends RecyclerView.Adapter<AudienceVideoAdap
             holder.labelText.setVisibility(View.GONE);
         }
 
-        if (audienceVideo.isMuted() || audienceVideo.getVolume() == 0) {
+        if (audienceVideo.isMuted() || audienceVideo.getVolume() <= 100) {
             holder.volumeImage.setVisibility(View.GONE);
         } else {
             holder.volumeImage.setVisibility(View.VISIBLE);
@@ -113,6 +113,22 @@ public class AudienceVideoAdapter extends RecyclerView.Adapter<AudienceVideoAdap
         stripSurfaceView(surfaceView);
         holder.videoLayout.addView(surfaceView, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull AudienceVideoViewHolder holder, int position, @NonNull List<Object> payloads) {
+        if (payloads.isEmpty()) {
+            onBindViewHolder(holder, position);
+        } else {
+            final AudienceVideo audienceVideo = audienceVideos.get(position);
+
+            if (audienceVideo.isMuted() || audienceVideo.getVolume() <= 100) {
+                holder.volumeImage.setVisibility(View.GONE);
+            } else {
+                holder.volumeImage.setVisibility(View.VISIBLE);
+            }
+
+        }
     }
 
     private void stripSurfaceView(SurfaceView view) {
