@@ -162,9 +162,15 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
                 if (position > 0) {
                     position--;
                     MeetingMaterialsPublish currentMaterialPublish = currentMaterial.getMeetingMaterialsPublishList().get(position);
-                    docImage.setVisibility(View.VISIBLE);
-                    String imageUrl = ImageHelper.getThumb(currentMaterialPublish.getUrl());
-                    Picasso.with(InviteMeetingBroadcastActivity.this).load(imageUrl).into(docImage);
+                    if (!isFullScreen) {
+                        docImage.setVisibility(View.VISIBLE);
+                        String imageUrl = ImageHelper.getThumb(currentMaterialPublish.getUrl());
+                        Picasso.with(InviteMeetingBroadcastActivity.this).load(imageUrl).into(docImage);
+                    } else {
+                        docFullImage.setVisibility(View.VISIBLE);
+                        String imageUrl = ImageHelper.getThumb(currentMaterialPublish.getUrl());
+                        Picasso.with(InviteMeetingBroadcastActivity.this).load(imageUrl).into(docFullImage);
+                    }
                     pageText.setVisibility(View.VISIBLE);
                     pageText.setText("第" + currentMaterialPublish.getPriority() + "/" + currentMaterial.getMeetingMaterialsPublishList().size() + "页");
 
@@ -191,9 +197,15 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
                 if (position < (currentMaterial.getMeetingMaterialsPublishList().size() - 1)) {
                     position++;
                     MeetingMaterialsPublish currentMaterialPublish = currentMaterial.getMeetingMaterialsPublishList().get(position);
-                    docImage.setVisibility(View.VISIBLE);
-                    String imageUrl = ImageHelper.getThumb(currentMaterialPublish.getUrl());
-                    Picasso.with(InviteMeetingBroadcastActivity.this).load(imageUrl).into(docImage);
+                    if (!isFullScreen) {
+                        docImage.setVisibility(View.VISIBLE);
+                        String imageUrl = ImageHelper.getThumb(currentMaterialPublish.getUrl());
+                        Picasso.with(InviteMeetingBroadcastActivity.this).load(imageUrl).into(docImage);
+                    } else {
+                        docFullImage.setVisibility(View.VISIBLE);
+                        String imageUrl = ImageHelper.getThumb(currentMaterialPublish.getUrl());
+                        Picasso.with(InviteMeetingBroadcastActivity.this).load(imageUrl).into(docFullImage);
+                    }
                     pageText.setVisibility(View.VISIBLE);
                     pageText.setText("第" + currentMaterialPublish.getPriority() + "/" + currentMaterial.getMeetingMaterialsPublishList().size() + "页");
 
@@ -219,6 +231,7 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
         exitDocButton.setOnClickListener(view -> {
             docImage.setVisibility(View.GONE);
             pageText.setVisibility(View.GONE);
+            docFullImage.setVisibility(View.GONE);
 
             docLayout.setVisibility(View.GONE);
 
@@ -266,6 +279,7 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
                 finishMeetingButton.setVisibility(View.GONE);
                 muteAudioButton.setVisibility(View.GONE);
                 switchCameraButton.setVisibility(View.GONE);
+                stripSurfaceView(localBroadcasterSurfaceView);
                 if (currentMaterial == null) {
                     broadcasterFullView.setVisibility(View.VISIBLE);
                     broadcasterView.removeView(localBroadcasterSurfaceView);
@@ -286,6 +300,7 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
                 finishMeetingButton.setVisibility(View.VISIBLE);
                 muteAudioButton.setVisibility(View.VISIBLE);
                 switchCameraButton.setVisibility(View.VISIBLE);
+                stripSurfaceView(localBroadcasterSurfaceView);
                 if (currentMaterial == null) {
                     broadcasterFullView.removeView(localBroadcasterSurfaceView);
                     broadcasterFullView.setVisibility(View.GONE);
