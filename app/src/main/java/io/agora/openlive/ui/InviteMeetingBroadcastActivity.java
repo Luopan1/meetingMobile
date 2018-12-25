@@ -438,7 +438,12 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
             @Override
             public void onChannelQueryUserNumResult(String channelID, int ecode, final int num) {
                 super.onChannelQueryUserNumResult(channelID, ecode, num);
-                runOnUiThread(() -> memberCount = num);
+                runOnUiThread(() -> {
+                    memberCount = num;
+                    HashMap<String, String> params = new HashMap<>();
+                    params.put("count", "" + num);
+                    ApiClient.getInstance().channelCount(TAG, channelCountCallback(), meetingJoin.getMeeting().getId(), params);
+                });
             }
 
             @Override
@@ -458,6 +463,8 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
                     if (BuildConfig.DEBUG) {
                         Toast.makeText(InviteMeetingBroadcastActivity.this, "参会人" + account + "进入信令频道", Toast.LENGTH_SHORT).show();
                     }
+
+                    agoraAPI.channelQueryUserNum(channelName);
                     if (currentMaterial != null) { //正在演示ppt
                         try {
                             if (BuildConfig.DEBUG) {
@@ -487,6 +494,8 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
                     if (BuildConfig.DEBUG) {
                         Toast.makeText(InviteMeetingBroadcastActivity.this, "参会人" + account + "退出信令频道", Toast.LENGTH_SHORT).show();
                     }
+
+                    agoraAPI.channelQueryUserNum(channelName);
                 });
             }
 
@@ -551,6 +560,15 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
             }
         });
 
+    }
+
+    private OkHttpCallback channelCountCallback() {
+        return new OkHttpCallback<Bucket>() {
+            @Override
+            public void onSuccess(Bucket bucket) {
+                Log.v("channel_count", bucket.toString());
+            }
+        };
     }
 
     private void stripSurfaceView(SurfaceView view) {

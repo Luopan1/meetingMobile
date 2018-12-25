@@ -307,6 +307,11 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
             @Override
             public void onChannelQueryUserNumResult(String channelID, int ecode, final int num) {
                 super.onChannelQueryUserNumResult(channelID, ecode, num);
+                runOnUiThread(() -> {
+                    HashMap<String, String> params = new HashMap<>();
+                    params.put("count", "" + num);
+                    ApiClient.getInstance().channelCount(TAG, channelCountCallback(), meetingJoin.getMeeting().getId(), params);
+                });
             }
 
             @Override
@@ -316,6 +321,8 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                     if (BuildConfig.DEBUG) {
                         Toast.makeText(InviteMeetingAudienceActivity.this, "用户" + account + "进入信令频道", Toast.LENGTH_SHORT).show();
                     }
+
+                    agoraAPI.channelQueryUserNum(channelName);
                 });
 
             }
@@ -327,6 +334,8 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                     if (BuildConfig.DEBUG) {
                         Toast.makeText(InviteMeetingAudienceActivity.this, "用户" + account + "退出信令频道", Toast.LENGTH_SHORT).show();
                     }
+
+                    agoraAPI.channelQueryUserNum(channelName);
                 });
             }
 
@@ -693,6 +702,15 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                 ApiClient.getInstance().meetingJoinStats(TAG, meetingJoinStatsCallback, params);
             }
         });
+    }
+
+    private OkHttpCallback channelCountCallback() {
+        return new OkHttpCallback<Bucket>() {
+            @Override
+            public void onSuccess(Bucket bucket) {
+                Log.v("channel_count", bucket.toString());
+            }
+        };
     }
 
     private String meetingJoinTraceId;
