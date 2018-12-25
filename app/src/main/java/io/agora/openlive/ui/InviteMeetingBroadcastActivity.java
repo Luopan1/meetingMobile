@@ -1014,24 +1014,19 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
         showExitDialog();
     }
 
-    @Override
-    protected void onUserLeaveHint() {
-        super.onUserLeaveHint();
-
-        HashMap<String, String> params = new HashMap<String, String>();
-        params.put("clientUid", "" + config().mUid);
-        params.put("hostUserId", Preferences.getUserId());
-        params.put("hostUserName", meetingJoin.getHostUser().getHostUserName());
-        params.put("status", "2");
-        ApiClient.getInstance().meetingLeaveTemp(TAG, params, meetingTempLeaveCallback, meetingJoin.getMeeting().getId());
-
-        doLeaveChannel();
-        if (agoraAPI.getStatus() == 2) {
-            agoraAPI.logout();
-        }
-
-        finish();
-    }
+//    @Override
+//    protected void onUserLeaveHint() {
+//        super.onUserLeaveHint();
+//
+//        Toast.makeText(this, "按home退出了", Toast.LENGTH_SHORT).show();
+//
+//        doLeaveChannel();
+//        if (agoraAPI.getStatus() == 2) {
+//            agoraAPI.logout();
+//        }
+//
+//        finish();
+//    }
 
     @Override
     protected void onDestroy() {
@@ -1066,6 +1061,13 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
                         Toast.makeText(getApplicationContext(), "您点击了Home键", Toast.LENGTH_SHORT).show();
 
                     currentMaterial = null;
+
+                    HashMap<String, String> params = new HashMap<String, String>();
+                    params.put("clientUid", "" + config().mUid);
+                    params.put("hostUserId", Preferences.getUserId());
+                    params.put("hostUserName", meetingJoin.getHostUser().getHostUserName());
+                    params.put("status", "2");
+                    ApiClient.getInstance().meetingLeaveTemp(TAG, params, meetingTempLeaveCallback, meetingJoin.getMeeting().getId());
 
                     doLeaveChannel();
                     if (agoraAPI.getStatus() == 2) {
