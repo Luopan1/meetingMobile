@@ -443,6 +443,10 @@ public class ApiClient {
         okHttpUtil.post(API_DOMAIN_NAME + "/osg/app/meeting/" + meetingId + "/leave/temp", getCommonHead(), params, callback);
     }
 
+    public void channelCount(Object tag, OkHttpCallback callback, String meetingId, Map<String, String> values){
+        okHttpUtil.post(API_DOMAIN_NAME + "/meeting/" + meetingId + "/user/count", getCommonHead(), values, callback);
+    }
+
     /**
      * 会议参会人摄像头抓拍
      * /osg/app/meeting/screenshot

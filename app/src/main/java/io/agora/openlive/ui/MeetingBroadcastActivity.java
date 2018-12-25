@@ -705,6 +705,9 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                 super.onChannelQueryUserNumResult(channelID, ecode, num);
                 runOnUiThread(() -> {
                     memberCount = num;
+                    HashMap<String, String> params = new HashMap<>();
+                    params.put("count", "" + num);
+                    ApiClient.getInstance().channelCount(TAG, channelCountCallback(), meetingJoin.getMeeting().getId(), params);
                 });
             }
 
@@ -887,6 +890,15 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
             }
         });
 
+    }
+
+    private OkHttpCallback channelCountCallback() {
+        return new OkHttpCallback<Bucket>() {
+            @Override
+            public void onSuccess(Bucket bucket) {
+                Log.v("channel_count", bucket.toString());
+            }
+        };
     }
 
     private Dialog dialog, exitDialog;
