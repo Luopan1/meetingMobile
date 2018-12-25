@@ -4,18 +4,18 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:background="@drawable/bg_dialog_exit"
-    android:orientation="vertical"
-    android:padding="30dp">
+    android:orientation="horizontal"
+    android:padding="20dp">
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="160dp"
-        android:gravity="center"
-        android:orientation="horizontal">
+        android:layout_width="140dp"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="120dp"
             android:drawableTop="@drawable/ic_temp_exit"
             android:drawablePadding="8dp"
             android:gravity="center"
@@ -23,11 +23,29 @@
             android:textColor="@color/white"
             android:textSize="14sp" />
 
+        <Button
+            android:id="@+id/left"
+            android:layout_width="100dp"
+            android:layout_height="38dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_button_dialog_selector"
+            android:text="暂时退出"
+            android:textColor="@color/white"
+            android:textSize="14sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="140dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
         <TextView
             android:id="@+id/finish_meeting_tips"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
+            android:layout_height="120dp"
             android:background="@drawable/ic_finish_meeting"
             android:drawablePadding="8dp"
             android:gravity="center"
@@ -38,29 +56,11 @@
             android:visibility="invisible"
             tools:visibility="visible" />
 
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/left"
-            android:layout_width="100dp"
-            android:layout_height="38dp"
-            android:layout_gravity="bottom"
-            android:layout_marginRight="20dp"
-            android:background="@drawable/bg_button_dialog_selector"
-            android:text="暂时退出"
-            android:textColor="@color/white"
-            android:textSize="14sp" />
-
         <Button
             android:id="@+id/right"
             android:layout_width="100dp"
             android:layout_height="38dp"
+            android:layout_marginTop="8dp"
             android:background="@drawable/bg_button_dialog_selector"
             android:text="结束会议"
             android:textColor="@color/white"
