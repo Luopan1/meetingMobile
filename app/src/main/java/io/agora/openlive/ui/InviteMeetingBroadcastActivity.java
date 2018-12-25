@@ -280,11 +280,15 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
                 muteAudioButton.setVisibility(View.GONE);
                 switchCameraButton.setVisibility(View.GONE);
                 if (currentMaterial == null) {
-                    stripSurfaceView(localBroadcasterSurfaceView);
+                    if (localBroadcasterSurfaceView != null) {
+                        stripSurfaceView(localBroadcasterSurfaceView);
+                    }
                     broadcasterFullView.setVisibility(View.VISIBLE);
                     broadcasterView.removeView(localBroadcasterSurfaceView);
                     broadcasterView.setVisibility(View.GONE);
-                    broadcasterFullView.addView(localBroadcasterSurfaceView);
+                    if (localBroadcasterSurfaceView != null) {
+                        broadcasterFullView.addView(localBroadcasterSurfaceView);
+                    }
                 } else {
                     docImage.setVisibility(View.GONE);
                     docFullImage.setVisibility(View.VISIBLE);
@@ -301,11 +305,15 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
                 muteAudioButton.setVisibility(View.VISIBLE);
                 switchCameraButton.setVisibility(View.VISIBLE);
                 if (currentMaterial == null) {
-                    stripSurfaceView(localBroadcasterSurfaceView);
+                    if (localBroadcasterSurfaceView != null) {
+                        stripSurfaceView(localBroadcasterSurfaceView);
+                    }
                     broadcasterFullView.removeView(localBroadcasterSurfaceView);
                     broadcasterFullView.setVisibility(View.GONE);
                     broadcasterView.setVisibility(View.VISIBLE);
-                    broadcasterView.addView(localBroadcasterSurfaceView);
+                    if (localBroadcasterSurfaceView != null) {
+                        broadcasterView.addView(localBroadcasterSurfaceView);
+                    }
                 } else {
                     docImage.setVisibility(View.VISIBLE);
                     docFullImage.setVisibility(View.GONE);

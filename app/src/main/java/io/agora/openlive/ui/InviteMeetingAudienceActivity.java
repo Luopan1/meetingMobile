@@ -175,11 +175,15 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                 muteAudioButton.setVisibility(View.GONE);
                 switchCameraButton.setVisibility(View.GONE);
                 if (currentMaterial == null) {
-                    stripSurfaceView(remoteBroadcasterSurfaceView);
+                    if (remoteBroadcasterSurfaceView != null) {
+                        stripSurfaceView(remoteBroadcasterSurfaceView);
+                    }
                     broadcasterView.removeAllViews();
                     broadcasterView.setVisibility(View.GONE);
                     broadcasterFullView.setVisibility(View.VISIBLE);
-                    broadcasterFullView.addView(remoteBroadcasterSurfaceView);
+                    if (remoteBroadcasterSurfaceView != null) {
+                        broadcasterFullView.addView(remoteBroadcasterSurfaceView);
+                    }
                 } else {
                     docImage.setVisibility(View.GONE);
                     fullDocImage.setVisibility(View.VISIBLE);
@@ -195,11 +199,15 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                 muteAudioButton.setVisibility(View.VISIBLE);
                 switchCameraButton.setVisibility(View.VISIBLE);
                 if (currentMaterial == null) {
-                    stripSurfaceView(remoteBroadcasterSurfaceView);
+                    if (remoteBroadcasterSurfaceView != null) {
+                        stripSurfaceView(remoteBroadcasterSurfaceView);
+                    }
                     broadcasterFullView.removeAllViews();
                     broadcasterFullView.setVisibility(View.GONE);
                     broadcasterView.setVisibility(View.VISIBLE);
-                    broadcasterView.addView(remoteBroadcasterSurfaceView);
+                    if (remoteBroadcasterSurfaceView != null) {
+                        broadcasterView.addView(remoteBroadcasterSurfaceView);
+                    }
                 } else {
                     docImage.setVisibility(View.VISIBLE);
                     fullDocImage.setVisibility(View.GONE);
@@ -496,6 +504,7 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                         rtcEngine().setupRemoteVideo(new VideoCanvas(remoteBroadcasterSurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, uid));
 
                         broadcastTipsText.setVisibility(View.GONE);
+                        fullScreenButton.setVisibility(View.VISIBLE);
 
                         if (currentMaterial != null) {
                             broadcasterView.setVisibility(View.GONE);
@@ -725,6 +734,7 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                     currentMaterial = null;
                     docImage.setVisibility(View.GONE);
                     fullDocImage.setVisibility(View.GONE);
+                    fullScreenButton.setVisibility(View.GONE);
                     audienceVideoAdapter.deleteItem(Integer.parseInt(broadcasterId));
                 } else {
 
