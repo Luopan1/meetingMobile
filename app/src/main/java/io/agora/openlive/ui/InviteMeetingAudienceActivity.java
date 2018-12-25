@@ -730,14 +730,13 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
             }
             if (uid == Integer.parseInt(meetingJoin.getHostUser().getClientUid())) {
                 broadcastTipsText.setVisibility(View.VISIBLE);
+                fullScreenButton.setVisibility(View.GONE);
+                remoteBroadcasterSurfaceView = null;
                 if (currentMaterial != null) {
                     currentMaterial = null;
                     docImage.setVisibility(View.GONE);
                     fullDocImage.setVisibility(View.GONE);
-                    fullScreenButton.setVisibility(View.GONE);
                     audienceVideoAdapter.deleteItem(Integer.parseInt(broadcasterId));
-                } else {
-
                 }
             } else {
                 audienceVideoAdapter.deleteItem(uid);
