@@ -46,10 +46,10 @@
 
     <ImageView
         android:id="@+id/dialog_meeting_warnning"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/my_px_43"
-        android:src="@drawable/dialog_rad_warnning"
+        android:layout_width="@dimen/my_px_29"
+        android:layout_height="@dimen/my_px_29"
+        android:layout_marginTop="@dimen/my_px_52"
+        android:src="@drawable/dialog_red_warnning"
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="@+id/code"
         app:layout_constraintTop_toBottomOf="@+id/code" />
@@ -58,15 +58,15 @@
         android:id="@+id/dialog_meeting_warnning_text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/my_px_12"
-        android:layout_marginLeft="@dimen/my_px_12"
+        android:layout_marginStart="@dimen/my_px_40"
+        android:layout_marginLeft="@dimen/my_px_40"
         android:layout_marginTop="@dimen/my_px_43"
         android:text="本次会议开启实况模式，将实时拍摄您的参会场景并上传至主持人端"
         android:textColor="@color/c_f62c64"
         android:textSize="@dimen/my_sp_35"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="@+id/code"
-        app:layout_constraintStart_toEndOf="@+id/dialog_meeting_warnning"
+        app:layout_constraintStart_toStartOf="@+id/code"
         app:layout_constraintTop_toBottomOf="@+id/code" />
 
     <Button
@@ -103,7 +103,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/code"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/cancel"
+        app:layout_constraintTop_toBottomOf="@+id/dialog_meeting_warnning_text"
         app:layout_constraintVertical_bias="0.0" />
 
 </android.support.constraint.ConstraintLayout>
