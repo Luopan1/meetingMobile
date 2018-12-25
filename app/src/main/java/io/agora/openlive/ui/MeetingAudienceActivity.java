@@ -1,7 +1,10 @@
 package io.agora.openlive.ui;
 
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -222,6 +225,9 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 //        } else {
 //            ZYAgent.onEvent(this, "在线按钮,当前在线,,无效操作");
 //        }
+
+        registerReceiver(homeKeyEventReceiver, new IntentFilter(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
+
         subscription = RxBus.handleMessage(new Action1() {
             @Override
             public void call(Object o) {
@@ -1632,6 +1638,9 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
         if (ChatHandler.hasMessages(23)) {
             ChatHandler.removeMessages(23);
         }
+
+        unregisterReceiver(homeKeyEventReceiver);
+
         subscription.unsubscribe();
 //        if (WSService.isOnline()) {
 //            //当前状态在线,可切换离线
@@ -1666,4 +1675,85 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
         fragmentTransaction.hide(fragment);
         fragmentTransaction.commitAllowingStateLoss();
     }
+
+    private BroadcastReceiver homeKeyEventReceiver = new BroadcastReceiver() {
+        String REASON = "reason";
+        String HOMEKEY = "homekey";
+        String RECENTAPPS = "recentapps";
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (Intent.ACTION_CLOSE_SYSTEM_DIALOGS.equals(action) || Intent.ACTION_SHUTDOWN.equals(action)) {
+                String reason = intent.getStringExtra(REASON);
+                if (TextUtils.equals(reason, HOMEKEY)) {
+                    // 点击 Home键
+                    if (BuildConfig.DEBUG)
+                        Toast.makeText(getApplicationContext(), "您点击了Home键", Toast.LENGTH_SHORT).show();
+
+                    if (localSurfaceView != null && remoteAudienceSurfaceView == null) {
+                        audienceView.removeAllViews();
+                        audienceNameText.setText("");
+                        audienceLayout.setVisibility(View.GONE);
+
+                        localSurfaceView = null;
+
+                        if (agoraAPI.getStatus() == 2) {
+                            agoraAPI.setAttr("uname", null);
+                            agoraAPI.channelDelAttr(channelName, CALLING_AUDIENCE);
+                        }
+
+                        if (!isDocShow) {
+                            fullScreenButton.setVisibility(View.GONE);
+                        }
+                        requestTalkButton.setVisibility(View.VISIBLE);
+                        stopTalkButton.setVisibility(View.GONE);
+
+                        handsUp = false;
+                        requestTalkButton.setText("我要发言");
+                        requestTalkButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_meeting_signup, 0, 0, 0);
+
+                        worker().getRtcEngine().setClientRole(Constants.CLIENT_ROLE_AUDIENCE);
+
+                        if (!TextUtils.isEmpty(meetingHostJoinTraceId)) {
+                            HashMap<String, Object> params = new HashMap<String, Object>();
+                            params.put("meetingHostJoinTraceId", meetingHostJoinTraceId);
+                            params.put("status", 2);
+                            params.put("meetingId", meetingJoin.getMeeting().getId());
+                            params.put("type", 2);
+                            params.put("leaveType", 1);
+                            ApiClient.getInstance().meetingHostStats(TAG, meetingHostJoinTraceCallback, params);
+                        }
+                        try {
+                            JSONObject jsonObject = new JSONObject();
+                            jsonObject.put("finish", true);
+                            agoraAPI.messageInstantSend(broadcastId, 0, jsonObject.toString(), "");
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    } else if (localSurfaceView == null && remoteAudienceSurfaceView != null) {
+                        audienceView.removeAllViews();
+                        audienceNameText.setText("");
+                        audienceLayout.setVisibility(View.GONE);
+
+                        remoteAudienceSurfaceView = null;
+
+                        if (!isDocShow) {
+                            fullScreenButton.setVisibility(View.GONE);
+                        }
+                    }
+                    doLeaveChannel();
+                    if (agoraAPI.getStatus() == 2) {
+                        agoraAPI.logout();
+                    }
+                    finish();
+                } else if (TextUtils.equals(reason, RECENTAPPS)) {
+                    // 点击 菜单键
+                    if (BuildConfig.DEBUG)
+                        Toast.makeText(getApplicationContext(), "您点击了菜单键", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    };
+
 }

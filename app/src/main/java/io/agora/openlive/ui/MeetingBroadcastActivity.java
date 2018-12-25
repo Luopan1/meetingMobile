@@ -2,7 +2,10 @@ package io.agora.openlive.ui;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -267,6 +270,8 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
 //            ZYAgent.onEvent(this, "在线按钮,当前在线,,无效操作");
 //        }
         TCAgent.onEvent(this, "进入会议直播界面");
+
+        registerReceiver(homeKeyEventReceiver, new IntentFilter(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
 
         subscription = RxBus.handleMessage(new Action1() {
             @Override
@@ -586,7 +591,6 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
 
         exitButton = findViewById(R.id.exit);
         exitButton.setOnClickListener(view -> {
-//            showDialog(1, "确定结束会议吗？", "暂时离开", "结束会议", null);
             showExitDialog();
         });
 
@@ -1699,6 +1703,9 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
 //        } else {
 //            ZYAgent.onEvent(this, "离线按钮,当前离线,无效操作");
 //        }
+
+        unregisterReceiver(homeKeyEventReceiver);
+
         subscription.unsubscribe();
         doLeaveChannel();
         if (agoraAPI.getStatus() == 2) {
@@ -1734,5 +1741,66 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
         fragmentTransaction.hide(fragment);
         fragmentTransaction.commitAllowingStateLoss();
     }
+
+    private BroadcastReceiver homeKeyEventReceiver = new BroadcastReceiver() {
+        String REASON = "reason";
+        String HOMEKEY = "homekey";
+        String RECENTAPPS = "recentapps";
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (Intent.ACTION_CLOSE_SYSTEM_DIALOGS.equals(action) || Intent.ACTION_SHUTDOWN.equals(action)) {
+                String reason = intent.getStringExtra(REASON);
+                if (TextUtils.equals(reason, HOMEKEY)) {
+                    // 点击 Home键
+                    if (BuildConfig.DEBUG)
+                        Toast.makeText(getApplicationContext(), "您点击了Home键", Toast.LENGTH_SHORT).show();
+                    if (currentAudience != null) {
+                        agoraAPI.channelDelAttr(channelName, CALLING_AUDIENCE);
+                        try {
+                            JSONObject jsonObject = new JSONObject();
+                            jsonObject.put("finish", true);
+                            agoraAPI.messageInstantSend("" + currentAudience.getUid(), 0, jsonObject.toString(), "");
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        if (BuildConfig.DEBUG) {
+                            Toast.makeText(MeetingBroadcastActivity.this, "当前没有连麦人", Toast.LENGTH_SHORT).show();
+                        }
+                        if (currentAiducenceId != 0) {
+                            stopButton.setVisibility(View.GONE);
+                            try {
+                                JSONObject jsonObject = new JSONObject();
+                                jsonObject.put("finish", true);
+                                agoraAPI.messageInstantSend("" + currentAiducenceId, 0, jsonObject.toString(), "");
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+
+                    HashMap<String, String> params = new HashMap<String, String>();
+                    params.put("clientUid", "" + config().mUid);
+                    params.put("hostUserId", Preferences.getUserId());
+                    params.put("hostUserName", meetingJoin.getHostUser().getHostUserName());
+                    params.put("status", "2");
+                    ApiClient.getInstance().meetingLeaveTemp(TAG, params, meetingTempLeaveCallback, meetingJoin.getMeeting().getId());
+
+                    doLeaveChannel();
+                    if (agoraAPI.getStatus() == 2) {
+                        agoraAPI.logout();
+                    }
+                    agoraAPI.destroy();
+                    finish();
+                } else if (TextUtils.equals(reason, RECENTAPPS)) {
+                    // 点击 菜单键
+                    if (BuildConfig.DEBUG)
+                        Toast.makeText(getApplicationContext(), "您点击了菜单键", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    };
 
 }
