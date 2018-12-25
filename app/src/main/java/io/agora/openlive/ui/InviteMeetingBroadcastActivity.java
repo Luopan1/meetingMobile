@@ -279,8 +279,8 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
                 finishMeetingButton.setVisibility(View.GONE);
                 muteAudioButton.setVisibility(View.GONE);
                 switchCameraButton.setVisibility(View.GONE);
-                stripSurfaceView(localBroadcasterSurfaceView);
                 if (currentMaterial == null) {
+                    stripSurfaceView(localBroadcasterSurfaceView);
                     broadcasterFullView.setVisibility(View.VISIBLE);
                     broadcasterView.removeView(localBroadcasterSurfaceView);
                     broadcasterView.setVisibility(View.GONE);
@@ -300,8 +300,8 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
                 finishMeetingButton.setVisibility(View.VISIBLE);
                 muteAudioButton.setVisibility(View.VISIBLE);
                 switchCameraButton.setVisibility(View.VISIBLE);
-                stripSurfaceView(localBroadcasterSurfaceView);
                 if (currentMaterial == null) {
+                    stripSurfaceView(localBroadcasterSurfaceView);
                     broadcasterFullView.removeView(localBroadcasterSurfaceView);
                     broadcasterFullView.setVisibility(View.GONE);
                     broadcasterView.setVisibility(View.VISIBLE);
