@@ -106,10 +106,9 @@
 
         <FrameLayout
             android:id="@+id/audience_layout"
-            android:layout_width="0dp"
+            android:layout_width="354dp"
             android:layout_height="220dp"
-            android:layout_marginRight="14dp"
-            android:layout_weight="1.0">
+            android:layout_marginRight="14dp">
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/audience_list"
