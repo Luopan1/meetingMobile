@@ -237,11 +237,18 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
 
             audienceVideoAdapter.deleteItem(config().mUid);
 
-            stripSurfaceView(localBroadcasterSurfaceView);
-            broadcasterView.setVisibility(View.VISIBLE);
-            broadcasterView.removeAllViews();
-            broadcasterView.addView(localBroadcasterSurfaceView);
+            if (isFullScreen) {
+                stripSurfaceView(localBroadcasterSurfaceView);
+                broadcasterFullView.setVisibility(View.VISIBLE);
+                broadcasterFullView.removeAllViews();
+                broadcasterFullView.addView(localBroadcasterSurfaceView);
+            } else {
+                stripSurfaceView(localBroadcasterSurfaceView);
+                broadcasterView.setVisibility(View.VISIBLE);
+                broadcasterView.removeAllViews();
+                broadcasterView.addView(localBroadcasterSurfaceView);
 
+            }
             currentMaterial = null;
             agoraAPI.channelDelAttr(channelName, DOC_INFO);
 
