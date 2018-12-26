@@ -959,13 +959,13 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                 if (ecode == 1002) {
                     return;
                 }
-                if (agoraAPI.getStatus() != 1 && agoraAPI.getStatus() != 2 && agoraAPI.getStatus() != 3) {
-                    if ("true".equals(agora.getIsTest())) {
-                        agoraAPI.login2(agora.getAppID(), "" + config().mUid, "noneed_token", 0, "", 20, 30);
-                    } else {
-                        agoraAPI.login2(agora.getAppID(), "" + config().mUid, agora.getSignalingKey(), 0, "", 20, 30);
-                    }
-                }
+//                if (agoraAPI.getStatus() != 1 && agoraAPI.getStatus() != 2 && agoraAPI.getStatus() != 3) {
+//                    if ("true".equals(agora.getIsTest())) {
+//                        agoraAPI.login2(agora.getAppID(), "" + config().mUid, "noneed_token", 0, "", 20, 30);
+//                    } else {
+//                        agoraAPI.login2(agora.getAppID(), "" + config().mUid, agora.getSignalingKey(), 0, "", 20, 30);
+//                    }
+//                }
             }
 
             @Override
