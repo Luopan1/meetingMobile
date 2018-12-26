@@ -1346,48 +1346,18 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        doTLeaveChannel();
-
-    }
-
-    @Override
-    protected void onUserLeaveHint() {
-        super.onUserLeaveHint();
-
-        worker().getRtcEngine().setClientRole(Constants.CLIENT_ROLE_AUDIENCE);
-
-        try {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("finish", true);
-            agoraAPI.messageInstantSend(broadcastId, 0, jsonObject.toString(), "");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        doLeaveChannel();
-        doTLeaveChannel();
-        if (agoraAPI.getStatus() == 2) {
-            agoraAPI.setAttr("uname", null);
-            agoraAPI.channelDelAttr(channelName, CALLING_AUDIENCE);
-            agoraAPI.logout();
-        }
-
-        finish();
-    }
-
     private void doTEnterChannel() {
         HashMap<String, Object> params = new HashMap<String, Object>();
         params.put("status", 1);
         params.put("type", 2);
         params.put("meetingId", ((MeetingJoin) (getIntent().getParcelableExtra("meeting"))).getMeeting().getId());
         ApiClient.getInstance().meetingJoinStats(TAG, meetingJoinStatsCallback, params);
-
     }
 
-    private void doTLeaveChannel() {
+    private void doLeaveChannel() {
+        worker().leaveChannel(config().mChannel);
+        worker().preview(false, null, 0);
+
         if (!TextUtils.isEmpty(meetingJoinTraceId)) {
             HashMap<String, Object> params = new HashMap<String, Object>();
             params.put("meetingJoinTraceId", meetingJoinTraceId);
@@ -1397,11 +1367,6 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
             params.put("leaveType", 1);
             ApiClient.getInstance().meetingJoinStats(TAG, meetingJoinStatsCallback, params);
         }
-    }
-
-    private void doLeaveChannel() {
-        worker().leaveChannel(config().mChannel);
-        worker().preview(false, null, 0);
     }
 
     @Override
