@@ -39,6 +39,7 @@ import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.utils.DensityUtil;
 import com.hezy.guide.phone.utils.OkHttpCallback;
 import com.hezy.guide.phone.utils.UIDUtil;
+import com.hezy.guide.phone.utils.helper.ImageHelper;
 import com.hezy.guide.phone.utils.statistics.ZYAgent;
 import com.hezy.guide.phone.view.SpaceItemDecoration;
 import com.squareup.picasso.Picasso;
@@ -429,11 +430,20 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                                                 broadcasterView.removeView(remoteBroadcasterSurfaceView);
                                                 broadcasterView.setVisibility(View.GONE);
                                             }
-                                            pageText.setVisibility(View.VISIBLE);
-                                            docImage.setVisibility(View.VISIBLE);
                                             MeetingMaterialsPublish currentMaterialPublish = currentMaterial.getMeetingMaterialsPublishList().get(doc_index);
+
+                                            if (!isFullScreen) {
+                                                docImage.setVisibility(View.VISIBLE);
+                                                String imageUrl = ImageHelper.getThumb(currentMaterialPublish.getUrl());
+                                                Picasso.with(InviteMeetingAudienceActivity.this).load(imageUrl).into(docImage);
+                                            } else {
+                                                fullDocImage.setVisibility(View.VISIBLE);
+                                                String imageUrl = ImageHelper.getThumb(currentMaterialPublish.getUrl());
+                                                Picasso.with(InviteMeetingAudienceActivity.this).load(imageUrl).into(fullDocImage);
+                                            }
+
+                                            pageText.setVisibility(View.VISIBLE);
                                             pageText.setText("第" + currentMaterialPublish.getPriority() + "/" + currentMaterial.getMeetingMaterialsPublishList().size() + "页");
-                                            Picasso.with(InviteMeetingAudienceActivity.this).load(currentMaterialPublish.getUrl()).into(docImage);
                                         }
                                     } else {
                                         ApiClient.getInstance().meetingMaterial(TAG, meetingMaterialCallback, materialId);
@@ -444,20 +454,33 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                             }
                         } else {
                             pageText.setVisibility(View.GONE);
-                            docImage.setVisibility(View.GONE);
 
                             if (currentMaterial != null) {
                                 currentMaterial = null;
                                 audienceVideoAdapter.deleteItem(Integer.parseInt(broadcasterId));
                             }
 
-                            broadcasterView.setVisibility(View.VISIBLE);
-                            broadcasterView.removeAllViews();
-                            if (remoteBroadcasterSurfaceView != null) {
-                                stripSurfaceView(remoteBroadcasterSurfaceView);
-                                broadcasterView.addView(remoteBroadcasterSurfaceView);
-                                Log.v("add view", "ppt退出");
+                            if (isFullScreen) {
+                                fullDocImage.setVisibility(View.GONE);
+                                broadcasterFullView.setVisibility(View.VISIBLE);
+                                broadcasterFullView.removeAllViews();
+                                if (remoteBroadcasterSurfaceView != null) {
+                                    stripSurfaceView(remoteBroadcasterSurfaceView);
+                                    broadcasterFullView.addView(remoteBroadcasterSurfaceView);
+                                    Log.v("add view", "ppt退出");
+                                }
+                            } else {
+                                docImage.setVisibility(View.GONE);
+
+                                broadcasterView.setVisibility(View.VISIBLE);
+                                broadcasterView.removeAllViews();
+                                if (remoteBroadcasterSurfaceView != null) {
+                                    stripSurfaceView(remoteBroadcasterSurfaceView);
+                                    broadcasterView.addView(remoteBroadcasterSurfaceView);
+                                    Log.v("add view", "ppt退出");
+                                }
                             }
+
                         }
                     }
                 });

@@ -86,8 +86,7 @@
             android:layout_height="220dp"
             android:layout_marginLeft="14dp"
             android:layout_marginRight="3dp"
-            android:layout_weight="1.0"
-            android:background="@android:color/black">
+            android:layout_weight="1.0">
 
             <FrameLayout
                 android:id="@+id/broadcaster_view"
