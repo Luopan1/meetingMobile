@@ -236,7 +236,6 @@ public class OkHttpUtil {
         return url;
     }
 
-
     private Request buildRequest(String url, Map<String, String> headers, Map<String, String> params, String jsonStr, HttpMethodType type) {
         return buildRequest(url, headers, params, jsonStr, type, null);
     }

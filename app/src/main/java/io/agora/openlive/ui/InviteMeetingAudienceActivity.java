@@ -914,8 +914,7 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                     // 点击 Home键
                     if (BuildConfig.DEBUG)
                         Toast.makeText(getApplicationContext(), "您点击了Home键", Toast.LENGTH_SHORT).show();
-
-                    agoraAPI.channelLeave(channelName);
+                    doLeaveChannel();
                     if (agoraAPI.getStatus() == 2) {
                         agoraAPI.logout();
                     }
