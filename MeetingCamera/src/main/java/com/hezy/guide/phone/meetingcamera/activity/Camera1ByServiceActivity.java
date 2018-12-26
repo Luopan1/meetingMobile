@@ -62,7 +62,7 @@ public class Camera1ByServiceActivity extends Activity implements Camera1Service
             Intent cameraServiceIntent = new Intent(Camera1ByServiceActivity.this, Camera1Service.class);
             cameraServiceIntent.putExtra(KEY_IMAGE_COMPRESSION_RATIO, imageCompressionRatio);
             bindService(cameraServiceIntent, mConnection, Context.BIND_AUTO_CREATE);
-
+            mBound = true;
         }
 
         @Override
@@ -128,5 +128,15 @@ public class Camera1ByServiceActivity extends Activity implements Camera1Service
      */
     @Override
     public void onBackPressed() {
+    }
+
+    @Override
+    protected void onDestroy() {
+        System.out.println("Activity onDestory()");
+        super.onDestroy();
+        if (mBound) {
+            unbindService(mConnection);
+            mBound = false;
+        }
     }
 }
