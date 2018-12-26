@@ -455,7 +455,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
             showDialog(1, "确定退出会议吗？", "取消", "确定", null);
         });
 
-        doConfigEngine(Constants.CLIENT_ROLE_AUDIENCE);
+        worker().configEngine(Constants.CLIENT_ROLE_AUDIENCE, Constants.VIDEO_PROFILE_180P);
 
         agoraAPI = AgoraAPIOnlySignal.getInstance(this, agora.getAppID());
         agoraAPI.callbackSet(new AgoraAPI.CallBack() {
@@ -1318,13 +1318,6 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
         dialog.setContentView(view);
 
         dialog.show();
-    }
-
-    private void doConfigEngine(int cRole) {
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-        int prefIndex = pref.getInt(ConstantApp.PrefManager.PREF_PROPERTY_PROFILE_IDX, ConstantApp.DEFAULT_PROFILE_IDX);
-        int vProfile = ConstantApp.VIDEO_PROFILES[prefIndex];
-        worker().configEngine(cRole, vProfile);
     }
 
     @Override
