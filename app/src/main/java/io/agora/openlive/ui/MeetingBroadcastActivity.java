@@ -1348,7 +1348,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
         public void onSuccess(Bucket<Meeting> meetingBucket) {
             try {
                 JSONObject jsonObject = new JSONObject();
-                jsonObject.put("ic_finish_meeting", true);
+                jsonObject.put("finish_meeting", true);
                 agoraAPI.messageChannelSend(channelName, jsonObject.toString(), "");
 
                 stopButton.setVisibility(View.GONE);
