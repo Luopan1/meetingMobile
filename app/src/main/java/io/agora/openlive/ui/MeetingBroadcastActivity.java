@@ -358,6 +358,9 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
 
         broadcasterSmallLayout = findViewById(R.id.broadcaster_small_layout);
         broadcasterSmallView = findViewById(R.id.broadcaster_small_view);
+        broadcasterSmallView.setOnClickListener(view -> {
+            rtcEngine().switchCamera();
+        });
 
         docLayout = findViewById(R.id.doc_layout);
         llMsg = findViewById(R.id.ll_msg);
