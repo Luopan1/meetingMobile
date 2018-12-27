@@ -413,6 +413,9 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
         audienceLayout = findViewById(R.id.audience_layout);
         audienceView = findViewById(R.id.audience_view);
         audienceNameText = findViewById(R.id.audience_name);
+        audienceView.setOnClickListener(view -> {
+            rtcEngine().switchCamera();
+        });
 
         countText = findViewById(R.id.online_count);
 

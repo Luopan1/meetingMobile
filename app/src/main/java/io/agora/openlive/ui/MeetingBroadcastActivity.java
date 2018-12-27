@@ -351,7 +351,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                 }else {
 //                    if(!tvChat.getText().toString().isEmpty())
 //                    llChat.setVisibility(View.VISIBLE);
-
+                    rtcEngine().switchCamera();
                 }
             }
         });
@@ -1115,7 +1115,9 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
         });
         exitDialog = new Dialog(this, R.style.MyDialog);
         exitDialog.setContentView(contentView);
-        exitDialog.show();
+        if (!exitDialog.isShowing()) {
+            exitDialog.show();
+        }
     }
 
     private TextView audienceCountText;
