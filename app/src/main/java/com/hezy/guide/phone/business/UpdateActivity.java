@@ -151,7 +151,7 @@ public class UpdateActivity extends BasicActivity {
         Uri uri = null;
         if (Build.VERSION.SDK_INT >= 24) {
             intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            uri = FileProvider.getUriForFile(getApplicationContext(), "com.hezy.guide.phone.fileprovider", new File(filePath));
+            uri = FileProvider.getUriForFile(getApplicationContext(), "com.zy.guide.phone.fileprovider", new File(filePath));
             intent.setDataAndType(uri, "application/vnd.android.package-archive");
         } else {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

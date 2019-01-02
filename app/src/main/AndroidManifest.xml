@@ -229,7 +229,7 @@
         <!--服务结束-->
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities="com.hezy.guide.phone.fileprovider"
+            android:authorities="com.zy.guide.phone.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
