@@ -10,7 +10,7 @@ import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.hezy.guide.phone.R;
+import com.zy.guide.phone.R;
 
 
 public class IconProgressBar extends View {

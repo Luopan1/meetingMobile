@@ -21,8 +21,8 @@ import android.widget.Toast;
 
 import com.adorkable.iosdialog.ActionSheetDialog;
 import com.hezy.guide.phone.ApiClient;
-import com.hezy.guide.phone.BuildConfig;
-import com.hezy.guide.phone.R;
+import com.zy.guide.phone.BuildConfig;
+import com.zy.guide.phone.R;
 import com.hezy.guide.phone.entities.Bucket;
 import com.hezy.guide.phone.entities.MeetingJoinStats;
 import com.hezy.guide.phone.entities.Version;

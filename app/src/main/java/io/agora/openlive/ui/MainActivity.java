@@ -13,7 +13,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
 
-import com.hezy.guide.phone.R;
+import com.zy.guide.phone.R;
 import com.hezy.guide.phone.entities.Agora;
 import com.hezy.guide.phone.utils.Logger;
 import com.tendcloud.tenddata.TCAgent;

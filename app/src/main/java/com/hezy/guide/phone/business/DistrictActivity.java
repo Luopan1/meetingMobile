@@ -7,7 +7,7 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 
-import com.hezy.guide.phone.R;
+import com.zy.guide.phone.R;
 import com.hezy.guide.phone.business.adapter.DistrictAdapter;
 import com.hezy.guide.phone.entities.District;
 import com.hezy.guide.phone.entities.base.BaseArrayBean;

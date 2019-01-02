@@ -7,7 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.SurfaceView;
 
-import com.hezy.guide.phone.R;
+import com.zy.guide.phone.R;
 import com.hezy.guide.phone.utils.DensityUtil;
 import com.hezy.guide.phone.view.SpaceItemDecoration;
 

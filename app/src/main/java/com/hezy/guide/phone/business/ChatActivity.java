@@ -11,7 +11,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.hezy.guide.phone.R;
+import com.zy.guide.phone.R;
 import com.hezy.guide.phone.event.SetUserChatEvent;
 import com.hezy.guide.phone.event.SetUserStateEvent;
 import com.hezy.guide.phone.service.WSService;

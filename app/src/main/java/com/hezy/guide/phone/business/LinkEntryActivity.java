@@ -12,7 +12,7 @@ import android.view.WindowManager;
 import com.alibaba.fastjson.JSON;
 import com.hezy.guide.phone.ApiClient;
 import com.hezy.guide.phone.BaseException;
-import com.hezy.guide.phone.R;
+import com.zy.guide.phone.R;
 import com.hezy.guide.phone.entities.Agora;
 import com.hezy.guide.phone.entities.Bucket;
 import com.hezy.guide.phone.entities.MeetingJoin;

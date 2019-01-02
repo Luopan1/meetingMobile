@@ -11,7 +11,7 @@ import android.widget.ImageView;
 import com.hezy.family.photolib.Info;
 import com.hezy.family.photolib.PhotoView;
 import com.hezy.guide.phone.BaseApplication;
-import com.hezy.guide.phone.R;
+import com.zy.guide.phone.R;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;

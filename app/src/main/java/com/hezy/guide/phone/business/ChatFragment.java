@@ -43,7 +43,7 @@ import com.hezy.family.photolib.PhotoView;
 import com.hezy.guide.phone.ApiClient;
 import com.hezy.guide.phone.BaseApplication;
 import com.hezy.guide.phone.BaseException;
-import com.hezy.guide.phone.R;
+import com.zy.guide.phone.R;
 import com.hezy.guide.phone.business.adapter.GuideLogAdapter;
 import com.hezy.guide.phone.business.adapter.ImageBrowerAdapter;
 import com.hezy.guide.phone.business.adapter.chatAdapter;

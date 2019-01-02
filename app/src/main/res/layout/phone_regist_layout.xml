@@ -8,7 +8,7 @@
         android:layout_height="match_parent"
         android:background="@drawable/bg_gradient_vertical_color"
         android:orientation="vertical"
-        tools:context=".business.PhoneRegisterActivity">
+        >
 
         <ImageView
             android:id="@+id/imageView"

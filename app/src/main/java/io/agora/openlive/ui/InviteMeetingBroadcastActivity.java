@@ -32,8 +32,8 @@ import android.widget.Toast;
 
 import com.hezy.guide.phone.ApiClient;
 import com.hezy.guide.phone.BaseException;
-import com.hezy.guide.phone.BuildConfig;
-import com.hezy.guide.phone.R;
+import com.zy.guide.phone.BuildConfig;
+import com.zy.guide.phone.R;
 import com.hezy.guide.phone.entities.Agora;
 import com.hezy.guide.phone.entities.Audience;
 import com.hezy.guide.phone.entities.AudienceVideo;

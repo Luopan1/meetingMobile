@@ -17,9 +17,9 @@ import android.widget.Toast;
 
 import com.hezy.guide.phone.ApiClient;
 import com.hezy.guide.phone.BaseApplication;
-import com.hezy.guide.phone.BuildConfig;
+import com.zy.guide.phone.BuildConfig;
 import com.hezy.guide.phone.Constant;
-import com.hezy.guide.phone.R;
+import com.zy.guide.phone.R;
 import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.utils.NetUtils;
 import com.hezy.guide.phone.utils.OkHttpUtil;

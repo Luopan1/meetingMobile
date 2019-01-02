@@ -16,8 +16,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.hezy.guide.phone.BaseApplication;
-import com.hezy.guide.phone.BuildConfig;
-import com.hezy.guide.phone.R;
+import com.zy.guide.phone.BuildConfig;
+import com.zy.guide.phone.R;
 import com.hezy.guide.phone.business.ViewPagerActivity;
 import com.hezy.guide.phone.entities.AudienceVideo;
 import com.hezy.guide.phone.entities.ChatMesData;

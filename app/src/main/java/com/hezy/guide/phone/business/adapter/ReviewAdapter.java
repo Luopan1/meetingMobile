@@ -12,7 +12,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.hezy.guide.phone.R;
+import com.zy.guide.phone.R;
 import com.hezy.guide.phone.business.ReplyReviewActivity;
 import com.hezy.guide.phone.business.SettingActivity;
 import com.hezy.guide.phone.business.UserInfoActivity;

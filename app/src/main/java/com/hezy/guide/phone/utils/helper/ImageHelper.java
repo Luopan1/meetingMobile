@@ -7,7 +7,7 @@ import android.util.Log;
 import android.widget.ImageView;
 
 import com.hezy.guide.phone.BaseApplication;
-import com.hezy.guide.phone.R;
+import com.zy.guide.phone.R;
 import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.utils.DensityUtil;
 import com.hezy.guide.phone.utils.HalfType;

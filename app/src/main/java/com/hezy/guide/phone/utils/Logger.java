@@ -3,7 +3,7 @@ package com.hezy.guide.phone.utils;
 import android.os.Looper;
 import android.util.Log;
 
-import com.hezy.guide.phone.BuildConfig;
+import com.zy.guide.phone.BuildConfig;
 import com.tencent.bugly.crashreport.BuglyLog;
 
 import java.io.PrintWriter;

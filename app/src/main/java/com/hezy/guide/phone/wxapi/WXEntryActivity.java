@@ -19,8 +19,8 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.hezy.guide.phone.ApiClient;
-import com.hezy.guide.phone.BuildConfig;
-import com.hezy.guide.phone.R;
+import com.zy.guide.phone.BuildConfig;
+import com.zy.guide.phone.R;
 import com.hezy.guide.phone.business.HomeActivity;
 import com.hezy.guide.phone.business.PhoneRegisterActivity;
 import com.hezy.guide.phone.business.UpdateActivity;
@@ -297,18 +297,20 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
         req.scope = "snsapi_userinfo";
         req.state = "GuideMobile_wx_login";
         mWxApi.sendReq(req);
+        Log.v("wxphone98","1");
         showDialog("正在加载...");
     }
 
     @Override
     public void onReq(BaseReq baseReq) {
-
+        Log.v("wxphone98","2");
     }
 
     // 第三方应用发送到微信的请求处理后的响应结果，会回调到该方法
     //app发送消息给微信，处理返回消息的回调
     @Override
     public void onResp(BaseResp baseResp) {
+        Log.v("wxphone98","3");
         String result;
         switch (baseResp.errCode) {
             case BaseResp.ErrCode.ERR_OK:

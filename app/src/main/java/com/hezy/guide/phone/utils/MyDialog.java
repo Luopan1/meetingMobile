@@ -9,7 +9,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.hezy.guide.phone.R;
+import com.zy.guide.phone.R;
 
 
 public class MyDialog extends AlertDialog {

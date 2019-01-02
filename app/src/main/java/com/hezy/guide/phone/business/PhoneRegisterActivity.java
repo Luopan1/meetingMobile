@@ -9,8 +9,8 @@ import android.text.TextUtils;
 import android.view.View;
 
 import com.hezy.guide.phone.BaseException;
-import com.hezy.guide.phone.R;
-import com.hezy.guide.phone.databinding.PhoneRegistLayoutBinding;
+import com.zy.guide.phone.R;
+import com.zy.guide.phone.databinding.PhoneRegistLayoutBinding;
 import com.hezy.guide.phone.entities.LoginWithPhoneNumber;
 import com.hezy.guide.phone.entities.User;
 import com.hezy.guide.phone.entities.base.BaseBean;

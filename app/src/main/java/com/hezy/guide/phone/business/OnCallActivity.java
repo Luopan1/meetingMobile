@@ -15,8 +15,8 @@ import android.widget.Toast;
 
 import com.hezy.guide.phone.BaseApplication;
 import com.hezy.guide.phone.BaseException;
-import com.hezy.guide.phone.R;
-import com.hezy.guide.phone.databinding.OnCallActivityBinding;
+import com.zy.guide.phone.R;
+import com.zy.guide.phone.databinding.OnCallActivityBinding;
 import com.hezy.guide.phone.entities.Agora;
 import com.hezy.guide.phone.entities.base.BaseBean;
 import com.hezy.guide.phone.entities.base.BaseErrorBean;

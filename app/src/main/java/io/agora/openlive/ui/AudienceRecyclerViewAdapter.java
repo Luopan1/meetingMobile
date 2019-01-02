@@ -15,7 +15,7 @@ import android.widget.FrameLayout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.hezy.guide.phone.R;
+import com.zy.guide.phone.R;
 import com.hezy.guide.phone.utils.DensityUtil;
 
 import java.util.ArrayList;

@@ -6,9 +6,9 @@ import android.view.View;
 import android.widget.AdapterView;
 
 import com.hezy.guide.phone.BaseException;
-import com.hezy.guide.phone.R;
+import com.zy.guide.phone.R;
 import com.hezy.guide.phone.business.adapter.CustomAdapter;
-import com.hezy.guide.phone.databinding.ActivityCustomBinding;
+import com.zy.guide.phone.databinding.ActivityCustomBinding;
 import com.hezy.guide.phone.entities.Custom;
 import com.hezy.guide.phone.entities.base.BaseArrayBean;
 import com.hezy.guide.phone.event.UserUpdateEvent;

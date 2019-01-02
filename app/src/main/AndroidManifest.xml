@@ -1,6 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.hezy.guide.phone">
+    package="com.zy.guide.phone">
+
 
     <supports-screens
         android:anyDensity="true"
@@ -48,7 +49,7 @@
         android:required="false" />
 
     <application
-        android:name=".BaseApplication"
+        android:name="com.hezy.guide.phone.BaseApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_login_logo"
         android:label="@string/app_name"
@@ -67,7 +68,7 @@
 
         <!--主页-->
         <activity
-            android:name=".business.HomeActivity"
+            android:name="com.hezy.guide.phone.business.HomeActivity"
             android:alwaysRetainTaskState="true"
             android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"
             android:screenOrientation="portrait"
@@ -87,33 +88,33 @@
         </activity>
 
         <activity
-            android:name=".business.MeetingSearchActivity"
+            android:name="com.hezy.guide.phone.business.MeetingSearchActivity"
             android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".business.OnCallActivity"
+            android:name="com.hezy.guide.phone.business.OnCallActivity"
             android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".business.UserInfoActivity"
+            android:name="com.hezy.guide.phone.business.UserInfoActivity"
             android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".business.DistrictActivity"
+            android:name="com.hezy.guide.phone.business.DistrictActivity"
             android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".business.ReplyReviewActivity"
+            android:name="com.hezy.guide.phone.business.ReplyReviewActivity"
             android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".business.SettingActivity"
+            android:name="com.hezy.guide.phone.business.SettingActivity"
             android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"
             android:screenOrientation="portrait" />
 
@@ -160,7 +161,7 @@
             android:theme="@style/FullscreenTheme" />
 
         <activity
-            android:name=".business.LinkEntryActivity"
+            android:name="com.hezy.guide.phone.business.LinkEntryActivity"
             android:screenOrientation="landscape"
             android:theme="@style/FullscreenTheme">
             <intent-filter>
@@ -177,45 +178,45 @@
         </activity>
 
         <activity
-            android:name=".business.PhoneRegisterActivity"
+            android:name="com.hezy.guide.phone.business.PhoneRegisterActivity"
             android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"
             android:screenOrientation="portrait"
             android:theme="@style/NoTitle"
             android:windowSoftInputMode="adjustPan" />
 
         <activity
-            android:name=".business.PostTypeActivity"
+            android:name="com.hezy.guide.phone.business.PostTypeActivity"
             android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".business.GridActivity"
+            android:name="com.hezy.guide.phone.business.GridActivity"
             android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".business.CustomActivity"
+            android:name="com.hezy.guide.phone.business.CustomActivity"
             android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"
             android:screenOrientation="portrait" />
 
-        <activity android:name=".business.UpdateActivity" />
+        <activity android:name="com.hezy.guide.phone.business.UpdateActivity" />
         <activity
-            android:name=".business.ChatActivity"
+            android:name="com.hezy.guide.phone.business.ChatActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".business.ViewPagerActivity" />
-        <activity android:name=".business.ImageBrowerActivity" />
+        <activity android:name="com.hezy.guide.phone.business.ViewPagerActivity" />
+        <activity android:name="com.hezy.guide.phone.business.ImageBrowerActivity" />
         <activity
-            android:name=".business.MeetingManagementActivity"
+            android:name="com.hezy.guide.phone.business.MeetingManagementActivity"
             android:theme="@style/NoTitle" />
         <activity
-            android:name=".business.ForumActivity"
+            android:name="com.hezy.guide.phone.business.ForumActivity"
             android:alwaysRetainTaskState="true"
             android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"
             android:screenOrientation="portrait"
             android:theme="@style/NoTitle"
             android:windowSoftInputMode="adjustPan" />
 
-        <receiver android:name=".receiver.PhoneReceiver">
+        <receiver android:name="com.hezy.guide.phone.receiver.PhoneReceiver">
             <intent-filter>
                 <!-- 获取来电广播 -->
                 <action android:name="android.intent.action.PHONE_STATE" />
@@ -225,7 +226,7 @@
         </receiver>
 
         <!--服务开始-->
-        <service android:name=".service.WSService" />
+        <service android:name="com.hezy.guide.phone.service.WSService" />
         <!--服务结束-->
         <provider
             android:name="android.support.v4.content.FileProvider"

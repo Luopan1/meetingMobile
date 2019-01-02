@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.hezy.guide.phone.R;
+import com.zy.guide.phone.R;
 
 public class VideoProfileAdapter extends RecyclerView.Adapter {
     private Context context;

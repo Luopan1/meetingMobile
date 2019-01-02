@@ -9,6 +9,7 @@ import com.hezy.guide.phone.utils.Logger;
 import com.tencent.bugly.crashreport.CrashReport;
 import com.hezy.guide.phone.utils.OkHttpCallback;
 import com.tendcloud.tenddata.TCAgent;
+import com.zy.guide.phone.BuildConfig;
 
 import java.net.URISyntaxException;
 

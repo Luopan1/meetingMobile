@@ -85,7 +85,7 @@ android {
             buildConfigField 'String', 'API_DOMAIN_NAME', '"http://osg.apitest.haierzhongyou.com"'
             buildConfigField 'String', 'API_DOMAIN_NAME_YOYOTU', '"http://api.teq6.com"' //唷唷兔地址
             buildConfigField 'String', 'WS_DOMAIN_NAME', '"http://wstest.haierzhongyou.com/sales"'
-            buildConfigField 'String', 'WEIXIN_APP_ID', '"wxcd220f151738cab5"' //微信id
+            buildConfigField 'String', 'WEIXIN_APP_ID', '"wx5c021e0744c3092d"' //微信id
             buildConfigField 'String', 'BUGLY_APPID', '"d2b5a75181"' //bugly
             buildConfigField 'String', 'QINIU_IMAGE_DOMAIN', '"http://image.i.teq6.com/"' //七牛图片domain
             buildConfigField 'String', 'QINIU_IMAGE_UPLOAD_PATH', '"osg/snapscreen/meeting/"' //七牛图片上传路径

@@ -7,8 +7,8 @@ import android.text.TextWatcher;
 import android.view.View;
 
 import com.hezy.guide.phone.Constant;
-import com.hezy.guide.phone.R;
-import com.hezy.guide.phone.databinding.ReplyReviewActivityBinding;
+import com.zy.guide.phone.R;
+import com.zy.guide.phone.databinding.ReplyReviewActivityBinding;
 import com.hezy.guide.phone.entities.RecordData;
 import com.hezy.guide.phone.entities.base.BaseErrorBean;
 import com.hezy.guide.phone.event.ReplyReviewEvent;

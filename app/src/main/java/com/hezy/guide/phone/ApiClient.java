@@ -24,6 +24,7 @@ import com.hezy.guide.phone.utils.OkHttpCallback;
 import com.hezy.guide.phone.utils.OkHttpUtil;
 import com.hezy.guide.phone.utils.RxBus;
 import com.tendcloud.tenddata.TCAgent;
+import com.zy.guide.phone.BuildConfig;
 
 import org.json.JSONException;
 import org.json.JSONObject;

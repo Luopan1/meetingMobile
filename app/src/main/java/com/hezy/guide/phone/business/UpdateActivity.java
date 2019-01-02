@@ -22,7 +22,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.hezy.guide.phone.R;
+import com.zy.guide.phone.R;
 import com.hezy.guide.phone.entities.Version;
 import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.utils.CheckNetWorkStatus;

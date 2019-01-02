@@ -16,7 +16,7 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.hezy.guide.phone.BaseApplication;
 import com.hezy.guide.phone.BaseException;
-import com.hezy.guide.phone.BuildConfig;
+import com.zy.guide.phone.BuildConfig;
 import com.hezy.guide.phone.Constant;
 import com.hezy.guide.phone.entities.base.BaseBean;
 import com.hezy.guide.phone.persistence.Preferences;

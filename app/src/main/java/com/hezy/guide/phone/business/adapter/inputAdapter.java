@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.hezy.guide.phone.R;
+import com.zy.guide.phone.R;
 
 import java.util.List;
 

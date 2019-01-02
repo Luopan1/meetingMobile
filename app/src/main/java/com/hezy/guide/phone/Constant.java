@@ -1,5 +1,7 @@
 package com.hezy.guide.phone;
 
+import com.zy.guide.phone.BuildConfig;
+
 /**
  * Created by wufan on 2017/8/2.
  */

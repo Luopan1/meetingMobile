@@ -17,7 +17,7 @@ import android.widget.TextView;
 
 import com.hezy.guide.phone.ApiClient;
 import com.hezy.guide.phone.BaseException;
-import com.hezy.guide.phone.R;
+import com.zy.guide.phone.R;
 import com.hezy.guide.phone.business.adapter.ForumMeetingAdapter;
 import com.hezy.guide.phone.entities.Bucket;
 import com.hezy.guide.phone.entities.ChatMesData;

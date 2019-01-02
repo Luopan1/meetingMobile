@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.FrameLayout;
 
-import com.hezy.guide.phone.R;
+import com.zy.guide.phone.R;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

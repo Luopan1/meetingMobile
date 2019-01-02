@@ -12,7 +12,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.hezy.guide.phone.BaseApplication;
-import com.hezy.guide.phone.R;
+import com.zy.guide.phone.R;
 import com.hezy.guide.phone.business.ViewPagerActivity;
 import com.hezy.guide.phone.entities.ChatMesData;
 import com.hezy.guide.phone.utils.helper.ImageHelper;

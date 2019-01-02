@@ -25,7 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hezy.guide.phone.BaseException;
-import com.hezy.guide.phone.R;
+import com.zy.guide.phone.R;
 import com.hezy.guide.phone.business.adapter.ForumMeetingAdapter;
 import com.hezy.guide.phone.business.adapter.GeneralAdapter;
 import com.hezy.guide.phone.business.adapter.MeetingAdapter;
