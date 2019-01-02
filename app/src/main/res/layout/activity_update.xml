@@ -7,19 +7,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="157dp"
+        android:layout_marginTop="127dp"
         android:orientation="vertical">
         <ImageView
-            android:layout_width="@dimen/my_px_350"
-            android:layout_height="@dimen/my_px_350"
+            android:layout_width="@dimen/my_px_600"
+            android:layout_height="@dimen/my_px_600"
             android:layout_gravity="center_horizontal"
-            android:src="@mipmap/ic_login_logo" />
+            android:src="@mipmap/zy_slogon" />
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/my_px_70"
             android:layout_centerHorizontal="true"
+            android:visibility="gone"
             android:src="@mipmap/img_login_slogen" />
 
     </LinearLayout>
