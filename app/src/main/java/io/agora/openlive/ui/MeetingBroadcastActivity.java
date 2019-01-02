@@ -351,13 +351,16 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                 }else {
 //                    if(!tvChat.getText().toString().isEmpty())
 //                    llChat.setVisibility(View.VISIBLE);
-
+                    rtcEngine().switchCamera();
                 }
             }
         });
 
         broadcasterSmallLayout = findViewById(R.id.broadcaster_small_layout);
         broadcasterSmallView = findViewById(R.id.broadcaster_small_view);
+        broadcasterSmallView.setOnClickListener(view -> {
+            rtcEngine().switchCamera();
+        });
 
         docLayout = findViewById(R.id.doc_layout);
         llMsg = findViewById(R.id.ll_msg);
@@ -1115,7 +1118,9 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
         });
         exitDialog = new Dialog(this, R.style.MyDialog);
         exitDialog.setContentView(contentView);
-        exitDialog.show();
+        if (!exitDialog.isShowing()) {
+            exitDialog.show();
+        }
     }
 
     private TextView audienceCountText;
@@ -1346,7 +1351,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
         public void onSuccess(Bucket<Meeting> meetingBucket) {
             try {
                 JSONObject jsonObject = new JSONObject();
-                jsonObject.put("ic_finish_meeting", true);
+                jsonObject.put("finish_meeting", true);
                 agoraAPI.messageChannelSend(channelName, jsonObject.toString(), "");
 
                 stopButton.setVisibility(View.GONE);

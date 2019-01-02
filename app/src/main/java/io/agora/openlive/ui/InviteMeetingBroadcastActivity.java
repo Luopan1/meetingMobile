@@ -714,9 +714,18 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
         TextView timeText = view.findViewById(R.id.time);
         timeText.setText(material.getCreateDate() + "创建");
         view.findViewById(R.id.use_doc).setOnClickListener(v -> {
-            currentMaterial = material;
-            Collections.sort(currentMaterial.getMeetingMaterialsPublishList(), (o1, o2) -> (o1.getPriority() < o2.getPriority()) ? -1 : 1);
-            ApiClient.getInstance().meetingSetMaterial(TAG, setMaterialCallback, meetingJoin.getMeeting().getId(), currentMaterial.getId());
+            if (currentMaterial != null && currentMaterial.getId().equals(material.getId())) {
+                if (pptAlertDialog.isShowing()) {
+                    pptAlertDialog.dismiss();
+                }
+                if (pptDetailDialog.isShowing()) {
+                    pptDetailDialog.dismiss();
+                }
+            } else {
+                currentMaterial = material;
+                Collections.sort(currentMaterial.getMeetingMaterialsPublishList(), (o1, o2) -> (o1.getPriority() < o2.getPriority()) ? -1 : 1);
+                ApiClient.getInstance().meetingSetMaterial(TAG, setMaterialCallback, meetingJoin.getMeeting().getId(), currentMaterial.getId());
+            }
         });
         view.findViewById(R.id.exit_preview).setOnClickListener(v -> {
             if (pptDetailDialog.isShowing()) {

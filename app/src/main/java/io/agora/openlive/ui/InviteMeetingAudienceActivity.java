@@ -437,6 +437,7 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                                                 String imageUrl = ImageHelper.getThumb(currentMaterialPublish.getUrl());
                                                 Picasso.with(InviteMeetingAudienceActivity.this).load(imageUrl).into(docImage);
                                             } else {
+                                                broadcasterFullView.setVisibility(View.GONE);
                                                 fullDocImage.setVisibility(View.VISIBLE);
                                                 String imageUrl = ImageHelper.getThumb(currentMaterialPublish.getUrl());
                                                 Picasso.with(InviteMeetingAudienceActivity.this).load(imageUrl).into(fullDocImage);
@@ -631,11 +632,21 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                 audienceVideoAdapter.insertItem(audienceVideo);
             }
 
+            if (!isFullScreen) {
+                broadcasterFullView.setVisibility(View.GONE);
+                docImage.setVisibility(View.VISIBLE);
+                String imageUrl = ImageHelper.getThumb(currentMaterialPublish.getUrl());
+                Picasso.with(InviteMeetingAudienceActivity.this).load(imageUrl).into(docImage);
+            } else {
+                broadcasterFullView.setVisibility(View.GONE);
+                docImage.setVisibility(View.GONE);
+                fullDocImage.setVisibility(View.VISIBLE);
+                String imageUrl = ImageHelper.getThumb(currentMaterialPublish.getUrl());
+                Picasso.with(InviteMeetingAudienceActivity.this).load(imageUrl).into(fullDocImage);
+            }
+
             pageText.setVisibility(View.VISIBLE);
-            docImage.setVisibility(View.VISIBLE);
             pageText.setText("第" + currentMaterialPublish.getPriority() + "/" + currentMaterial.getMeetingMaterialsPublishList().size() + "页");
-            docImage.setVisibility(View.VISIBLE);
-            Picasso.with(InviteMeetingAudienceActivity.this).load(currentMaterialPublish.getUrl()).into(docImage);
 
         }
 
