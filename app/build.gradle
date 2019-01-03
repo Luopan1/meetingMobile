@@ -45,7 +45,7 @@ android {
     defaultConfig {
         applicationId "com.hezy.guide.phone"
         minSdkVersion 16
-        targetSdkVersion 28
+        targetSdkVersion 27
         versionName "1.1.5"
         versionCode 16781317
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -100,7 +100,7 @@ android {
             signingConfig signingConfigs.config
             buildConfigField "boolean", "IS_DEBUG_LOG", "false"  //显示LOG
             buildConfigField "boolean", "IS_DEBUG_TOAST", "false"  //显示LOG的TOAST
-            buildConfigField 'String', 'API_DOMAIN_NAME', '"http://osg.api.haierzhongyou.com"'
+            buildConfigField 'String', 'API_DOMAIN_NAME', '"https://osgapi.haierzhongyou.com"'
             buildConfigField 'String', 'API_DOMAIN_NAME_YOYOTU', '"https://api.haierzhongyou.com"' //唷唷兔地址
             buildConfigField 'String', 'WS_DOMAIN_NAME', '"http://ws.haierzhongyou.com/sales"'
             buildConfigField 'String', 'WEIXIN_APP_ID', '"wxfb5b05dd7686698b"' //微信id
