@@ -104,7 +104,7 @@ android {
             buildConfigField 'String', 'API_DOMAIN_NAME', '"http://api.zhongyouie.com"'
             buildConfigField 'String', 'API_DOMAIN_NAME_YOYOTU', '"http://api.haierzhongyou.com"' //唷唷兔地址
 
-            buildConfigField 'String', 'WS_DOMAIN_NAME', '"http://ws.haierzhongyou.com/sales"'
+            buildConfigField 'String', 'WS_DOMAIN_NAME', '"http://ws.zhongyouie.com/sales"'
             buildConfigField 'String', 'WEIXIN_APP_ID', '"wx5c021e0744c3092d"' //微信id
             buildConfigField 'String', 'BUGLY_APPID', '"63fc264795"' //bugly
             buildConfigField 'String', 'QINIU_IMAGE_DOMAIN', '"http://image.i.haierzhongyou.com/"' //七牛图片domain
