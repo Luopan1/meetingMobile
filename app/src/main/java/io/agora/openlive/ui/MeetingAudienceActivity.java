@@ -913,11 +913,6 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                                 e.printStackTrace();
                             }
                         } else {
-                            broadcasterSmallView.removeAllViews();
-                            if (remoteBroadcasterSurfaceView != null) {
-                                broadcasterSmallView.removeView(remoteBroadcasterSurfaceView);
-                            }
-                            broadcasterSmallLayout.setVisibility(View.GONE);
 
                             pageText.setVisibility(View.GONE);
                             docImage.setVisibility(View.GONE);
@@ -927,12 +922,23 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 
                             isDocShow = false;
 
-                            broadcasterLayout.setVisibility(View.VISIBLE);
-                            broadcasterLayout.removeAllViews();
-                            if (remoteBroadcasterSurfaceView != null) {
-                                broadcasterLayout.addView(remoteBroadcasterSurfaceView);
+                            if (broadcasterSmallView.getChildCount() > 0) {
+                                broadcasterSmallView.removeAllViews();
+                                if (remoteBroadcasterSurfaceView != null) {
+                                    broadcasterSmallView.removeView(remoteBroadcasterSurfaceView);
+                                }
+                                broadcasterSmallLayout.setVisibility(View.GONE);
                             }
 
+                            broadcasterLayout.setVisibility(View.VISIBLE);
+                            if (broadcasterLayout.getChildCount() > 0) {
+
+                            } else {
+                                broadcasterLayout.removeAllViews();
+                                if (remoteBroadcasterSurfaceView != null) {
+                                    broadcasterLayout.addView(remoteBroadcasterSurfaceView);
+                                }
+                            }
                             if (remoteAudienceSurfaceView != null) {
                                 if (isFullScreen) {
                                     audienceLayout.setVisibility(View.GONE);

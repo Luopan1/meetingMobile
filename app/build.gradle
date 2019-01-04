@@ -45,9 +45,9 @@ android {
     defaultConfig {
         applicationId "com.zy.guide.phone"
         minSdkVersion 16
-        targetSdkVersion 27
-        versionName "1.1.5"
-        versionCode 16781317
+        targetSdkVersion 28
+        versionName "1.1.6"
+        versionCode 16781318
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
         //默认编译赋值
