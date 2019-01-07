@@ -14,6 +14,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
@@ -103,7 +104,11 @@ public class WSService extends Service {
         if (!WSService.serviceIsCreate) {
             Log.i(TAG,"!WSService.serviceIsCreate actionStart");
             Intent intent = new Intent(context, WSService.class);
-            context.startService(intent);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                context.startForegroundService(intent);
+            } else {
+                context.startService(intent);
+            }
         }
     }
 
@@ -128,6 +133,26 @@ public class WSService extends Service {
     @Override
     public void onCreate() {
         Log.i(TAG,"onCreate");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+            NotificationChannel channel = new NotificationChannel("xxx", "xxx", NotificationManager.IMPORTANCE_LOW);
+
+            NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            if (manager == null)
+                return;
+            manager.createNotificationChannel(channel);
+
+            Notification notification = new NotificationCompat.Builder(this, "xxx")
+                    .setAutoCancel(true)
+                    .setCategory(Notification.CATEGORY_SERVICE)
+                    .setOngoing(true)
+                    .setPriority(NotificationManager.IMPORTANCE_LOW)
+                    .build();
+
+            startForeground(101, notification);
+
+        }
+
         ZYAgent.onEvent(getApplicationContext(),"连接服务 创建");
         serviceIsCreate = true;
         mSocket = BaseApplication.getInstance().getSocket();

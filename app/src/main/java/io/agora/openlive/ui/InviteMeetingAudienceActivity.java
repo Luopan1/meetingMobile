@@ -474,11 +474,15 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                                 docImage.setVisibility(View.GONE);
 
                                 broadcasterView.setVisibility(View.VISIBLE);
-                                broadcasterView.removeAllViews();
-                                if (remoteBroadcasterSurfaceView != null) {
-                                    stripSurfaceView(remoteBroadcasterSurfaceView);
-                                    broadcasterView.addView(remoteBroadcasterSurfaceView);
-                                    Log.v("add view", "ppt退出");
+                                if (broadcasterView.getChildCount() > 0) {
+
+                                } else {
+                                    broadcasterView.removeAllViews();
+                                    if (remoteBroadcasterSurfaceView != null) {
+                                        stripSurfaceView(remoteBroadcasterSurfaceView);
+                                        broadcasterView.addView(remoteBroadcasterSurfaceView);
+                                        Log.v("add view", "ppt退出");
+                                    }
                                 }
                             }
 
