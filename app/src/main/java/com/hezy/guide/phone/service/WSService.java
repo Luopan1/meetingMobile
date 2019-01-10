@@ -280,18 +280,21 @@ public class WSService extends Service {
 //        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel("im_channel_id","System", NotificationManager.IMPORTANCE_LOW);
+            NotificationChannel channel = new NotificationChannel("xxx", "xxx", NotificationManager.IMPORTANCE_LOW);
+
             NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            if (manager == null)
+                return;
             manager.createNotificationChannel(channel);
-            Notification notification = new Notification.Builder(this,"im_channel_id")
-//                    .setAutoCancel(true)
-                    .setContentTitle("应用正常运行")
-                    .setContentText("这个通知是为了标识应用是否正常运行中")
-                    .setSmallIcon(R.mipmap.icon_launcher)
-                    .setWhen(System.currentTimeMillis())
+
+            Notification notification = new NotificationCompat.Builder(this, "xxx")
+                    .setAutoCancel(true)
+                    .setCategory(Notification.CATEGORY_SERVICE)
+                    .setOngoing(true)
+                    .setPriority(NotificationManager.IMPORTANCE_LOW)
                     .build();
-//           .setContentIntent(pendingIntent)
-            startForeground(1, notification);
+
+            startForeground(101, notification);
         } else {
             Notification notification = new Notification.Builder(this)
                     .setAutoCancel(true)

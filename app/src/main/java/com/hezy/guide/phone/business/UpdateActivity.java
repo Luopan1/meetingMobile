@@ -373,6 +373,9 @@ public class UpdateActivity extends BasicActivity {
         NumberFormat nf = NumberFormat.getPercentInstance();
         nf.setMinimumFractionDigits(0);
         str = nf.format(p3);
+        if(str.contains("-")){
+            str=str.replace("-","");
+        }
         return str;
     }
 
