@@ -129,8 +129,11 @@ public class ReviewAdapter extends BaseRecyclerAdapter<RecordData.PageDataEntity
 
         if (getItemViewType(position) == ITEM_TYPE.ME.ordinal()) {
             MeViewHolder meHolder = (MeViewHolder) viewHolder;
-            ImageHelper.loadImageDpIdRound(Preferences.getUserPhoto(), R.dimen.my_px_460, R.dimen.my_px_426, meHolder.mIvHead);
-            ImageHelper.loadImageDpIdBlur(Preferences.getUserPhoto(), R.dimen.my_px_1080, R.dimen.my_px_530, meHolder.mIvBack);
+            if(!TextUtils.isEmpty(Preferences.getUserPhoto())){
+                ImageHelper.loadImageDpIdRound(Preferences.getUserPhoto(), R.dimen.my_px_460, R.dimen.my_px_426, meHolder.mIvHead);
+                ImageHelper.loadImageDpIdBlur(Preferences.getUserPhoto(), R.dimen.my_px_1080, R.dimen.my_px_530, meHolder.mIvBack);
+            }
+
             if (Preferences.getUserRank() == 0) {
                 meHolder.mIvGold.setVisibility(View.GONE);
             } else {
