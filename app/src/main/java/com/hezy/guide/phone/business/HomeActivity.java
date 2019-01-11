@@ -314,7 +314,7 @@ public class HomeActivity extends BasicActivity implements View.OnClickListener 
         StringBuffer msg = new StringBuffer("registerDevice ");
         if (TextUtils.isEmpty(uuid)) {
             msg.append("UUID为空");
-            showToast(msg.toString());
+//            showToast(msg.toString());
             Logger.e(TAG, msg.toString());
         } else {
             try {
