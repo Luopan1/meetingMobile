@@ -192,6 +192,9 @@ public class InMeetChatFragment extends BaseFragment implements InMeetingAdapter
         ApiClient.getInstance().expostorPostChatMessage(TAG, expostorStatsCallback, params);
     }
     private void initLastData(List<ChatMesData.PageDataEntity> data, boolean last) {
+        if(adapter == null){
+            return;
+        }
         adapter.notifyItemChanged(data.size() - 1);
         if (last) {
             if (handler.hasMessages(10)) {

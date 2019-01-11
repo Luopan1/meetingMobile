@@ -328,7 +328,7 @@ public class WSService extends Service {
         StringBuffer msg = new StringBuffer("registerDevice ");
         if (TextUtils.isEmpty(uuid)) {
             msg.append("UUID为空");
-            showToast(msg.toString());
+//            showToast(msg.toString());
             Logger.e(TAG, msg.toString());
         } else {
             try {
