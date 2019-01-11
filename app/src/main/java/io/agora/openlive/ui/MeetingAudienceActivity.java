@@ -1025,7 +1025,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
      * @param imagePath
      */
     private void uploadMeetingImageToQiniu(String imagePath) {
-        ApiClient.getInstance().requestQiniuToken(this, new OkHttpCallback<BaseBean<QiniuToken>>() {
+        ApiClient.getInstance().requestQiniuToken(TAG, new OkHttpCallback<BaseBean<QiniuToken>>() {
 
             @Override
             public void onSuccess(BaseBean<QiniuToken> result) {

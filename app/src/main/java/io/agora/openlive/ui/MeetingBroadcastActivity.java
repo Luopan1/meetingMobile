@@ -411,7 +411,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                         jsonObject.put("material_id", currentMaterial.getId());
                         jsonObject.put("doc_index", position);
                         agoraAPI.channelSetAttr(channelName, DOC_INFO, jsonObject.toString());
-                        agoraAPI.messageChannelSend(channelName, jsonObject.toString(), "");
+//                        agoraAPI.messageChannelSend(channelName, jsonObject.toString(), "");
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -440,7 +440,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                         jsonObject.put("material_id", currentMaterial.getId());
                         jsonObject.put("doc_index", position);
                         agoraAPI.channelSetAttr(channelName, DOC_INFO, jsonObject.toString());
-                        agoraAPI.messageChannelSend(channelName, jsonObject.toString(), "");
+//                        agoraAPI.messageChannelSend(channelName, jsonObject.toString(), "");
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -734,7 +734,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                             jsonObject.put("material_id", currentMaterial.getId());
                             jsonObject.put("doc_index", position);
                             agoraAPI.channelSetAttr(channelName, DOC_INFO, jsonObject.toString());
-                            agoraAPI.messageChannelSend(channelName, jsonObject.toString(), "");
+//                            agoraAPI.messageChannelSend(channelName, jsonObject.toString(), "");
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -1333,7 +1333,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                 jsonObject.put("material_id", currentMaterial.getId());
                 jsonObject.put("doc_index", position);
                 agoraAPI.channelSetAttr(channelName, DOC_INFO, jsonObject.toString());
-                agoraAPI.messageChannelSend(channelName, jsonObject.toString(), "");
+//                agoraAPI.messageChannelSend(channelName, jsonObject.toString(), "");
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -1374,7 +1374,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
             Toast.makeText(MeetingBroadcastActivity.this, exception.getMessage(), Toast.LENGTH_SHORT).show();
             try {
                 JSONObject jsonObject = new JSONObject();
-                jsonObject.put("ic_finish_meeting", true);
+                jsonObject.put("finish_meeting", true);
                 agoraAPI.messageChannelSend(channelName, jsonObject.toString(), "");
 
                 stopButton.setVisibility(View.GONE);
