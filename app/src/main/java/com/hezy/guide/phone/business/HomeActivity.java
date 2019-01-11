@@ -39,7 +39,7 @@ import com.hezy.guide.phone.utils.Logger;
 import com.hezy.guide.phone.utils.OkHttpCallback;
 import com.hezy.guide.phone.utils.RxBus;
 import com.hezy.guide.phone.utils.statistics.ZYAgent;
-import com.hezy.guide.phone.wxapi.WXEntryActivity;
+import com.zy.guide.phone.wxapi.WXEntryActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;

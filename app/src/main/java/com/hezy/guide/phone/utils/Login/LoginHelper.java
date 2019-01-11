@@ -12,7 +12,7 @@ import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.service.WSService;
 import com.hezy.guide.phone.utils.Logger;
 import com.hezy.guide.phone.utils.statistics.ZYAgent;
-import com.hezy.guide.phone.wxapi.WXEntryActivity;
+import com.zy.guide.phone.wxapi.WXEntryActivity;
 
 
 /**

@@ -21,7 +21,8 @@ import com.hezy.guide.phone.Constant;
 import com.hezy.guide.phone.entities.base.BaseBean;
 import com.hezy.guide.phone.persistence.Preferences;
 import com.hezy.guide.phone.utils.Login.LoginHelper;
-import com.hezy.guide.phone.wxapi.WXEntryActivity;
+import com.zy.guide.phone.wxapi.WXEntryActivity;
+
 
 import java.io.IOException;
 import java.util.Map;
