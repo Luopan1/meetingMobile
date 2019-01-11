@@ -25,7 +25,6 @@ import com.hezy.guide.phone.utils.NetUtils;
 import com.hezy.guide.phone.utils.OkHttpUtil;
 import com.hezy.guide.phone.utils.ToastUtils;
 import com.hezy.guide.phone.utils.statistics.ZYAgent;
-import com.hezy.guide.phone.wxapi.WXEntryActivity;
 
 import java.util.Calendar;
 

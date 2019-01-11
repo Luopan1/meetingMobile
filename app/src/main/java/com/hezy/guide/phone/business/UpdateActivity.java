@@ -30,7 +30,6 @@ import com.hezy.guide.phone.utils.DeviceUtil;
 import com.hezy.guide.phone.utils.Logger;
 import com.hezy.guide.phone.utils.MyDialog;
 import com.hezy.guide.phone.view.IconProgressBar;
-import com.hezy.guide.phone.wxapi.WXEntryActivity;
 
 import java.io.File;
 import java.text.NumberFormat;
