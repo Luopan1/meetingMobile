@@ -364,7 +364,7 @@ public class HomeActivity extends BasicActivity implements View.OnClickListener 
     @Override
     public void onBackPressed() {
         if ((System.currentTimeMillis() - mExitTime) > 2000) {
-            Toast.makeText(this, "再按一次退出在线导购", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "再按一次退出中幼学院", Toast.LENGTH_SHORT).show();
             mExitTime = System.currentTimeMillis();
         } else {
             quit();
