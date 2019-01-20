@@ -219,7 +219,7 @@ public class ApiClient {
      * @param responseCallback
      */
     public void getAgoraKey(Object tag, Map<String, String> params, OkHttpCallback responseCallback) {
-        okHttpUtil.get(jointParamsToUrl(API_DOMAIN_NAME_YOYOTU + "/dz/agora/key/osgV2", params), tag, responseCallback);
+        okHttpUtil.get(jointParamsToUrl(API_DOMAIN_NAME + "/osg/agora/key/osgV2", params), tag, responseCallback);
     }
 
     /**
