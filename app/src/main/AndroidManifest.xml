@@ -82,7 +82,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="com.hezy.guide.phone"
+                    android:host="com.zy.train"
                     android:pathPrefix="/meeting/list"
                     android:scheme="app" />
             </intent-filter>
@@ -172,7 +172,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="com.hezy.guide.phone"
+                    android:host="com.zy.train"
                     android:pathPrefix="/meeting"
                     android:scheme="app" />
             </intent-filter>
