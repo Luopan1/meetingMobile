@@ -310,7 +310,7 @@ public class ApiClient {
      */
     public void requestQiniuToken(Object tag, OkHttpCallback callback) {
         //使用唷唷兔地址
-        okHttpUtil.get(API_DOMAIN_NAME_YOYOTU + "/dz/resource/uploadtoken/image", tag, callback);
+        okHttpUtil.get(API_DOMAIN_NAME + "/osg/resource/uploadtoken/image", tag, callback);
     }
 
     /**
