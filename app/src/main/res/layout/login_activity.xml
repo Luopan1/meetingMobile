@@ -1,37 +1,141 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="center"
     android:orientation="vertical"
-    android:background="@drawable/bg_gradient_vertical_color">
+    android:layout_height="match_parent"
+    tools:context=".wxapi.WXEntryActivity">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:layout_width="@dimen/dp230"
+            android:layout_height="@dimen/dp100"
+            android:src="@drawable/logo_2"
+            android:layout_marginTop="@dimen/dp60"/>
 
-    <ImageView
-        android:layout_width="@dimen/my_px_600"
-        android:layout_height="@dimen/my_px_600"
-        android:layout_centerHorizontal="true"
-        android:src="@mipmap/zy_slogon" />
+        <LinearLayout
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_marginLeft="@dimen/dp27"
+            android:background="@color/white"
+            android:layout_marginTop="@dimen/dp40"
+            android:layout_marginRight="@dimen/dp27"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:orientation="vertical">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_height="@dimen/dp75">
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:src="@drawable/dh"
+                        android:layout_marginLeft="@dimen/dp17"
+                        android:layout_height="wrap_content" />
+                    <EditText
+                        android:id="@+id/txt_phone"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@color/white"
+                        android:hint="@string/txt_phone"
+                        android:textSize="@dimen/sp15"
+                        android:paddingLeft="@dimen/dp9"
+                        android:paddingRight="@dimen/dp9"
+                        android:digits="0123456789"
+                        android:inputType="number"
+                        android:singleLine="true" />
+                </LinearLayout>
+                <View
+                    android:layout_width="match_parent"
+                    android:background="@color/color_e0e0e0"
+                    android:layout_height="@dimen/dp1"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_height="@dimen/dp75">
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_height="53dp">
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:src="@drawable/yzm"
+                            android:layout_marginLeft="@dimen/dp17"
+                            android:layout_height="wrap_content" />
+                        <EditText
+                            android:id="@+id/txt_code"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:background="@color/white"
+                            android:hint="@string/txt_code"
+                            android:textSize="@dimen/sp15"
+                            android:paddingLeft="@dimen/dp9"
+                            android:paddingRight="@dimen/dp9"
+                            android:inputType="number"
+                            android:singleLine="true" />
+                    </LinearLayout>
+                    <Button
+                        android:id="@+id/bt_getcode_text"
+                        android:layout_width="@dimen/dp85"
+                        android:gravity="center"
+                        android:layout_height="@dimen/dp30"
+                        android:background="@drawable/button_y_circle"
+                        android:textSize="@dimen/sp14"
+                        android:text="@string/bt_getcode_text"
+                        android:layout_marginRight="@dimen/dp23"
+                        android:textColor="@color/white" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+        <Button
+            android:visibility="gone"
+            android:id="@+id/bt_login"
+            android:layout_width="match_parent"
+            android:layout_marginLeft="@dimen/dp27"
+            android:layout_marginRight="@dimen/dp27"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp42"
+            android:background="@drawable/drawable_login"
+            android:text="@string/bt_login"
+            android:textSize="@dimen/sp16"
+            android:textColor="@color/white" />
+    </LinearLayout>
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/my_px_70"
-        android:visibility="gone"
-        android:src="@mipmap/img_login_slogen" />
 
-    <ImageView
-        android:id="@+id/wchat_login"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:src="@mipmap/btn_login_wechat" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:text="微信登录"
-        android:textColor="@android:color/white"
-        android:textSize="15sp" />
 
-</LinearLayout>
+    <RelativeLayout
+        android:clickable="true"
+        android:focusable="true"
+        android:id="@+id/layout_wx"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp50"
+        android:layout_alignParentBottom="true"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:layout_marginBottom="50dp">
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:background="@drawable/h"/>
+        <ImageView
+            android:layout_width="@dimen/dp50"
+            android:layout_height="@dimen/dp50"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/wechat_icon"/>
+
+    </RelativeLayout>
+
+</RelativeLayout>

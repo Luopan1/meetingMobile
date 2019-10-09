@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:clipChildren="false"
-    tools:context="com.hezy.guide.phone.business.HomeActivity">
+    tools:context="com.zy.guide.phone.business.HomeActivity">
 
     <android.support.v4.view.ViewPager
         android:id="@+id/view_pager"
@@ -15,63 +15,59 @@
     <LinearLayout
         android:id="@+id/bottom_layout"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/my_px_160"
+        android:layout_height="@dimen/my_px_168"
         android:layout_alignParentBottom="true"
-        android:background="@drawable/bg_gradient_vertical_color"
+        android:background="@color/white"
         android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/state"
-            android:layout_width="@dimen/my_px_250"
-            android:layout_height="@dimen/my_px_250"
-            android:layout_gravity="bottom"
-            android:background="@drawable/bg_connection_status_color"
-            android:drawableTop="@mipmap/ic_offline"
-            android:gravity="center"
-            android:paddingTop="@dimen/my_px_20"
-            android:text="离线"
-            android:textColor="@color/text_gray_c784fb"
-            android:textSize="15sp" />
-
         <RadioGroup
             android:id="@+id/radio_group"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_marginLeft="@dimen/my_px_100"
             android:layout_weight="2"
             android:orientation="horizontal">
 
             <RadioButton
-                android:id="@+id/record_radio"
+                android:textColor="@drawable/home_below_selector_txt_color"
+                android:id="@+id/meeting"
                 style="@style/HomeTab"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:checked="true"
-                android:drawablePadding="@dimen/my_px_10"
-                android:drawableTop="@drawable/home_tab_log_selector"
-                android:paddingTop="@dimen/my_px_14"
-                android:text="日志" />
-
-            <RadioButton
-                android:id="@+id/meeting_radio"
-                style="@style/HomeTab"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:drawablePadding="@dimen/my_px_10"
-                android:drawableTop="@drawable/home_tab_meeting_selector"
+                android:drawableTop="@drawable/drawoble_meeting"
                 android:paddingTop="@dimen/my_px_14"
                 android:text="会议" />
 
             <RadioButton
-                android:id="@+id/profile_radio"
+                android:textColor="@drawable/home_below_selector_txt_color"
+                android:id="@+id/meeting_discuss"
                 style="@style/HomeTab"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:drawablePadding="@dimen/my_px_10"
-                android:drawableTop="@drawable/home_tab_me_selector"
+                android:drawableTop="@drawable/drawoble_discuss"
+                android:paddingTop="@dimen/my_px_14"
+                android:text="讨论" />
+
+            <RadioButton
+                android:textColor="@drawable/home_below_selector_txt_color"
+                android:id="@+id/meeting_log"
+                style="@style/HomeTab"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:drawableTop="@drawable/drawoble_log"
+                android:paddingTop="@dimen/my_px_14"
+                android:text="日志" />
+
+            <RadioButton
+                android:textColor="@drawable/home_below_selector_txt_color"
+                android:id="@+id/meeting_my"
+                style="@style/HomeTab"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:drawableTop="@drawable/drawoble_log"
                 android:paddingTop="@dimen/my_px_14"
                 android:text="我的" />
 

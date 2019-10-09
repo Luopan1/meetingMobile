@@ -1,4 +1,4 @@
-package com.hezy.guide.phone.meetingcamera.camera;
+package com.zy.guide.phone.meetingcamera.camera;
 
 import android.annotation.TargetApi;
 import android.hardware.Camera;

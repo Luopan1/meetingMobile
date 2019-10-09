@@ -2,14 +2,9 @@ package io.agora.openlive.ui;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.SurfaceView;
-
-import com.zy.guide.phone.R;
-import com.hezy.guide.phone.utils.DensityUtil;
-import com.hezy.guide.phone.view.SpaceItemDecoration;
 
 import java.util.HashMap;
 

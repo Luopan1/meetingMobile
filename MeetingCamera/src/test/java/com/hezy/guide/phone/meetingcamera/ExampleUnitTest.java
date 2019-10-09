@@ -1,4 +1,4 @@
-package com.hezy.guide.phone.meetingcamera;
+package com.zy.guide.phone.meetingcamera;
 
 import org.junit.Test;
 

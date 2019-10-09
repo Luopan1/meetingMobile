@@ -1,21 +1,18 @@
 package io.agora.openlive.ui;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.hezy.guide.phone.entities.Material;
+import com.zy.guide.phone.entities.Material;
 import com.zy.guide.phone.R;
-import com.hezy.guide.phone.utils.helper.ImageHelper;
+import com.zy.guide.phone.utils.helper.ImageHelper;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;

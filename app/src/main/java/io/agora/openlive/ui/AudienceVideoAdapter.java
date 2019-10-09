@@ -1,10 +1,8 @@
 package io.agora.openlive.ui;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.SurfaceView;
 import android.view.View;
@@ -12,21 +10,13 @@ import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.hezy.guide.phone.BaseApplication;
 import com.zy.guide.phone.BuildConfig;
 import com.zy.guide.phone.R;
-import com.hezy.guide.phone.business.ViewPagerActivity;
-import com.hezy.guide.phone.entities.AudienceVideo;
-import com.hezy.guide.phone.entities.ChatMesData;
-import com.hezy.guide.phone.utils.helper.ImageHelper;
-import com.squareup.picasso.Picasso;
+import com.zy.guide.phone.entities.AudienceVideo;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 

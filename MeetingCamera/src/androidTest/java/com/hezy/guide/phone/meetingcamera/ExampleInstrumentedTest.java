@@ -1,4 +1,4 @@
-package com.hezy.guide.phone.meetingcamera;
+package com.zy.guide.phone.meetingcamera;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.hezy.guide.phone.meetingcamera", appContext.getPackageName());
+        assertEquals("com.zy.guide.phone.meetingcamera", appContext.getPackageName());
     }
 }

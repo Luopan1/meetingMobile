@@ -11,11 +11,11 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.hezy.guide.phone.BaseApplication;
+import com.zy.guide.phone.BaseApplication;
 import com.zy.guide.phone.R;
-import com.hezy.guide.phone.business.ViewPagerActivity;
-import com.hezy.guide.phone.entities.ChatMesData;
-import com.hezy.guide.phone.utils.helper.ImageHelper;
+import com.zy.guide.phone.business.ViewPagerActivity;
+import com.zy.guide.phone.entities.ChatMesData;
+import com.zy.guide.phone.utils.helper.ImageHelper;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;

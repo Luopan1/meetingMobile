@@ -36,7 +36,7 @@
                 android:textColor="@color/white"
                 android:textSize="@dimen/my_sp_48" />
 
-            <com.hezy.guide.phone.view.PressedTextView
+            <com.zy.guide.phone.view.PressedTextView
                 android:id="@+id/mTvRight"
                 android:layout_width="@dimen/my_px_200"
                 android:layout_height="match_parent"

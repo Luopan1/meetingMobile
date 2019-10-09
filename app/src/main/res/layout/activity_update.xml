@@ -69,7 +69,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <com.hezy.guide.phone.view.IconProgressBar
+            <com.zy.guide.phone.view.IconProgressBar
                 android:id="@+id/download_progress_bar"
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="0dp"

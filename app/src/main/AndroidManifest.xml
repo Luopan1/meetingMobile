@@ -1,12 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.zy.guide.phone">
 
+    <application
+        android:name=".BaseApplication"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_login_logo"
+        android:label="@string/app_name"
+        android:networkSecurityConfig="@xml/network_security_config"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name=".UserInfoActivity"></activity>
+        <!-- 微信登录页面 -->
+        <activity
+            android:name=".wxapi.WXEntryActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity> <!-- 主页 -->
+        <activity
+            android:name=".business.HomeActivity"
+            android:alwaysRetainTaskState="true"
+            android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"
+            android:screenOrientation="portrait"
+            android:theme="@style/NoTitle"
+            android:windowSoftInputMode="adjustPan">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="com.zy.train"
+                    android:pathPrefix="/meeting/list"
+                    android:scheme="app" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".business.MeetingSearchActivity"
+            android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".business.OnCallActivity"
+            android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".business.BindActivity"
+            android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".business.DistrictActivity"
+            android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".business.ReplyReviewActivity"
+            android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".business.SettingActivity"
+            android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="io.agora.openlive.ui.MainActivity"
+            android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"
+            android:launchMode="singleInstance"
+            android:screenOrientation="landscape"
+            android:theme="@style/FullscreenTheme" />
+        <activity
+            android:name="io.agora.openlive.ui.LiveRoomActivity"
+            android:configChanges="keyboard|keyboardHidden|navigation|orientation|screenSize|fontScale"
+            android:screenOrientation="landscape"
+            android:theme="@style/FullscreenTheme" />
+        <activity
+            android:name="io.agora.openlive.ui.MeetingInitActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="landscape"
+            android:theme="@style/FullscreenTheme" />
+        <activity
+            android:name="io.agora.openlive.ui.MeetingBroadcastActivity"
+            android:configChanges="keyboard|keyboardHidden|navigation|orientation|screenSize|fontScale"
+            android:launchMode="singleTask"
+            android:screenOrientation="landscape"
+            android:theme="@style/FullscreenTheme" />
+        <activity
+            android:name="io.agora.openlive.ui.MeetingAudienceActivity"
+            android:configChanges="keyboard|keyboardHidden|navigation|orientation|screenSize|fontScale"
+            android:launchMode="singleTask"
+            android:screenOrientation="landscape"
+            android:theme="@style/FullscreenTheme" />
+        <activity
+            android:name="io.agora.openlive.ui.InviteMeetingBroadcastActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="landscape"
+            android:theme="@style/FullscreenTheme" />
+        <activity
+            android:name="io.agora.openlive.ui.InviteMeetingAudienceActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="landscape"
+            android:theme="@style/FullscreenTheme" />
+        <activity
+            android:name=".business.LinkEntryActivity"
+            android:screenOrientation="landscape"
+            android:theme="@style/FullscreenTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="com.zy.train"
+                    android:pathPrefix="/meeting"
+                    android:scheme="app" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".business.PhoneRegisterActivity"
+            android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"
+            android:screenOrientation="portrait"
+            android:theme="@style/NoTitle"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".business.PostTypeActivity"
+            android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".business.GridActivity"
+            android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".business.CustomActivity"
+            android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"
+            android:screenOrientation="portrait" />
+        <activity android:name=".business.UpdateActivity" />
+        <activity
+            android:name=".business.ChatActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".business.ViewPagerActivity" />
+        <activity android:name=".business.ImageBrowerActivity" />
+        <activity
+            android:name=".business.MeetingManagementActivity"
+            android:theme="@style/NoTitle" />
+        <activity
+            android:name=".business.ForumActivity"
+            android:alwaysRetainTaskState="true"
+            android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"
+            android:screenOrientation="portrait"
+            android:theme="@style/NoTitle"
+            android:windowSoftInputMode="adjustPan" />
+
+        <meta-data
+            android:name="TD_APP_ID"
+            android:value="${TD_APP_ID}" /> <!-- 服务开始 -->
+        <meta-data
+            android:name="TD_CHANNEL_ID"
+            android:value="${TD_CHANNEL_ID}" /> <!-- 服务结束 -->
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.zy.guide.phone.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/filepaths"
+                tools:replace="android:resource" />
+        </provider> <!-- TD统计 开始 -->
+        <receiver android:name=".receiver.PhoneReceiver">
+            <intent-filter>
+
+                <!-- 获取来电广播 -->
+                <action android:name="android.intent.action.PHONE_STATE" />
+                <!-- 获取去电广播 -->
+                <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
+            </intent-filter>
+        </receiver> <!-- TD统计 使用build配置 -->
+        <service android:name=".service.WSService" />
+        <service
+            android:name="com.talkingdata.sdk.TDAntiCheatingService"
+            android:process="com.talkingdata.sdk.TDAntiCheatingService"> <!-- 用户质量评估Service可以配置在主进程或者单独进程 -->
+            <intent-filter>
+                <action android:name="com.talkingdata.sdk.TDAntiCheatingService" />
+            </intent-filter>
+        </service>
+    </application>
 
     <supports-screens
         android:anyDensity="true"
         android:xlargeScreens="true" />
-
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.camera.autofocus"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.camera.flash"
+        android:required="false" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -33,231 +228,11 @@
     <uses-permission android:name="android.permission.READ_LOGS" />
     <uses-permission android:name="com.yunos.tv.alitvasr.permission.SERVICE_LISTEN" />
     <uses-permission android:name="com.yunos.tv.alitvasr.permission.CONTROL" />
+
     <uses-permission android:name="android.permission.RECORD_VIDEO" />
     <uses-permission android:name="android.permission.CHANGE_CONFIGURATION" />
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-
-    <uses-feature
-        android:name="android.hardware.camera"
-        android:required="false" />
-    <uses-feature
-        android:name="android.hardware.camera.autofocus"
-        android:required="false" />
-    <uses-feature
-        android:name="android.hardware.camera.flash"
-        android:required="false" />
-
-    <application
-        android:name="com.hezy.guide.phone.BaseApplication"
-        android:allowBackup="true"
-        android:icon="@mipmap/ic_login_logo"
-        android:label="@string/app_name"
-        android:supportsRtl="true"
-        android:networkSecurityConfig="@xml/network_security_config"
-        android:theme="@style/AppTheme">
-
-        <!--微信登录页面-->
-        <activity
-            android:name=".wxapi.WXEntryActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-
-        <!--主页-->
-        <activity
-            android:name="com.hezy.guide.phone.business.HomeActivity"
-            android:alwaysRetainTaskState="true"
-            android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"
-            android:screenOrientation="portrait"
-            android:theme="@style/NoTitle"
-            android:windowSoftInputMode="adjustPan">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:host="com.zy.train"
-                    android:pathPrefix="/meeting/list"
-                    android:scheme="app" />
-            </intent-filter>
-        </activity>
-
-        <activity
-            android:name="com.hezy.guide.phone.business.MeetingSearchActivity"
-            android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"
-            android:screenOrientation="portrait" />
-
-        <activity
-            android:name="com.hezy.guide.phone.business.OnCallActivity"
-            android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
-
-        <activity
-            android:name="com.hezy.guide.phone.business.UserInfoActivity"
-            android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"
-            android:screenOrientation="portrait" />
-
-        <activity
-            android:name="com.hezy.guide.phone.business.DistrictActivity"
-            android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"
-            android:screenOrientation="portrait" />
-
-        <activity
-            android:name="com.hezy.guide.phone.business.ReplyReviewActivity"
-            android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"
-            android:screenOrientation="portrait" />
-
-        <activity
-            android:name="com.hezy.guide.phone.business.SettingActivity"
-            android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"
-            android:screenOrientation="portrait" />
-
-        <activity
-            android:name="io.agora.openlive.ui.MainActivity"
-            android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"
-            android:launchMode="singleInstance"
-            android:screenOrientation="landscape"
-            android:theme="@style/FullscreenTheme" />
-
-        <activity
-            android:name="io.agora.openlive.ui.LiveRoomActivity"
-            android:configChanges="keyboard|keyboardHidden|navigation|orientation|screenSize|fontScale"
-            android:screenOrientation="landscape"
-            android:theme="@style/FullscreenTheme" />
-
-        <activity
-            android:name="io.agora.openlive.ui.MeetingInitActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="landscape"
-            android:theme="@style/FullscreenTheme" />
-        <activity
-            android:name="io.agora.openlive.ui.MeetingBroadcastActivity"
-            android:configChanges="keyboard|keyboardHidden|navigation|orientation|screenSize|fontScale"
-            android:launchMode="singleTask"
-            android:screenOrientation="landscape"
-            android:theme="@style/FullscreenTheme" />
-
-        <activity
-            android:name="io.agora.openlive.ui.MeetingAudienceActivity"
-            android:configChanges="keyboard|keyboardHidden|navigation|orientation|screenSize|fontScale"
-            android:launchMode="singleTask"
-            android:screenOrientation="landscape"
-            android:theme="@style/FullscreenTheme" />
-        <activity
-            android:name="io.agora.openlive.ui.InviteMeetingBroadcastActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="landscape"
-            android:theme="@style/FullscreenTheme" />
-        <activity
-            android:name="io.agora.openlive.ui.InviteMeetingAudienceActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="landscape"
-            android:theme="@style/FullscreenTheme" />
-
-        <activity
-            android:name="com.hezy.guide.phone.business.LinkEntryActivity"
-            android:screenOrientation="landscape"
-            android:theme="@style/FullscreenTheme">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:host="com.zy.train"
-                    android:pathPrefix="/meeting"
-                    android:scheme="app" />
-            </intent-filter>
-        </activity>
-
-        <activity
-            android:name="com.hezy.guide.phone.business.PhoneRegisterActivity"
-            android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"
-            android:screenOrientation="portrait"
-            android:theme="@style/NoTitle"
-            android:windowSoftInputMode="adjustPan" />
-
-        <activity
-            android:name="com.hezy.guide.phone.business.PostTypeActivity"
-            android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"
-            android:screenOrientation="portrait" />
-
-        <activity
-            android:name="com.hezy.guide.phone.business.GridActivity"
-            android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"
-            android:screenOrientation="portrait" />
-
-        <activity
-            android:name="com.hezy.guide.phone.business.CustomActivity"
-            android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"
-            android:screenOrientation="portrait" />
-
-        <activity android:name="com.hezy.guide.phone.business.UpdateActivity" />
-        <activity
-            android:name="com.hezy.guide.phone.business.ChatActivity"
-            android:screenOrientation="portrait" />
-        <activity android:name="com.hezy.guide.phone.business.ViewPagerActivity" />
-        <activity android:name="com.hezy.guide.phone.business.ImageBrowerActivity" />
-        <activity
-            android:name="com.hezy.guide.phone.business.MeetingManagementActivity"
-            android:theme="@style/NoTitle" />
-        <activity
-            android:name="com.hezy.guide.phone.business.ForumActivity"
-            android:alwaysRetainTaskState="true"
-            android:configChanges="keyboard|keyboardHidden|navigation|screenSize|fontScale"
-            android:screenOrientation="portrait"
-            android:theme="@style/NoTitle"
-            android:windowSoftInputMode="adjustPan" />
-
-        <receiver android:name="com.hezy.guide.phone.receiver.PhoneReceiver">
-            <intent-filter>
-                <!-- 获取来电广播 -->
-                <action android:name="android.intent.action.PHONE_STATE" />
-                <!-- 获取去电广播 -->
-                <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
-            </intent-filter>
-        </receiver>
-
-        <!--服务开始-->
-        <service android:name="com.hezy.guide.phone.service.WSService" />
-        <!--服务结束-->
-        <provider
-            android:name="android.support.v4.content.FileProvider"
-            android:authorities="com.zy.guide.phone.fileprovider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/filepaths"
-                tools:replace="android:resource" />
-        </provider>
-        <!-- TD统计 开始-->
-        <service
-            android:name="com.talkingdata.sdk.TDAntiCheatingService"
-            android:process="com.talkingdata.sdk.TDAntiCheatingService">  <!--用户质量评估Service可以配置在主进程或者单独进程-->
-            <intent-filter>
-                <action android:name="com.talkingdata.sdk.TDAntiCheatingService" />
-            </intent-filter>
-        </service>
-
-        <!-- TD统计 使用build配置-->
-        <meta-data
-            android:name="TD_APP_ID"
-            android:value="${TD_APP_ID}" />
-        <meta-data
-            android:name="TD_CHANNEL_ID"
-            android:value="${TD_CHANNEL_ID}" />
-        <!-- TD统计 结束-->
-
-
-    </application>
 
 </manifest>

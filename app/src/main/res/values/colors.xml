@@ -18,8 +18,10 @@
     <color name="transparent_20_black">#33000000</color>
     <color name="transparent_60_black">#a8000000</color>
     <color name="transparent_80_black">#cc000000</color>
+    <color name="back_list_item">#ffffff</color>
 
     <color name="dark_gray">#FF55585A</color>
+    <color name="back_list">#f4f4f4</color>
     <!-- ========================agora color======================== -->
 
     <!--通用颜色-->
@@ -101,6 +103,41 @@
     <color name="item_forum_meeting_msg_dividing_line">#FFD8D8D8</color>
     <color name="color_7FBAFF">#7FBAFF</color>
     <color name="color_00FFFFFF">#00FFFFFF</color>
+
+    <color name="bar_title_bg">#3399ff</color>
+
+    <!-- 底层背景色 -->
+    <color name="dc_background">#f4f4f4</color>
+    <!-- 内容背景色 -->
+    <color name="nr_background">#ffffff</color>
+    <!-- 引用背景色 -->
+    <color name="yy_background">#dedede</color>
+    <!-- 标题背景色 -->
+    <color name="bt_background">#34A2DA</color>
+    <!-- 标题强调色 -->
+    <color name="bt_focus">#1785C6</color>
+    <color name="button_background">#3399ff</color>
+    <color name="button_discuss">#45a2d6</color>
+
+    <color name="line">#e2e2e2</color>
+    <color name="text">#000000</color>
+
+
+    <color name="color_e0e0e0">#e0e0e0</color>
+    <color name="color_4095e8">#4095e8</color>
+    <color name="color_347bbf">#347bbf</color>
+    <color name="color_f35b56">#f35b56</color>
+    <color name="color_333333">#333333</color>
+    <color name="color_666666">#666666</color>
+    <color name="color_e1e1e1">#e1e1e1</color>
+    <color name="color_3580c8">#3580c8</color>
+    <color name="color_999999">#999999</color>
+    <color name="color_f7f7f7">#f7f7f7</color>
+    <color name="color_08080b">#08080b</color>
+    <color name="color_ececec">#ececec</color>
+    <color name="xianColor">#e1e1e1</color>
+    <color name="color_f9f9f9">#f9f9f9</color>
+
 
 
 </resources>

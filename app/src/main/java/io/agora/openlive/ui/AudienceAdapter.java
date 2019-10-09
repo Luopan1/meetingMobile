@@ -12,11 +12,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.zy.guide.phone.R;
-import com.hezy.guide.phone.entities.Audience;
+import com.zy.guide.phone.entities.Audience;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 
 
 /**

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".business.HomeActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:orientation="vertical"
+            android:paddingLeft="@dimen/layout_left_margin"
+            android:paddingRight="@dimen/layout_right_margin"
+            android:paddingBottom="100dp">
+
+            <EditText
+                android:visibility="gone"
+                android:id="@+id/txt_name"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@android:drawable/editbox_background"
+                android:hint="@string/label_nickname"
+                android:singleLine="true" />
+
+            <EditText
+                android:id="@+id/txt_phone"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="10dp"
+                android:background="@android:drawable/editbox_background"
+                android:hint="@string/txt_phone"
+                android:inputType="phone"
+                android:singleLine="true" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp">
+
+                <Button
+                    android:id="@+id/bt_getcode_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/button_circle"
+                    android:text="@string/bt_getcode_text"
+                    android:textColor="@color/white" />
+
+                <EditText
+                    android:id="@+id/txt_code"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_toLeftOf="@id/bt_getcode_text"
+                    android:background="@android:drawable/editbox_background"
+                    android:hint="@string/txt_code"
+                    android:inputType="number"
+                    android:singleLine="true" />
+            </RelativeLayout>
+
+            <Button
+                android:id="@+id/bt_login"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/button_circle"
+                android:text="@string/bt_bind"
+                android:textColor="@color/white" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:orientation="vertical"
+            android:paddingLeft="@dimen/layout_left_margin"
+            android:paddingRight="@dimen/layout_right_margin"
+            android:paddingBottom="@dimen/layout_bottom_margin">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:src="@drawable/ico_logo2" />
+
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:src="@drawable/ico_weixin" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/ico_link" />
+            </RelativeLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:text="@string/txt_bind_alert" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/mTvTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/layout_top_margin"
+            android:text="@string/txt_bind_title"
+            android:textStyle="bold" />
+    </RelativeLayout>
+</layout>

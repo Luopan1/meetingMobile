@@ -1,4 +1,4 @@
-package com.hezy.guide.phone.meetingcamera.activity;
+package com.zy.guide.phone.meetingcamera.activity;
 
 import android.app.Activity;
 import android.content.ComponentName;
@@ -13,8 +13,8 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
-import com.hezy.guide.phone.meetingcamera.R;
-import com.hezy.guide.phone.meetingcamera.service.Camera1Service;
+import com.zy.guide.phone.meetingcamera.R;
+import com.zy.guide.phone.meetingcamera.service.Camera1Service;
 
 
 /**

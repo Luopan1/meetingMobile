@@ -35,4 +35,103 @@
 
     <string name="forum_meeting_public">公开\n会议</string>
     <string name="forum_meeting_private">受邀\n会议</string>
+    <string name="room_set" translatable="false">设置</string>
+    <string name="room_version" translatable="false">版本</string>
+    <string name="room_banned" translatable="false">禁音</string>
+    <string name="room_speak" translatable="false">发言</string>
+    <string name="room_fy" translatable="false">我要发言</string>
+    <string name="room_fz" translatable="false">翻转</string>
+    <string name="room_fullscreen" translatable="false">全屏</string>
+    <string name="room_banged" translatable="false">退出</string>
+
+    <string name="label_meet_desc">会议摘要：</string>
+    <string name="label_meet_time">会议开始时间：</string>
+    <string name="label_meet_class">会议类型：</string>
+    <string name="label_meet_info">会议资料</string>
+    <string name="bt_login">登录</string>
+    <string name="bt_bind">绑定</string>
+    <string name="bt_getcode_text">获取验证码</string>
+    <string name="bt_login_other">第三方登录方式</string>
+    <string name="bt_confirm">确定</string>
+    <string name="bt_cancel">取消</string>
+    <string name="bt_not_prompt">不再提醒</string>
+    <string name="bt_save">保存</string>
+    <string name="bt_exit">退出</string>
+    <string name="bt_update">立即升级</string>
+    <string name="bt_later">以后再说</string>
+    <string name="bt_leave">结束会议</string>
+    <string name="bt_leave_stand">暂时离开</string>
+    <string name="bt_meet_discuss">讨论</string>
+    <string name="bt_send">发送</string>
+    <string name="bt_refresh">刷新</string>
+    <string name="bt_close">关闭</string>
+    <string name="bt_qrcode_login">微信扫码登录</string>
+    <string name="bt_apply">申请</string>
+    <string name="bt_agree">同意</string>
+    <string name="bt_refuse">拒绝</string>
+    <string name="bt_micro">连麦</string>
+    <string name="bt_micro_off">关麦</string>
+    <string name="bt_camera">打开摄像头</string>
+    <string name="bt_camera_off">关闭摄像头</string>
+    <string name="bt_leave2">立即离开</string>
+    <string name="bt_later2">稍后再说</string>
+    <string name="bt_goto">立即就去</string>
+    <string name="alt_sdk_disabled">扩展卡不可用</string>
+
+    <string name="txt_phone">手机号码</string>
+    <string name="txt_code">验证码</string>
+    <string name="txt_bind_title">绑定微信</string>
+    <string name="txt_bind_alert">绑定后无需输入手机号密码登录，更便捷</string>
+    <string name="txt_started">未开始</string>
+    <string name="txt_raged">进行中</string>
+    <string name="meet_state_complete">已结束</string>
+
+    <string name="bar_online">在线</string>
+    <string name="bar_offline">离线</string>
+    <string name="bar_log">记录</string>
+    <string name="bar_meet">会议</string>
+    <string name="bar_search">搜索</string>
+    <string name="bar_profile">我的</string>
+
+    <string name="label_nickname">昵称</string>
+    <string name="label_user_name">姓名</string>
+    <string name="label_meet_users">参会人数</string>
+    <string name="label_quit_alert">您确定要离开会议室吗？</string>
+    <string name="label_hot_city">热点城市</string>
+    <string name="label_sync_loading">正在下载升级包...</string>
+    <string name="alt_update">%1$s%2$s版本发布了。\r\n是否立即升级到最新版？</string>
+    <string name="alt_upgrade_down_error">下载失败，请稍后再试。</string>
+    <string name="alt_upgrade_down_loading">正在下载升级包，请稍后...</string>
+    <string name="alt_list_loading">正在加载数据，请稍后...</string>
+    <string name="alt_create_file_fail">创建文件失败</string>
+    <string name="alt_message_null">不能发送空消息</string>
+    <string name="dlg_title">温馨提示</string>
+    <string name="dlg_apply_vide">申请视频互动</string>
+    <string name="dlg_apply_call">申请通话</string>
+    <string name="dlg_apply_call_desc">您没有权限进行通话，需向主持人申请！</string>
+    <string name="dlg_apply_video_desc">您没有权限进行视频互动，需向主持人申请！</string>
+    <string name="dlg_apply_call_success">申请已发送，请等待主持人授权</string>
+    <string name="dlg_apply_call_error">申请发送失败</string>
+    <string name="dlg_participand_title">所有参会人员</string>
+    <string name="dlg_repeat_click_flag">您已经点过赞了</string>
+    <string name="dlg_meet_finish">会议已结束，是否立即离开？</string>
+    <string name="dlg_not_network">网络已断开，请稍后再试</string>
+    <string name="dlg_edit_userinfo">是否去编辑详细个人资料？</string>
+    <string name="dlg_exception">程序出错了</string>
+
+    <string name="dialog_title_settings">分辨率设置</string>
+    <string name="label_video_fluent">\t\t流畅（480*360）</string>
+    <string name="label_video_standard">\t\t标准（640*480）</string>
+    <string name="label_video_high">\t\t高清（1280*720）</string>
+    <string name="label_noth_meet">没有相关会议</string>
+    <string name="label_noth_log" translatable="false">没有相关日志</string>
+    <string name="label_order_news">最新</string>
+    <string name="label_order_hot">最热</string>
+    <string name="label_order_flag">点赞</string>
+
+    <string name="account_offline">连接断开，请重试登录</string>
+    <string name="account_reason_login">另一个用户正以相同的用户 ID 进入讨论区</string>
+
+    <string name="wx_appid">wx9a61fda9d6d2e0fb</string>
+    <string name="wx_appsecret">797101d28f353fc581cd05421b251cde</string>
 </resources>

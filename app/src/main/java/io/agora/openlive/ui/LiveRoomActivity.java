@@ -21,20 +21,18 @@ import android.support.v7.widget.RecyclerView;
 
 import com.zy.guide.phone.BuildConfig;
 import com.zy.guide.phone.R;
-import com.hezy.guide.phone.entities.Agora;
-import com.hezy.guide.phone.entities.Audience;
-import com.hezy.guide.phone.entities.base.BaseErrorBean;
-import com.hezy.guide.phone.event.HangOnEvent;
-import com.hezy.guide.phone.event.HangUpEvent;
-import com.hezy.guide.phone.ApiClient;
-import com.hezy.guide.phone.utils.OkHttpCallback;
-import com.hezy.guide.phone.persistence.Preferences;
-import com.hezy.guide.phone.receiver.PhoneReceiver;
-import com.hezy.guide.phone.utils.RxBus;
-import com.hezy.guide.phone.utils.UIDUtil;
+import com.zy.guide.phone.entities.Agora;
+import com.zy.guide.phone.entities.base.BaseErrorBean;
+import com.zy.guide.phone.event.HangOnEvent;
+import com.zy.guide.phone.event.HangUpEvent;
+import com.zy.guide.phone.ApiClient;
+import com.zy.guide.phone.utils.OkHttpCallback;
+import com.zy.guide.phone.persistence.Preferences;
+import com.zy.guide.phone.receiver.PhoneReceiver;
+import com.zy.guide.phone.utils.RxBus;
+import com.zy.guide.phone.utils.UIDUtil;
 import com.tendcloud.tenddata.TCAgent;
 
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

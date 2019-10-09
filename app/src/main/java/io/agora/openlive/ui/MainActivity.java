@@ -14,8 +14,8 @@ import android.view.WindowManager;
 import android.widget.EditText;
 
 import com.zy.guide.phone.R;
-import com.hezy.guide.phone.entities.Agora;
-import com.hezy.guide.phone.utils.Logger;
+import com.zy.guide.phone.entities.Agora;
+import com.zy.guide.phone.utils.Logger;
 import com.tendcloud.tenddata.TCAgent;
 
 import io.agora.openlive.model.ConstantApp;

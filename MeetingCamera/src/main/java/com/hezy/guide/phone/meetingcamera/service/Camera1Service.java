@@ -1,4 +1,4 @@
-package com.hezy.guide.phone.meetingcamera.service;
+package com.zy.guide.phone.meetingcamera.service;
 
 import android.app.Service;
 import android.content.Intent;
@@ -11,8 +11,8 @@ import android.os.IBinder;
 import android.util.Log;
 import android.view.SurfaceHolder;
 
-import com.hezy.guide.phone.meetingcamera.activity.Camera1ByServiceActivity;
-import com.hezy.guide.phone.meetingcamera.camera.CameraHelper;
+import com.zy.guide.phone.meetingcamera.activity.Camera1ByServiceActivity;
+import com.zy.guide.phone.meetingcamera.camera.CameraHelper;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;

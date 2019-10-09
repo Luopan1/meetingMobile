@@ -18,7 +18,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.hezy.guide.phone.BaseApplication;
+import com.zy.guide.phone.BaseApplication;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

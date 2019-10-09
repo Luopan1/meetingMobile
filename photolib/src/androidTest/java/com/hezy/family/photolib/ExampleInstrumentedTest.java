@@ -1,4 +1,4 @@
-package com.hezy.family.photolib;
+package com.zy.family.photolib;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

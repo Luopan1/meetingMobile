@@ -15,36 +15,39 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.hezy.guide.phone.ApiClient;
-import com.hezy.guide.phone.business.HomeActivity;
-import com.hezy.guide.phone.business.PhoneRegisterActivity;
-import com.hezy.guide.phone.business.UpdateActivity;
-import com.hezy.guide.phone.business.UserInfoActivity;
-import com.hezy.guide.phone.entities.FinishWX;
-import com.hezy.guide.phone.entities.LoginWechat;
-import com.hezy.guide.phone.entities.User;
-import com.hezy.guide.phone.entities.UserData;
-import com.hezy.guide.phone.entities.Version;
-import com.hezy.guide.phone.entities.Wechat;
-import com.hezy.guide.phone.entities.base.BaseBean;
-import com.hezy.guide.phone.persistence.Preferences;
-import com.hezy.guide.phone.utils.DeviceUtil;
-import com.hezy.guide.phone.utils.Installation;
-import com.hezy.guide.phone.utils.Login.LoginHelper;
-import com.hezy.guide.phone.utils.OkHttpCallback;
-import com.hezy.guide.phone.utils.RxBus;
-import com.hezy.guide.phone.utils.ToastUtils;
-import com.hezy.guide.phone.utils.statistics.ZYAgent;
+
 import com.tencent.mm.opensdk.modelbase.BaseReq;
 import com.tencent.mm.opensdk.modelbase.BaseResp;
 import com.tencent.mm.opensdk.modelmsg.SendAuth;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.IWXAPIEventHandler;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
+import com.zy.guide.phone.ApiClient;
 import com.zy.guide.phone.BuildConfig;
 import com.zy.guide.phone.R;
+import com.zy.guide.phone.UserInfoActivity;
+import com.zy.guide.phone.business.BindActivity;
+import com.zy.guide.phone.business.HomeActivity;
+import com.zy.guide.phone.business.PhoneRegisterActivity;
+import com.zy.guide.phone.business.UpdateActivity;
+import com.zy.guide.phone.entities.FinishWX;
+import com.zy.guide.phone.entities.LoginWechat;
+import com.zy.guide.phone.entities.User;
+import com.zy.guide.phone.entities.UserData;
+import com.zy.guide.phone.entities.Version;
+import com.zy.guide.phone.entities.Wechat;
+import com.zy.guide.phone.entities.base.BaseBean;
+import com.zy.guide.phone.persistence.Preferences;
+import com.zy.guide.phone.utils.DeviceUtil;
+import com.zy.guide.phone.utils.Installation;
+import com.zy.guide.phone.utils.Login.LoginHelper;
+import com.zy.guide.phone.utils.OkHttpCallback;
+import com.zy.guide.phone.utils.RxBus;
+import com.zy.guide.phone.utils.ToastUtils;
+import com.zy.guide.phone.utils.statistics.ZYAgent;
 
 import org.json.JSONObject;
 
@@ -61,7 +64,7 @@ import rx.functions.Action1;
 
 public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHandler, EasyPermissions.PermissionCallbacks {
 
-    private ImageView wchatLoginImage;
+    private RelativeLayout wchatLoginImage;
     private IWXAPI mWxApi;
 
     private Subscription subscription;
@@ -122,7 +125,9 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
 
 
     protected void initView() {
-        wchatLoginImage = findViewById(R.id.wchat_login);
+        wchatLoginImage = findViewById(R.id.layout_wx);
+        wchatLoginImage.setClickable(true);
+        wchatLoginImage.setEnabled(true);
         wchatLoginImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -130,7 +135,6 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
             }
         });
 
-//        Preferences.setToken("90dd5c25795d4436ae3cb68cf844e3f2");
 
         if (Preferences.isLogin()) {
             ApiClient.getInstance().requestUser(this, new OkHttpCallback<BaseBean<UserData>>() {
@@ -141,6 +145,8 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
                         return;
                     }
 
+//                    BindActivity.actionStart(WXEntryActivity.this,true,true);
+
                     Wechat wechat = entity.getData().getWechat();
                     if (wechat != null) {
                         LoginHelper.savaWeChat(wechat);
@@ -150,7 +156,7 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
                     User user = entity.getData().getUser();
 
                     if (TextUtils.isEmpty(user.getMobile())) {
-                        startActivity(new Intent(WXEntryActivity.this, PhoneRegisterActivity.class));
+                        startActivity(new Intent(WXEntryActivity.this, BindActivity.class));
                     } else if (Preferences.isUserinfoEmpty()) {
                         boolean isUserAuthByHEZY = user.getAuditStatus() == 1;
                         UserInfoActivity.actionStart(WXEntryActivity.this, true, isUserAuthByHEZY);
@@ -259,23 +265,6 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
         });
     }
 
-//    private void versionCheck() {
-//        ApiClient.getInstance().versionCheck(this, new OkHttpCallback<BaseBean<Version>>() {
-//            @Override
-//            public void onSuccess(BaseBean<Version> entity) {
-//                Version version = entity.getData();
-//                if (version.getImportance() != 1) {
-//                    Intent intent = new Intent();
-//                    intent.setAction(Intent.ACTION_VIEW);
-//                    Uri content_url = Uri.parse(version.getUrl());
-//                    intent.setData(content_url);
-//                    startActivity(Intent.createChooser(intent, "请选择浏览器"));
-//                }
-//            }
-//
-//        });
-//    }
-
     private void reToWx() {
         String app_id = BuildConfig.WEIXIN_APP_ID;
         mWxApi = WXAPIFactory.createWXAPI(this.getApplicationContext(), app_id, false);
@@ -287,11 +276,7 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
             ToastUtils.showToast("您还未安装微信客户端，请先安装");
             return;
         }
-//        if (isWxLoging) {
-//            Log.i(TAG, "isWxLoging == true return");
-//            ZYAgent.onEvent(mContext,"微信按钮 重复点击返回");
-//            return;
-//        }
+
         final SendAuth.Req req = new SendAuth.Req();
         req.scope = "snsapi_userinfo";
         req.state = "GuideMobile_wx_login";
@@ -357,13 +342,15 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
                 LoginWechat loginWechat = entity.getData();
                 Wechat wechat = loginWechat.getWechat();
                 Preferences.setWeiXinHead(wechat.getHeadimgurl());
+                Preferences.setUserPhoto(wechat.getHeadimgurl());
+                Preferences.setUserName(wechat.getNickname());// TODO: 2019-10-09 需要判断昵称是否为空字符串
                 User user = loginWechat.getUser();
                 if (loginWechat.getUser() == null) {
                 } else {
                     LoginHelper.savaUser(user);
 
                     if (TextUtils.isEmpty(user.getMobile())) {
-                        startActivity(new Intent(WXEntryActivity.this, PhoneRegisterActivity.class));
+                        startActivity(new Intent(WXEntryActivity.this, BindActivity.class));
                     } else if (Preferences.isUserinfoEmpty()) {
                         boolean isUserAuthByHEZY = user.getAuditStatus() == 1;
                         UserInfoActivity.actionStart(WXEntryActivity.this, true, isUserAuthByHEZY);
