@@ -4,11 +4,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
@@ -17,6 +19,8 @@ import com.zy.guide.phone.R;
 import com.zy.guide.phone.entities.Agora;
 import com.zy.guide.phone.utils.Logger;
 import com.tendcloud.tenddata.TCAgent;
+
+import java.util.Locale;
 
 import io.agora.openlive.model.ConstantApp;
 import io.agora.rtc.Constants;
@@ -40,7 +44,15 @@ public class MainActivity extends BaseActivity {
 
     private AudioManager mAudioManager;
 
-    @Override
+    public static synchronized String getRoot(Context context) {
+        if(Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+            return String.format(Locale.CHINA, "%s/Android/data/com.zy.guide.phone/", Environment.getExternalStorageDirectory().getAbsolutePath());
+        } else {
+            return null;
+        }
+    }
+
+	@Override
     protected void onResume() {
         super.onResume();
         Logger.d(FTAG + TAG, "onResume");

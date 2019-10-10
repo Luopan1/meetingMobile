@@ -84,7 +84,8 @@ android {
             buildConfigField "boolean", "IS_HEART_LOG", "false"  //显示心跳的http日志
 
             buildConfigField 'String', 'API_DOMAIN_NAME', '"http://api.zhongyouie.com"'
-            buildConfigField 'String', 'API_DOMAIN_NAME_YOYOTU', '"http://api.haierzhongyou.com"'//唷唷兔地址
+            buildConfigField 'String', 'API_DOMAIN_NAME_YOYOTU', '"http://api.haierzhongyou.com"'
+//唷唷兔地址
 
             buildConfigField 'String', 'WS_DOMAIN_NAME', '"http://wstest.haierzhongyou.com/sales"'
             buildConfigField 'String', 'WEIXIN_APP_ID', '"wx5c021e0744c3092d"' //微信id
@@ -106,7 +107,8 @@ android {
             buildConfigField "boolean", "IS_DEBUG_TOAST", "false"  //显示LOG的TOAST
 
             buildConfigField 'String', 'API_DOMAIN_NAME', '"http://api.zhongyouie.com"'
-            buildConfigField 'String', 'API_DOMAIN_NAME_YOYOTU', '"http://api.haierzhongyou.com"'//唷唷兔地址
+            buildConfigField 'String', 'API_DOMAIN_NAME_YOYOTU', '"http://api.haierzhongyou.com"'
+//唷唷兔地址
 
             buildConfigField 'String', 'WS_DOMAIN_NAME', '"http://ws.zhongyouie.com/sales"'
             buildConfigField 'String', 'WEIXIN_APP_ID', '"wx5c021e0744c3092d"' //微信id

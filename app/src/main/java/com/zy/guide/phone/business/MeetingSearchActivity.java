@@ -1,6 +1,7 @@
 package com.zy.guide.phone.business;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -13,6 +14,7 @@ import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -115,6 +117,8 @@ public class MeetingSearchActivity extends BasicActivity {
                         Toast.makeText(mContext, "搜索会议名称不能为空", Toast.LENGTH_SHORT).show();
                     } else {
                         requestMeetings(searchEdit.getText().toString(), meetingType);
+                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(searchEdit.getWindowToken(),0) ;
                     }
                     return true;
                 } else {

@@ -27,6 +27,7 @@
             android:orientation="horizontal">
 
             <RadioButton
+                android:background="@color/transparent"
                 android:textColor="@drawable/home_below_selector_txt_color"
                 android:id="@+id/meeting"
                 style="@style/HomeTab"
@@ -39,6 +40,7 @@
                 android:text="会议" />
 
             <RadioButton
+                android:background="@color/transparent"
                 android:textColor="@drawable/home_below_selector_txt_color"
                 android:id="@+id/meeting_discuss"
                 style="@style/HomeTab"
@@ -50,6 +52,7 @@
                 android:text="讨论" />
 
             <RadioButton
+                android:background="@color/transparent"
                 android:textColor="@drawable/home_below_selector_txt_color"
                 android:id="@+id/meeting_log"
                 style="@style/HomeTab"
@@ -61,13 +64,14 @@
                 android:text="日志" />
 
             <RadioButton
+                android:background="@color/transparent"
                 android:textColor="@drawable/home_below_selector_txt_color"
                 android:id="@+id/meeting_my"
                 style="@style/HomeTab"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:drawableTop="@drawable/drawoble_log"
+                android:drawableTop="@drawable/drawoble_my"
                 android:paddingTop="@dimen/my_px_14"
                 android:text="我的" />
 

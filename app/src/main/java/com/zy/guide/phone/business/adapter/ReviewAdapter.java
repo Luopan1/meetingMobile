@@ -95,7 +95,7 @@ public class ReviewAdapter extends BaseRecyclerAdapter<RecordData.PageDataEntity
     public int getItemViewType(int position) {
         if (position == 0) {
             return ITEM_TYPE.ME.ordinal();
-        } else if (position == 1 && super.getItemCount() == 0) {
+        } else if ( super.getItemCount() == 0) {
             return ITEM_TYPE.EMPTY.ordinal();
         } else {
             return ITEM_TYPE.REVIEW.ordinal();

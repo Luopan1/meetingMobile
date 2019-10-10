@@ -103,12 +103,14 @@ public class MeetingInitActivity extends BaseActivity {
             if (meetingJoin.getMeeting().getType() == 0) {
                 intent = new Intent(MeetingInitActivity.this, MeetingBroadcastActivity.class);
             } else {
+                //主持人进入
                 intent = new Intent(MeetingInitActivity.this, InviteMeetingBroadcastActivity.class);
             }
         } else {
             if (meetingJoin.getMeeting().getType() == 0) {
                 intent = new Intent(MeetingInitActivity.this, MeetingAudienceActivity.class);
             } else {
+                //参会人进入
                 intent = new Intent(MeetingInitActivity.this, InviteMeetingAudienceActivity.class);
             }
         }

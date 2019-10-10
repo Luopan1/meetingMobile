@@ -70,6 +70,7 @@ public class HomeActivity extends BasicActivity implements View.OnClickListener 
 
 	private int mIntentType;
 
+
 	private Subscription subscription;
 
 	private PhoneReceiver phoneReceiver;
@@ -97,7 +98,7 @@ public class HomeActivity extends BasicActivity implements View.OnClickListener 
 		});
 
 		initView();
-//        versionCheck();
+        versionCheck();
 		initData();
 		registerDevice();
 
@@ -205,7 +206,7 @@ public class HomeActivity extends BasicActivity implements View.OnClickListener 
 		mFragments.add(ProfileFragment.newInstance());
 		mHomePagerAdapter.setData(mFragments);
 		viewPager.setAdapter(mHomePagerAdapter);
-
+		viewPager.setOffscreenPageLimit(4);
 		phoneReceiver = new PhoneReceiver();
 		intentFilter = new IntentFilter();
 		intentFilter.addAction("android.intent.action.PHONE_STATE");

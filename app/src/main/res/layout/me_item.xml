@@ -6,6 +6,7 @@
     android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
     android:focusable="true"
+    android:visibility="gone"
     android:focusableInTouchMode="true">
 
     <ImageView

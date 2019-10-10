@@ -1,119 +1,145 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <android.support.constraint.ConstraintLayout
-        android:id="@+id/title_meeting_list"
+    <LinearLayout
+        android:id="@+id/top_layout"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/my_px_300"
-        android:background="@drawable/bg_gradient_vertical_color">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/colorPrimary">
 
-        <TextView
-            android:id="@+id/tv_meeting_public"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/my_px_43"
-            android:layout_marginLeft="@dimen/my_px_43"
-            android:layout_marginBottom="@dimen/my_px_200"
-            android:text="公开会议"
-            android:theme="@style/MeetingTypeFocus"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/dp17"
+            android:layout_marginRight="@dimen/dp17"
+            android:layout_marginBottom="@dimen/dp13"
+            android:layout_marginTop="@dimen/dp13">
+            <ImageButton
+                android:id="@+id/bt_search"
+                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@android:drawable/ic_search_category_default"
+                android:layout_alignParentRight="true"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="@drawable/button_home_search"
+                android:layout_height="@dimen/dp50">
+                <ImageView
+                    android:layout_width="@dimen/dp18"
+                    android:src="@drawable/fdj"
+                    android:layout_marginLeft="@dimen/dp17"
+                    android:layout_height="@dimen/dp18" />
+                <TextView
+                    android:gravity="center_vertical"
+                    android:id="@+id/txt_search"
+                    android:layout_width="0dp"
+                    android:background="@color/color_347bbf"
+                    android:layout_marginRight="@dimen/dp15"
+                    android:layout_weight="1"
+                    android:textColor="@color/white"
+                    android:paddingLeft="@dimen/dp7"
+                    android:textColorHint="@color/white"
+                    android:textSize="@dimen/sp17"
+                    android:layout_height="@dimen/dp44"
+                    android:singleLine="true"
+                    android:hint="请输入会议名称"/>
+            </LinearLayout>
 
-        <TextView
-            android:id="@+id/tv_meeting_private"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/my_px_29"
-            android:layout_marginLeft="@dimen/my_px_29"
-            android:layout_marginBottom="0dp"
-            android:layout_toRightOf="@+id/tv_meeting_public"
-            android:text="受邀会议"
-            android:theme="@style/MeetingTypeUnFocus"
-            app:layout_constraintBottom_toBottomOf="@+id/tv_meeting_public"
-            app:layout_constraintStart_toEndOf="@+id/tv_meeting_public" />
+        </RelativeLayout>
 
-        <TextView
-            android:id="@+id/tv_meeting_owner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/my_px_29"
-            android:layout_marginLeft="@dimen/my_px_29"
-            android:layout_marginBottom="0dp"
-            android:layout_toRightOf="@+id/tv_meeting_private"
-            android:text="我的会议"
-            android:theme="@style/MeetingTypeUnFocus"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@+id/tv_meeting_private"
-            app:layout_constraintStart_toEndOf="@+id/tv_meeting_private" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:gravity="center_vertical"
+            android:layout_height="@dimen/dp50"
+            android:orientation="horizontal">
+            <LinearLayout
+                android:id="@+id/layout_public"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="right|center_vertical"
+                android:paddingRight="@dimen/dp17"
+                android:layout_height="match_parent">
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/tv_meet_public"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/dp25"
+                        android:textColor="@color/white"
+                        android:text="公开会议"
+                        android:textSize="@dimen/sp20"
+                        android:layout_marginRight="5dp"/>
+                    <View
+                        android:id="@+id/v_public"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/dp2"
+                        android:layout_marginTop="@dimen/dp3"
+                        android:background="@color/color_f35b56"/>
+                </LinearLayout>
 
-        <ImageButton
-            android:id="@+id/ib_meeting_forum"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/my_px_37"
-            android:layout_marginRight="8dp"
-            android:layout_marginBottom="@dimen/my_px_183"
-            android:background="@drawable/bg_ic_meeting_forum"
-            android:src="@drawable/ic_meeting_forum"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-    </android.support.constraint.ConstraintLayout>
+            </LinearLayout>
 
+
+            <View
+                android:layout_width="@dimen/dp1"
+                android:layout_height="@dimen/dp15"
+                android:background="@color/color_3580c8"/>
+            <LinearLayout
+                android:id="@+id/layout_invited"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="left|center_vertical"
+                android:paddingLeft="@dimen/dp17"
+                android:layout_height="match_parent">
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/tv_meet_invite"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/dp25"
+                        android:textColor="@color/white"
+                        android:gravity="bottom"
+                        android:text="受邀会议"
+                        android:textSize="@dimen/sp20"
+                        android:layout_marginRight="5dp"/>
+                    <View
+                        android:id="@+id/v_invite"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/dp2"
+                        android:visibility="gone"
+                        android:layout_marginTop="@dimen/dp3"
+                        android:background="@color/color_f35b56"/>
+                </LinearLayout>
+
+
+
+            </LinearLayout>
+        </LinearLayout>
+
+    </LinearLayout>
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/mSwipeRefreshLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/my_px_141"
-        app:layout_constraintTop_toTopOf="@+id/title_meeting_list">
+        android:layout_height="match_parent">
 
         <android.support.design.widget.CoordinatorLayout
             android:id="@+id/id_coordinatorlayout_appbar_scroll"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-
-            <android.support.design.widget.AppBarLayout
-                android:id="@+id/appBarLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="0dp"
-                android:background="#00FFFFFF"
-                app:elevation="0dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent">
-
-                <android.support.v7.widget.Toolbar
-                    android:id="@+id/toolbar"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/my_px_158"
-                    app:layout_scrollFlags="scroll|snap">
-
-                    <FrameLayout
-                        android:id="@+id/search_text"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/my_px_35"
-                        android:layout_marginRight="@dimen/my_px_35"
-                        android:layout_marginBottom="@dimen/my_px_43"
-                        android:background="@drawable/bg_meeting_search_edittext">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="@dimen/my_px_115"
-                            android:layout_gravity="center"
-                            android:drawableLeft="@drawable/ic_search"
-                            android:drawablePadding="3dp"
-                            android:gravity="center"
-                            android:hint="请输入会议名称搜索"
-                            android:textColorHint="#FFFFFF"
-                            android:textSize="14sp" />
-                    </FrameLayout>
-
-                </android.support.v7.widget.Toolbar>
-            </android.support.design.widget.AppBarLayout>
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/mRecyclerView"
@@ -126,7 +152,7 @@
                 android:scrollbars="none"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/appBarLayout" />
+                />
 
 
             <TextView
@@ -135,13 +161,13 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="100dp"
-                android:drawableTop="@drawable/ic_home_record_none"
+                android:drawableTop="@drawable/c"
                 android:drawablePadding="8dp"
                 android:gravity="center_horizontal"
-                android:text="暂时没有会议"
+                android:text="空空如也"
                 android:textColor="#909090"
                 android:textSize="15sp"
                 android:visibility="gone" />
         </android.support.design.widget.CoordinatorLayout>
     </android.support.v4.widget.SwipeRefreshLayout>
-</android.support.constraint.ConstraintLayout>
+</LinearLayout>

@@ -6,7 +6,7 @@
         android:id="@+id/top"
         android:layout_width="match_parent"
         android:layout_height="@dimen/my_px_144"
-        android:background="@drawable/bg_gradient_vertical_color">
+        android:background="@color/colorPrimary">
         <LinearLayout
             android:id="@+id/ll_back"
             android:layout_width="30dp"

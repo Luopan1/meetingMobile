@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/back_list"
+    android:orientation="vertical"
    >
 
     <LinearLayout
@@ -13,7 +14,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="@dimen/dp13"
-        android:layout_alignParentTop="true"
         android:background="@color/color_4095e8">
         <LinearLayout
             android:layout_width="match_parent"
@@ -28,7 +28,8 @@
                 android:src="@drawable/fdj"
                 android:layout_marginLeft="@dimen/dp17"
                 android:layout_height="@dimen/dp18" />
-            <EditText
+            <TextView
+                android:gravity="center_vertical"
                 android:id="@+id/input_keyword"
                 android:layout_width="0dp"
                 android:background="@color/color_347bbf"
@@ -45,41 +46,43 @@
 
     </LinearLayout>
 
-    <ListView
-        android:id="@+id/listview3"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout_forum"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:dividerHeight="10dp"
-        android:divider="@color/back_list"
-        android:fadingEdge="none"
-        android:cacheColorHint="#00000000"
-        android:background="@color/back_list"
-        android:layout_below="@id/layout_top"
-        android:focusable="true"
-        android:focusableInTouchMode="true">
-    </ListView>
+      >
+        <android.support.design.widget.CoordinatorLayout
+            android:id="@+id/cordinatorLayout_forum"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-    <LinearLayout
-        android:id="@+id/layout_ico_none"
-        android:layout_width="match_parent"
-        android:layout_below="@id/layout_top"
-        android:background="@color/white"
-        android:visibility="gone"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:orientation="vertical">
-        <ImageView
-            android:layout_width="@dimen/dp120"
-            android:src="@drawable/c"
-            android:layout_height="@dimen/dp120" />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/dp25"
-            android:textColor="@color/color_666666"
-            android:layout_gravity="center"
-            android:layout_marginTop="@dimen/dp20"
-            android:text="@string/label_noth_meet"
-            android:textSize="@dimen/sp17"/>
-    </LinearLayout>
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recyclerView_forum"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="0dp"
+                android:background="@color/white"
+                android:cacheColorHint="@null"
+                android:scrollbars="none"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/appBarLayout_forum" />
 
-</RelativeLayout>
+            <TextView
+                android:id="@+id/tv_forum_empty"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="100dp"
+                android:drawableTop="@drawable/c"
+                android:drawablePadding="8dp"
+                android:gravity="center_horizontal"
+                android:text="暂时没有会议"
+                android:textColor="@color/c_909090"
+                android:textSize="15sp"
+                android:visibility="gone" />
+        </android.support.design.widget.CoordinatorLayout>
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+</LinearLayout>

@@ -193,7 +193,8 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
         if (currentTime - lastClickTime > MIN_CLICK_DELAY_TIME) {
             lastClickTime = currentTime;
             normalOnClick(v);
-            if (!NetUtils.isNetworkConnected(getActivity())) {//not network
+            //not network
+            if (!NetUtils.isNetworkConnected(getActivity())) {
                 Toast.makeText(getActivity(), getString(R.string.network_err_toast), Toast.LENGTH_SHORT).show();
             } else {//have network
                 checkNetWorkOnClick(v);

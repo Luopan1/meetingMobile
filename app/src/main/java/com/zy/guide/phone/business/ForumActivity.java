@@ -42,6 +42,7 @@ import static com.zy.guide.phone.business.MeetingsFragment.KEY_MEETING_TYPE;
 /**
  * @author Dongce
  * create time: 2018/12/19
+ * 讨论的界面
  */
 public class ForumActivity extends AppCompatActivity {
 

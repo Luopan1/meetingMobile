@@ -19,10 +19,13 @@ import com.zy.guide.phone.entities.Version;
 import com.zy.guide.phone.entities.base.BaseBean;
 import com.zy.guide.phone.event.ResolutionChangeEvent;
 import com.zy.guide.phone.persistence.Preferences;
+import com.zy.guide.phone.utils.Common;
 import com.zy.guide.phone.utils.OkHttpCallback;
 import com.zy.guide.phone.utils.RxBus;
+import com.zy.guide.phone.utils.Utils;
 
 import io.agora.openlive.model.ConstantApp;
+import io.agora.openlive.ui.MainActivity;
 
 /**
  * Created by whatisjava on 17-9-5.
@@ -31,6 +34,7 @@ import io.agora.openlive.model.ConstantApp;
 public class SettingActivity extends BasicActivity {
 
     private SharedPreferences pref;
+    private TextView mNewVersionFlag;
 
     @Override
     public String getStatisticsTag() {
@@ -42,32 +46,30 @@ public class SettingActivity extends BasicActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
 
+
+
         pref = PreferenceManager.getDefaultSharedPreferences(this);
 
-        findViewById(R.id.mIvLeft).setOnClickListener(new View.OnClickListener() {
+        // 设置标题和返回键
+        findViewById(R.id.back).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
             }
         });
+        ((TextView)findViewById(R.id.title)).setText(getStatisticsTag().toString());
 
-        findViewById(R.id.resolution_layout).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.layout_ver).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showSelectDialog();
+                startActivity(new Intent(SettingActivity.this,VersionActivity.class));
             }
         });
 
-        findViewById(R.id.version_layout).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                versionCheck();
-            }
-        });
+        ((TextView) findViewById(R.id.label_version_num)).setText(BuildConfig.VERSION_NAME);
+        mNewVersionFlag = findViewById(R.id.label_version_new);
 
-        ((TextView) findViewById(R.id.version_text)).setText(BuildConfig.VERSION_NAME);
-
-        findViewById(R.id.exit).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.layout_logout).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Preferences.clear();
@@ -75,8 +77,21 @@ public class SettingActivity extends BasicActivity {
             }
         });
 
-        int prefIndex = pref.getInt(ConstantApp.PrefManager.PREF_PROPERTY_PROFILE_IDX, ConstantApp.DEFAULT_PROFILE_IDX);
-        ((TextView) findViewById(R.id.resolution_text)).setText(resolutionText(prefIndex));
+        findViewById(R.id.layout_clear).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(Common.deleteFileByPath(MainActivity.getRoot(SettingActivity.this))){
+                    Utils.showSimpleAlertDialog(SettingActivity.this, "所有文件已删除");
+                } else{
+                    Utils.showSimpleAlertDialog(SettingActivity.this, "文件删除失败");
+                }
+            }
+        });
+
+        versionCheck();
+
+       /* int prefIndex = pref.getInt(ConstantApp.PrefManager.PREF_PROPERTY_PROFILE_IDX, ConstantApp.DEFAULT_PROFILE_IDX);
+        ((TextView) findViewById(R.id.resolution_text)).setText(resolutionText(prefIndex));*/
     }
 
     private void versionCheck() {
@@ -85,13 +100,10 @@ public class SettingActivity extends BasicActivity {
             public void onSuccess(BaseBean<Version> entity) {
                 Version version = entity.getData();
                 if (version.getImportance() != 1) {
-                    Intent intent = new Intent();
-                    intent.setAction(Intent.ACTION_VIEW);
-                    Uri content_url = Uri.parse(version.getUrl());
-                    intent.setData(content_url);
-                    startActivity(Intent.createChooser(intent, "请选择浏览器"));
+                    mNewVersionFlag.setVisibility(View.VISIBLE);
                 } else {
-                    Toast.makeText(mContext, "已经是最新版了", Toast.LENGTH_SHORT).show();
+                    mNewVersionFlag.setVisibility(View.GONE);
+
                 }
             }
 
@@ -103,9 +115,9 @@ public class SettingActivity extends BasicActivity {
         });
     }
 
-    String[] items = new String[]{"流畅（480x320）", "标准（640x480）", "高清（1280x720）"};
+//    String[] items = new String[]{"流畅（480x320）", "标准（640x480）", "高清（1280x720）"};
 
-    private void showSelectDialog() {
+    /*private void showSelectDialog() {
         int prefIndex = pref.getInt(ConstantApp.PrefManager.PREF_PROPERTY_PROFILE_IDX, ConstantApp.DEFAULT_PROFILE_IDX);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("分辨率设置");
@@ -127,9 +139,9 @@ public class SettingActivity extends BasicActivity {
         });
         AlertDialog dialog = builder.create();
         dialog.show();
-    }
+    }*/
 
-    private String resolutionText(int which) {
+   /* private String resolutionText(int which) {
         switch (which) {
             case 0:
                 return "流畅";
@@ -140,6 +152,6 @@ public class SettingActivity extends BasicActivity {
             default:
                 return "标准（推荐）";
         }
-    }
+    }*/
 
 }

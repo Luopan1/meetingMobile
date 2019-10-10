@@ -9,7 +9,10 @@ import android.os.Parcelable;
 
 public class MeetingJoin implements Entity, Parcelable {
 
-    private int role; // 0-主播； 1-观众
+    /**
+     *  0-主播； 1-观众
+    * */
+    private int role;
 
     private Meeting meeting;
 

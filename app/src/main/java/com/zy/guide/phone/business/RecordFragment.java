@@ -1,5 +1,6 @@
 package com.zy.guide.phone.business;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -18,6 +19,8 @@ import com.zy.guide.phone.entities.RecordData;
 import com.zy.guide.phone.entities.base.BaseBean;
 import com.zy.guide.phone.utils.OkHttpCallback;
 
+import static com.zy.guide.phone.business.MeetingsFragment.KEY_MEETING_TYPE;
+
 
 /**
  * Created by wufan on 2017/7/26.
@@ -34,6 +37,7 @@ public class RecordFragment extends BaseFragment {
     private boolean isRefresh;
     private int mTotalPage = -1;
     private int mPageNo = -1;
+    private TextView mSearchView;
 
     @Override
     public String getStatisticsTag() {
@@ -53,6 +57,8 @@ public class RecordFragment extends BaseFragment {
         mRecyclerView = view.findViewById(R.id.mRecyclerView);
         emptyText = view.findViewById(R.id.emptyView);
         mAdapter = new GuideLogAdapter(mContext);
+
+        mSearchView = view.findViewById(R.id.input_keyword);
 
         //设置布局管理器
         mLayoutManager = new LinearLayoutManager(mContext);
@@ -87,13 +93,14 @@ public class RecordFragment extends BaseFragment {
             }
         });
 
-        //刷新与分页加载
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                requestRecord();
-            }
+        mSearchView.setOnClickListener(v -> {
+            Intent searchMeetingIntent = new Intent(RecordFragment.this.getContext(), MeetingSearchActivity.class);
+            searchMeetingIntent.putExtra(KEY_MEETING_TYPE, MeetingsFragment.TYPE_PUBLIC_MEETING);
+            startActivity(searchMeetingIntent);
         });
+
+        //刷新与分页加载
+        mSwipeRefreshLayout.setOnRefreshListener(() -> requestRecord());
 
         requestRecord();
 
