@@ -9,7 +9,7 @@
         android:visibility="gone"
         android:background="#ff000000" />
 
-    <com.zy.family.photolib.PhotoView
+    <com.zhongyou.family.photolib.PhotoView
         android:id="@+id/img"
         android:layout_width="match_parent"
         android:scaleType="centerCrop"

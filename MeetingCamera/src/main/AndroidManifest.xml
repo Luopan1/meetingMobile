@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.zy.guide.phone.meetingcamera">
+    package="com.zhongyou.meet.mobile.meetingcamera">
 
     <!-- 读写SD卡权限 -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -17,10 +17,10 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
-            android:name=".activity.Camera1ByServiceActivity"
+            android:name="com.zhongyou.meet.mobile.meetingcamera.activity.Camera1ByServiceActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
-        <service android:name=".service.Camera1Service" />
+        <service android:name="com.zhongyou.meet.mobile.meetingcamera.service.Camera1Service" />
     </application>
 
 </manifest>

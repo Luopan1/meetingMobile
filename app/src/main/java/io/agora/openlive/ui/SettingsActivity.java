@@ -7,7 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
-import com.zy.guide.phone.R;
+import com.zhongyou.meet.mobile.R;
 
 import io.agora.openlive.model.ConstantApp;
 

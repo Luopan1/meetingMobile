@@ -78,8 +78,8 @@
     <string name="bt_goto">立即就去</string>
     <string name="alt_sdk_disabled">扩展卡不可用</string>
 
-    <string name="txt_phone">手机号码</string>
-    <string name="txt_code">验证码</string>
+    <string name="txt_phone">请输入手机号码</string>
+    <string name="txt_code">请输入验证码</string>
     <string name="txt_bind_title">绑定微信</string>
     <string name="txt_bind_alert">绑定后无需输入手机号密码登录，更便捷</string>
     <string name="txt_started">未开始</string>

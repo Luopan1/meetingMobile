@@ -8,9 +8,9 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
-import com.zy.guide.phone.R;
-import com.zy.guide.phone.entities.Agora;
-import com.zy.guide.phone.entities.MeetingJoin;
+import com.zhongyou.meet.mobile.R;
+import com.zhongyou.meet.mobile.entities.Agora;
+import com.zhongyou.meet.mobile.entities.MeetingJoin;
 import com.tendcloud.tenddata.TCAgent;
 
 import io.agora.rtc.Constants;

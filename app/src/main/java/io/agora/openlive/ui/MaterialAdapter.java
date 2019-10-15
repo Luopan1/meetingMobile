@@ -10,9 +10,9 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.zy.guide.phone.entities.Material;
-import com.zy.guide.phone.R;
-import com.zy.guide.phone.utils.helper.ImageHelper;
+import com.zhongyou.meet.mobile.entities.Material;
+import com.zhongyou.meet.mobile.R;
+import com.zhongyou.meet.mobile.utils.helper.ImageHelper;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;

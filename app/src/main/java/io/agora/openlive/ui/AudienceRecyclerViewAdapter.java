@@ -15,8 +15,8 @@ import android.widget.FrameLayout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.zy.guide.phone.R;
-import com.zy.guide.phone.utils.DensityUtil;
+import com.zhongyou.meet.mobile.R;
+import com.zhongyou.meet.mobile.utils.DensityUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -111,4 +111,11 @@
         <item name="actionMenuTextColor">@color/white</item> <!--  敲定颜色-->
         <item name="android:textSize">@dimen/sp13</item> <!--  搞掂字体大小-->
     </style>
+
+    <style name="RadingStyle" parent="@android:style/Widget.RatingBar">
+        <!-- 定义星星图片 -->
+        <item name="android:progressDrawable">@drawable/appraise_rating_bar</item>
+
+
+    </style>
 </resources>

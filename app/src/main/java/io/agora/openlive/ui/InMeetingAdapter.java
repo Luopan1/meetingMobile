@@ -11,11 +11,11 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.zy.guide.phone.BaseApplication;
-import com.zy.guide.phone.R;
-import com.zy.guide.phone.business.ViewPagerActivity;
-import com.zy.guide.phone.entities.ChatMesData;
-import com.zy.guide.phone.utils.helper.ImageHelper;
+import com.zhongyou.meet.mobile.BaseApplication;
+import com.zhongyou.meet.mobile.R;
+import com.zhongyou.meet.mobile.business.ViewPagerActivity;
+import com.zhongyou.meet.mobile.entities.ChatMesData;
+import com.zhongyou.meet.mobile.utils.helper.ImageHelper;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;

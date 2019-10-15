@@ -43,7 +43,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.zy.guide.phone"
+        applicationId "com.zhongyou.meet.mobile"
         minSdkVersion 16
         targetSdkVersion 28
         versionName "1.1.6"
@@ -83,12 +83,11 @@ android {
             buildConfigField "boolean", "IS_DEBUG_TOAST", "true"  //显示LOG的TOAST
             buildConfigField "boolean", "IS_HEART_LOG", "false"  //显示心跳的http日志
 
-            buildConfigField 'String', 'API_DOMAIN_NAME', '"http://api.zhongyouie.com"'
-            buildConfigField 'String', 'API_DOMAIN_NAME_YOYOTU', '"http://api.haierzhongyou.com"'
-//唷唷兔地址
+            buildConfigField 'String', 'API_DOMAIN_NAME', '"http://osg.apitest.zhongyouie.cn"'
+            buildConfigField 'String', 'API_DOMAIN_NAME_YOYOTU', '"http://api.haierzhongyou.com"'//唷唷兔地址
 
             buildConfigField 'String', 'WS_DOMAIN_NAME', '"http://wstest.haierzhongyou.com/sales"'
-            buildConfigField 'String', 'WEIXIN_APP_ID', '"wx5c021e0744c3092d"' //微信id
+            buildConfigField 'String', 'WEIXIN_APP_ID', '"wx9a61fda9d6d2e0fb"' //微信id
             buildConfigField 'String', 'BUGLY_APPID', '"d2b5a75181"' //bugly
             buildConfigField 'String', 'QINIU_IMAGE_DOMAIN', '"http://image.i.teq6.com/"'
             //七牛图片domain
@@ -107,11 +106,10 @@ android {
             buildConfigField "boolean", "IS_DEBUG_TOAST", "false"  //显示LOG的TOAST
 
             buildConfigField 'String', 'API_DOMAIN_NAME', '"http://api.zhongyouie.com"'
-            buildConfigField 'String', 'API_DOMAIN_NAME_YOYOTU', '"http://api.haierzhongyou.com"'
-//唷唷兔地址
+            buildConfigField 'String', 'API_DOMAIN_NAME_YOYOTU', '"http://api.haierzhongyou.com"'//唷唷兔地址
 
             buildConfigField 'String', 'WS_DOMAIN_NAME', '"http://ws.zhongyouie.com/sales"'
-            buildConfigField 'String', 'WEIXIN_APP_ID', '"wx5c021e0744c3092d"' //微信id
+            buildConfigField 'String', 'WEIXIN_APP_ID', '"wx9a61fda9d6d2e0fb"' //微信id
             buildConfigField 'String', 'BUGLY_APPID', '"63fc264795"' //bugly
             buildConfigField 'String', 'QINIU_IMAGE_DOMAIN', '"http://image.i.zhongyouie.com/"'
             //七牛图片domain

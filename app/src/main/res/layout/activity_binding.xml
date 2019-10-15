@@ -8,33 +8,48 @@
         android:layout_height="match_parent">
 
         <LinearLayout
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
+            android:id="@+id/inputLayout"
+            android:background="@drawable/bind_bg_white"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:orientation="vertical"
-            android:paddingLeft="@dimen/layout_left_margin"
-            android:paddingRight="@dimen/layout_right_margin"
-            android:paddingBottom="100dp">
+            android:layout_marginLeft="@dimen/my_px_80"
+            android:layout_marginRight="@dimen/my_px_80"
+            >
 
             <EditText
+                android:background="@null"
                 android:visibility="gone"
                 android:id="@+id/txt_name"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:background="@android:drawable/editbox_background"
+                android:layout_height="80dp"
                 android:hint="@string/label_nickname"
                 android:singleLine="true" />
 
             <EditText
+                android:layout_marginRight="8dp"
+                android:layout_marginLeft="8dp"
+                android:background="@null"
+                android:drawablePadding="10dp"
+                android:drawableLeft="@drawable/dh"
+                android:paddingLeft="10dp"
                 android:id="@+id/txt_phone"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="66dp"
                 android:layout_marginTop="10dp"
-                android:background="@android:drawable/editbox_background"
                 android:hint="@string/txt_phone"
                 android:inputType="phone"
                 android:singleLine="true" />
 
+            <View
+                android:layout_marginRight="10dp"
+                android:layout_marginLeft="10dp"
+                android:background="#cecece"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"/>
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -43,36 +58,45 @@
                 <Button
                     android:id="@+id/bt_getcode_text"
                     android:layout_width="wrap_content"
-                    android:layout_height="40dp"
+                    android:layout_height="30dp"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
-                    android:background="@drawable/button_circle"
+                    android:background="@drawable/shap_circle_blue"
                     android:text="@string/bt_getcode_text"
-                    android:textColor="@color/white" />
+                    android:textColor="#3399ff" />
 
                 <EditText
+                    android:layout_marginRight="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:drawablePadding="10dp"
+                    android:drawableLeft="@drawable/yzm"
+                    android:paddingLeft="10dp"
                     android:id="@+id/txt_code"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
+                    android:layout_height="66dp"
                     android:layout_toLeftOf="@id/bt_getcode_text"
-                    android:background="@android:drawable/editbox_background"
+                    android:background="@null"
                     android:hint="@string/txt_code"
                     android:inputType="number"
                     android:singleLine="true" />
             </RelativeLayout>
 
-            <Button
-                android:id="@+id/bt_login"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/button_circle"
-                android:text="@string/bt_bind"
-                android:textColor="@color/white" />
-
         </LinearLayout>
 
+        <Button
+            android:layout_marginRight="@dimen/my_px_80"
+            android:layout_marginLeft="@dimen/my_px_80"
+            android:layout_below="@+id/inputLayout"
+            android:id="@+id/bt_login"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="30dp"
+            android:background="@drawable/setting_button_circle_blue"
+            android:text="@string/bt_bind"
+            android:textColor="@color/white" />
+
         <LinearLayout
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
@@ -113,13 +137,13 @@
                 android:text="@string/txt_bind_alert" />
         </LinearLayout>
 
-        <TextView
+        <ImageView
+            android:src="@drawable/logo_2"
             android:id="@+id/mTvTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="@dimen/layout_top_margin"
-            android:text="@string/txt_bind_title"
             android:textStyle="bold" />
     </RelativeLayout>
 </layout>

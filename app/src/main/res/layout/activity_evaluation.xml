@@ -14,9 +14,30 @@
         android:layout_height="match_parent">
 
         <LinearLayout
+            android:background="@color/white"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
+
+            <android.support.v7.widget.AppCompatRatingBar
+                android:isIndicator="true"
+                android:id="@+id/ratingBar"
+                android:layout_marginTop="10dp"
+                style="@style/RadingStyle"
+                android:max="5"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:id="@+id/score"
+                android:textColor="@color/red"
+                android:textSize="18sp"
+                tools:text="0.0"
+                android:layout_margin="10dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/mRecyclerView"

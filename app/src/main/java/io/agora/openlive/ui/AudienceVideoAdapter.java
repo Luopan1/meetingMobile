@@ -12,9 +12,9 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.zy.guide.phone.BuildConfig;
-import com.zy.guide.phone.R;
-import com.zy.guide.phone.entities.AudienceVideo;
+import com.zhongyou.meet.mobile.BuildConfig;
+import com.zhongyou.meet.mobile.R;
+import com.zhongyou.meet.mobile.entities.AudienceVideo;
 
 import java.util.ArrayList;
 import java.util.Iterator;

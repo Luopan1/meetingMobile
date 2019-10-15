@@ -11,8 +11,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.zy.guide.phone.R;
-import com.zy.guide.phone.entities.Audience;
+import com.zhongyou.meet.mobile.R;
+import com.zhongyou.meet.mobile.entities.Audience;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -3,239 +3,236 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <include layout="@layout/base_tool_bar"/>
     <ScrollView
         android:fillViewport="true"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.constraint.ConstraintLayout
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <Button
-                android:id="@+id/btnUserInfoSave"
-                android:layout_width="@dimen/my_px_648"
-                android:layout_height="@dimen/my_px_115"
-                android:layout_marginTop="44dp"
-                android:background="@drawable/drawable_login"
-                android:text="保存"
-                android:textColor="@color/black"
-                android:textSize="@dimen/my_px_43"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/edtUserInfoAddress"
-                 />
-
-            <EditText
-                android:id="@+id/edtUserInfoName"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/my_px_156"
-                android:layout_marginStart="@dimen/my_px_130"
-                android:layout_marginLeft="@dimen/my_px_130"
-                android:layout_marginTop="@dimen/my_px_37"
-                android:layout_marginEnd="@dimen/my_px_130"
-                android:layout_marginRight="@dimen/my_px_130"
-                android:ems="10"
-                android:hint="姓名"
-                android:textColorHint="#666"
-                android:inputType="textPersonName"
-                android:paddingStart="@dimen/my_px_140"
-                android:paddingLeft="@dimen/my_px_140"
-                android:paddingTop="@dimen/my_px_32"
-                android:paddingBottom="@dimen/my_px_32"
-                android:textColor="@color/black"
-                android:theme="@style/WhiteEdittext"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView" />
-
-            <EditText
-                android:id="@+id/edtUserInfoPostType"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/my_px_156"
-                android:cursorVisible="false"
-                android:ems="10"
-                android:hint="选择用户类型"
-                android:textColorHint="#666"
-                android:inputType="textPersonName"
-                android:paddingStart="@dimen/my_px_140"
-                android:paddingLeft="@dimen/my_px_140"
-                android:paddingTop="@dimen/my_px_32"
-                android:paddingBottom="@dimen/my_px_32"
-                android:textColor="@color/black"
-                android:theme="@style/WhiteEdittext"
-                app:layout_constraintEnd_toEndOf="@+id/edtUserInfoName"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="@+id/edtUserInfoName"
-                app:layout_constraintTop_toBottomOf="@+id/edtUserInfoName" />
-
-            <EditText
-                android:textColorHint="#666"
-                android:id="@+id/edtUserInfoDistrict"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/my_px_156"
-                android:layout_marginTop="0dp"
-                android:cursorVisible="false"
-                android:ems="10"
-                android:hint="选择中心"
-                android:inputType="textPersonName"
-                android:paddingStart="@dimen/my_px_140"
-                android:paddingLeft="@dimen/my_px_140"
-                android:paddingTop="@dimen/my_px_32"
-                android:paddingBottom="@dimen/my_px_32"
-                android:textColor="@color/black"
-                android:theme="@style/WhiteEdittext"
-                app:layout_constraintEnd_toEndOf="@+id/edtUserInfoName"
-                app:layout_constraintHorizontal_bias="0.502"
-                app:layout_constraintStart_toStartOf="@+id/edtUserInfoName"
-                app:layout_constraintTop_toBottomOf="@+id/edtUserInfoPostType" />
-
-
-
-            <EditText
-                android:textColorHint="#666"
-                android:id="@+id/edtUserInfoCustom"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/my_px_156"
-                android:layout_marginTop="0dp"
-                android:cursorVisible="false"
-                android:ems="10"
-                android:hint="选择客户"
-                android:inputType="textPersonName"
-                android:paddingStart="@dimen/my_px_140"
-                android:paddingLeft="@dimen/my_px_140"
-                android:paddingTop="@dimen/my_px_32"
-                android:paddingBottom="@dimen/my_px_32"
-                android:textColor="@color/black"
-                android:theme="@style/WhiteEdittext"
-                app:layout_constraintEnd_toEndOf="@+id/edtUserInfoName"
-                app:layout_constraintHorizontal_bias="0.502"
-                app:layout_constraintStart_toStartOf="@+id/edtUserInfoName"
-                app:layout_constraintTop_toBottomOf="@+id/edtUserInfoDistrict" />
-
-            <EditText
-                android:textColorHint="#666"
-                android:id="@+id/edtUserInfoAddress"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/my_px_156"
-                android:layout_marginTop="0dp"
-                android:cursorVisible="false"
-                android:ems="10"
-                android:hint="选择地址"
-                android:inputType="textPersonName"
-                android:paddingStart="@dimen/my_px_140"
-                android:paddingLeft="@dimen/my_px_140"
-                android:paddingTop="@dimen/my_px_32"
-                android:paddingBottom="@dimen/my_px_32"
-                android:textColor="@color/black"
-                android:theme="@style/WhiteEdittext"
-                app:layout_constraintEnd_toEndOf="@+id/edtUserInfoName"
-                app:layout_constraintHorizontal_bias="0.502"
-                app:layout_constraintStart_toStartOf="@+id/edtUserInfoName"
-                app:layout_constraintTop_toBottomOf="@+id/edtUserInfoCustom" />
-
-            <ImageView
+            <com.zhongyou.meet.mobile.view.CircleImageView
                 android:id="@+id/imgUserInfoHead"
                 android:layout_width="@dimen/my_px_360"
                 android:layout_height="@dimen/my_px_360"
-                android:layout_marginLeft="@dimen/my_px_360"
                 android:layout_marginTop="@dimen/my_px_132"
-                android:layout_marginRight="@dimen/my_px_360"
-                android:src="@drawable/uinfo_head"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ImageView
-                android:layout_width="@dimen/my_px_92"
-                android:layout_height="@dimen/my_px_92"
-                android:layout_marginStart="@dimen/my_px_18"
-                android:layout_marginLeft="@dimen/my_px_18"
-                android:layout_marginTop="@dimen/my_px_42"
-                android:layout_marginBottom="@dimen/my_px_42"
-                android:src="@drawable/ico_name"
-                app:layout_constraintBottom_toBottomOf="@+id/edtUserInfoName"
-                app:layout_constraintStart_toStartOf="@+id/edtUserInfoName"
-                app:layout_constraintTop_toTopOf="@+id/edtUserInfoName" />
-
-
-            <ImageView
-                android:layout_width="@dimen/my_px_92"
-                android:layout_height="@dimen/my_px_92"
-                android:layout_marginStart="4dp"
-                android:layout_marginLeft="4dp"
-                android:layout_marginTop="@dimen/my_px_42"
-                android:layout_marginBottom="@dimen/my_px_42"
-                android:src="@drawable/ico_card"
-                app:layout_constraintBottom_toBottomOf="@+id/edtUserInfoPostType"
-                app:layout_constraintStart_toStartOf="@+id/edtUserInfoPostType"
-                app:layout_constraintTop_toTopOf="@+id/edtUserInfoPostType" />
-
-            <ImageView
-                android:layout_width="@dimen/my_px_92"
-                android:layout_height="@dimen/my_px_92"
-                android:layout_marginStart="@dimen/my_px_18"
-                android:layout_marginLeft="@dimen/my_px_18"
-                android:layout_marginTop="@dimen/my_px_42"
-                android:layout_marginBottom="@dimen/my_px_42"
-                android:src="@drawable/ico_center"
-                app:layout_constraintBottom_toBottomOf="@+id/edtUserInfoDistrict"
-                app:layout_constraintStart_toStartOf="@+id/edtUserInfoDistrict"
-                app:layout_constraintTop_toTopOf="@+id/edtUserInfoDistrict" />
-
-
-
-            <ImageView
-                android:id="@+id/imgEdtUserInfoCustom"
-                android:layout_width="@dimen/my_px_92"
-                android:layout_height="@dimen/my_px_92"
-                android:layout_marginStart="@dimen/my_px_18"
-                android:layout_marginLeft="@dimen/my_px_18"
-                android:layout_marginTop="@dimen/my_px_42"
-                android:layout_marginBottom="@dimen/my_px_42"
-                android:src="@drawable/ico_kehu"
-                app:layout_constraintBottom_toBottomOf="@+id/edtUserInfoCustom"
-                app:layout_constraintStart_toStartOf="@+id/edtUserInfoCustom"
-                app:layout_constraintTop_toTopOf="@+id/edtUserInfoCustom" />
-
-            <ImageView
-                android:layout_width="@dimen/my_px_92"
-                android:layout_height="@dimen/my_px_92"
-                android:layout_marginStart="@dimen/my_px_18"
-                android:layout_marginLeft="@dimen/my_px_18"
-                android:layout_marginTop="@dimen/my_px_42"
-                android:layout_marginBottom="@dimen/my_px_42"
-                android:src="@drawable/ico_addr"
-                app:layout_constraintBottom_toBottomOf="@+id/edtUserInfoAddress"
-                app:layout_constraintStart_toStartOf="@+id/edtUserInfoAddress"
-                app:layout_constraintTop_toTopOf="@+id/edtUserInfoAddress" />
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/tx"
+               />
 
             <TextView
-                android:id="@+id/tvUserInfoMobile"
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/my_px_60"
-                android:layout_marginTop="@dimen/my_px_12"
-                android:textColor="@color/black"
-                android:textSize="@dimen/my_sp_43"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
+                android:layout_gravity="center_horizontal"
                 android:id="@+id/textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/my_px_20"
                 android:text="点击头像上传头像"
-                android:textColor="@color/purple_B07EDA"
+                android:textColor="@color/black"
                 android:textSize="@dimen/my_sp_35"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/imgUserInfoHead" />
 
+        <LinearLayout
+            android:layout_marginRight="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="20dp"
+            android:background="@color/white"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="56dp">
+                <ImageView
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="20dp"
+                    android:src="@drawable/ico_name"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"/>
+
+                <EditText
+                    android:background="@null"
+                    android:id="@+id/edtUserInfoName"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/my_px_156"
+                    android:ems="10"
+                    android:hint="姓名"
+                    android:inputType="textPersonName"
+                    android:paddingLeft="@dimen/my_px_92"
+                    android:paddingTop="@dimen/my_px_32"
+                    android:paddingBottom="@dimen/my_px_32"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/alertdialog_line"
+                    android:theme="@style/WhiteEdittext" />
+            </LinearLayout>
+            <View
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:background="#ccc"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"/>
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="56dp">
+                <ImageView
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="20dp"
+                    android:src="@drawable/ico_class"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"/>
+                <EditText
+                    android:background="@null"
+                    android:textColorHint="@color/alertdialog_line"
+                    android:id="@+id/edtUserInfoPostType"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/my_px_156"
+                    android:layout_marginTop="0dp"
+                    android:cursorVisible="false"
+                    android:ems="10"
+                    android:textColor="@color/black"
+                    android:hint="选择用户类型"
+                    android:inputType="textPersonName"
+                    android:paddingLeft="@dimen/my_px_92"
+                    android:paddingTop="@dimen/my_px_32"
+                    android:paddingBottom="@dimen/my_px_32"
+                    android:theme="@style/WhiteEdittext"
+                     />
+            </LinearLayout>
+
+            <View
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:background="#ccc"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"/>
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="56dp">
+                <ImageView
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="20dp"
+                    android:src="@drawable/ico_center"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"/>
+                <EditText
+                    android:textColorHint="@color/alertdialog_line"
+                    android:background="@null"
+                    android:id="@+id/edtUserInfoDistrict"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/my_px_156"
+                    android:layout_marginTop="0dp"
+                    android:cursorVisible="false"
+                    android:ems="10"
+                    android:hint="选择中心"
+                    android:inputType="textPersonName"
+                    android:paddingStart="@dimen/my_px_92"
+                    android:paddingLeft="@dimen/my_px_92"
+                    android:paddingTop="@dimen/my_px_32"
+                    android:paddingBottom="@dimen/my_px_32"
+                    android:textColor="@color/black"
+                    android:theme="@style/WhiteEdittext"
+                  />
+            </LinearLayout>
+
+            <View
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:background="#ccc"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"/>
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="56dp">
+                <ImageView
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="20dp"
+                    android:src="@drawable/ico_kehu"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"/>
+
+                <EditText
+                    android:textColorHint="@color/alertdialog_line"
+                    android:id="@+id/edtUserInfoCustom"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/my_px_156"
+                    android:layout_marginTop="0dp"
+                    android:background="@null"
+                    android:cursorVisible="false"
+                    android:ems="10"
+                    android:hint="选择客户"
+                    android:inputType="textPersonName"
+                    android:paddingLeft="@dimen/my_px_92"
+                    android:paddingTop="@dimen/my_px_32"
+                    android:paddingBottom="@dimen/my_px_32"
+                    android:textColor="@color/black"
+                    android:theme="@style/WhiteEdittext" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:background="#ccc"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"/>
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="56dp">
+                <ImageView
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="20dp"
+                    android:src="@drawable/bt_addr"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"/>
+                <EditText
+                    android:textColorHint="@color/alertdialog_line"
+                    android:background="@null"
+                    android:id="@+id/edtUserInfoAddress"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/my_px_156"
+                    android:layout_marginTop="0dp"
+                    android:cursorVisible="false"
+                    android:ems="10"
+                    android:hint="选择地址"
+                    android:inputType="textPersonName"
+                    android:paddingLeft="@dimen/my_px_92"
+                    android:paddingTop="@dimen/my_px_32"
+                    android:paddingBottom="@dimen/my_px_32"
+                    android:textColor="@color/black"
+                    android:theme="@style/WhiteEdittext"
+                   />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+            <Button
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="30dp"
+                android:id="@+id/btnUserInfoSave"
+                android:layout_width="@dimen/my_px_648"
+                android:layout_height="@dimen/my_px_115"
+                android:background="@drawable/drawable_login"
+                android:text="保存"
+                android:textColor="@color/white"
+                android:textSize="@dimen/my_px_43"
+                />
+        </LinearLayout>
 
 
-        </android.support.constraint.ConstraintLayout>
     </ScrollView>
+    </LinearLayout>
 </layout>

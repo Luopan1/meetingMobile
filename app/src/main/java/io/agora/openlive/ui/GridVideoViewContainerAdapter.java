@@ -13,7 +13,7 @@ import android.view.ViewParent;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 
-import com.zy.guide.phone.R;
+import com.zhongyou.meet.mobile.R;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

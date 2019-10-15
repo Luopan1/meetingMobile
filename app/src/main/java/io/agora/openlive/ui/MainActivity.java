@@ -10,14 +10,13 @@ import android.os.Message;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
 
-import com.zy.guide.phone.R;
-import com.zy.guide.phone.entities.Agora;
-import com.zy.guide.phone.utils.Logger;
+import com.zhongyou.meet.mobile.R;
+import com.zhongyou.meet.mobile.entities.Agora;
+import com.zhongyou.meet.mobile.utils.Logger;
 import com.tendcloud.tenddata.TCAgent;
 
 import java.util.Locale;
@@ -46,7 +45,7 @@ public class MainActivity extends BaseActivity {
 
     public static synchronized String getRoot(Context context) {
         if(Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-            return String.format(Locale.CHINA, "%s/Android/data/com.zy.guide.phone/", Environment.getExternalStorageDirectory().getAbsolutePath());
+            return String.format(Locale.CHINA, "%s/Android/data/com.zhongyou.meet.mobile/", Environment.getExternalStorageDirectory().getAbsolutePath());
         } else {
             return null;
         }

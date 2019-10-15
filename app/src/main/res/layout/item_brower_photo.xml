@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#ff000000">
-    <com.zy.family.photolib.PhotoView
+    <com.zhongyou.family.photolib.PhotoView
         android:id="@+id/photo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />

@@ -12,8 +12,6 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.SurfaceView;
 
-import com.zy.guide.phone.R;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
