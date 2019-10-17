@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -43,6 +44,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import es.dmoral.toasty.Toasty;
 import io.agora.openlive.ui.MeetingInitActivity;
 
 public class MeetingSearchActivity extends BasicActivity {
@@ -83,7 +85,6 @@ public class MeetingSearchActivity extends BasicActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_meeting_search);
-
         initView();
         initData();
     }
@@ -101,7 +102,10 @@ public class MeetingSearchActivity extends BasicActivity {
             }
         });
 
+
+
         searchEdit = findViewById(R.id.search_text);
+
         cancelText = findViewById(R.id.cancel);
         cancelText.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -206,7 +210,7 @@ public class MeetingSearchActivity extends BasicActivity {
         @Override
         public void onFailure(int errorCode, BaseException exception) {
             super.onFailure(errorCode, exception);
-            Toast.makeText(mContext, exception.getMessage(), Toast.LENGTH_SHORT).show();
+            Toasty.error(mContext, exception.getMessage(), Toast.LENGTH_SHORT, true).show();
         }
 
         @Override
@@ -239,7 +243,8 @@ public class MeetingSearchActivity extends BasicActivity {
         public void onFailure(int errorCode, BaseException exception) {
             super.onFailure(errorCode, exception);
             ZYAgent.onEvent(getApplicationContext(), exception.getMessage());
-            ToastUtils.showToast("请求讨论区数据失败");
+//            ToastUtils.showToast("请求讨论区数据失败");
+            Toasty.error(mContext, exception.getMessage(), Toast.LENGTH_SHORT, true).show();
         }
 
         @Override
@@ -252,11 +257,19 @@ public class MeetingSearchActivity extends BasicActivity {
     private Dialog dialog;
 
     private void initDialog(final Meeting meeting) {
-        View view = View.inflate(mContext, R.layout.dialog_meeting_code, null);
+        View view = View.inflate(mContext, R.layout.dialog_meeting_input_code, null);
         final EditText codeEdit = view.findViewById(R.id.code);
         view.findViewById(R.id.confirm).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(searchEdit.getWindowToken(),0) ;
+                    }
+                },100);
+
                 dialog.dismiss();
                 if (!TextUtils.isEmpty(codeEdit.getText())) {
                     HashMap<String, Object> params = new HashMap<String, Object>();
@@ -295,7 +308,8 @@ public class MeetingSearchActivity extends BasicActivity {
             @Override
             public void onFailure(int errorCode, BaseException exception) {
                 super.onFailure(errorCode, exception);
-                Toast.makeText(mContext, exception.getMessage(), Toast.LENGTH_SHORT).show();
+                Toasty.error(mContext, exception.getMessage(), Toast.LENGTH_SHORT, true).show();
+//                Toast.makeText(mContext, exception.getMessage(), Toast.LENGTH_SHORT).show();
             }
         };
     }
@@ -315,7 +329,7 @@ public class MeetingSearchActivity extends BasicActivity {
         @Override
         public void onFailure(int errorCode, BaseException exception) {
             super.onFailure(errorCode, exception);
-            Toast.makeText(mContext, exception.getMessage(), Toast.LENGTH_SHORT).show();
+            Toasty.error(mContext, exception.getMessage(), Toast.LENGTH_SHORT, true).show();
         }
     };
 
@@ -335,6 +349,7 @@ public class MeetingSearchActivity extends BasicActivity {
             @Override
             public void onFailure(int errorCode, BaseException exception) {
                 Toast.makeText(mContext, "网络异常，请稍后重试！", Toast.LENGTH_SHORT).show();
+                Toasty.error(mContext, exception.getMessage(), Toast.LENGTH_SHORT, true).show();
             }
 
         };

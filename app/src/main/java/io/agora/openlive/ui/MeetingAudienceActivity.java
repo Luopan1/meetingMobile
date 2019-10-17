@@ -618,6 +618,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
             @Override
             public void onMessageInstantReceive(final String account, final int uid, final String msg) {
                 super.onMessageInstantReceive(account, uid, msg);
+                com.orhanobut.logger.Logger.e(msg);
                 runOnUiThread(() -> {
                     try {
                         if (BuildConfig.DEBUG) {
@@ -691,7 +692,6 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
                                 requestTalkButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_meeting_signup, 0, 0, 0);
 
                                 worker().getRtcEngine().setClientRole(Constants.CLIENT_ROLE_AUDIENCE);
-
                                 if (!TextUtils.isEmpty(meetingHostJoinTraceId)) {
                                     HashMap<String, Object> params = new HashMap<String, Object>();
                                     params.put("meetingHostJoinTraceId", meetingHostJoinTraceId);
@@ -1467,6 +1467,16 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
             } else {
                 if (BuildConfig.DEBUG)
                     Toast.makeText(MeetingAudienceActivity.this, "连麦观众" + uid + "退出了" + config().mUid, Toast.LENGTH_SHORT).show();
+
+                    audienceView.removeAllViews();
+                    audienceNameText.setText("");
+                    audienceLayout.setVisibility(View.GONE);
+                if (!isDocShow) {
+                    fullScreenButton.setVisibility(View.GONE);
+                    requestTalkButton.setVisibility(View.VISIBLE);
+                }
+                remoteAudienceSurfaceView = null;
+
 
 //                audienceView.removeAllViews();
 //                audienceNameText.setText("");

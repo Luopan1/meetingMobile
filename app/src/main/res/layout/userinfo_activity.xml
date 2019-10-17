@@ -151,7 +151,48 @@
                 android:background="#ccc"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"/>
+
             <LinearLayout
+                android:id="@+id/userInfoGridLayout"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="56dp">
+                <ImageView
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="20dp"
+                    android:src="@drawable/xzdz"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"/>
+                <EditText
+                    android:textColorHint="@color/alertdialog_line"
+                    android:background="@null"
+                    android:id="@+id/edtUserInfoGrid"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/my_px_156"
+                    android:layout_marginTop="0dp"
+                    android:cursorVisible="false"
+                    android:ems="10"
+                    android:hint="选择网格"
+                    android:inputType="textPersonName"
+                    android:paddingStart="@dimen/my_px_92"
+                    android:paddingLeft="@dimen/my_px_92"
+                    android:paddingTop="@dimen/my_px_32"
+                    android:paddingBottom="@dimen/my_px_32"
+                    android:textColor="@color/black"
+                    android:theme="@style/WhiteEdittext"
+                    />
+            </LinearLayout>
+
+            <View
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:background="#ccc"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"/>
+
+
+            <LinearLayout
+                android:id="@+id/UserInfoCustomLayout"
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="56dp">
@@ -194,7 +235,7 @@
                 <ImageView
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="20dp"
-                    android:src="@drawable/bt_addr"
+                    android:src="@drawable/xzdz"
                     android:layout_width="30dp"
                     android:layout_height="30dp"/>
                 <EditText

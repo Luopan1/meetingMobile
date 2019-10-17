@@ -410,21 +410,25 @@ public class HomeActivity extends BasicActivity implements View.OnClickListener 
 
 		subscription.unsubscribe();
 
-		if (phoneReceiver!=null){
-			unregisterReceiver(phoneReceiver);
-		}
-
-
-		super.onDestroy();
-		if (WSService.isOnline()) {
-			//当前状态在线,可切换离线
-			Log.i(TAG, "当前状态在线,可切换离线");
-			ZYAgent.onEvent(mContext, "离线按钮,当前在线,切换到离线");
-			RxBus.sendMessage(new SetUserChatEvent(false));
+		try {
+			if (phoneReceiver!=null){
+				unregisterReceiver(phoneReceiver);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			super.onDestroy();
+			if (WSService.isOnline()) {
+				//当前状态在线,可切换离线
+				Log.i(TAG, "当前状态在线,可切换离线");
+				ZYAgent.onEvent(mContext, "离线按钮,当前在线,切换到离线");
+				RxBus.sendMessage(new SetUserChatEvent(false));
 //                                            WSService.SOCKET_ONLINE =false;
 //                                            setState(false);
-		} else {
-			ZYAgent.onEvent(mContext, "离线按钮,当前离线,无效操作");
+			} else {
+				ZYAgent.onEvent(mContext, "离线按钮,当前离线,无效操作");
+			}
 		}
+
 	}
 }

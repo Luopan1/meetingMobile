@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.orhanobut.logger.Logger;
 import com.zhongyou.meet.mobile.ApiClient;
 import com.zhongyou.meet.mobile.BaseException;
 import com.zhongyou.meet.mobile.R;
@@ -47,7 +48,7 @@ import static com.zhongyou.meet.mobile.business.MeetingsFragment.KEY_MEETING_TYP
  * 讨论界面
  */
 public class DiscussFragment extends BaseFragment {
-	static DiscussFragment fragment = new DiscussFragment();
+
 
 	public String TAG = getClass().getSimpleName();
 	private Subscription subscription;
@@ -73,15 +74,13 @@ public class DiscussFragment extends BaseFragment {
 	}
 
 	public static DiscussFragment newInstance() {
-		if (fragment == null) {
-			fragment = new DiscussFragment();
-		}
-		return fragment;
+		return new DiscussFragment();
 	}
 
 	@Nullable
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		Logger.e("DiscussFragment  onCreateView ");
 		View view = inflater.inflate(R.layout.fragment_discuss, null, false);
 		emptyText = view.findViewById(R.id.tv_forum_empty);
 		swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout_forum);
@@ -219,6 +218,8 @@ public class DiscussFragment extends BaseFragment {
 		@Override
 		public void onSuccess(Bucket<PaginationData<ForumMeeting>> forumMeetingBucket) {
 			paginationData = forumMeetingBucket.getData();
+			Logger.e(paginationData.toString());
+
 			ArrayList<ForumMeeting> forumMeetingList = paginationData.getPageData();
 			if (forumMeetingList.size() == 0) {
 				recyclerView.setVisibility(View.GONE);

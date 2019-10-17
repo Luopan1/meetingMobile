@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
+import com.orhanobut.logger.Logger;
 import com.zhongyou.meet.mobile.R;
 import com.zhongyou.meet.mobile.entities.Agora;
 import com.zhongyou.meet.mobile.entities.MeetingJoin;
@@ -99,6 +100,7 @@ public class MeetingInitActivity extends BaseActivity {
 
     public void forwardToLiveRoom(int cRole) {
         Intent intent;
+        Logger.e("cRole :"+cRole+"-----"+"meetingJoin.getMeeting().getType(): "+meetingJoin.getMeeting().getType());
         if (cRole == 1) {
             if (meetingJoin.getMeeting().getType() == 0) {
                 intent = new Intent(MeetingInitActivity.this, MeetingBroadcastActivity.class);
@@ -108,6 +110,7 @@ public class MeetingInitActivity extends BaseActivity {
             }
         } else {
             if (meetingJoin.getMeeting().getType() == 0) {
+                //参会人进入
                 intent = new Intent(MeetingInitActivity.this, MeetingAudienceActivity.class);
             } else {
                 //参会人进入

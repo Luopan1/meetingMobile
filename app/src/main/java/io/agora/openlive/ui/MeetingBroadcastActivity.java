@@ -1,5 +1,6 @@
 package io.agora.openlive.ui;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
@@ -37,6 +38,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
+import com.orhanobut.logger.Logger;
 import com.zhongyou.meet.mobile.ApiClient;
 import com.zhongyou.meet.mobile.BaseException;
 import com.zhongyou.meet.mobile.BuildConfig;
@@ -64,7 +66,6 @@ import com.squareup.picasso.Picasso;
 import com.tendcloud.tenddata.TCAgent;
 
 import org.json.JSONObject;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
@@ -86,7 +87,7 @@ import rx.functions.Action1;
 
 public class MeetingBroadcastActivity extends BaseActivity implements AGEventHandler {
 
-    private final static Logger LOG = LoggerFactory.getLogger(MeetingBroadcastActivity.class);
+//    private final static Logger LOG = LoggerFactory.getLogger(MeetingBroadcastActivity.class);
 
     private final String TAG = MeetingBroadcastActivity.class.getSimpleName();
 
@@ -126,6 +127,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
     private static final String DOC_INFO = "doc_info";
     private static final String CALLING_AUDIENCE = "calling_audience";
 
+    @SuppressLint("HandlerLeak")
     private Handler ChatHandler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -216,6 +218,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
         }
     };
 
+    @SuppressLint("HandlerLeak")
     private Handler connectingHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -793,6 +796,8 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                 runOnUiThread(() -> {
                     try {
                         JSONObject jsonObject = new JSONObject(msg);
+
+                        com.orhanobut.logger.Logger.e("onMessageInstantReceive    "+jsonObject.toString());
                         if (jsonObject.has("handsUp")) {
                             Audience audience = JSON.parseObject(jsonObject.toString(), Audience.class);
                             if (audience.getCallStatus() == 2) {
@@ -988,10 +993,12 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
 
                 currentAudience = null;
                 agoraAPI.channelDelAttr(channelName, CALLING_AUDIENCE);
+
                 try {
                     JSONObject jsonObject = new JSONObject();
                     jsonObject.put("finish", true);
                     agoraAPI.messageInstantSend("" + audience.getUid(), 0, jsonObject.toString(), "");
+                    //rtcEngine().muteRemoteAudioStream(audience.getUid(),true);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -1532,7 +1539,8 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
 
     @Override
     public void onUserOffline(int uid, int reason) {
-        LOG.debug("onUserOffline " + (uid & 0xFFFFFFFFL) + " " + reason);
+//        LOG.debug("onUserOffline " + (uid & 0xFFFFFFFFL) + " " + reason);
+        Logger.e("onUserOffline " + (uid & 0xFFFFFFFFL) + " " + reason);
         doRemoveRemoteUi(uid);
     }
 

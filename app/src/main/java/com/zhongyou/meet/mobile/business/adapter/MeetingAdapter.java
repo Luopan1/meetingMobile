@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.zhongyou.meet.mobile.R;
@@ -52,16 +53,16 @@ public class MeetingAdapter extends OpenPresenter {
         MeetingHodler holder = (MeetingHodler) viewHolder;
 
         if (meeting.getMeetingProcess() == 1) {
-            holder.stateText.setBackgroundResource(R.drawable.bg_meeting_state);
+            holder.stateText.setBackgroundResource(R.drawable.bg_meeting_state_new);
             holder.stateText.setText("进行中");
         } else {
-            holder.stateText.setBackgroundResource(R.drawable.bg_meeting_state_a);
+            holder.stateText.setBackgroundResource(R.drawable.bg_meeting_state_a_new);
             holder.stateText.setText("未开始");
         }
 
         holder.titleText.setText(meeting.getTitle());
 
-        holder.beginTimeText.setText("-----------" + meeting.getStartTime().substring(0, 16) + "-----------");
+        holder.beginTimeText.setText( meeting.getStartTime().substring(0, 16));
 
         if (position % 2==0){
             holder.bgLayout.setBackgroundResource(R.mipmap.bg_meeting_item_b);
@@ -89,7 +90,7 @@ public class MeetingAdapter extends OpenPresenter {
     private class MeetingHodler extends ViewHolder {
 
         View itemView;
-        LinearLayout bgLayout;
+        RelativeLayout bgLayout;
         TextView titleText, beginTimeText, stateText;
 
         MeetingHodler(View itemView) {

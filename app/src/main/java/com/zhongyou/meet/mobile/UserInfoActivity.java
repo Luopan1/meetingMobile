@@ -21,6 +21,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.zhongyou.meet.mobile.business.BaseDataBindingActivity;
 import com.zhongyou.meet.mobile.business.CustomActivity;
 import com.zhongyou.meet.mobile.business.DistrictActivity;
+import com.zhongyou.meet.mobile.business.GridActivity;
 import com.zhongyou.meet.mobile.business.HomeActivity;
 import com.zhongyou.meet.mobile.business.PostTypeActivity;
 
@@ -166,9 +167,11 @@ public class UserInfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
 	private void hideEditTextFocus() {
 		mBinding.edtUserInfoPostType.setInputType(InputType.TYPE_NULL);
 		mBinding.edtUserInfoDistrict.setInputType(InputType.TYPE_NULL);
-
+		mBinding.edtUserInfoGrid.setInputType(InputType.TYPE_NULL);
 		mBinding.edtUserInfoCustom.setInputType(InputType.TYPE_NULL);
 		mBinding.edtUserInfoAddress.setInputType(InputType.TYPE_NULL);
+
+		mBinding.edtUserInfoGrid.setText(Preferences.getUserGrid());
 
 	}
 
@@ -198,7 +201,7 @@ public class UserInfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
 		mBinding.edtUserInfoName.setOnFocusChangeListener(edtUserInfoNameFocusChangeListener);
 		mBinding.edtUserInfoPostType.setOnTouchListener(onTouchListener);
 		mBinding.edtUserInfoDistrict.setOnTouchListener(onTouchListener);
-
+		mBinding.edtUserInfoGrid.setOnTouchListener(onTouchListener);
 		mBinding.edtUserInfoCustom.setOnTouchListener(onTouchListener);
 		mBinding.edtUserInfoAddress.setOnTouchListener(onTouchListener);
 	}
@@ -244,7 +247,7 @@ public class UserInfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
 						Intent districtIntent = new Intent(mContext, DistrictActivity.class);
 						startActivityForResult(districtIntent, CODE_USERINFO_DISTRICT);
 						break;
-					/*case R.id.edtUserInfoGrid:
+					case R.id.edtUserInfoGrid:
 						String g_districtID = Preferences.getUserDistrictId();
 						if (TextUtils.isEmpty(g_districtID)) {
 							ToastUtils.showToast("请先选择中心");
@@ -253,7 +256,7 @@ public class UserInfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
 						Intent gridIntent = new Intent(mContext, GridActivity.class);
 						gridIntent.putExtra(KEY_DISTRICT_ID, g_districtID);
 						startActivityForResult(gridIntent, CODE_USERINFO_GRID);
-						break;*/
+						break;
 					case R.id.edtUserInfoCustom:
 						String c_districtID = Preferences.getUserDistrictId();
 						if (TextUtils.isEmpty(c_districtID)) {
@@ -433,7 +436,7 @@ public class UserInfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
 			} else if (requestCode == CODE_USERINFO_GRID) {
 				//网格
 				Grid grid = data.getParcelableExtra(KEY_USERINFO_GRID);
-//				mBinding.edtUserInfoGrid.setText(grid.getName());
+				mBinding.edtUserInfoGrid.setText(grid.getName());
 				Preferences.setUserGrid(grid.getName());
 				Preferences.setUserGridId(grid.getId());
 
@@ -619,8 +622,8 @@ public class UserInfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
 	 * 用户类型为4-网格主，不提交客户信息，提交网格信息
 	 */
 	private void showPostTypeIs4() {
-		mBinding.edtUserInfoCustom.setVisibility(View.GONE);
-//		mBinding.imgEdtUserInfoCustom.setVisibility(View.GONE);
+		mBinding.UserInfoCustomLayout.setVisibility(View.GONE);
+		mBinding.userInfoGridLayout.setVisibility(View.VISIBLE);
 	}
 
 	/**
@@ -629,7 +632,8 @@ public class UserInfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
 	 * 不提交客户信息，网格信息
 	 */
 	private void showPostTypeIs10() {
-		mBinding.edtUserInfoCustom.setVisibility(View.GONE);
+		mBinding.UserInfoCustomLayout.setVisibility(View.GONE);
+		mBinding.userInfoGridLayout.setVisibility(View.GONE);
 //		mBinding.imgEdtUserInfoCustom.setVisibility(View.GONE);
 //		mBinding.edtUserInfoGrid.setVisibility(View.GONE);
 //		mBinding.imgEdtUserInfoGrid.setVisibility(View.GONE);
@@ -639,7 +643,8 @@ public class UserInfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
 	 * 除用户类型为4、10以外，显示客户信息，不显示网格信息
 	 */
 	private void showAllInfoEditText() {
-		mBinding.edtUserInfoCustom.setVisibility(View.VISIBLE);
+		mBinding.UserInfoCustomLayout.setVisibility(View.VISIBLE);
+		mBinding.userInfoGridLayout.setVisibility(View.GONE);
 //		mBinding.imgEdtUserInfoCustom.setVisibility(View.VISIBLE);
 //		mBinding.edtUserInfoGrid.setVisibility(View.GONE);
 //		mBinding.imgEdtUserInfoGrid.setVisibility(View.GONE);

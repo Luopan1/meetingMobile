@@ -1,7 +1,9 @@
 package com.zhongyou.meet.mobile;
 
+import android.graphics.Typeface;
 import android.support.multidex.MultiDexApplication;
 
+import com.orhanobut.logger.AndroidLogAdapter;
 import com.zhongyou.meet.mobile.entities.StaticResource;
 import com.zhongyou.meet.mobile.entities.base.BaseBean;
 import com.zhongyou.meet.mobile.persistence.Preferences;
@@ -12,6 +14,7 @@ import com.tendcloud.tenddata.TCAgent;
 
 import java.net.URISyntaxException;
 
+import es.dmoral.toasty.Toasty;
 import io.agora.openlive.model.WorkerThread;
 import io.socket.client.IO;
 import io.socket.client.Socket;
@@ -31,6 +34,12 @@ public class BaseApplication extends MultiDexApplication {
         instance = this;
 
         initSocket();
+
+        com.orhanobut.logger.Logger.addLogAdapter(new AndroidLogAdapter());
+        Toasty.Config.getInstance()
+                .setToastTypeface(Typeface.createFromAsset(getAssets(), "PCap Terminal.otf"))
+                .allowQueue(false)
+                .apply();
 
         //内存泄露检测工具,开发中最好开启
 //        if (BuildConfig.DEBUG) {

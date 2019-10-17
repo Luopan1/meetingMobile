@@ -111,13 +111,15 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_activity);
-        initView();
+
 
         if (EasyPermissions.hasPermissions(this, perms)) {
+
         } else {
             EasyPermissions.requestPermissions(this, "请授予必要的权限", 0, perms);
         }
-//        registerDevice();
+        registerDevice();
+        initView();
 
 
     }
@@ -134,6 +136,8 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
                 wchatLogin();
             }
         });
+
+
 
 
         if (Preferences.isLogin()) {
@@ -246,7 +250,7 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
     }
     private void versionCheck() {
         initEntry();
-      /*  ApiClient.getInstance().versionCheck(this, new OkHttpCallback<BaseBean<Version>>() {
+        ApiClient.getInstance().versionCheck(this, new OkHttpCallback<BaseBean<Version>>() {
             @Override
             public void onSuccess(BaseBean<Version> entity) {
                 Version version = entity.getData();
@@ -263,7 +267,7 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
 
 
             }
-        });*/
+        });
     }
 
     private void reToWx() {

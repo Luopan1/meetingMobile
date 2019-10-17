@@ -119,10 +119,10 @@ public class RecordFragment extends BaseFragment {
             public void onSuccess(BaseBean<RecordData> entity) {
                 if (entity.getData().getTotalCount() == 0) {
                     emptyText.setVisibility(View.VISIBLE);
-                    mSwipeRefreshLayout.setVisibility(View.GONE);
+                    mRecyclerView.setVisibility(View.GONE);
                 } else {
                     emptyText.setVisibility(View.GONE);
-                    mSwipeRefreshLayout.setVisibility(View.VISIBLE);
+                    mRecyclerView.setVisibility(View.VISIBLE);
                 }
                 if (isRefresh) {
                     isRefresh = false;

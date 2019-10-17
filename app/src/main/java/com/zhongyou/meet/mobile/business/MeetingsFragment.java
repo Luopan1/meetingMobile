@@ -375,7 +375,7 @@ public class MeetingsFragment extends BaseFragment {
 	}
 
 	private void initDialog(final Meeting meeting) {
-		View view = View.inflate(mContext, R.layout.dialog_meeting_code, null);
+		View view = View.inflate(mContext, R.layout.dialog_meeting_input_code, null);
 		if (meeting.getScreenshotFrequency() == Meeting.SCREENSHOTFREQUENCY_INVALID) {
 			view.findViewById(R.id.dialog_meeting_warnning).setVisibility(View.GONE);
 			view.findViewById(R.id.dialog_meeting_warnning_text).setVisibility(View.GONE);
