@@ -145,8 +145,6 @@
                 android:id="@+id/mRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="0dp"
-                android:layout_marginBottom="0dp"
                 android:background="@color/white"
                 android:cacheColorHint="@null"
                 android:scrollbars="none"
@@ -168,6 +166,36 @@
                 android:textColor="#909090"
                 android:textSize="15sp"
                 android:visibility="gone" />
+
+            <FrameLayout
+                android:layout_gravity="bottom|right"
+                android:id="@+id/start_meeting"
+                android:layout_width="66dp"
+                android:layout_height="66dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/bg_send"
+                android:visibility="gone"
+                android:layout_marginEnd="10dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="发起会议"
+                    android:textColor="#F62C64"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+            </FrameLayout>
+
         </android.support.design.widget.CoordinatorLayout>
+
+
+
+
     </android.support.v4.widget.SwipeRefreshLayout>
+
+
+
+
+
 </LinearLayout>

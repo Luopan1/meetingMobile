@@ -179,4 +179,27 @@ public class Wechat {
     public void setNicknameEmoji(String nicknameEmoji) {
         this.nicknameEmoji = nicknameEmoji;
     }
+
+    @Override
+    public String toString() {
+        return "Wechat{" +
+                "id='" + id + '\'' +
+                ", createDate='" + createDate + '\'' +
+                ", updateDate='" + updateDate + '\'' +
+                ", delFlag='" + delFlag + '\'' +
+                ", officialAccounts=" + officialAccounts +
+                ", subscribe=" + subscribe +
+                ", openid='" + openid + '\'' +
+                ", nickname='" + nickname + '\'' +
+                ", sex=" + sex +
+                ", headimgurl='" + headimgurl + '\'' +
+                ", city='" + city + '\'' +
+                ", province='" + province + '\'' +
+                ", country='" + country + '\'' +
+                ", unionid='" + unionid + '\'' +
+                ", language='" + language + '\'' +
+                ", userId='" + userId + '\'' +
+                ", nicknameEmoji='" + nicknameEmoji + '\'' +
+                '}';
+    }
 }

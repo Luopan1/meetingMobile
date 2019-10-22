@@ -18,6 +18,8 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 
+import com.alibaba.fastjson.JSON;
+import com.orhanobut.logger.Logger;
 import com.tencent.mm.opensdk.modelbase.BaseReq;
 import com.tencent.mm.opensdk.modelbase.BaseResp;
 import com.tencent.mm.opensdk.modelmsg.SendAuth;
@@ -75,7 +77,10 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
 
     @Override
     public void onPermissionsGranted(int i, @NonNull List<String> list) {
-//        initView();
+
+        registerDevice();
+        reToWx();
+
     }
 
     @Override
@@ -113,13 +118,28 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
         setContentView(R.layout.login_activity);
 
 
-        if (EasyPermissions.hasPermissions(this, perms)) {
+        wchatLoginImage = findViewById(R.id.layout_wx);
+        wchatLoginImage.setClickable(true);
+        wchatLoginImage.setEnabled(true);
+        wchatLoginImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (EasyPermissions.hasPermissions(WXEntryActivity.this, perms)) {
+                    wchatLogin();
+                } else {
+                    EasyPermissions.requestPermissions(WXEntryActivity.this, "请授予必要的权限", 0, perms);
+                }
 
+            }
+        });
+
+
+        if (EasyPermissions.hasPermissions(this, perms)) {
+            registerDevice();
+            reToWx();
         } else {
             EasyPermissions.requestPermissions(this, "请授予必要的权限", 0, perms);
         }
-        registerDevice();
-        initView();
 
 
     }
@@ -127,18 +147,6 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
 
 
     protected void initView() {
-        wchatLoginImage = findViewById(R.id.layout_wx);
-        wchatLoginImage.setClickable(true);
-        wchatLoginImage.setEnabled(true);
-        wchatLoginImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                wchatLogin();
-            }
-        });
-
-
-
 
         if (Preferences.isLogin()) {
             ApiClient.getInstance().requestUser(this, new OkHttpCallback<BaseBean<UserData>>() {
@@ -148,6 +156,7 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
                         Toast.makeText(WXEntryActivity.this, "用户数据为空", Toast.LENGTH_SHORT).show();
                         return;
                     }
+                    Logger.e(JSON.toJSONString(entity));
 
 //                    BindActivity.actionStart(WXEntryActivity.this,true,true);
 
@@ -172,8 +181,6 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
                 }
             });
         }
-
-        reToWx();
 
         mWxApi.handleIntent(getIntent(), this);
 
@@ -249,7 +256,6 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
         }
     }
     private void versionCheck() {
-        initEntry();
         ApiClient.getInstance().versionCheck(this, new OkHttpCallback<BaseBean<Version>>() {
             @Override
             public void onSuccess(BaseBean<Version> entity) {
@@ -344,6 +350,7 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
             @Override
             public void onSuccess(BaseBean<LoginWechat> entity) {
                 ZYAgent.onEvent(WXEntryActivity.this, "请求微信登录回调 成功");
+                Logger.e(entity.getData().toString());
                 if (entity.getData() == null) {
                     return;
                 }

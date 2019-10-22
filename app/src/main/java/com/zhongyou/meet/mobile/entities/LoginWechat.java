@@ -31,5 +31,11 @@ public class LoginWechat {
         this.user = user;
     }
 
-   
+    @Override
+    public String toString() {
+        return "LoginWechat{" +
+                "wechat=" + wechat +
+                ", user=" + user +
+                '}';
+    }
 }

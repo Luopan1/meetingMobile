@@ -309,4 +309,40 @@ public class Device {
     public void setOpenCount(int openCount) {
         this.openCount = openCount;
     }
+
+    @Override
+    public String toString() {
+        return "Device{" +
+                "id='" + id + '\'' +
+                ", createDate='" + createDate + '\'' +
+                ", updateDate='" + updateDate + '\'' +
+                ", delFlag='" + delFlag + '\'' +
+                ", uuid='" + uuid + '\'' +
+                ", androidId='" + androidId + '\'' +
+                ", manufacturer='" + manufacturer + '\'' +
+                ", name='" + name + '\'' +
+                ", model='" + model + '\'' +
+                ", version='" + version + '\'' +
+                ", sdkVersion=" + sdkVersion +
+                ", screenDensity='" + screenDensity + '\'' +
+                ", display='" + display + '\'' +
+                ", finger='" + finger + '\'' +
+                ", socketId='" + socketId + '\'' +
+                ", regIp='" + regIp + '\'' +
+                ", appVersion='" + appVersion + '\'' +
+                ", aliDeviceUUID='" + aliDeviceUUID + '\'' +
+                ", imei='" + imei + '\'' +
+                ", cpuSerial='" + cpuSerial + '\'' +
+                ", androidDeviceId='" + androidDeviceId + '\'' +
+                ", buildSerial='" + buildSerial + '\'' +
+                ", country='" + country + '\'' +
+                ", province='" + province + '\'' +
+                ", city='" + city + '\'' +
+                ", district='" + district + '\'' +
+                ", beforeOpenDate='" + beforeOpenDate + '\'' +
+                ", openDate='" + openDate + '\'' +
+                ", source=" + source +
+                ", openCount=" + openCount +
+                '}';
+    }
 }

@@ -29,4 +29,13 @@ public class UserData {
     public void setDevice(Device device) {
         this.device = device;
     }
+
+    @Override
+    public String toString() {
+        return "UserData{" +
+                "wechat=" + wechat +
+                ", user=" + user +
+                ", device=" + device +
+                '}';
+    }
 }

@@ -134,4 +134,5 @@
 
     <string name="wx_appid">wx9a61fda9d6d2e0fb</string>
     <string name="wx_appsecret">797101d28f353fc581cd05421b251cde</string>
+    <string name="start_meeting">发起\n会议</string>
 </resources>

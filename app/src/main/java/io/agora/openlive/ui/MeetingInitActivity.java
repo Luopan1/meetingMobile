@@ -101,19 +101,18 @@ public class MeetingInitActivity extends BaseActivity {
     public void forwardToLiveRoom(int cRole) {
         Intent intent;
         Logger.e("cRole :"+cRole+"-----"+"meetingJoin.getMeeting().getType(): "+meetingJoin.getMeeting().getType());
-        if (cRole == 1) {
+        if (cRole == 1) {//主持人进入
             if (meetingJoin.getMeeting().getType() == 0) {
                 intent = new Intent(MeetingInitActivity.this, MeetingBroadcastActivity.class);
             } else {
-                //主持人进入
+
                 intent = new Intent(MeetingInitActivity.this, InviteMeetingBroadcastActivity.class);
             }
-        } else {
+        } else {//参会人进入
             if (meetingJoin.getMeeting().getType() == 0) {
-                //参会人进入
                 intent = new Intent(MeetingInitActivity.this, MeetingAudienceActivity.class);
             } else {
-                //参会人进入
+
                 intent = new Intent(MeetingInitActivity.this, InviteMeetingAudienceActivity.class);
             }
         }

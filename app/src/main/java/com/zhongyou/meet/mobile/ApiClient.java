@@ -188,6 +188,11 @@ public class ApiClient {
         okHttpUtil.postJson(API_DOMAIN_NAME + "/osg/app/device", getCommonHead(), jsonStr, callback, tag);
     }
 
+    //获取大区（中心）接口
+    public void meetingAdmin(OkHttpCallback callback) {
+        okHttpUtil.get(API_DOMAIN_NAME + "/osg/app/user/meeting/admin", getCommonHead(), null, callback);
+    }
+
     /**
      * 收到客户退出通知或者主动退出房间时请求
      *

@@ -19,9 +19,11 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.zhongyou.meet.mobile.ApiClient;
 import com.zhongyou.meet.mobile.BaseException;
 import com.zhongyou.meet.mobile.R;
 import com.zhongyou.meet.mobile.business.adapter.ForumMeetingAdapter;
@@ -33,6 +35,7 @@ import com.zhongyou.meet.mobile.entities.ChatMesData;
 import com.zhongyou.meet.mobile.entities.ForumMeeting;
 import com.zhongyou.meet.mobile.entities.MeeetingAdmin;
 import com.zhongyou.meet.mobile.entities.Meeting;
+import com.zhongyou.meet.mobile.entities.MeetingAdmin;
 import com.zhongyou.meet.mobile.entities.MeetingJoin;
 import com.zhongyou.meet.mobile.entities.base.BaseArrayBean;
 import com.zhongyou.meet.mobile.event.ForumSendEvent;
@@ -72,6 +75,7 @@ public class MeetingsFragment extends BaseFragment {
 	public static final String KEY_MEETING_TYPE = "meetingType";
 	private int currentMeetingListPageIndex = TYPE_PUBLIC_MEETING;
 	private TextView mEmptyView;
+	private FrameLayout frameLayout;
 
 	@Override
 	public String getStatisticsTag() {
@@ -166,10 +170,10 @@ public class MeetingsFragment extends BaseFragment {
 		public void onSuccess(Bucket<MeeetingAdmin> entity) {
 			MeeetingAdmin meeetingAdmin = entity.getData();
 			if (meeetingAdmin.isMeetingAdmin()) {
-//				showOwnerMeeting(meeetingAdmin.getMeetingMgrUrl());
+				showOwnerMeeting(meeetingAdmin.getMeetingMgrUrl());
 
 			} else {
-//				hideOwnerMeeting();
+				hideOwnerMeeting();
 
 			}
 		}
@@ -177,9 +181,20 @@ public class MeetingsFragment extends BaseFragment {
 		@Override
 		public void onFailure(int errorCode, BaseException exception) {
 			super.onFailure(errorCode, exception);
-//			hideOwnerMeeting();
+			hideOwnerMeeting();
 		}
 	};
+
+
+	private void showOwnerMeeting(String meetingMgrUrl) {
+		frameLayout.setVisibility(View.VISIBLE);
+
+	}
+
+	private void hideOwnerMeeting() {
+		frameLayout.setVisibility(View.GONE);
+
+	}
 
 	@Override
 	public void onDestroyView() {
@@ -226,8 +241,30 @@ public class MeetingsFragment extends BaseFragment {
 
 		v_public = view.findViewById(R.id.v_public);
 		v_invite = view.findViewById(R.id.v_invite);
+
+		frameLayout = view.findViewById(R.id.start_meeting);
+		frameLayout.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				ApiClient.getInstance().meetingAdmin(meetingAdminCallback);
+			}
+		});
+
 		return view;
 	}
+
+	private OkHttpCallback meetingAdminCallback = new OkHttpCallback<Bucket<MeetingAdmin>>() {
+
+		@Override
+		public void onSuccess(Bucket<MeetingAdmin> meetingAdminBucket) {
+			MeetingAdmin meetingAdmin = meetingAdminBucket.getData();
+//            if (meetingAdmin.isMeetingAdmin()) {
+//                startActivity(new Intent(HomeShoperActivity.this, MeetingAdminActivity.class).putExtra("meeting_mgr_url", meetingAdmin.getMeetingMgrUrl()));
+//            } else {
+			startActivityForResult(new Intent(getContext(), MeetingPublishActivity.class).putExtra("meeting_public_url", meetingAdmin.getPublishMeetingUrl()), CODE_MEETING_LIST_REQUEST);
+//            }
+		}
+	};
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {

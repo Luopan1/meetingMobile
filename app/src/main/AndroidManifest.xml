@@ -148,6 +148,7 @@
         <activity
             android:name="com.zhongyou.meet.mobile.business.MeetingManagementActivity"
             android:theme="@style/NoTitle" />
+        <activity android:name=".business.MeetingPublishActivity"  android:theme="@style/NoTitle"/>
         <activity
             android:name="com.zhongyou.meet.mobile.business.ForumActivity"
             android:alwaysRetainTaskState="true"

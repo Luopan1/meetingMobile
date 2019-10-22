@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.makeramen.roundedimageview.RoundedImageView;
@@ -139,6 +140,7 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
 				User user = entity.getData().getUser();
 				Wechat wechat = entity.getData().getWechat();
 				LoginHelper.savaUser(user);
+				com.orhanobut.logger.Logger.i(JSON.toJSONString(entity));
 //                initCurrentItem();
 				if (wechat != null) {
 					LoginHelper.savaWeChat(wechat);
