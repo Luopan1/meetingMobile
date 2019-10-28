@@ -24,6 +24,7 @@ public class MeetingInitActivity extends BaseActivity {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
+            Logger.e("角色为:"+meetingJoin.getRole());
             if (meetingJoin.getRole() == 0) {
                 forwardToLiveRoom(Constants.CLIENT_ROLE_BROADCASTER);
             } else {
@@ -105,14 +106,12 @@ public class MeetingInitActivity extends BaseActivity {
             if (meetingJoin.getMeeting().getType() == 0) {
                 intent = new Intent(MeetingInitActivity.this, MeetingBroadcastActivity.class);
             } else {
-
                 intent = new Intent(MeetingInitActivity.this, InviteMeetingBroadcastActivity.class);
             }
         } else {//参会人进入
             if (meetingJoin.getMeeting().getType() == 0) {
                 intent = new Intent(MeetingInitActivity.this, MeetingAudienceActivity.class);
             } else {
-
                 intent = new Intent(MeetingInitActivity.this, InviteMeetingAudienceActivity.class);
             }
         }

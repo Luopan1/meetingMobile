@@ -129,7 +129,7 @@
         <Button
             android:id="@+id/exit_ppt"
             android:layout_width="110sp"
-            android:layout_height="30sp"
+            android:layout_height="17dp"
             android:layout_marginLeft="10dp"
             android:background="@drawable/bg_meeting_button_selector"
             android:shadowColor="@color/black"

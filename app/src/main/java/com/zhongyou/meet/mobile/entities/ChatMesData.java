@@ -3,6 +3,9 @@ package com.zhongyou.meet.mobile.entities;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.chad.library.adapter.base.entity.MultiItemEntity;
+import com.zhongyou.meet.mobile.persistence.Preferences;
+
 import java.util.List;
 
 public class ChatMesData {
@@ -53,7 +56,7 @@ public class ChatMesData {
         this.pageData = pageData;
     }
 
-    public static class PageDataEntity implements Parcelable {
+    public static class PageDataEntity implements Parcelable, MultiItemEntity {
         private String id;
         private String userName;
         private String replyTime;
@@ -223,6 +226,22 @@ public class ChatMesData {
             parcel.writeLong(ts);
             parcel.writeString(meetingId);
             parcel.writeString(atailUserId);
+        }
+
+        @Override
+        public int getItemType() {
+            if (getMsgType() == 1 || getMsgType() == 2) {
+                return 2;
+            } else {
+                if (null == getUserId()) {
+                    return 0;
+                }
+                if (!getUserId().equals(Preferences.getUserId())) {
+                    return 0;
+                } else {
+                    return 1;
+                }
+            }
         }
     }
 }

@@ -16,8 +16,10 @@ import android.widget.Toast;
 
 import com.adorkable.iosdialog.ActionSheetDialog;
 
+import com.alibaba.fastjson.JSON;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.qiniu.android.utils.Json;
 import com.zhongyou.meet.mobile.business.BaseDataBindingActivity;
 import com.zhongyou.meet.mobile.business.CustomActivity;
 import com.zhongyou.meet.mobile.business.DistrictActivity;
@@ -529,6 +531,7 @@ public class UserInfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
 		Logger.i(TAG, "key " + key);
 		if (!TextUtils.isEmpty(key)) {
 			if (TextUtils.isEmpty(Preferences.getImgUrl())) {
+//				ApiClient.getInstance().getImageUrlPath(TAG,imgePathCallBack(key));
 				ApiClient.getInstance().urlConfig(staticResCallback(key));
 			} else {
 				Map<String, String> params = new HashMap<>();
@@ -545,26 +548,50 @@ public class UserInfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
 		}
 	}
 
+	private OkHttpCallback imgePathCallBack(final String key){
+		return new OkHttpCallback<BaseBean<Object>>() {
+			@Override
+			public void onSuccess(BaseBean<Object> entity) {
+				try {
+					com.alibaba.fastjson.JSONObject obj = JSON.parseObject(JSON.toJSONString(entity));
+					if (obj.getInteger("errcode")==0){
+						String imageUrl = obj.getJSONObject("data").getString("host");
+						if (imageUrl!=null&& !TextUtils.isEmpty(imageUrl)){
+							Preferences.setImgUrl(imageUrl);
+							Map<String, String> params = new HashMap<>();
+							params.put("photo", Preferences.getImgUrl() + key); //服务器存储全路径
+							ApiClient.getInstance().requestUserExpostor(this, params, new OkHttpCallback<BaseErrorBean>() {
+								@Override
+								public void onSuccess(BaseErrorBean entity) {
+									Logger.i("photo", entity.toString());
+									Preferences.setUserPhoto(Preferences.getImgUrl() + key);
+									ToastUtils.showToast("保存照片成功");
+								}
+							});
+						}
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+
+			@Override
+			public void onFailure(int errorCode, BaseException exception) {
+				super.onFailure(errorCode, exception);
+				Toast.makeText(mContext, "获取图片路径前缀失败", Toast.LENGTH_SHORT).show();
+			}
+		};
+	}
+
 	private OkHttpCallback staticResCallback(final String key) {
 		return new OkHttpCallback<BaseBean<StaticResource>>() {
 			@Override
 			public void onSuccess(BaseBean<StaticResource> entity) {
-
 				Preferences.setImgUrl(entity.getData().getStaticRes().getImgUrl());
 				Preferences.setVideoUrl(entity.getData().getStaticRes().getVideoUrl());
 				Preferences.setDownloadUrl(entity.getData().getStaticRes().getDownloadUrl());
 				Preferences.setCooperationUrl(entity.getData().getStaticRes().getDownloadUrl());
 
-				Map<String, String> params = new HashMap<>();
-				params.put("photo", Preferences.getImgUrl() + key); //服务器存储全路径
-				ApiClient.getInstance().requestUserExpostor(this, params, new OkHttpCallback<BaseErrorBean>() {
-					@Override
-					public void onSuccess(BaseErrorBean entity) {
-						Logger.i("photo", entity.toString());
-						Preferences.setUserPhoto(Preferences.getImgUrl() + key);
-						ToastUtils.showToast("保存照片成功");
-					}
-				});
 			}
 
 			@Override

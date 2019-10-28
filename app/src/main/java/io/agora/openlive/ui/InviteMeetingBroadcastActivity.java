@@ -736,7 +736,7 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
     private OkHttpCallback setMaterialCallback = new OkHttpCallback<Bucket>() {
         @Override
         public void onSuccess(Bucket bucket) {
-            Log.v("material_set", bucket.toString());
+            com.orhanobut.logger.Logger.e(bucket.toString());
             if (pptAlertDialog.isShowing()) {
                 pptAlertDialog.dismiss();
             }
@@ -761,7 +761,7 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
 
             AudienceVideo audienceVideo = new AudienceVideo();
             audienceVideo.setUid(config().mUid);
-            audienceVideo.setName("主持人" + config().mUid);
+            audienceVideo.setName("主持人" +  meetingJoin.getHostUser().getHostUserName());
             audienceVideo.setBroadcaster(true);
             audienceVideo.setSurfaceView(localBroadcasterSurfaceView);
             audienceVideoAdapter.insertItem(audienceVideo);
@@ -895,6 +895,7 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
             if (isFinishing()) {
                 return;
             }
+
             if (BuildConfig.DEBUG) {
                 Toast.makeText(InviteMeetingBroadcastActivity.this, "参会人" + uid + "的视频流进入", Toast.LENGTH_SHORT).show();
             }
@@ -914,6 +915,8 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
             audienceVideoAdapter.insertItem(audienceVideo);
         });
     }
+
+
 
     @Override
     public void onUserOffline(int uid, int reason) {

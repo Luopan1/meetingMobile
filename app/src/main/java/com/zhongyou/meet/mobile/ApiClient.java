@@ -103,12 +103,11 @@ public class ApiClient {
 
         okHttpUtil.delete(API_DOMAIN_NAME + "/osg/app/forum/" + forumId, getCommonHead(), null, callback);
     }
-    ///osg/app/forum/{meetingId}/view/log
 
     public void postViewLog(String meetingid,Object tag, OkHttpCallback callback){
         okHttpUtil.post(API_DOMAIN_NAME + "/osg/app/forum/"+meetingid+"/view/log", getCommonHead(), null,callback);
     }
-    //提交聊天内容/osg/app/forum
+    //提交聊天内容
     public void expostorPostChatMessage(Object tag, OkHttpCallback callback, Map<String, Object> values) {
         okHttpUtil.postJson(API_DOMAIN_NAME + "/osg/app/forum", getCommonHead(), JSON.toJSONString(values), callback, tag);
     }
@@ -472,4 +471,13 @@ public class ApiClient {
     public void requestMeetingAdmin(Object tag, OkHttpCallback callback){
         okHttpUtil.get(API_DOMAIN_NAME + "/osg/app/user/meeting/admin", getCommonHead(), null, callback);
     }
+
+
+    /**
+     * 获取地址前缀
+     * */
+
+   /* public void getImageUrlPath(Object tag, OkHttpCallback callback){
+        okHttpUtil.get(API_DOMAIN_NAME+"/osg/resource/host/image",tag,callback);
+    }*/
 }

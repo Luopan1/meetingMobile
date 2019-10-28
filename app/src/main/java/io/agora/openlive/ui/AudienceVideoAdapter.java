@@ -93,7 +93,7 @@ public class AudienceVideoAdapter extends RecyclerView.Adapter<AudienceVideoAdap
 
         holder.nameText.setText(audienceVideo.getName());
         if (BuildConfig.DEBUG) {
-            holder.nameText.setVisibility(View.VISIBLE);
+            holder.nameText.setVisibility(View.GONE);
         } else {
             holder.nameText.setVisibility(View.GONE);
         }

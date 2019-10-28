@@ -13,6 +13,11 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.orhanobut.logger.Logger;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.MemoryPolicy;
 import com.zhongyou.meet.mobile.BaseApplication;
 import com.zhongyou.meet.mobile.R;
 import com.zhongyou.meet.mobile.business.ViewPagerActivity;
@@ -63,6 +68,11 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.ViewHolder> {
         if(data.get(position).getMsgType() == 1 || data.get(position).getMsgType() == 2){
             return 2;
         }else {
+
+            if (null==data.get(position).getUserId()){
+                return 0;
+            }
+
             if(!data.get(position).getUserId().equals(Preferences.getUserId())){
                 return 0;
             }else {
@@ -119,15 +129,32 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.ViewHolder> {
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Log.e("这里是点击每一行item的响应事件",""+position+item);
                 callBack.onClickCallBackFuc();
             }
         });
 
-        ((TextView)holder.name).setText(data.get(position).getUserName());
+        if (null==data.get(position).getUserName()){
+            ((TextView)holder.name).setText("");
+        }else {
+            ((TextView)holder.name).setText(data.get(position).getUserName());
+        }
 
 
-        ImageHelper.loadImageDpId(data.get(position).getUserLogo(), R.dimen.my_px_66, R.dimen.my_px_66, holder.imgHead);
+
+        if (null==data.get(position).getUserLogo()){
+            Picasso.with(context).load(R.drawable.ico_face).into(holder.imgHead);
+        }else {
+//            ImageHelper.loadImageDpId(data.get(position).getUserLogo(), R.dimen.my_px_66, R.dimen.my_px_66, holder.imgHead);
+            Glide.with(context)
+                    .load(data.get(position).getUserLogo())
+                    .error(R.drawable.ico_face)
+                    .placeholder(R.drawable.ico_face)
+                    .skipMemoryCache(true)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(holder.imgHead);
+        }
+
+
         if(getItemViewType(position)==0){
             holder.tvContent.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
@@ -154,7 +181,6 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.ViewHolder> {
             holder.imgHead.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
-//                    callBack.onLongImgHead(data.get(position).getUserName());
                     return false;
                 }
             });
@@ -170,61 +196,57 @@ public class chatAdapter extends RecyclerView.Adapter<chatAdapter.ViewHolder> {
                 holder.sendBar.setVisibility(View.GONE);
                 holder.tvState.setVisibility(View.VISIBLE);
                 holder.tvError.setVisibility(View.VISIBLE);
-                holder.tvState.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        callBack.onReSend(data.get(position).getContent(),data.get(position).getType());
-                    }
-                });
-//                holder.tvState.setText("失败");
+                holder.tvState.setOnClickListener(view -> callBack.onReSend(data.get(position).getContent(),data.get(position).getType()));
             }
         }
 
         if(data.get(position).getType() == 1){
             String url = "";
-//            if(data.get(position).getLocalState()==1){
-//                url = "file://"+data.get(position).getContent();
-//            }else {
-//            BitmapFactory.Options options = new BitmapFactory.Options();
-//            options.inJustDecodeBounds = true;
-//            Bitmap bitmap = BitmapFactory.decodeFile(data.get(position).getContent(), options);
-//                url = ImageHelper.getUrlJoinAndThumAndCrop(data.get(position).getContent(),
-//                        (int)context.getResources().getDimension(R.dimen.my_px_501),
-//                        (int)context.getResources().getDimension(R.dimen.my_px_322));
-//            }
+            Picasso.with(context).load(data.get(position).getContent())
+                     .memoryPolicy(MemoryPolicy.NO_STORE, MemoryPolicy.NO_STORE)
+                    .error(R.drawable.load_error)
+                    .placeholder(R.drawable.loading)
+                    .transform(new CropSquareTransformation()).into(holder.imgPic, new Callback() {
+                @Override
+                public void onSuccess() {
 
-            Picasso.with(BaseApplication.getInstance()).load(data.get(position).getContent()).transform(new CropSquareTransformation()).into(holder.imgPic);
+                    holder.imgPic.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            int pos = 0;
+                            ArrayList<String> mList = new ArrayList<>();
+                            for(int i=0; i<data.size(); i++){
+                                if(data.get(i).getType()==1){
+                                    mList.add(data.get(i).getContent());
+                                    if(data.get(i).getContent().equals(data.get(position).getContent())){
+                                        pos = mList.size()-1;
+                                    }
+                                }
+                            }
+                            context.startActivity(new Intent(context,ViewPagerActivity.class).putExtra("imglist",mList)
+                                    .putExtra("pos",pos));
+                        }
+                    });
+
+                    holder.imgPic.setOnLongClickListener(new View.OnLongClickListener() {
+                        @Override
+                        public boolean onLongClick(View view) {
+                            callBack.onLongContent(view,data.get(position).getId(),null);
+                            return true;
+                        }
+                    });
+                }
+
+                @Override
+                public void onError() {
+
+                }
+            });
             ((TextView)holder.tvContent).setVisibility(View.GONE);
             ((ImageView)holder.imgArrow).setVisibility(View.GONE);
             ((ImageView)holder.imgPic).setVisibility(View.VISIBLE);
-            holder.imgPic.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-//                    callBack.onClickImage(holder.imgPic.getInfo());
-                    int pos = 0;
-                    ArrayList<String> mList = new ArrayList<>();
-                    for(int i=0; i<data.size(); i++){
-                        if(data.get(i).getType()==1){
-                            mList.add(data.get(i).getContent());
-                            if(data.get(i).getContent().equals(data.get(position).getContent())){
-                                pos = mList.size()-1;
-                            }
-                        }
-                    }
-                    context.startActivity(new Intent(context,ViewPagerActivity.class).putExtra("imglist",mList)
-                            .putExtra("pos",pos));
-//                    context.startActivity(new Intent(context,ViewPagerActivity.class).putExtra("info",holder.imgPic.getInfo()).putExtra("imglist",mList)
-//                            .putExtra("pos",pos));
-//                    ((Activity)context).overridePendingTransition(0, 0);
-                }
-            });
-            holder.imgPic.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View view) {
-                    callBack.onLongContent(view,data.get(position).getId(),null);
-                    return true;
-                }
-            });
+
+
 
         }else {
             ((TextView)holder.tvContent).setText(data.get(position).getContent());

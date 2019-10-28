@@ -17,6 +17,7 @@ import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.ViewParent;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -25,6 +26,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSON;
 import com.orhanobut.logger.Logger;
 import com.qiniu.android.http.ResponseInfo;
 import com.qiniu.android.storage.Configuration;
@@ -462,6 +464,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 			@Override
 			public void onLoginSuccess(int uid, int fd) {
 				super.onLoginSuccess(uid, fd);
+				Logger.e("onLoginSuccess   uid:"+uid+" --- "+"fd="+fd);
 				if (BuildConfig.DEBUG) {
 					runOnUiThread(() -> Toast.makeText(MeetingAudienceActivity.this, "观众登录信令系统成功", Toast.LENGTH_SHORT).show());
 				}
@@ -471,6 +474,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 			@Override
 			public void onLoginFailed(final int ecode) {
 				super.onLoginFailed(ecode);
+				Logger.e("onLoginFailed   ecode:"+ecode);
 				if (BuildConfig.DEBUG) {
 					runOnUiThread(() -> Toast.makeText(MeetingAudienceActivity.this, "观众登录信令系统失败" + ecode, Toast.LENGTH_SHORT).show());
 				}
@@ -485,6 +489,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 			@Override
 			public void onLogout(int ecode) {
 				super.onLogout(ecode);
+				Logger.e("onLogout   ecode:"+ecode);
 				if (BuildConfig.DEBUG) {
 					runOnUiThread(() -> Toast.makeText(MeetingAudienceActivity.this, "观众登出信令系统成功" + ecode, Toast.LENGTH_SHORT).show());
 				}
@@ -493,6 +498,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 			@Override
 			public void onChannelJoined(String channelID) {
 				super.onChannelJoined(channelID);
+				Logger.e("onChannelJoined   channelID:"+channelID);
 				runOnUiThread(() -> {
 					if (BuildConfig.DEBUG) {
 						Toast.makeText(MeetingAudienceActivity.this, "观众登录信令频道成功", Toast.LENGTH_SHORT).show();
@@ -565,11 +571,24 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 			@Override
 			public void onChannelUserLeaved(String account, int uid) {
 				super.onChannelUserLeaved(account, uid);
+				Logger.e("用户account:" + account +"---"+"uid:"+uid+ "退出信令频道");
 				runOnUiThread(() -> {
 					if (BuildConfig.DEBUG) {
 						Toast.makeText(MeetingAudienceActivity.this, "用户" + account + "退出信令频道", Toast.LENGTH_SHORT).show();
 					}
+					if (account.equals(broadcastId)){
+						isDocShow=false;
+						isHostCommeIn=false;
+						broadcasterLayout.removeView(remoteBroadcasterSurfaceView);
+						broadcasterLayout.setVisibility(View.VISIBLE);
+						broadcasterSmallView.removeAllViews();
+						broadcasterSmallLayout.setVisibility(View.GONE);
+						docImage.setVisibility(View.GONE);
+						onUserOffline(Integer.parseInt(account),Constants.USER_OFFLINE_QUIT);
+
+					}
 					agoraAPI.channelQueryUserNum(channelName);
+
 				});
 			}
 
@@ -712,6 +731,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 			@Override
 			public void onMessageChannelReceive(String channelID, String account, int uid, final String msg) {
 				super.onMessageChannelReceive(channelID, account, uid, msg);
+				Logger.e("onMessageChannelReceive:  channelID " + channelID + ", account:" + account + ", uid:" + uid + ", msg:" + msg);
 				runOnUiThread(() -> {
 					try {
 						if (BuildConfig.DEBUG) {
@@ -865,7 +885,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 							}
 						}
 					}
-					if ("doc_info".equals(name)) {
+					if ("doc_info".equals(name)&&isHostCommeIn) {
 						agoraAPI.channelQueryUserNum(channelName);
 						if (!TextUtils.isEmpty(value)) {
 							try {
@@ -961,6 +981,28 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 						requestTalkButton.setVisibility(View.VISIBLE);
 
 						agoraAPI.channelDelAttr(channelName, CALLING_AUDIENCE);
+					}
+					if (TextUtils.isEmpty(name)&&type.equals("clear")&&TextUtils.isEmpty(value)){
+						docImage.setVisibility(View.GONE);
+						pageText.setVisibility(View.GONE);
+
+						if (broadcasterSmallView.getChildCount() > 0) {
+							broadcasterSmallView.removeAllViews();
+							if (remoteBroadcasterSurfaceView != null) {
+								broadcasterSmallView.removeView(remoteBroadcasterSurfaceView);
+							}
+							broadcasterSmallLayout.setVisibility(View.GONE);
+						}
+
+						broadcasterLayout.setVisibility(View.VISIBLE);
+
+						broadcasterLayout.removeAllViews();
+						if (remoteBroadcasterSurfaceView!=null){
+							broadcasterLayout.addView(remoteBroadcasterSurfaceView);
+						}
+
+
+						currentMaterial = null;
 					}
 				});
 			}
@@ -1103,21 +1145,24 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 			ZYAgent.onEvent(getApplicationContext(), "参会人直播图像上传服务器失败，错误提示: " + errorCode + ", Excepton: " + exception.getMessage());
 		}
 	};
-
+	private boolean isHostCommeIn=false;
 	private OkHttpCallback joinMeetingCallback(int uid) {
 		return new OkHttpCallback<Bucket<HostUser>>() {
 
 			@Override
 			public void onSuccess(Bucket<HostUser> meetingJoinBucket) {
+				Logger.e(JSON.toJSONString(meetingJoinBucket));
 				meetingJoin.setHostUser(meetingJoinBucket.getData());
 				broadcastId = meetingJoinBucket.getData().getClientUid();
 				broadcastNameText.setText("主持人：" + meetingJoinBucket.getData().getHostUserName());
 				if (uid != 0 && broadcastId != null) {
-					if (uid == Integer.parseInt(broadcastId)) {
+					Logger.e("uid:  "+uid +"---------"+"broadcastId:"+broadcastId);
+					if (String.valueOf(uid).equals(broadcastId)) {
 						if (BuildConfig.DEBUG) {
+							Logger.e("主持人进入");
 							Toast.makeText(MeetingAudienceActivity.this, "主持人" + broadcastId + "---" + uid + meetingJoin.getHostUser().getHostUserName() + "进入了", Toast.LENGTH_SHORT).show();
 						}
-
+						isHostCommeIn=true;
 						agoraAPI.queryUserStatus(broadcastId);
 
 						broadcastTipsText.setVisibility(View.GONE);
@@ -1127,6 +1172,13 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 						remoteBroadcasterSurfaceView.setZOrderMediaOverlay(false);
 						rtcEngine().setupRemoteVideo(new VideoCanvas(remoteBroadcasterSurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, uid));
 
+
+						/*broadcasterSmallLayout.setVisibility(View.INVISIBLE);
+						broadcasterSmallView.removeAllViews();
+						docImage.setVisibility(View.GONE);*/
+
+
+
 						if (isDocShow) {
 							broadcasterSmallLayout.setVisibility(View.VISIBLE);
 							broadcasterSmallView.removeAllViews();
@@ -1134,6 +1186,11 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 
 							fullScreenButton.setVisibility(View.VISIBLE);
 						} else {
+
+							broadcasterSmallLayout.setVisibility(View.GONE);
+							broadcasterSmallView.removeAllViews();
+							docImage.setVisibility(View.GONE);
+
 							broadcasterLayout.setVisibility(View.VISIBLE);
 							broadcasterLayout.removeAllViews();
 							broadcasterLayout.addView(remoteBroadcasterSurfaceView);
@@ -1430,11 +1487,13 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 
 	@Override
 	public void onUserOffline(int uid, int reason) {
+		Logger.e("onUserOffline   uid:"+uid+"   ----   "+"reason:"+reason);
 		runOnUiThread(() -> {
 			if (isFinishing()) {
 				return;
 			}
-			if (uid == Integer.parseInt(broadcastId)) {
+			if (String.valueOf(uid).equals(broadcastId)) {
+				Logger.e("uid==broadcastId");
 				broadcasterLayout.removeAllViews();
 				broadcastTipsText.setText("等待主持人进入...");
 				broadcastTipsText.setVisibility(View.VISIBLE);

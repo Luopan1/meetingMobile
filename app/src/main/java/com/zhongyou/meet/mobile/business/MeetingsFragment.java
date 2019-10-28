@@ -23,6 +23,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSON;
 import com.zhongyou.meet.mobile.ApiClient;
 import com.zhongyou.meet.mobile.BaseException;
 import com.zhongyou.meet.mobile.R;
@@ -501,6 +502,7 @@ public class MeetingsFragment extends BaseFragment {
 
 			@Override
 			public void onSuccess(Bucket<Agora> agoraBucket) {
+				com.orhanobut.logger.Logger.e(JSON.toJSONString(agoraBucket));
 				dialog.dismiss();
 				Intent intent = new Intent(mContext, MeetingInitActivity.class);
 				intent.putExtra("agora", agoraBucket.getData());

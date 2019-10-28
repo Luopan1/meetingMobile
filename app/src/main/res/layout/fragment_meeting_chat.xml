@@ -85,12 +85,13 @@
                 android:visibility="gone"
                 android:text="+"/>
         </LinearLayout>
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recycler2"
             android:layout_width="@dimen/my_px_1140"
             android:layout_marginLeft="@dimen/my_px_56"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/my_px_90"></android.support.v7.widget.RecyclerView>
+            android:layout_marginBottom="@dimen/my_px_90" />
     </LinearLayout>
     <!--<android.support.v7.widget.RecyclerView-->
         <!--android:id="@+id/recycler"-->

@@ -22,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSON;
 import com.zhongyou.meet.mobile.ApiClient;
 import com.zhongyou.meet.mobile.BaseException;
 import com.zhongyou.meet.mobile.BuildConfig;
@@ -408,6 +409,7 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
             @Override
             public void onChannelAttrUpdated(String channelID, String name, String value, String type) {
                 super.onChannelAttrUpdated(channelID, name, value, type);
+                com.orhanobut.logger.Logger.e("onChannelAttrUpdated:" + "name:   " + name + "value:    " + value + "type:    " + type);
                 runOnUiThread(() -> {
                     if (BuildConfig.DEBUG) {
                         Toast.makeText(InviteMeetingAudienceActivity.this, "onChannelAttrUpdated:" + "\nname:" + name + ", \nvalue:" + value + ", \ntype:" + type, Toast.LENGTH_SHORT).show();
@@ -486,6 +488,41 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                                 }
                             }
 
+
+
+                        }
+                    }
+                    if (type.equals("clear")){
+                        pageText.setVisibility(View.GONE);
+
+                        if (currentMaterial != null) {
+                            currentMaterial = null;
+                            audienceVideoAdapter.deleteItem(Integer.parseInt(broadcasterId));
+                        }
+
+                        if (isFullScreen) {
+                            fullDocImage.setVisibility(View.GONE);
+                            broadcasterFullView.setVisibility(View.VISIBLE);
+                            broadcasterFullView.removeAllViews();
+                            if (remoteBroadcasterSurfaceView != null) {
+                                stripSurfaceView(remoteBroadcasterSurfaceView);
+                                broadcasterFullView.addView(remoteBroadcasterSurfaceView);
+                                Log.v("add view", "ppt退出");
+                            }
+                        } else {
+                            docImage.setVisibility(View.GONE);
+
+                            broadcasterView.setVisibility(View.VISIBLE);
+                            if (broadcasterView.getChildCount() > 0) {
+
+                            } else {
+                                broadcasterView.removeAllViews();
+                                if (remoteBroadcasterSurfaceView != null) {
+                                    stripSurfaceView(remoteBroadcasterSurfaceView);
+                                    broadcasterView.addView(remoteBroadcasterSurfaceView);
+                                    Log.v("add view", "ppt退出");
+                                }
+                            }
                         }
                     }
                 });
@@ -523,18 +560,18 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
 
     private OkHttpCallback joinMeetingCallback(int uid) {
         return new OkHttpCallback<Bucket<HostUser>>() {
-
             @Override
             public void onSuccess(Bucket<HostUser> meetingJoinBucket) {
+                com.orhanobut.logger.Logger.e(JSON.toJSONString(meetingJoinBucket));
                 meetingJoin.setHostUser(meetingJoinBucket.getData());
                 broadcasterId = meetingJoinBucket.getData().getClientUid();
                 broadcastNameText.setText("主持人：" + meetingJoinBucket.getData().getHostUserName());
+                com.orhanobut.logger.Logger.e("uid:"+uid+"---"+"broadcasterId:"+broadcasterId);
                 if (uid != 0 && broadcasterId != null) {
                     if (uid == Integer.parseInt(broadcasterId)) {
                         if (BuildConfig.DEBUG) {
                             Toast.makeText(InviteMeetingAudienceActivity.this, "主持人" + uid + "回来了", Toast.LENGTH_SHORT).show();
                         }
-
                         remoteBroadcasterSurfaceView = RtcEngine.CreateRendererView(getApplicationContext());
                         remoteBroadcasterSurfaceView.setZOrderOnTop(false);
                         remoteBroadcasterSurfaceView.setZOrderMediaOverlay(false);
@@ -553,7 +590,7 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
 
                             AudienceVideo audienceVideo = new AudienceVideo();
                             audienceVideo.setUid(Integer.parseInt(broadcasterId));
-                            audienceVideo.setName("主持人" + broadcasterId);
+                            audienceVideo.setName("主持人" + meetingJoinBucket.getData().getHostUserName());
                             audienceVideo.setBroadcaster(true);
                             audienceVideo.setSurfaceView(remoteBroadcasterSurfaceView);
                             audienceVideoAdapter.insertItem(audienceVideo);
@@ -574,10 +611,10 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
                         rtcEngine().setupRemoteVideo(new VideoCanvas(remoteAudienceSurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, uid));
 
                         audienceRecyclerView.setVisibility(View.VISIBLE);
-
+                        com.orhanobut.logger.Logger.e(meetingJoinBucket.getData().getHostUserName());
                         AudienceVideo audienceVideo = new AudienceVideo();
                         audienceVideo.setUid(uid);
-                        audienceVideo.setName("参会人" + uid);
+                        audienceVideo.setName("参会人" + meetingJoinBucket.getData().getHostUserName());
                         audienceVideo.setBroadcaster(false);
                         audienceVideo.setSurfaceView(remoteAudienceSurfaceView);
                         audienceVideoAdapter.insertItem(audienceVideo);
@@ -593,7 +630,7 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
 
                     AudienceVideo audienceVideo = new AudienceVideo();
                     audienceVideo.setUid(config().mUid);
-                    audienceVideo.setName("参会人" + config().mUid);
+                    audienceVideo.setName("参会人" +meetingJoinBucket.getData().getHostUserName() );
                     audienceVideo.setBroadcaster(false);
                     audienceVideo.setSurfaceView(localAudienceSurfaceView);
                     audienceVideoAdapter.insertItem(audienceVideo);
@@ -630,7 +667,7 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
 
                 AudienceVideo audienceVideo = new AudienceVideo();
                 audienceVideo.setUid(Integer.parseInt(broadcasterId));
-                audienceVideo.setName("主持人" + broadcasterId);
+                audienceVideo.setName("主持人" + meetingJoin.getHostUser().getHostUserName());
                 audienceVideo.setBroadcaster(true);
                 audienceVideo.setSurfaceView(remoteBroadcasterSurfaceView);
                 audienceVideoAdapter.insertItem(audienceVideo);
@@ -787,6 +824,10 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
             if (uid == Integer.parseInt(meetingJoin.getHostUser().getClientUid())) {
                 broadcastTipsText.setVisibility(View.VISIBLE);
                 fullScreenButton.setVisibility(View.GONE);
+
+                broadcasterView.removeView(remoteBroadcasterSurfaceView);
+                broadcasterView.setVisibility(View.GONE);
+
                 remoteBroadcasterSurfaceView = null;
                 if (currentMaterial != null) {
                     currentMaterial = null;

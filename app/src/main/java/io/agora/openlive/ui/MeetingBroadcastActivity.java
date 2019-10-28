@@ -453,7 +453,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
 
         exitDocButton = findViewById(R.id.exit_ppt);
         exitDocButton.setOnClickListener(view -> {
-            docImage.setVisibility(View.GONE);
+            /*docImage.setVisibility(View.GONE);
             pageText.setVisibility(View.GONE);
             isFullScreen = false;
             llMsg.setVisibility(View.GONE);
@@ -469,9 +469,10 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
             broadcasterLayout.removeAllViews();
             broadcasterLayout.addView(localBroadcasterSurfaceView);
 
-            currentMaterial = null;
-            agoraAPI.channelDelAttr(channelName, DOC_INFO);
+            currentMaterial = null;*/
 
+
+            agoraAPI.channelDelAttr(channelName, DOC_INFO);
             if (currentAudience == null) {
                 if (currentMaterial == null) {
                     fullScreenButton.setVisibility(View.VISIBLE);
@@ -834,7 +835,8 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
             @Override
             public void onChannelAttrUpdated(String channelID, String name, String value, String type) {
                 super.onChannelAttrUpdated(channelID, name, value, type);
-                Log.v("onChannelAttrUpdated", "" + channelID + "" + name + "" + value + "" + type);
+                Logger.e("channelID:" + channelID + "---"+"name:" + name + "---" +"value:"+ value + "---"+"type:" + type);
+
                 runOnUiThread(() -> {
                     if (CALLING_AUDIENCE.equals(name)) {
                         if (TextUtils.isEmpty(value)) {
@@ -860,7 +862,45 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                             }
                         } else {
                             currentAiducenceId = Integer.parseInt(value);
+                            nextButton.setVisibility(View.VISIBLE);
+                            previewButton.setVisibility(View.VISIBLE);
+                            exitDocButton.setVisibility(View.VISIBLE);
                         }
+                    }
+
+                    if (DOC_INFO.equals(name)&&type.equals("update")){
+                        nextButton.setVisibility(View.VISIBLE);
+                        previewButton.setVisibility(View.VISIBLE);
+                        exitDocButton.setVisibility(View.VISIBLE);
+                    }
+
+                    if (DOC_INFO.equals(name)&&type.equals("del")){
+                        docImage.setVisibility(View.GONE);
+                        pageText.setVisibility(View.GONE);
+                        previewButton.setVisibility(View.GONE);
+                        nextButton.setVisibility(View.GONE);
+                        exitDocButton.setVisibility(View.GONE);
+
+                        broadcasterLayout.setVisibility(View.VISIBLE);
+                        broadcasterLayout.removeAllViews();
+                        broadcasterSmallView.removeAllViews();
+                        broadcasterLayout.addView(localBroadcasterSurfaceView);
+
+                    }
+
+
+                    if (TextUtils.isEmpty(name)&&TextUtils.isEmpty(value)&&type.equals("clear")){
+                        docImage.setVisibility(View.GONE);
+                        pageText.setVisibility(View.GONE);
+                        previewButton.setVisibility(View.GONE);
+                        nextButton.setVisibility(View.GONE);
+                        exitDocButton.setVisibility(View.GONE);
+                        broadcasterSmallView.removeView(localBroadcasterSurfaceView);
+                        broadcasterSmallLayout.setVisibility(View.GONE);
+                        broadcasterLayout.setVisibility(View.VISIBLE);
+                        broadcasterLayout.removeAllViews();
+                        broadcasterLayout.addView(localBroadcasterSurfaceView);
+                        currentMaterial = null;
                     }
                 });
             }
@@ -1095,7 +1135,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                     }
                 }
             }
-
+            agoraAPI.channelDelAttr(channelName, DOC_INFO);
             HashMap<String, String> params = new HashMap<String, String>();
             params.put("clientUid", "" + config().mUid);
             params.put("hostUserId", Preferences.getUserId());
@@ -1117,9 +1157,11 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
             } else {
                 finishTips.setVisibility(View.VISIBLE);
             }
+            agoraAPI.channelDelAttr(channelName, DOC_INFO);
         });
         exitDialog = new Dialog(this, R.style.MyDialog);
         exitDialog.setContentView(contentView);
+
         if (!exitDialog.isShowing()) {
             exitDialog.show();
         }
@@ -1541,6 +1583,34 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
     public void onUserOffline(int uid, int reason) {
 //        LOG.debug("onUserOffline " + (uid & 0xFFFFFFFFL) + " " + reason);
         Logger.e("onUserOffline " + (uid & 0xFFFFFFFFL) + " " + reason);
+        if (reason==Constants.USER_OFFLINE_BECOME_AUDIENCE){
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+
+                    if (currentAudience != null) {
+                        currentAudience.setCallStatus(0);
+                        currentAudience.setHandsUp(false);
+                        audienceHashMap.put(currentAudience.getUid(), currentAudience);
+                        updateAudienceList();
+                        currentAudience = null;
+                    }
+                    currentAudience = null;
+
+                    remoteAudienceSurfaceView = null;
+
+                    stopButton.setVisibility(View.GONE);
+                    audienceView.removeAllViews();
+                    audienceNameText.setText("");
+                    audienceLayout.setVisibility(View.GONE);
+                    if (currentMaterial != null) {
+                        fullScreenButton.setVisibility(View.VISIBLE);
+                    } else {
+                        fullScreenButton.setVisibility(View.GONE);
+                    }
+                }
+            });
+        }
         doRemoveRemoteUi(uid);
     }
 

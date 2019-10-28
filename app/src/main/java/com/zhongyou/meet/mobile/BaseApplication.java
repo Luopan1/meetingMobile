@@ -2,7 +2,10 @@ package com.zhongyou.meet.mobile;
 
 import android.graphics.Typeface;
 import android.support.multidex.MultiDexApplication;
+import android.text.TextUtils;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.orhanobut.logger.AndroidLogAdapter;
 import com.zhongyou.meet.mobile.entities.StaticResource;
 import com.zhongyou.meet.mobile.entities.base.BaseBean;
@@ -30,12 +33,12 @@ public class BaseApplication extends MultiDexApplication {
     @Override
     public void onCreate() {
         super.onCreate();
-
+        com.orhanobut.logger.Logger.addLogAdapter(new AndroidLogAdapter());
         instance = this;
 
         initSocket();
 
-        com.orhanobut.logger.Logger.addLogAdapter(new AndroidLogAdapter());
+
         Toasty.Config.getInstance()
                 .setToastTypeface(Typeface.createFromAsset(getAssets(), "PCap Terminal.otf"))
                 .allowQueue(false)
@@ -61,6 +64,24 @@ public class BaseApplication extends MultiDexApplication {
         TCAgent.setReportUncaughtExceptions(true);
 
         ApiClient.getInstance().urlConfig(staticResCallback);
+      /*  //获取图片地址
+        ApiClient.getInstance().getImageUrlPath(TAG, new OkHttpCallback<BaseBean<Object>>() {
+            @Override
+            public void onSuccess(BaseBean<Object> entity) {
+                try {
+                    JSONObject obj = JSON.parseObject(JSON.toJSONString(entity));
+                    if (obj.getInteger("errcode")==0){
+                        String imageUrl = obj.getJSONObject("data").getString("host");
+                        if (imageUrl!=null&& !TextUtils.isEmpty(imageUrl)){
+                            com.orhanobut.logger.Logger.e(imageUrl);
+
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });*/
     }
 
     public static BaseApplication getInstance() {
@@ -119,6 +140,8 @@ public class BaseApplication extends MultiDexApplication {
 
         @Override
         public void onSuccess(BaseBean<StaticResource> entity) {
+
+            com.orhanobut.logger.Logger.e(JSON.toJSONString(entity));
             Preferences.setImgUrl(entity.getData().getStaticRes().getImgUrl());
             Preferences.setVideoUrl(entity.getData().getStaticRes().getVideoUrl());
             Preferences.setDownloadUrl(entity.getData().getStaticRes().getDownloadUrl());

@@ -27,6 +27,7 @@ import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.IWXAPIEventHandler;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 import com.zhongyou.meet.mobile.ApiClient;
+import com.zhongyou.meet.mobile.BaseException;
 import com.zhongyou.meet.mobile.BuildConfig;
 import com.zhongyou.meet.mobile.R;
 import com.zhongyou.meet.mobile.UserInfoActivity;
@@ -147,8 +148,9 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
 
 
     protected void initView() {
-
+        Logger.e("initViews");
         if (Preferences.isLogin()) {
+            Logger.e("Preferences.isLogin()");
             ApiClient.getInstance().requestUser(this, new OkHttpCallback<BaseBean<UserData>>() {
                 @Override
                 public void onSuccess(BaseBean<UserData> entity) {
@@ -156,7 +158,7 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
                         Toast.makeText(WXEntryActivity.this, "用户数据为空", Toast.LENGTH_SHORT).show();
                         return;
                     }
-                    Logger.e(JSON.toJSONString(entity));
+                    Logger.i(JSON.toJSONString(entity));
 
 //                    BindActivity.actionStart(WXEntryActivity.this,true,true);
 
@@ -250,6 +252,7 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
     };
     private void initEntry(){
         if (EasyPermissions.hasPermissions(this, perms)) {
+            Logger.e("hasPermissions");
             initView();
         } else {
             EasyPermissions.requestPermissions(this, "请授予必要的权限", 0, perms);
@@ -272,6 +275,13 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
                 }
 
 
+            }
+
+            @Override
+            public void onFailure(int errorCode, BaseException exception) {
+                super.onFailure(errorCode, exception);
+                Logger.e(exception.getMessage());
+//                initEntry();
             }
         });
     }
@@ -363,7 +373,6 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
                 if (loginWechat.getUser() == null) {
                 } else {
                     LoginHelper.savaUser(user);
-
                     if (TextUtils.isEmpty(user.getMobile())) {
                        BindActivity.actionStart(WXEntryActivity.this,true,false);
                     } else if (Preferences.isUserinfoEmpty()) {

@@ -85,9 +85,9 @@ android {
 
             buildConfigField 'String', 'API_DOMAIN_NAME', '"http://osg.apitest.zhongyouie.cn"'
 //            buildConfigField 'String', 'API_DOMAIN_NAME', '"http://api.zhongyouie.com"'
-            buildConfigField 'String', 'API_DOMAIN_NAME_YOYOTU', '"http://api.haierzhongyou.com"'//唷唷兔地址
+            buildConfigField 'String', 'API_DOMAIN_NAME_YOYOTU', '"http://tapi.zhongyouie.cn"'//唷唷兔地址
 
-            buildConfigField 'String', 'WS_DOMAIN_NAME', '"http://wstest.haierzhongyou.com/sales"'
+            buildConfigField 'String', 'WS_DOMAIN_NAME', '"http://wstest.zhongyouie.cn/sales"'
             buildConfigField 'String', 'WEIXIN_APP_ID', '"wx9a61fda9d6d2e0fb"' //微信id
             buildConfigField 'String', 'BUGLY_APPID', '"562c412edd"' //bugly
             buildConfigField 'String', 'QINIU_IMAGE_DOMAIN', '"http://image.i.teq6.com/"'
@@ -106,10 +106,16 @@ android {
             buildConfigField "boolean", "IS_DEBUG_LOG", "false"  //显示LOG
             buildConfigField "boolean", "IS_DEBUG_TOAST", "false"  //显示LOG的TOAST
 
-            buildConfigField 'String', 'API_DOMAIN_NAME', '"http://api.zhongyouie.com"'
-            buildConfigField 'String', 'API_DOMAIN_NAME_YOYOTU', '"http://api.haierzhongyou.com"'//唷唷兔地址
 
-            buildConfigField 'String', 'WS_DOMAIN_NAME', '"http://ws.zhongyouie.com/sales"'
+            buildConfigField 'String', 'API_DOMAIN_NAME', '"http://osg.apitest.zhongyouie.cn"'
+//            buildConfigField 'String', 'API_DOMAIN_NAME', '"http://api.zhongyouie.com"'
+            buildConfigField 'String', 'API_DOMAIN_NAME_YOYOTU', '"http://api.haierzhongyou.com"'
+//唷唷兔地址
+            buildConfigField 'String', 'WS_DOMAIN_NAME', '"ws://wstest.zhongyouie.cn"'
+//
+//            buildConfigField 'String', 'API_DOMAIN_NAME', '"http://api.zhongyouie.com"'
+//            buildConfigField 'String', 'API_DOMAIN_NAME_YOYOTU', '"http://api.haierzhongyou.com"'//唷唷兔地址
+//            buildConfigField 'String', 'WS_DOMAIN_NAME', '"http://ws.zhongyouie.com/sales"'
             buildConfigField 'String', 'WEIXIN_APP_ID', '"wx9a61fda9d6d2e0fb"' //微信id
             buildConfigField 'String', 'BUGLY_APPID', '"562c412edd"' //bugly
             buildConfigField 'String', 'QINIU_IMAGE_DOMAIN', '"http://image.i.zhongyouie.com/"'
@@ -190,4 +196,6 @@ dependencies {
     implementation 'com.makeramen:roundedimageview:2.2.1'
     implementation 'com.orhanobut:logger:2.2.0'
     implementation 'com.github.GrenderG:Toasty:1.4.2'
+
+    implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.30'
 }
