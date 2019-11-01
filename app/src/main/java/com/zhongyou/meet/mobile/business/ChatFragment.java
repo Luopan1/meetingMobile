@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -76,6 +77,7 @@ import com.zhongyou.meet.mobile.persistence.Preferences;
 import com.zhongyou.meet.mobile.utils.NetUtils;
 import com.zhongyou.meet.mobile.utils.OkHttpCallback;
 import com.zhongyou.meet.mobile.utils.RxBus;
+import com.zhongyou.meet.mobile.utils.SoftKeyBoardListener;
 import com.zhongyou.meet.mobile.utils.ToastUtils;
 
 import org.json.JSONObject;
@@ -182,7 +184,6 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 									return;
 								}
 								if (info.isOK()) {
-
 //									int i = adapter.getData().indexOf(entity);
 //									adapter.getData().get(i).setContent(Preferences.getImgUrl() + key);
 									entity.setUpLoadScuucess(true);
@@ -237,7 +238,6 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 					if (((ForumSendEvent) o).getEntity().getUserId().equals(Preferences.getUserId())) {
 						getActivity().runOnUiThread(() -> {
 							for (ChatMesData.PageDataEntity data : adapter.getData()) {
-								Logger.e(data.getTs() + " : " + ((ForumSendEvent) o).getEntity().getTs());
 								if (data.getTs() == ((ForumSendEvent) o).getEntity().getTs()) {
 									int index = adapter.getData().indexOf(data);
 									ChatMesData.PageDataEntity entity = ((ForumSendEvent) o).getEntity();
@@ -266,6 +266,7 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 
 				} else if (o instanceof ForumRevokeEvent) {
 //                    requestRecordOnlyLast(true);
+					Log.e("backMessage", "call: "+JSON.toJSONString(((ForumRevokeEvent) o).getEntity()) );
 					if (mMeetingId != null) {
 						if (!((ForumRevokeEvent) o).getEntity().getMeetingId().equals(mMeetingId)) {
 							return;
@@ -465,6 +466,20 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 			}
 		});
 
+		SoftKeyBoardListener.setListener(getActivity(), new SoftKeyBoardListener.OnSoftKeyBoardChangeListener() {
+			@Override
+			public void keyBoardShow(int height) {
+				if (adapter!=null){
+					recyclerViewChat.smoothScrollToPosition(adapter.getData().size());
+				}
+			}
+
+			@Override
+			public void keyBoardHide(int height) {
+
+			}
+		});
+
 		btnSend.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -564,7 +579,6 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 		mLayoutManager.setOrientation(GridLayoutManager.VERTICAL);
 		recyclerViewChat.setLayoutManager(mLayoutManager);
 
-//		mLayoutManager.setStackFromEnd(true);
 		recyclerViewChat.setFocusable(false);
 		SimpleItemAnimator itemAnimator = (SimpleItemAnimator) recyclerViewChat.getItemAnimator();
 		itemAnimator.setAddDuration(0);
@@ -605,7 +619,7 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 				if (adapter == null) {
 					adapter = new NewChatAdapter(entity.getData().getPageData());
 					recyclerViewChat.setAdapter(adapter);
-					((LinearLayoutManager) recyclerViewChat.getLayoutManager()).setStackFromEnd(true);
+					recyclerViewChat.smoothScrollToPosition(adapter.getData().size());
 					if (mCurrentPage >= mTotalPage) {
 						adapter.setUpFetchEnable(false);
 					} else {
@@ -632,7 +646,6 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 							for (int i = 0; i <imagePathList.size() ; i++) {
 								if (imagePathList.get(i).equals(adapter.getData().get(position).getContent())){
 									index=i;
-									Logger.e(index+"-------"+imagePathList.get(i));
 									break;
 								}
 							}
@@ -682,7 +695,9 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 									}
 									break;
 								case R.id.img_pic:
-									showPopupWindow(view, adapter.getData().get(position).getId(), null);
+									if (adapter.getItemViewType(position)==1){
+										showPopupWindow(view, adapter.getData().get(position).getId(), null);
+									}
 									break;
 								case R.id.mIvHead:
 									mEditText.setText("@" + adapter.getData().get(position).getUserName());
@@ -710,7 +725,7 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 			@Override
 			public void onFinish() {
 				Logger.e("获取信息结束");
-				if (adapter != null) {
+				if (adapter!=null){
 					adapter.setUpFetching(false);
 				}
 
@@ -773,17 +788,17 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 			sendAction(mReSendEntity.getTs(), content);
 
 		} else {
-			ChatMesData.PageDataEntity entity = new ChatMesData.PageDataEntity();
-			long ts = System.currentTimeMillis();
-			entity.setContent(content);
-			entity.setId("");
-			entity.setMsgType(0);
-			entity.setTs(ts);
-			entity.setType(1);
-			entity.setUserName(Preferences.getUserName());
-			entity.setUserId(Preferences.getUserId());
-			entity.setUserLogo(Preferences.getUserPhoto());
-			entity.setLocalState(1);
+//			ChatMesData.PageDataEntity entity = new ChatMesData.PageDataEntity();
+//			long ts = System.currentTimeMillis();
+//			entity.setContent(content);
+//			entity.setId("");
+//			entity.setMsgType(0);
+//			entity.setTs(ts);
+//			entity.setType(1);
+//			entity.setUserName(Preferences.getUserName());
+//			entity.setUserId(Preferences.getUserId());
+//			entity.setUserLogo(Preferences.getUserPhoto());
+//			entity.setLocalState(1);
 
 			int index = adapter.getData().indexOf(mReSendEntity);
 			adapter.getData().get(index).setType(1);
@@ -794,7 +809,7 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 			Logger.e(JSON.toJSONString(adapter.getData().get(index)));
 //			adapter.addData(adapter.getData().size(), (ChatMesData.PageDataEntity) entity);
 //			initLastData(dataChat, true);
-			uploadImage(ts, adapter.getData().get(index));
+			uploadImage(adapter.getData().get(index).getTs(), adapter.getData().get(index));
 		}
 
 	}

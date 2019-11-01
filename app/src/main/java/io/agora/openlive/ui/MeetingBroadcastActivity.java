@@ -707,6 +707,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                 super.onChannelQueryUserNumResult(channelID, ecode, num);
                 runOnUiThread(() -> {
                     memberCount = num;
+                    Logger.e("当前用户数量为=:"+num);
                 });
             }
 
@@ -753,14 +754,16 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                     if (BuildConfig.DEBUG) {
                         Toast.makeText(MeetingBroadcastActivity.this, account + "退出信令频道", Toast.LENGTH_SHORT).show();
                     }
+                    Logger.e(account + "退出信令频道"+"----uid:="+uid);
                     agoraAPI.channelQueryUserNum(channelName);
                     Audience audience = audienceHashMap.remove(Integer.parseInt(account));
+                    updateAudienceList();
                     if (audience != null) {
                         if (BuildConfig.DEBUG) {
                             Toast.makeText(MeetingBroadcastActivity.this, audience.getUname() + "退出信令频道", Toast.LENGTH_SHORT).show();
                         }
                     }
-                    updateAudienceList();
+
                 });
             }
 
@@ -1589,6 +1592,7 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                 public void run() {
 
                     if (currentAudience != null) {
+                        Logger.e("currentAudience?=null:==="+currentAudience);
                         currentAudience.setCallStatus(0);
                         currentAudience.setHandsUp(false);
                         audienceHashMap.put(currentAudience.getUid(), currentAudience);
@@ -1610,7 +1614,18 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                     }
                 }
             });
+        }else if (reason==Constants.USER_OFFLINE_QUIT){
+            if (currentAudience!=null){
+                if (audienceHashMap.containsKey(currentAudience.getUid())){
+                    audienceHashMap.remove(currentAudience.getUid());
+                    currentAudience = null;
+                    updateAudienceList();
+                }
+
+            }
+
         }
+
         doRemoveRemoteUi(uid);
     }
 

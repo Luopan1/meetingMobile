@@ -3,6 +3,7 @@ package com.zhongyou.meet.mobile.business.adapter;
 import android.annotation.SuppressLint;
 import android.graphics.Rect;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -13,12 +14,12 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
+import com.orhanobut.logger.Logger;
 import com.zhongyou.meet.mobile.R;
 import com.zhongyou.meet.mobile.entities.ChatMesData;
 import com.zhongyou.meet.mobile.persistence.Preferences;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -49,10 +50,10 @@ public class NewChatAdapter extends BaseMultiItemQuickAdapter<ChatMesData.PageDa
 	@Override
 	protected void convert(BaseViewHolder helper, ChatMesData.PageDataEntity item) {
 		if (helper.getItemViewType() == 2) {
-			if (item.getMsgType() == 1) {
+			Log.e("convertView", "{"+item.getType()+"} -\t- "+item.getContent());
+			if (item.getType() == 0) {
 				if (item.getUserId().equals(Preferences.getUserId())) {
 					helper.setText(R.id.tv_center, "你撤回了一条消息");
-
 					if (System.currentTimeMillis() - item.getReplyTimestamp() < 20000) {
 						helper.getView(R.id.tv_edit).setVisibility(View.VISIBLE);
 						Message msg = new Message();
@@ -67,8 +68,8 @@ public class NewChatAdapter extends BaseMultiItemQuickAdapter<ChatMesData.PageDa
 					((TextView) helper.getView(R.id.tv_center)).setText(item.getUserName() + "  撤回了一条消息");
 					((TextView) helper.getView(R.id.tv_edit)).setVisibility(View.GONE);
 				}
-			} else {
-				((TextView) helper.getView(R.id.tv_center)).setText(item.getReplyTime());
+			} else if (item.getType()==1){
+				((TextView) helper.getView(R.id.tv_center)).setText("你撤回了一条消息  "+item.getReplyTime());
 				((TextView) helper.getView(R.id.tv_edit)).setVisibility(View.GONE);
 			}
 
@@ -123,15 +124,6 @@ public class NewChatAdapter extends BaseMultiItemQuickAdapter<ChatMesData.PageDa
 			if (item.getType() == 1) {
 				helper.getView(R.id.img_pic).setVisibility(View.VISIBLE);
 
-
-				HashMap<String, String> maps = new HashMap<>();
-				maps.put(item.getContent(), item.getContent());
-				if (!imageMaps.contains(maps)) {
-					imageMaps.add(maps);
-				}
-				createImage(item.getContent(), helper.getView(R.id.img_pic));
-
-
 				Glide.with(mContext).load(item.getContent())
 						.skipMemoryCache(false)
 						.centerCrop()
@@ -160,19 +152,19 @@ public class NewChatAdapter extends BaseMultiItemQuickAdapter<ChatMesData.PageDa
 					@Override
 					public void onClick(View v) {
 						ImageView view = helper.getView(R.id.img_pic);
-						if (mOnItemClickListener!=null){
-								// 每次点击 都清空集合 不然会导致重复
-								mImagePathLists.clear();
-								mImageViewList.clear();
-								//遍历所有的当前adapter的所有数据，如果是图片类型  就添加进入集合
-								for (int i = 0; i < getData().size(); i++) {
-									if (getData().get(i).getType()==1){
-										createImages(getData().get(i).getContent(),view);
-										mImagePathLists.add(getData().get(i).getContent());
-									}
+						if (mOnItemClickListener != null) {
+							// 每次点击 都清空集合 不然会导致重复
+							mImagePathLists.clear();
+							mImageViewList.clear();
+							//遍历所有的当前adapter的所有数据，如果是图片类型  就添加进入集合
+							for (int i = 0; i < getData().size(); i++) {
+								if (getData().get(i).getType() == 1) {
+									createImages(getData().get(i).getContent(), view);
+									mImagePathLists.add(getData().get(i).getContent());
 								}
-								mOnItemClickListener.onItemClick(helper.getPosition(),helper.getView(R.id.img_pic),mImageViewList,mImagePathLists);
 							}
+							mOnItemClickListener.onItemClick(helper.getPosition(), helper.getView(R.id.img_pic), mImageViewList, mImagePathLists);
+						}
 					}
 				});
 
@@ -181,44 +173,15 @@ public class NewChatAdapter extends BaseMultiItemQuickAdapter<ChatMesData.PageDa
 				helper.getView(R.id.img_pic).setVisibility(View.GONE);
 			}
 
-			helper.addOnLongClickListener(R.id.tv_content);
+			helper.addOnLongClickListener(R.id.tv_content)
+					.addOnLongClickListener(R.id.img_pic);
 		}
 
 	}
 
-	private void createImage(String conent, ImageView view) {
-		/*int[] location = new int[2];
-		view.getLocationInWindow(location);*/
-		Rect bounds = new Rect();
-		view.getGlobalVisibleRect(bounds);
-
-		HashMap<String, ImageView> map = new HashMap<>();
-		map.put(conent, view);
-
-		if (originImgaeList.contains(map)) {
-			originImgaeList.remove(map);
-		}
-		originImgaeList.add(map);
-		view.layout(bounds.left, bounds.top, bounds.right, bounds.bottom);
-	}
-
-	private List<HashMap<String, ImageView>> originImgaeList = new ArrayList<>();
-
-	public List<HashMap<String, ImageView>> getOriginImageList() {
-
-		return originImgaeList;
-	}
-
-
-	private List<HashMap<String, String>> imageMaps = new ArrayList<>();
-
-	public List<HashMap<String, String>> getImageMaps() {
-
-		return imageMaps;
-	}
 
 	public interface onItemClickListener {
-		void onItemClick(int position, View view,List<ImageView> imageViewList,List<String> imagePathList);
+		void onItemClick(int position, View view, List<ImageView> imageViewList, List<String> imagePathList);
 	}
 
 	public onItemClickListener mOnItemClickListener;
@@ -234,15 +197,6 @@ public class NewChatAdapter extends BaseMultiItemQuickAdapter<ChatMesData.PageDa
 		Rect bounds = new Rect();
 		view.getGlobalVisibleRect(bounds);
 		mImageViewList.add(view);
-//		view.layout(bounds.left, bounds.top, bounds.right, bounds.bottom);
-	}
-
-	public List<ImageView> getImageViewLists() {
-		return mImageViewList;
-	}
-
-	public List<String> getImagePathLists() {
-		return mImagePathLists;
 	}
 
 

@@ -39,6 +39,7 @@ import com.zhongyou.meet.mobile.entities.MeetingMaterialsPublish;
 import com.zhongyou.meet.mobile.persistence.Preferences;
 import com.zhongyou.meet.mobile.utils.DensityUtil;
 import com.zhongyou.meet.mobile.utils.OkHttpCallback;
+import com.zhongyou.meet.mobile.utils.ToastUtils;
 import com.zhongyou.meet.mobile.utils.UIDUtil;
 import com.zhongyou.meet.mobile.utils.helper.ImageHelper;
 import com.zhongyou.meet.mobile.utils.statistics.ZYAgent;
@@ -54,6 +55,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Collections;
 import java.util.HashMap;
 
+import es.dmoral.toasty.Toasty;
 import io.agora.AgoraAPI;
 import io.agora.AgoraAPIOnlySignal;
 import io.agora.openlive.model.AGEventHandler;
@@ -130,6 +132,11 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
         ZYAgent.onEvent(getApplicationContext(), "meetingId=" + meetingJoin.getMeeting().getId());
         meeting = meetingJoin.getMeeting();
 
+        if(meetingJoin==null||meetingJoin.getHostUser()==null||meetingJoin.getHostUser().getClientUid()==null){
+            Toasty.error(this,"会议加入码输入错误").show();
+            finish();
+            return;
+        }
         broadcasterId = meetingJoin.getHostUser().getClientUid();
 
         channelName = meeting.getId();

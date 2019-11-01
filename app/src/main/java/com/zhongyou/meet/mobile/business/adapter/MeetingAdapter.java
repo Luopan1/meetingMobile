@@ -62,7 +62,7 @@ public class MeetingAdapter extends OpenPresenter {
 
         holder.titleText.setText(meeting.getTitle());
 
-        holder.beginTimeText.setText( meeting.getStartTime().substring(0, 16));
+        holder.beginTimeText.setText("-----------" + meeting.getStartTime().substring(0, 16) + "-----------");
 
         if (position % 2==0){
             holder.bgLayout.setBackgroundResource(R.mipmap.bg_meeting_item_b);

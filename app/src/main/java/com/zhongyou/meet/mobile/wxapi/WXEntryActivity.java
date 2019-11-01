@@ -348,7 +348,7 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
         }
 
         if (!TextUtils.isEmpty(result) && baseResp.errCode != BaseResp.ErrCode.ERR_OK) {
-            Toast.makeText(this, baseResp.errCode + result, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, result, Toast.LENGTH_SHORT).show();
             return;
         }
     }
