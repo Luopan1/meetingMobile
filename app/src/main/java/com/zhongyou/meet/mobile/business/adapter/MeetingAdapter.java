@@ -90,7 +90,7 @@ public class MeetingAdapter extends OpenPresenter {
     private class MeetingHodler extends ViewHolder {
 
         View itemView;
-        RelativeLayout bgLayout;
+        LinearLayout bgLayout;
         TextView titleText, beginTimeText, stateText;
 
         MeetingHodler(View itemView) {

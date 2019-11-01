@@ -109,9 +109,8 @@ android {
 
             buildConfigField 'String', 'API_DOMAIN_NAME', '"http://osg.apitest.zhongyouie.cn"'
 //            buildConfigField 'String', 'API_DOMAIN_NAME', '"http://api.zhongyouie.com"'
-            buildConfigField 'String', 'API_DOMAIN_NAME_YOYOTU', '"http://api.haierzhongyou.com"'
-//唷唷兔地址
-            buildConfigField 'String', 'WS_DOMAIN_NAME', '"ws://wstest.zhongyouie.cn"'
+            buildConfigField 'String', 'API_DOMAIN_NAME_YOYOTU', '"http://tapi.zhongyouie.cn"'//唷唷兔地址
+            buildConfigField 'String', 'WS_DOMAIN_NAME', '"http://wstest.zhongyouie.cn/sales"'
 //
 //            buildConfigField 'String', 'API_DOMAIN_NAME', '"http://api.zhongyouie.com"'
 //            buildConfigField 'String', 'API_DOMAIN_NAME_YOYOTU', '"http://api.haierzhongyou.com"'//唷唷兔地址
@@ -198,4 +197,8 @@ dependencies {
     implementation 'com.github.GrenderG:Toasty:1.4.2'
 
     implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.30'
+    implementation project(path: ':ImagePreview')
+    implementation 'com.github.Hitomis.transferee:Transferee:v1.0.0'
+    implementation 'com.github.Hitomis.transferee:GlideLoader:v1.0.0'
+
 }

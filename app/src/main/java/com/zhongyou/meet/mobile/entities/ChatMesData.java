@@ -70,37 +70,37 @@ public class ChatMesData {
         private int localState;//0发送成功1正在发送2发送失败
         private String meetingId;
         private String atailUserId;
+        private boolean isNewAdd;
+
+        private boolean upLoadScuucess;
+
+        private boolean isNewAdd() {
+            return isNewAdd;
+        }
+
+        private void setNewAdd(boolean newAdd) {
+            isNewAdd = newAdd;
+        }
+
+        public boolean isUpLoadScuucess() {
+            return upLoadScuucess;
+        }
+
+        public void setUpLoadScuucess(boolean upLoadScuucess) {
+            this.upLoadScuucess = upLoadScuucess;
+        }
+
+        public boolean getIsNewAdd() {
+            return isNewAdd;
+        }
+
+        public void setIsNewAdd(boolean newAdd) {
+            isNewAdd = newAdd;
+        }
+
         public PageDataEntity(){
 
         }
-
-        public PageDataEntity(Parcel in) {
-            userName = in.readString();
-            replyTime = in.readString();
-            content = in.readString();
-            type = in.readInt();
-            userLogo = in.readString();
-            userId = in.readString();
-            id = in.readString();
-            replyTimestamp = in.readLong();
-            msgType = in.readInt();
-            localState = in.readInt();
-            ts = in.readLong();
-            meetingId = in.readString();
-            atailUserId = in.readString();
-        }
-
-        public static final Creator<PageDataEntity> CREATOR = new Creator<PageDataEntity>() {
-            @Override
-            public PageDataEntity createFromParcel(Parcel in) {
-                return new PageDataEntity(in);
-            }
-
-            @Override
-            public PageDataEntity[] newArray(int size) {
-                return new PageDataEntity[size];
-            }
-        };
 
         public String getUserName() {
             return userName;
@@ -207,28 +207,6 @@ public class ChatMesData {
         }
 
         @Override
-        public int describeContents() {
-            return 0;
-        }
-
-        @Override
-        public void writeToParcel(Parcel parcel, int i) {
-            parcel.writeString(userName);
-            parcel.writeString(replyTime);
-            parcel.writeString(content);
-            parcel.writeInt(type);
-            parcel.writeString(userLogo);
-            parcel.writeString(userId);
-            parcel.writeString(id);
-            parcel.writeLong(replyTimestamp);
-            parcel.writeInt(msgType);
-            parcel.writeInt(localState);
-            parcel.writeLong(ts);
-            parcel.writeString(meetingId);
-            parcel.writeString(atailUserId);
-        }
-
-        @Override
         public int getItemType() {
             if (getMsgType() == 1 || getMsgType() == 2) {
                 return 2;
@@ -243,5 +221,59 @@ public class ChatMesData {
                 }
             }
         }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeString(this.id);
+            dest.writeString(this.userName);
+            dest.writeString(this.replyTime);
+            dest.writeString(this.content);
+            dest.writeString(this.userId);
+            dest.writeInt(this.type);
+            dest.writeString(this.userLogo);
+            dest.writeLong(this.replyTimestamp);
+            dest.writeLong(this.ts);
+            dest.writeInt(this.msgType);
+            dest.writeInt(this.localState);
+            dest.writeString(this.meetingId);
+            dest.writeString(this.atailUserId);
+            dest.writeByte(this.isNewAdd ? (byte) 1 : (byte) 0);
+            dest.writeByte(this.upLoadScuucess ? (byte) 1 : (byte) 0);
+        }
+
+        protected PageDataEntity(Parcel in) {
+            this.id = in.readString();
+            this.userName = in.readString();
+            this.replyTime = in.readString();
+            this.content = in.readString();
+            this.userId = in.readString();
+            this.type = in.readInt();
+            this.userLogo = in.readString();
+            this.replyTimestamp = in.readLong();
+            this.ts = in.readLong();
+            this.msgType = in.readInt();
+            this.localState = in.readInt();
+            this.meetingId = in.readString();
+            this.atailUserId = in.readString();
+            this.isNewAdd = in.readByte() != 0;
+            this.upLoadScuucess = in.readByte() != 0;
+        }
+
+        public static final Creator<PageDataEntity> CREATOR = new Creator<PageDataEntity>() {
+            @Override
+            public PageDataEntity createFromParcel(Parcel source) {
+                return new PageDataEntity(source);
+            }
+
+            @Override
+            public PageDataEntity[] newArray(int size) {
+                return new PageDataEntity[size];
+            }
+        };
     }
 }

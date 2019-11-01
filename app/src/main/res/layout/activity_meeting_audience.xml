@@ -188,7 +188,7 @@
             android:paddingRight="10dp"
             android:textColor="@color/white"
             android:textSize="14sp"
-            android:text="我要发言" />
+            android:text="申请发言" />
 
         <Button
             android:id="@+id/stop_talk"
@@ -200,7 +200,7 @@
             android:layout_marginRight="15dp"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
-            android:text="终止发言"
+            android:text="结束发言"
             android:textColor="@color/white"
             android:textSize="14sp"
             android:visibility="gone" />

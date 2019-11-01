@@ -44,6 +44,7 @@ import com.zhongyou.meet.mobile.event.HangUpEvent;
 import com.zhongyou.meet.mobile.event.ResolutionChangeEvent;
 import com.zhongyou.meet.mobile.event.SetUserChatEvent;
 import com.zhongyou.meet.mobile.event.SetUserStateEvent;
+import com.zhongyou.meet.mobile.event.SocketStatus;
 import com.zhongyou.meet.mobile.event.TvLeaveChannel;
 import com.zhongyou.meet.mobile.event.TvTimeoutHangUp;
 import com.zhongyou.meet.mobile.event.UserStateEvent;
@@ -426,6 +427,7 @@ public class WSService extends Service {
             Log.i(TAG, "disConnectSocket mSocket==null return");
             return;
         }
+        RxBus.sendMessage(new SocketStatus(false));
         ZYAgent.onEvent(getApplicationContext(),"长连接 主动调用断开连接");
         mSocket.disconnect();
         mSocket.off(Socket.EVENT_DISCONNECT, onChatDisconnect);
@@ -491,6 +493,7 @@ public class WSService extends Service {
     private Emitter.Listener onConnect = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
+            RxBus.sendMessage(new SocketStatus(true));
             com.orhanobut.logger.Logger.e("连接成功的回调");
             ZYAgent.onEvent(getApplicationContext(),"连接回调");
 //            JSONObject data = (JSONObject) args;
@@ -524,6 +527,7 @@ public class WSService extends Service {
     private Emitter.Listener onChatDisconnect = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
+            RxBus.sendMessage(new SocketStatus(false));
             ZYAgent.onEvent(getApplicationContext(),"断开连接回调");
             Log.i("wsserver", "Listener onChatDisconnect diconnected");
             com.orhanobut.logger.Logger.e("断开socket的连接："+JSON.toJSONString(args));
@@ -551,7 +555,7 @@ public class WSService extends Service {
     private Emitter.Listener onChatConnectError = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
-            com.orhanobut.logger.Logger.e("socket连接出错:"+JSON.toJSONString(args));
+            com.orhanobut.logger.Logger.e("socket连接出错:");
             ZYAgent.onEvent(getApplicationContext(),"断开连接回调");
             disconnectChatSocket();
             if(handler.hasMessages(10)){
@@ -560,11 +564,10 @@ public class WSService extends Service {
             handler.sendEmptyMessageDelayed(10,10000);
 //            mSocket.disconnect();
 //            mSocket.connect();
-            com.orhanobut.logger.Logger.e("socket连接出错:"+JSON.toJSONString(args));
+            com.orhanobut.logger.Logger.e("socket连接出错:");
             Log.i("wsserver", "Listener onChatConnectError ");
-//            SOCKET_ONLINE = false;
-//            sendUserStateEvent();
-//            connectChatSocket();
+
+            RxBus.sendMessage(new SocketStatus(false));
 
         }
     };

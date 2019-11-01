@@ -1,27 +1,24 @@
 package com.zhongyou.meet.mobile.business.adapter;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
+import android.graphics.Rect;
 import android.os.Message;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.alibaba.fastjson.JSON;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
-import com.orhanobut.logger.Logger;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.MemoryPolicy;
-import com.squareup.picasso.Picasso;
 import com.zhongyou.meet.mobile.R;
-import com.zhongyou.meet.mobile.business.ViewPagerActivity;
 import com.zhongyou.meet.mobile.entities.ChatMesData;
 import com.zhongyou.meet.mobile.persistence.Preferences;
-import com.zhongyou.meet.mobile.view.CropSquareTransformation;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -82,6 +79,10 @@ public class NewChatAdapter extends BaseMultiItemQuickAdapter<ChatMesData.PageDa
 				((ImageView) helper.getView(R.id.img_arrow)).setVisibility(View.VISIBLE);
 				((ImageView) helper.getView(R.id.img_pic)).setVisibility(View.GONE);
 				((TextView) helper.getView(R.id.tv_content)).setText(item.getContent());
+			} else {
+				helper.getView(R.id.img_pic).setVisibility(View.VISIBLE);
+				((TextView) helper.getView(R.id.tv_content)).setVisibility(View.GONE);
+				((ImageView) helper.getView(R.id.img_arrow)).setVisibility(View.GONE);
 			}
 			if (null == item.getUserName()) {
 				((TextView) helper.getView(R.id.tv_name)).setText("");
@@ -90,6 +91,7 @@ public class NewChatAdapter extends BaseMultiItemQuickAdapter<ChatMesData.PageDa
 			}
 			Glide.with(mContext)
 					.load(item.getUserLogo())
+					.skipMemoryCache(false)
 					.error(R.drawable.ico_face)
 					.placeholder(R.drawable.ico_face)
 					.into((ImageView) helper.getView(R.id.mIvHead));
@@ -119,45 +121,132 @@ public class NewChatAdapter extends BaseMultiItemQuickAdapter<ChatMesData.PageDa
 
 		if (helper.getItemViewType() == 1 || helper.getItemViewType() == 0) {
 			if (item.getType() == 1) {
-				Picasso.with(mContext).load(item.getContent())
-						.memoryPolicy(MemoryPolicy.NO_STORE, MemoryPolicy.NO_STORE)
+				helper.getView(R.id.img_pic).setVisibility(View.VISIBLE);
+
+
+				HashMap<String, String> maps = new HashMap<>();
+				maps.put(item.getContent(), item.getContent());
+				if (!imageMaps.contains(maps)) {
+					imageMaps.add(maps);
+				}
+				createImage(item.getContent(), helper.getView(R.id.img_pic));
+
+
+				Glide.with(mContext).load(item.getContent())
+						.skipMemoryCache(false)
+						.centerCrop()
 						.error(R.drawable.load_error)
 						.placeholder(R.drawable.loading)
-						.transform(new CropSquareTransformation()).into(helper.getView(R.id.img_pic), new Callback() {
-					@Override
-					public void onSuccess() {
-						helper.getView(R.id.img_pic).setOnClickListener(new View.OnClickListener() {
+						.listener(new RequestListener<String, GlideDrawable>() {
 							@Override
-							public void onClick(View view) {
-								int pos = 0;
-								ArrayList<String> mList = new ArrayList<>();
-								for (int i = 0; i < getItemCount(); i++) {
-									if (item.getType() == 1) {
-										mList.add(item.getContent());
-										if (item.getContent().equals(item.getContent())) {
-											pos = mList.size() - 1;
-										}
-									}
-								}
-								mContext.startActivity(new Intent(mContext, ViewPagerActivity.class).putExtra("imglist", mList)
-										.putExtra("pos", pos));
+							public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+								return false;
 							}
-						});
 
-					}
+							@Override
+							public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
 
-					@Override
-					public void onError() {
 
-					}
-				});
+								return false;
+							}
+						}).into((ImageView) helper.getView(R.id.img_pic));
+
 				((TextView) helper.getView(R.id.tv_content)).setVisibility(View.GONE);
 				((ImageView) helper.getView(R.id.img_arrow)).setVisibility(View.GONE);
 				((ImageView) helper.getView(R.id.img_pic)).setVisibility(View.VISIBLE);
+
+
+				helper.getView(R.id.img_pic).setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						ImageView view = helper.getView(R.id.img_pic);
+						if (mOnItemClickListener!=null){
+								// 每次点击 都清空集合 不然会导致重复
+								mImagePathLists.clear();
+								mImageViewList.clear();
+								//遍历所有的当前adapter的所有数据，如果是图片类型  就添加进入集合
+								for (int i = 0; i < getData().size(); i++) {
+									if (getData().get(i).getType()==1){
+										createImages(getData().get(i).getContent(),view);
+										mImagePathLists.add(getData().get(i).getContent());
+									}
+								}
+								mOnItemClickListener.onItemClick(helper.getPosition(),helper.getView(R.id.img_pic),mImageViewList,mImagePathLists);
+							}
+					}
+				});
+
+
+			} else {
+				helper.getView(R.id.img_pic).setVisibility(View.GONE);
 			}
 
 			helper.addOnLongClickListener(R.id.tv_content);
 		}
 
 	}
+
+	private void createImage(String conent, ImageView view) {
+		/*int[] location = new int[2];
+		view.getLocationInWindow(location);*/
+		Rect bounds = new Rect();
+		view.getGlobalVisibleRect(bounds);
+
+		HashMap<String, ImageView> map = new HashMap<>();
+		map.put(conent, view);
+
+		if (originImgaeList.contains(map)) {
+			originImgaeList.remove(map);
+		}
+		originImgaeList.add(map);
+		view.layout(bounds.left, bounds.top, bounds.right, bounds.bottom);
+	}
+
+	private List<HashMap<String, ImageView>> originImgaeList = new ArrayList<>();
+
+	public List<HashMap<String, ImageView>> getOriginImageList() {
+
+		return originImgaeList;
+	}
+
+
+	private List<HashMap<String, String>> imageMaps = new ArrayList<>();
+
+	public List<HashMap<String, String>> getImageMaps() {
+
+		return imageMaps;
+	}
+
+	public interface onItemClickListener {
+		void onItemClick(int position, View view,List<ImageView> imageViewList,List<String> imagePathList);
+	}
+
+	public onItemClickListener mOnItemClickListener;
+
+	public void setOnItemClickListener(onItemClickListener onItemClickListener) {
+		this.mOnItemClickListener = onItemClickListener;
+	}
+
+	private List<ImageView> mImageViewList = new ArrayList<>();
+	private List<String> mImagePathLists = new ArrayList<>();
+
+	private void createImages(String conent, ImageView view) {
+		Rect bounds = new Rect();
+		view.getGlobalVisibleRect(bounds);
+		mImageViewList.add(view);
+//		view.layout(bounds.left, bounds.top, bounds.right, bounds.bottom);
+	}
+
+	public List<ImageView> getImageViewLists() {
+		return mImageViewList;
+	}
+
+	public List<String> getImagePathLists() {
+		return mImagePathLists;
+	}
+
+
 }
+
+
+

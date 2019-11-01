@@ -427,11 +427,11 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 			if (remoteBroadcasterSurfaceView != null) {
 				if (handsUp) {
 					handsUp = false;
-					requestTalkButton.setText("我要发言");
+					requestTalkButton.setText("申请发言");
 					requestTalkButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_meeting_signup, 0, 0, 0);
 				} else {
 					handsUp = true;
-					requestTalkButton.setText("放弃发言");
+					requestTalkButton.setText("取消申请");
 					requestTalkButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_meeting_signup_giveup, 0, 0, 0);
 				}
 				try {
@@ -686,7 +686,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 								requestTalkButton.setVisibility(View.VISIBLE);
 							}
 							handsUp = false;
-							requestTalkButton.setText("我要发言");
+							requestTalkButton.setText("申请发言");
 							requestTalkButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_meeting_signup, 0, 0, 0);
 						}
 						if (jsonObject.has("finish")) {
@@ -707,7 +707,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 								stopTalkButton.setVisibility(View.GONE);
 
 								handsUp = false;
-								requestTalkButton.setText("我要发言");
+								requestTalkButton.setText("申请发言");
 								requestTalkButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_meeting_signup, 0, 0, 0);
 
 								worker().getRtcEngine().setClientRole(Constants.CLIENT_ROLE_AUDIENCE);
@@ -830,7 +830,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 
 							if (currentAudienceId == config().mUid) {
 								handsUp = false;
-								requestTalkButton.setText("我要发言");
+								requestTalkButton.setText("申请发言");
 								requestTalkButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_meeting_signup, 0, 0, 0);
 							}
 						} else {
@@ -1321,7 +1321,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 					stopTalkButton.setVisibility(View.GONE);
 
 					handsUp = false;
-					requestTalkButton.setText("我要发言");
+					requestTalkButton.setText("申请发言");
 					requestTalkButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_meeting_signup, 0, 0, 0);
 
 					worker().getRtcEngine().setClientRole(Constants.CLIENT_ROLE_AUDIENCE);
@@ -1374,7 +1374,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 				agoraAPI.channelDelAttr(channelName, CALLING_AUDIENCE);
 
 				handsUp = false;
-				requestTalkButton.setText("我要发言");
+				requestTalkButton.setText("申请发言");
 				requestTalkButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_meeting_signup, 0, 0, 0);
 
 				if (!TextUtils.isEmpty(meetingHostJoinTraceId)) {
@@ -1754,7 +1754,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 						stopTalkButton.setVisibility(View.GONE);
 
 						handsUp = false;
-						requestTalkButton.setText("我要发言");
+						requestTalkButton.setText("申请发言");
 						requestTalkButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_meeting_signup, 0, 0, 0);
 
 						worker().getRtcEngine().setClientRole(Constants.CLIENT_ROLE_AUDIENCE);

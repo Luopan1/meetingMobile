@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -14,6 +15,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SimpleItemAnimator;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -35,6 +37,11 @@ import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.hitomi.glideloader.GlideImageLoader;
+import com.hitomi.tilibrary.style.index.NumberIndexIndicator;
+import com.hitomi.tilibrary.style.progress.ProgressPieIndicator;
+import com.hitomi.tilibrary.transfer.TransferConfig;
+import com.hitomi.tilibrary.transfer.Transferee;
 import com.jph.takephoto.app.TakePhoto;
 import com.jph.takephoto.app.TakePhotoImpl;
 import com.jph.takephoto.compress.CompressConfig;
@@ -61,11 +68,14 @@ import com.zhongyou.meet.mobile.business.adapter.chatAdapter;
 import com.zhongyou.meet.mobile.business.adapter.inputAdapter;
 import com.zhongyou.meet.mobile.entities.Bucket;
 import com.zhongyou.meet.mobile.entities.ChatMesData;
+import com.zhongyou.meet.mobile.entities.PreViewImages;
 import com.zhongyou.meet.mobile.entities.QiniuToken;
 import com.zhongyou.meet.mobile.entities.base.BaseBean;
 import com.zhongyou.meet.mobile.event.ForumRevokeEvent;
 import com.zhongyou.meet.mobile.event.ForumSendEvent;
+import com.zhongyou.meet.mobile.event.SocketStatus;
 import com.zhongyou.meet.mobile.persistence.Preferences;
+import com.zhongyou.meet.mobile.utils.NetUtils;
 import com.zhongyou.meet.mobile.utils.OkHttpCallback;
 import com.zhongyou.meet.mobile.utils.RxBus;
 import com.zhongyou.meet.mobile.utils.ToastUtils;
@@ -78,6 +88,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+import es.dmoral.toasty.Toasty;
 import rx.Subscription;
 import rx.functions.Action1;
 
@@ -85,7 +96,7 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 
 
 	//    private SwipeRefreshLayout mSwipeRefreshLayout;
-	private RecyclerView recyclerViewChat, recyclerViewInput;
+	private RecyclerView recyclerViewInput, recyclerViewChat;
 	//    private RecyclerView mRecycler;
 	private TextView emptyText;
 	private String imagePath;
@@ -114,6 +125,8 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 	private static int delayTime = 2000;
 	private static int delayRevokeTime = 2000;
 	private ChatMesData.PageDataEntity mDataEntity;
+	private List<PreViewImages> mStringLists;
+	private Transferee mTransferee;
 
 	@Override
 	public String getStatisticsTag() {
@@ -137,7 +150,7 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 		super.onSaveInstanceState(outState);
 	}
 
-	private void uploadImage(long ts) {
+	private void uploadImage(long ts, ChatMesData.PageDataEntity entity) {
 		ApiClient.getInstance().requestQiniuToken(this, new OkHttpCallback<BaseBean<QiniuToken>>() {
 
 			@Override
@@ -158,15 +171,24 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 							@Override
 							public void complete(String key, ResponseInfo info, JSONObject response) {
 								if (info.isNetworkBroken() || info.isServerError()) {
-									getActivity().runOnUiThread(new Runnable() {
-										@Override
-										public void run() {
-											showToast("上传失败");
-										}
-									});
+									if (getActivity() != null) {
+										getActivity().runOnUiThread(new Runnable() {
+											@Override
+											public void run() {
+												showToast("上传失败");
+												entity.setLocalState(2);
+												entity.setUpLoadScuucess(false);
+												adapter.notifyItemChanged(adapter.getData().indexOf(entity));
+											}
+										});
+									}
 									return;
 								}
 								if (info.isOK()) {
+
+//									int i = adapter.getData().indexOf(entity);
+//									adapter.getData().get(i).setContent(Preferences.getImgUrl() + key);
+									entity.setUpLoadScuucess(true);
 									HashMap<String, Object> params = new HashMap<String, Object>();
 									params.put("meetingId", mMeetingId);
 									params.put("ts", ts);
@@ -175,6 +197,9 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 									ApiClient.getInstance().expostorPostChatMessage(TAG, expostorStatsCallback, params);
 
 								} else {
+									entity.setUpLoadScuucess(false);
+									entity.setLocalState(2);
+									adapter.notifyItemChanged(adapter.getData().indexOf(entity));
 									showToast("上传失败" + info.error);
 								}
 							}
@@ -182,6 +207,7 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 						new UploadOptions(null, null, true, new UpProgressHandler() {
 							@Override
 							public void progress(final String key, final double percent) {
+
 							}
 
 						}, null));
@@ -196,12 +222,11 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 		View view = inflater.inflate(R.layout.fragment_meeting_chat, null, false);
 //        mSwipeRefreshLayout = view.findViewById(R.id.mSwipeRefreshLayout);
 		mMeetingId = getActivity().getIntent().getStringExtra("meetingId");
-
-
 		initView(view);
 		initRecy();
 		getData();
 		setData();
+		mTransferee = Transferee.getDefault(getActivity());
 		subscription = RxBus.handleMessage(new Action1() {
 			@Override
 			public void call(Object o) {
@@ -215,12 +240,19 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 					if (((ForumSendEvent) o).getEntity().getUserId().equals(Preferences.getUserId())) {
 						getActivity().runOnUiThread(() -> {
 							for (ChatMesData.PageDataEntity data : adapter.getData()) {
+								Logger.e(data.getTs() + " : " + ((ForumSendEvent) o).getEntity().getTs());
 								if (data.getTs() == ((ForumSendEvent) o).getEntity().getTs()) {
 									int index = adapter.getData().indexOf(data);
-									adapter.getData().set(index, ((ForumSendEvent) o).getEntity());
-									adapter.notifyItemChanged(index);
+									ChatMesData.PageDataEntity entity = ((ForumSendEvent) o).getEntity();
+									if (entity.getTs() == adapter.getData().get(index).getTs()) {
+										if (entity.getType() == 1) {
+											entity.setContent(adapter.getData().get(index).getContent());
+										}
+									}
+									Logger.e(JSON.toJSONString(entity));
+									adapter.getData().set(index, entity);
+									adapter.notifyItemChanged(index, index);
 									recyclerViewChat.smoothScrollToPosition(adapter.getData().size());
-
 									break;
 								}
 							}
@@ -257,6 +289,41 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 						}
 					});
 
+				} else if (o instanceof SocketStatus) {
+					//socket连接成功 如果有发送中的消息 尝试重新发送 并且改变状态
+					if (((SocketStatus) o).getIsConnected()) {
+						if (getActivity() != null) {
+							getActivity().runOnUiThread(new Runnable() {
+								@Override
+								public void run() {
+									for (int i = 0; i < adapter.getData().size(); i++) {
+										if (adapter.getData().get(i).getLocalState() == 1) {
+											sendAction(System.currentTimeMillis(), adapter.getData().get(i).getContent());
+										}
+									}
+								}
+							});
+						}
+					} else {
+						//断开了socket的连接
+						if (getActivity() == null) {
+							return;
+						}
+						getActivity().runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								for (int i = 0; i < adapter.getData().size(); i++) {
+									//正在发送中 就改变状态 改成发送失败
+									if (adapter.getData().get(i).getLocalState() == 1) {
+										adapter.getData().get(i).setLocalState(2);
+										adapter.notifyItemChanged(i);
+									}
+								}
+							}
+						});
+
+					}
+
 				}
 
 			}
@@ -278,7 +345,11 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
+		if (mTransferee != null) {
+			mTransferee.destroy();
+		}
 		subscription.unsubscribe();
+
 	}
 
 	public TakePhoto getTakePhoto() {
@@ -300,7 +371,7 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 
 	private void initView(View rootView) {
 		openCamera = (RelativeLayout) rootView.findViewById(R.id.open_camera);
-		recyclerViewChat = (RecyclerView) rootView.findViewById(R.id.recycler1);
+		recyclerViewChat = rootView.findViewById(R.id.recycler1);
 		recyclerViewInput = (RecyclerView) rootView.findViewById(R.id.recycler2);
 		btnSend = (Button) rootView.findViewById(R.id.btn_send);
 		mEditText = (EditText) rootView.findViewById(R.id.edit_text);
@@ -310,37 +381,9 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 		openCamera.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				Log.v("imput98989", "count==" + count);
-				if (count == 0) {
-					InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-					imm.hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
 
-					RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-					params.bottomMargin = (int) getResources().getDimension(R.dimen.my_px_500);
-					recyclerViewChat.setLayoutParams(params);
-					recyclerViewInput.setVisibility(View.VISIBLE);
-					recyclerViewChat.smoothScrollToPosition(adapter.getData().size());
-					count = 1;
-				} else if (count == 1) {
-					RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-					params.bottomMargin = (int) getResources().getDimension(R.dimen.my_px_180);
-					recyclerViewChat.setLayoutParams(params);
-					recyclerViewInput.setVisibility(View.GONE);
-					InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-					imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
-					recyclerViewChat.smoothScrollToPosition(adapter.getData().size());
-					count = 2;
-				} else if (count == 2) {
-					InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-					imm.hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
-
-					RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-					params.bottomMargin = (int) getResources().getDimension(R.dimen.my_px_500);
-					recyclerViewChat.setLayoutParams(params);
-					recyclerViewInput.setVisibility(View.VISIBLE);
-					recyclerViewChat.smoothScrollToPosition(adapter.getData().size());
-					count = 1;
-				}
+				recyclerViewInput.setVisibility(View.VISIBLE);
+				recyclerViewChat.smoothScrollToPosition(adapter.getData().size());
 
 			}
 		});
@@ -348,9 +391,9 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 		rlContent.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+				/*RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
 				params.bottomMargin = (int) getResources().getDimension(R.dimen.my_px_180);
-				recyclerViewChat.setLayoutParams(params);
+				recyclerViewChat.setLayoutParams(params);*/
 				recyclerViewInput.setVisibility(View.GONE);
 				InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 				imm.hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
@@ -361,6 +404,7 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 			public void onClick(View view) {
 				recyclerViewChat.smoothScrollToPosition(adapter.getData().size());
 				recyclerViewInput.setVisibility(View.GONE);
+
 			}
 		});
 		mEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -438,9 +482,20 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 				mDataEntity.setUserId(Preferences.getUserId());
 				mDataEntity.setUserLogo(Preferences.getUserPhoto());
 				mDataEntity.setLocalState(1);
-				adapter.addData(adapter.getData().size(), mDataEntity);
-				recyclerViewChat.smoothScrollToPosition(adapter.getData().size());
-				sendAction(ts, mEditText.getText().toString());
+				if (adapter != null) {
+					adapter.addData(adapter.getData().size(), mDataEntity);
+					recyclerViewChat.smoothScrollToPosition(adapter.getData().size());
+				}
+				if (NetUtils.isNetworkConnected(getActivity())) {
+					sendAction(ts, mEditText.getText().toString());
+				} else {
+					mDataEntity.setLocalState(2);
+					if (adapter != null) {
+						mEditText.setText("");
+						adapter.notifyItemChanged(adapter.getData().indexOf(mDataEntity));
+					}
+					Toasty.error(getActivity(), "当前没有网路连接 请检查网络再重试!").show();
+				}
 			}
 		});
 	}
@@ -471,9 +526,9 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 		public void onFailure(int errorCode, BaseException exception) {
 			super.onFailure(errorCode, exception);
 			Logger.e(exception.getLocalizedMessage());
-			if (mDataEntity!=null){
+			if (mDataEntity != null) {
 				mDataEntity.setLocalState(2);
-				adapter.addData(adapter.getData().size(), mDataEntity);
+				adapter.notifyItemChanged(adapter.getData().indexOf(mDataEntity));
 				recyclerViewChat.smoothScrollToPosition(adapter.getData().size());
 			}
 
@@ -493,12 +548,32 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 		mEditText.setFocusable(true);
 	}
 
+	public void hintKeyBoard() {
+		//拿到InputMethodManager
+		InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+		//如果window上view获取焦点 && view不为空
+		if (imm.isActive() && getActivity().getCurrentFocus() != null) {
+			//拿到view的token 不为空
+			if (getActivity().getCurrentFocus().getWindowToken() != null) {
+				//表示软键盘窗口总是隐藏，除非开始时以SHOW_FORCED显示。
+				imm.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+			}
+		}
+	}
+
+	@SuppressLint("ClickableViewAccessibility")
 	private void initRecy() {
 		mLayoutManager = new LinearLayoutManager(getActivity());
 		mLayoutManager.setOrientation(GridLayoutManager.VERTICAL);
 		recyclerViewChat.setLayoutManager(mLayoutManager);
-		mLayoutManager.setStackFromEnd(true);
+
+//		mLayoutManager.setStackFromEnd(true);
 		recyclerViewChat.setFocusable(false);
+		SimpleItemAnimator itemAnimator = (SimpleItemAnimator) recyclerViewChat.getItemAnimator();
+		itemAnimator.setAddDuration(0);
+		itemAnimator.setChangeDuration(0);
+		itemAnimator.setMoveDuration(0);
+		itemAnimator.setRemoveDuration(0);
 
 		GridLayoutManager gridlayoutManager2 = new GridLayoutManager(getActivity(), 4);
 		gridlayoutManager2.setOrientation(GridLayoutManager.VERTICAL);
@@ -506,13 +581,21 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 		recyclerViewInput.setFocusable(false);
 		recyclerViewInput.setVisibility(View.GONE);
 
+		recyclerViewChat.setOnTouchListener(new View.OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				hintKeyBoard();
+				recyclerViewInput.setVisibility(View.GONE);
+				return false;
+			}
+		});
 
 	}
 
 
 	private int mCurrentPage = 1;
 	private int mPageSize = 20;
-
+	private ChatMesData.PageDataEntity mReSendEntity;
 	private List<ChatMesData.PageDataEntity> mDataLists = new ArrayList<>();
 
 	private void getData() {
@@ -525,6 +608,7 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 				if (adapter == null) {
 					adapter = new NewChatAdapter(entity.getData().getPageData());
 					recyclerViewChat.setAdapter(adapter);
+					((LinearLayoutManager) recyclerViewChat.getLayoutManager()).setStackFromEnd(true);
 					if (mCurrentPage >= mTotalPage) {
 						adapter.setUpFetchEnable(false);
 					} else {
@@ -543,7 +627,31 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 							getData();
 						}
 					});
-					ApiClient.getInstance().postViewLog(mMeetingId,this,expostorStatsCallback);
+					ApiClient.getInstance().postViewLog(mMeetingId, this, expostorStatsCallback);
+					adapter.setOnItemClickListener(new NewChatAdapter.onItemClickListener() {
+						@Override
+						public void onItemClick(int position, View view, List<ImageView> imageViewList, List<String> imagePathList) {
+							int index=0;
+							for (int i = 0; i <imagePathList.size() ; i++) {
+								if (imagePathList.get(i).equals(adapter.getData().get(position).getContent())){
+									index=i;
+									Logger.e(index+"-------"+imagePathList.get(i));
+									break;
+								}
+							}
+							TransferConfig config = TransferConfig.build()
+									.setNowThumbnailIndex(index)
+									.setSourceImageList(imagePathList)
+									.setMissPlaceHolder(R.drawable.loading)
+									.setOriginImageList(imageViewList)
+									.setProgressIndicator(new ProgressPieIndicator())
+									.setIndexIndicator(new NumberIndexIndicator())
+									.setImageLoader(GlideImageLoader.with(ChatFragment.this.getActivity()))
+									.create();
+							mTransferee.apply(config).show();
+						}
+					});
+
 					adapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
 						@Override
 						public void onItemChildClick(BaseQuickAdapter pter, View view, int position) {
@@ -553,7 +661,9 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 									mEditText.setSelection(mEditText.getText().length());
 									break;
 								case R.id.send_sate:
-										onReSend(adapter.getData().get(position).getContent(),adapter.getData().get(position).getType());
+									Logger.e("重新发送……");
+									mReSendEntity = adapter.getData().get(position);
+									onReSend(adapter.getData().get(position).getContent(), adapter.getData().get(position).getType());
 									break;
 								default:
 									break;
@@ -567,9 +677,9 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 						public boolean onItemChildLongClick(BaseQuickAdapter pter, View view, int position) {
 							switch (view.getId()) {
 								case R.id.tv_content:
-									if (adapter.getItemViewType(position)==0){
+									if (adapter.getItemViewType(position) == 0) {
 										showPopupWindow(view, null, adapter.getData().get(position).getContent());
-									}else {
+									} else {
 										showPopupWindow(view, adapter.getData().get(position).getId(), adapter.getData().get(position).getContent());
 										Logger.e(adapter.getData().get(position).getId());
 									}
@@ -585,6 +695,7 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 								default:
 									break;
 
+
 							}
 
 							return true;
@@ -596,6 +707,7 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 
 				}
 
+
 			}
 
 			@Override
@@ -605,10 +717,13 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 					adapter.setUpFetching(false);
 				}
 
+
 			}
 		});
 	}
 
+	private int clickCounts = 0;
+	List<ImageView> imageViewList;
 
 	@Override
 	protected void normalOnClick(View v) {
@@ -654,21 +769,11 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 	@Override
 	public void onReSend(String content, int type) {
 		if (type == 0) {
-			ChatMesData.PageDataEntity entity = new ChatMesData.PageDataEntity();
-			long ts = System.currentTimeMillis();
-			entity.setContent(content);
-			entity.setId("");
-			entity.setMsgType(0);
-			entity.setTs(ts);
-			entity.setType(0);
-			entity.setUserName(Preferences.getUserName());
-			entity.setUserId(Preferences.getUserId());
-			entity.setUserLogo(Preferences.getUserPhoto());
-			entity.setLocalState(1);
-			adapter.addData(adapter.getData().size(), (ChatMesData.PageDataEntity) entity);
-//			initLastData(dataChat, true);
 
-			sendAction(ts, content);
+			mReSendEntity.setLocalState(1);
+			adapter.notifyItemChanged(adapter.getData().indexOf(mReSendEntity));
+//			initLastData(dataChat, true);
+			sendAction(mReSendEntity.getTs(), content);
 
 		} else {
 			ChatMesData.PageDataEntity entity = new ChatMesData.PageDataEntity();
@@ -683,9 +788,16 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 			entity.setUserLogo(Preferences.getUserPhoto());
 			entity.setLocalState(1);
 
-			adapter.addData(adapter.getData().size(), (ChatMesData.PageDataEntity) entity);
+			int index = adapter.getData().indexOf(mReSendEntity);
+			adapter.getData().get(index).setType(1);
+			adapter.getData().get(index).setLocalState(1);
+			adapter.getData().get(index).setMsgType(0);
+			adapter.notifyItemChanged(index);
+
+			Logger.e(JSON.toJSONString(adapter.getData().get(index)));
+//			adapter.addData(adapter.getData().size(), (ChatMesData.PageDataEntity) entity);
 //			initLastData(dataChat, true);
-			uploadImage(ts);
+			uploadImage(ts, adapter.getData().get(index));
 		}
 
 	}
@@ -698,8 +810,6 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 			Log.v("chatfragment9090", "收到msg==" + msg.what + "*****" + msg.obj);
 			if (msg.obj instanceof ChatMesData.PageDataEntity) {
 				Log.v("chatfragment9090", "2s收到");
-
-
 			} else if (msg.what == 11) {
 				RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
 				params.bottomMargin = (int) getResources().getDimension(R.dimen.my_px_500);
@@ -740,14 +850,15 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 		entity.setUserId(Preferences.getUserId());
 		entity.setUserLogo(Preferences.getUserPhoto());
 		entity.setLocalState(1);
+
 		Logger.e("开始加入图片");
 		adapter.getData().add(adapter.getData().size(), entity);
 		adapter.notifyItemInserted(adapter.getData().size());
 		recyclerViewChat.smoothScrollToPosition(adapter.getData().size());
-
+		recyclerViewInput.setVisibility(View.GONE);
 //		initLastData(dataChat, true);
 
-		uploadImage(ts);
+		uploadImage(ts, entity);
 		Log.i(TAG, "takeSuccess：" + result.getImage().getOriginalPath());
 	}
 
@@ -871,4 +982,5 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 		progressDialog.setCanceledOnTouchOutside(false);
 		progressDialog.show();
 	}
+
 }

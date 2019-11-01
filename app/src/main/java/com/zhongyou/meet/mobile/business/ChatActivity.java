@@ -107,4 +107,5 @@ public class ChatActivity extends BasicActivity implements TakePhoto.TakeResultL
     protected void onDestroy() {
         super.onDestroy();
     }
+
 }

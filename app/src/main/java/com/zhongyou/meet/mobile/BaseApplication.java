@@ -7,11 +7,13 @@ import android.text.TextUtils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.orhanobut.logger.AndroidLogAdapter;
+import com.previewlibrary.ZoomMediaLoader;
 import com.zhongyou.meet.mobile.entities.StaticResource;
 import com.zhongyou.meet.mobile.entities.base.BaseBean;
 import com.zhongyou.meet.mobile.persistence.Preferences;
 import com.zhongyou.meet.mobile.utils.Logger;
 import com.tencent.bugly.crashreport.CrashReport;
+import com.zhongyou.meet.mobile.utils.MyGlideModule;
 import com.zhongyou.meet.mobile.utils.OkHttpCallback;
 import com.tendcloud.tenddata.TCAgent;
 
@@ -37,7 +39,7 @@ public class BaseApplication extends MultiDexApplication {
         instance = this;
 
         initSocket();
-
+        ZoomMediaLoader.getInstance().init(new MyGlideModule());
 
         Toasty.Config.getInstance()
                 .setToastTypeface(Typeface.createFromAsset(getAssets(), "PCap Terminal.otf"))
