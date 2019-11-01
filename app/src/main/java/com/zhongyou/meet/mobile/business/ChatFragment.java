@@ -5,7 +5,6 @@ import android.app.Dialog;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -68,7 +67,6 @@ import com.zhongyou.meet.mobile.business.adapter.chatAdapter;
 import com.zhongyou.meet.mobile.business.adapter.inputAdapter;
 import com.zhongyou.meet.mobile.entities.Bucket;
 import com.zhongyou.meet.mobile.entities.ChatMesData;
-import com.zhongyou.meet.mobile.entities.PreViewImages;
 import com.zhongyou.meet.mobile.entities.QiniuToken;
 import com.zhongyou.meet.mobile.entities.base.BaseBean;
 import com.zhongyou.meet.mobile.event.ForumRevokeEvent;
@@ -125,7 +123,6 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 	private static int delayTime = 2000;
 	private static int delayRevokeTime = 2000;
 	private ChatMesData.PageDataEntity mDataEntity;
-	private List<PreViewImages> mStringLists;
 	private Transferee mTransferee;
 
 	@Override

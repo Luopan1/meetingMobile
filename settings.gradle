@@ -1,1 +1,1 @@
-include ':app', ':IosDialog', ':test', ':citypicker', ':MeetingCamera', ':photolib',  ':ImagePreview'
+include ':app', ':IosDialog', ':test', ':citypicker', ':MeetingCamera', ':photolib'

@@ -158,7 +158,6 @@
             android:screenOrientation="portrait"
             android:theme="@style/NoTitle"
             android:windowSoftInputMode="adjustPan" />
-        <activity android:name=".business.PhotoPreviewActivity" />
 
         <meta-data
             android:name="TD_APP_ID"
