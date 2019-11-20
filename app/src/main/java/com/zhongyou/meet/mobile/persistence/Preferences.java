@@ -483,6 +483,10 @@ public class Preferences {
         }
     }
 
+    public static String getWeiXinHead(){
+        return getPreferences().getString(PREFERENCE_WEIXIN_HEAD, "");
+    }
+
     /**
      * 没有设置完用户信息
      *

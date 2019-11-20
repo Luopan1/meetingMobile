@@ -30,6 +30,16 @@ public class Version implements Parcelable, Entity {
     private String versionCode;
 
     private String url;
+    private String versionDesc;
+    private String name;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public String getId() {
         return id;
@@ -177,6 +187,17 @@ public class Version implements Parcelable, Entity {
                 '}';
     }
 
+    public Version() {
+    }
+
+    public String getVersionDesc() {
+        return versionDesc;
+    }
+
+    public void setVersionDesc(String versionDesc) {
+        this.versionDesc = versionDesc;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -195,9 +216,8 @@ public class Version implements Parcelable, Entity {
         dest.writeString(this.delFlag);
         dest.writeString(this.versionCode);
         dest.writeString(this.url);
-    }
-
-    public Version() {
+        dest.writeString(this.versionDesc);
+        dest.writeString(this.name);
     }
 
     protected Version(Parcel in) {
@@ -212,6 +232,8 @@ public class Version implements Parcelable, Entity {
         this.delFlag = in.readString();
         this.versionCode = in.readString();
         this.url = in.readString();
+        this.versionDesc = in.readString();
+        this.name = in.readString();
     }
 
     public static final Creator<Version> CREATOR = new Creator<Version>() {

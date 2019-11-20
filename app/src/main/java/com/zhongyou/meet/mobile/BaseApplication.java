@@ -1,7 +1,9 @@
 package com.zhongyou.meet.mobile;
 
 import android.graphics.Typeface;
+import android.support.multidex.MultiDex;
 import android.support.multidex.MultiDexApplication;
+import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
 import com.orhanobut.logger.AndroidLogAdapter;
@@ -28,13 +30,14 @@ public class BaseApplication extends MultiDexApplication {
 
 	private Socket mSocket;
 
+
 	@Override
 	public void onCreate() {
 		super.onCreate();
 		com.orhanobut.logger.Logger.addLogAdapter(new AndroidLogAdapter());
 		instance = this;
-
-		initSocket();
+		MultiDex.install(this);
+		getHostUrl();
 
 		Toasty.Config.getInstance()
 				.setToastTypeface(Typeface.createFromAsset(getAssets(), "PCap Terminal.otf"))
@@ -60,7 +63,6 @@ public class BaseApplication extends MultiDexApplication {
 		TCAgent.init(this);
 		TCAgent.setReportUncaughtExceptions(true);
 
-		ApiClient.getInstance().urlConfig(staticResCallback);
       /*  //获取图片地址
         ApiClient.getInstance().getImageUrlPath(TAG, new OkHttpCallback<BaseBean<Object>>() {
             @Override
@@ -79,6 +81,41 @@ public class BaseApplication extends MultiDexApplication {
                 }
             }
         });*/
+	}
+
+	private void getHostUrl() {
+		ApiClient.getInstance().getHttpBaseUrl(this, new OkHttpCallback<com.alibaba.fastjson.JSONObject>() {
+
+			@Override
+			public void onSuccess(com.alibaba.fastjson.JSONObject entity) {
+
+				if (entity.getInteger("errcode")==0.0){
+					Constant.WEBSOCKETURL=entity.getJSONObject("data").getJSONObject("staticRes").getString("websocket");
+					Constant.APIHOSTURL=entity.getJSONObject("data").getJSONObject("staticRes").getString("domain");
+					Constant.DOWNLOADURL=entity.getJSONObject("data").getJSONObject("staticRes").getString("apiDownloadUrl");
+					com.orhanobut.logger.Logger.e("webSocket:="+Constant.WEBSOCKETURL);
+					com.orhanobut.logger.Logger.e("ApiHost:="+Constant.APIHOSTURL);
+					com.orhanobut.logger.Logger.e("DownLoadUrl:="+Constant.DOWNLOADURL);
+					if (Constant.WEBSOCKETURL==null||Constant.APIHOSTURL==null){
+						return;
+					}
+					initSocket();
+					ApiClient.getInstance().urlConfig(staticResCallback);
+				}
+
+			}
+
+			@Override
+			public void onFailure(int errorCode, BaseException exception) {
+				com.orhanobut.logger.Logger.e(exception.getMessage());
+				Toasty.error(getInstance(),exception.getMessage(), Toast.LENGTH_SHORT, true).show();
+			}
+
+			@Override
+			public void onFinish() {
+
+			}
+		});
 	}
 
 	public static BaseApplication getInstance() {
@@ -119,7 +156,7 @@ public class BaseApplication extends MultiDexApplication {
 			options.reconnectionDelayMax = 5000;
 			options.reconnectionAttempts = 10;
 			options.query = "userId=" + Preferences.getUserId();
-			mSocket = IO.socket(BuildConfig.WS_DOMAIN_NAME, options);
+			mSocket = IO.socket(Constant.WEBSOCKETURL, options);
 			Logger.i(TAG, "初始化WebSocket成功");
 			TCAgent.onEvent(this, "WebSocket", "初始化WebSocket成功");
 		} catch (URISyntaxException e) {

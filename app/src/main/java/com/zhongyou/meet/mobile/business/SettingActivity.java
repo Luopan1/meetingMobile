@@ -18,6 +18,7 @@ import com.zhongyou.meet.mobile.entities.Version;
 import com.zhongyou.meet.mobile.entities.base.BaseBean;
 import com.zhongyou.meet.mobile.event.ResolutionChangeEvent;
 import com.zhongyou.meet.mobile.persistence.Preferences;
+import com.zhongyou.meet.mobile.utils.ApkUtil;
 import com.zhongyou.meet.mobile.utils.Common;
 import com.zhongyou.meet.mobile.utils.OkHttpCallback;
 import com.zhongyou.meet.mobile.utils.RxBus;
@@ -74,7 +75,7 @@ public class SettingActivity extends BasicActivity {
         });
 
 
-        ((TextView) findViewById(R.id.label_version_num)).setText(BuildConfig.VERSION_NAME);
+        ((TextView) findViewById(R.id.label_version_num)).setText("V"+BuildConfig.VERSION_NAME);
         mNewVersionFlag = findViewById(R.id.label_version_new);
 
         findViewById(R.id.layout_logout).setOnClickListener(new View.OnClickListener() {
@@ -107,12 +108,24 @@ public class SettingActivity extends BasicActivity {
             @Override
             public void onSuccess(BaseBean<Version> entity) {
                 Version version = entity.getData();
-                if (version.getImportance() != 1) {
+
+               /* if (version.getImportance() != 1 &&version.getImportance()!=0) {
                     mNewVersionFlag.setVisibility(View.VISIBLE);
                 } else {
                     mNewVersionFlag.setVisibility(View.GONE);
+                }*/
 
-                }
+               if (version!=null){
+                   try {
+                       if (ApkUtil.compareVersion(version.getVersionDesc(),BuildConfig.VERSION_NAME)>0){
+                           mNewVersionFlag.setVisibility(View.VISIBLE);
+                       }else {
+                           mNewVersionFlag.setVisibility(View.GONE);
+                       }
+                   } catch (Exception e) {
+                       e.printStackTrace();
+                   }
+               }
             }
 
             @Override

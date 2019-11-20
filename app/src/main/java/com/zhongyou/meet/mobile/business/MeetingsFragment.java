@@ -188,7 +188,7 @@ public class MeetingsFragment extends BaseFragment {
 
 
 	private void showOwnerMeeting(String meetingMgrUrl) {
-		frameLayout.setVisibility(View.VISIBLE);
+		frameLayout.setVisibility(View.GONE);
 
 	}
 

@@ -18,8 +18,11 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSON;
 import com.zhongyou.meet.mobile.ApiClient;
+import com.zhongyou.meet.mobile.BaseException;
 import com.zhongyou.meet.mobile.BuildConfig;
+import com.zhongyou.meet.mobile.Constant;
 import com.zhongyou.meet.mobile.R;
 import com.zhongyou.meet.mobile.entities.Bucket;
 import com.zhongyou.meet.mobile.entities.MeetingJoinStats;
@@ -93,8 +96,9 @@ public class HomeActivity extends BasicActivity implements View.OnClickListener 
 			}
 		});
 
+
 		initView();
-        versionCheck();
+		versionCheck();
 		initData();
 		registerDevice();
 
@@ -108,6 +112,8 @@ public class HomeActivity extends BasicActivity implements View.OnClickListener 
 			ApiClient.getInstance().meetingJoinStats(TAG, meetingJoinStatsCallback, params);
 		}
 	}
+
+
 
 	private OkHttpCallback meetingJoinStatsCallback = new OkHttpCallback<Bucket<MeetingJoinStats>>() {
 

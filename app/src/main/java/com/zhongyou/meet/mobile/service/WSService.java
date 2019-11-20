@@ -168,7 +168,6 @@ public class WSService extends Service {
             public void call(Object o) {
                 if (o instanceof SetUserStateEvent) {
                     SetUserStateEvent event = (SetUserStateEvent) o;
-                    com.orhanobut.logger.Logger.e(JSON.toJSONString(event));
                     if (event.isOnline()) {
                         PHONE_ONLINE = true;
                         disconnectChatSocket();
@@ -223,7 +222,6 @@ public class WSService extends Service {
                     ResolutionChangeEvent resolutionChangeEvent = (ResolutionChangeEvent) o;
                     resolutionChanged(resolutionChangeEvent.getResolution());
                 }else if(o instanceof SetUserChatEvent){
-                    com.orhanobut.logger.Logger.e(JSON.toJSONString(o));
                     SetUserChatEvent event = (SetUserChatEvent) o;
                     if (event.isOnline()) {
                         connectChatSocket();
@@ -250,7 +248,6 @@ public class WSService extends Service {
 
         @Override
         public void onSuccess(Bucket<ExpostorOnlineStats> entity) {
-            Logger.i("stats", entity.getData().toString());
             if (TextUtils.isEmpty(onlineTraceId)) {
                 onlineTraceId = entity.getData().getId();
             } else {
@@ -334,7 +331,6 @@ public class WSService extends Service {
         if (TextUtils.isEmpty(uuid)) {
             msg.append("UUID为空");
 //            showToast(msg.toString());
-            Logger.e(TAG, msg.toString());
         } else {
             try {
                 JSONObject params = new JSONObject();
@@ -400,14 +396,12 @@ public class WSService extends Service {
     };
 
     private void connectChatSocket(){
-        com.orhanobut.logger.Logger.e("connectChatSocket:"+isOnline());
         Log.i(TAG, "connectChatSocket");
         if (isOnline()) {
             Log.i(TAG, "connectChatSocket SOCKET_ONLINE == true re");
             return;
         }
         ZYAgent.onEvent(getApplicationContext(),"长连接 主动调用连接");
-        Logger.i(TAG,WS_URL);
 
         mSocket.on(Socket.EVENT_DISCONNECT, onChatDisconnect);
         mSocket.on(Socket.EVENT_CONNECT_ERROR, onChatConnectError);
@@ -421,7 +415,6 @@ public class WSService extends Service {
     }
 
     private void disconnectChatSocket(){
-        com.orhanobut.logger.Logger.e("disconnectChatSocket");
         Log.i(TAG, "disconnectChatSocket");
         if (mSocket == null) {
             Log.i(TAG, "disConnectSocket mSocket==null return");
@@ -439,7 +432,6 @@ public class WSService extends Service {
     }
     private void connectSocket() {
         Log.i(TAG, "connectSocket");
-        com.orhanobut.logger.Logger.e("connectSocket:"+isOnline());
         if (isOnline()) {
             Log.i(TAG, "connectSocket SOCKET_ONLINE == true re");
             return;
@@ -466,7 +458,6 @@ public class WSService extends Service {
     }
 
     private void disConnectSocket() {
-        com.orhanobut.logger.Logger.e("disconnectChatSocket");
         Log.i(TAG, "disConnectSocket");
         if (mSocket == null) {
             Log.i(TAG, "disConnectSocket mSocket==null return");
@@ -494,7 +485,6 @@ public class WSService extends Service {
         @Override
         public void call(Object... args) {
             RxBus.sendMessage(new SocketStatus(true));
-            com.orhanobut.logger.Logger.e("连接成功的回调");
             ZYAgent.onEvent(getApplicationContext(),"连接回调");
 //            JSONObject data = (JSONObject) args;
             Log.i("wsserver", "Listener onConnect ");
@@ -530,7 +520,6 @@ public class WSService extends Service {
             RxBus.sendMessage(new SocketStatus(false));
             ZYAgent.onEvent(getApplicationContext(),"断开连接回调");
             Log.i("wsserver", "Listener onChatDisconnect diconnected");
-            com.orhanobut.logger.Logger.e("断开socket的连接："+JSON.toJSONString(args));
         }
     };
     @SuppressLint("HandlerLeak")
@@ -555,7 +544,6 @@ public class WSService extends Service {
     private Emitter.Listener onChatConnectError = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
-            com.orhanobut.logger.Logger.e("socket连接出错:");
             ZYAgent.onEvent(getApplicationContext(),"断开连接回调");
             disconnectChatSocket();
             if(handler.hasMessages(10)){
@@ -564,7 +552,6 @@ public class WSService extends Service {
             handler.sendEmptyMessageDelayed(10,10000);
 //            mSocket.disconnect();
 //            mSocket.connect();
-            com.orhanobut.logger.Logger.e("socket连接出错:");
             Log.i("wsserver", "Listener onChatConnectError ");
 
             RxBus.sendMessage(new SocketStatus(false));
@@ -760,7 +747,6 @@ public class WSService extends Service {
     private Emitter.Listener ON_FORUM_REVOKE = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
-            com.orhanobut.logger.Logger.e("ON_FORUM_REVOKE:   "+JSON.toJSONString(args));
             ZYAgent.onEvent(getApplicationContext(),"ON_OLD_DISCONNECT");
             Log.i("wsserver", "Listener ON_OLD_DISCONNECT=="+args);
             ForumRevokeEvent event = new ForumRevokeEvent();
@@ -792,7 +778,6 @@ public class WSService extends Service {
     private Emitter.Listener ON_FORUM_SEND_CONTENT = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
-            com.orhanobut.logger.Logger.e("ON_FORUM_SEND_CONTENT:    "+JSON.toJSONString(args));
             ZYAgent.onEvent(getApplicationContext(),"ON_FORUM_SEND_CONTENT");
             Log.i("wsserver", "Listener ON_FORUM_SEND_CONTENT=="+args);
             ForumSendEvent event = new ForumSendEvent();

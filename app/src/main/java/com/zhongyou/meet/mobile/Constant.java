@@ -6,13 +6,17 @@ package com.zhongyou.meet.mobile;
 
 public class Constant {
 
+    public static String APIHOSTURL="";
+    public static String WEBSOCKETURL="";
+    public static String DOWNLOADURL="";
+
     public static final String RELOGIN_ACTION = ".ACTION.RELOGIN";
 
     /**
      * 检查更新地址
      */
-    public static final String VERSION_UPDATE_URL = BuildConfig.API_DOMAIN_NAME_YOYOTU+"/dz/app/version/"
-            + BuildConfig.APPLICATION_ID+"/android/GA/latest?versionCode=" + BuildConfig.VERSION_CODE;
+   /* public static final String VERSION_UPDATE_URL = DOWNLOADURL+"/dz/app/version/"
+            + BuildConfig.APPLICATION_ID+"/android/GA/latest?versionCode=" + BuildConfig.VERSION_CODE;*/
 
     public final static int NICKNAME_MAX = 8;
     public final static int NICKNAME_MIN = 2;

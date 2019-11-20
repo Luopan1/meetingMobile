@@ -8,14 +8,21 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ycbjie.ycupdatelib.UpdateFragment;
+import com.ycbjie.ycupdatelib.UpdateUtils;
 import com.zhongyou.meet.mobile.ApiClient;
 import com.zhongyou.meet.mobile.BaseException;
+import com.zhongyou.meet.mobile.BuildConfig;
 import com.zhongyou.meet.mobile.R;
 import com.zhongyou.meet.mobile.entities.Version;
 import com.zhongyou.meet.mobile.entities.base.BaseBean;
+import com.zhongyou.meet.mobile.utils.ApkUtil;
 import com.zhongyou.meet.mobile.utils.OkHttpCallback;
 import com.zhongyou.meet.mobile.utils.ToastUtils;
+import com.zhongyou.meet.mobile.utils.Utils;
+import com.zhongyou.meet.mobile.wxapi.WXEntryActivity;
 
+import java.io.File;
 import java.util.Locale;
 
 
@@ -50,43 +57,53 @@ public class VersionActivity extends BasicActivity {
 		versionCheck();
 
 	}
-
+	private boolean isFoceUpDate=false;
 	private void versionCheck() {
 		ApiClient.getInstance().versionCheck(this, new OkHttpCallback<BaseBean<Version>>() {
 			@Override
 			public void onSuccess(BaseBean<Version> entity) {
 				Version version = entity.getData();
-
-				if (version!=null&&version.getImportance() != 1) {
+				if (version==null){
+					return;
+				}
+				if (version.getImportance()==1){
+					try {
+						if (ApkUtil.compareVersion(version.getVersionDesc(),BuildConfig.VERSION_NAME)<=0){
+							mBtnUpgrade.setEnabled(false);
+							mBtnUpgrade.setBackground(getResources().getDrawable(R.drawable.setting_button_circle_blue_enable));
+							mLabelViersion.setText(String.format(Locale.CHINA, "已是新版本：中幼在线%s", BuildConfig.VERSION_NAME));
+							return;
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+				//1:最新版，不用更新 2：小改动，可以不更新 3：建议更新 4 强制更新
+				if (version.getImportance()!=0){
 					mBtnUpgrade.setEnabled(true);
 					mBtnUpgrade.setBackground(getResources().getDrawable(R.drawable.setting_button_circle_blue));
-					upDataUrl=version.getUrl();
 					if (version.getVersionCode()!=null){
-						mLabelViersion.setText(String.format(Locale.CHINA, "已有新版本：中幼在线%s", version.getVersionCode()));
+						mLabelViersion.setText(String.format(Locale.CHINA, "已有新版本：中幼在线%s", version.getVersionDesc()));
 					}else {
 						mLabelViersion.setText("已有新版本：中幼在线");
 					}
 
+					if (version.getImportance()==4){
+						isFoceUpDate=true;
+					}else if (version.getImportance()==2||version.getImportance()==3){
+						isFoceUpDate=false;
+					}
 					mBtnUpgrade.setOnClickListener(new View.OnClickListener() {
 						@Override
 						public void onClick(View v) {
-							Intent intent = new Intent();
-							intent.setAction(Intent.ACTION_VIEW);
-							if (upDataUrl==null){
-								ToastUtils.showToast("下载连接失效，请去应用市场下载");
-								return;
-							}
-							Uri content_url = Uri.parse(upDataUrl);
-							intent.setData(content_url);
-							startActivity(Intent.createChooser(intent, "请选择浏览器"));
+							UpdateUtils.APP_UPDATE_DOWN_APK_PATH = getResources().getString(R.string.app_name) + File.separator + "download";
+							String desc = version.getName() + "\n" + "最新版本:" + version.getVersionDesc();
+							UpdateFragment updateFragment = UpdateFragment.showFragment(VersionActivity.this,
+									isFoceUpDate, version.getUrl(),
+									version.getName() + "-" + version.getVersionDesc(),
+									desc, BuildConfig.APPLICATION_ID);
 						}
 					});
-
-				} else {
-					mBtnUpgrade.setEnabled(false);
-					mBtnUpgrade.setBackground(getResources().getDrawable(R.drawable.setting_button_circle_blue_enable));
-					mLabelViersion.setText(String.format(Locale.CHINA, "已是新版本：中幼在线%s", version.getVersionCode()));
-
 				}
 			}
 

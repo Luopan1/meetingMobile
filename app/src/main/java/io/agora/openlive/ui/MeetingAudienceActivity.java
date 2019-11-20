@@ -80,6 +80,7 @@ import io.agora.openlive.model.AGEventHandler;
 import io.agora.rtc.Constants;
 import io.agora.rtc.IRtcEngineEventHandler;
 import io.agora.rtc.RtcEngine;
+import io.agora.rtc.internal.RtcEngineMessage;
 import io.agora.rtc.video.VideoCanvas;
 import rx.Subscription;
 import rx.functions.Action1;
@@ -522,6 +523,13 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 				if (BuildConfig.DEBUG) {
 					runOnUiThread(() -> Toast.makeText(MeetingAudienceActivity.this, "信令系统重连成功", Toast.LENGTH_SHORT).show());
 				}
+				runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						agoraAPI.channelJoin(channelName);
+					}
+				});
+
 			}
 
 			@Override
@@ -660,7 +668,6 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 								remoteAudienceSurfaceView = null;
 
 								agoraAPI.setAttr("uname", audienceName); // 设置当前登录用户的相关属性值。
-
 								localSurfaceView = RtcEngine.CreateRendererView(getApplicationContext());
 								localSurfaceView.setZOrderOnTop(true);
 								localSurfaceView.setZOrderMediaOverlay(true);
@@ -885,7 +892,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 							}
 						}
 					}
-					if ("doc_info".equals(name)&&isHostCommeIn) {
+					if ("doc_info".equals(name)) {
 						agoraAPI.channelQueryUserNum(channelName);
 						if (!TextUtils.isEmpty(value)) {
 							try {
@@ -980,7 +987,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 						stopTalkButton.setVisibility(View.GONE);
 						requestTalkButton.setVisibility(View.VISIBLE);
 
-						agoraAPI.channelDelAttr(channelName, CALLING_AUDIENCE);
+//						agoraAPI.channelDelAttr(channelName, CALLING_AUDIENCE);
 					}
 					if (TextUtils.isEmpty(name)&&type.equals("clear")&&TextUtils.isEmpty(value)){
 						docImage.setVisibility(View.GONE);
@@ -1163,6 +1170,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 							Toast.makeText(MeetingAudienceActivity.this, "主持人" + broadcastId + "---" + uid + meetingJoin.getHostUser().getHostUserName() + "进入了", Toast.LENGTH_SHORT).show();
 						}
 						isHostCommeIn=true;
+						agoraAPI.channelJoin(channelName);
 						agoraAPI.queryUserStatus(broadcastId);
 
 						broadcastTipsText.setVisibility(View.GONE);
@@ -1728,6 +1736,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			String action = intent.getAction();
+			Logger.e(action);
 			if (Intent.ACTION_CLOSE_SYSTEM_DIALOGS.equals(action) || Intent.ACTION_SHUTDOWN.equals(action)) {
 				String reason = intent.getStringExtra(REASON);
 				if (TextUtils.equals(reason, HOMEKEY)) {

@@ -108,6 +108,12 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
 
         TCAgent.onEvent(this, "进入会议直播界面");
 
+        audienceRecyclerView = findViewById(R.id.audience_list);
+        audienceRecyclerView.setLayoutManager(new GridLayoutManager(getApplicationContext(), 3, RecyclerView.VERTICAL, false));
+        audienceRecyclerView.addItemDecoration(new SpaceItemDecoration(DensityUtil.dip2px(getApplicationContext(), 4), 0, 0, DensityUtil.dip2px(getApplicationContext(), 4)));
+        audienceVideoAdapter = new AudienceVideoAdapter(this);
+        audienceRecyclerView.setAdapter(audienceVideoAdapter);
+
     }
 
     @Override
@@ -133,7 +139,7 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
         meeting = meetingJoin.getMeeting();
 
         if(meetingJoin==null||meetingJoin.getHostUser()==null||meetingJoin.getHostUser().getClientUid()==null){
-            Toasty.error(this,"会议加入码输入错误").show();
+            Toasty.error(this,"主持人还未加入会议 请稍等").show();
             finish();
             return;
         }
@@ -143,11 +149,7 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
 
         config().mUid = Integer.parseInt(UIDUtil.generatorUID(Preferences.getUserId()));
 
-        audienceRecyclerView = findViewById(R.id.audience_list);
-        audienceRecyclerView.setLayoutManager(new GridLayoutManager(getApplicationContext(), 3, RecyclerView.VERTICAL, false));
-        audienceRecyclerView.addItemDecoration(new SpaceItemDecoration(DensityUtil.dip2px(getApplicationContext(), 4), 0, 0, DensityUtil.dip2px(getApplicationContext(), 4)));
-        audienceVideoAdapter = new AudienceVideoAdapter(this);
-        audienceRecyclerView.setAdapter(audienceVideoAdapter);
+
 
         audienceLayout = findViewById(R.id.audience_layout);
         broadcasterView = findViewById(R.id.broadcaster_view);
@@ -416,7 +418,7 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
             @Override
             public void onChannelAttrUpdated(String channelID, String name, String value, String type) {
                 super.onChannelAttrUpdated(channelID, name, value, type);
-                com.orhanobut.logger.Logger.e("onChannelAttrUpdated:" + "name:   " + name + "value:    " + value + "type:    " + type);
+                com.orhanobut.logger.Logger.e("onChannelAttrUpdated:" + "name:   " + name + "   value:  " + value + "    type:      " + type);
                 runOnUiThread(() -> {
                     if (BuildConfig.DEBUG) {
                         Toast.makeText(InviteMeetingAudienceActivity.this, "onChannelAttrUpdated:" + "\nname:" + name + ", \nvalue:" + value + ", \ntype:" + type, Toast.LENGTH_SHORT).show();

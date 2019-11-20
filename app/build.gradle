@@ -46,8 +46,8 @@ android {
         applicationId "com.zhongyou.meet.mobile"
         minSdkVersion 16
         targetSdkVersion 28
-        versionName "1.1.6"
-        versionCode 26781318
+        versionName "2.0.0"
+        versionCode 33554432
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
         //默认编译赋值
@@ -61,6 +61,7 @@ android {
 //            abiFilters "armeabi-v7a", "x86"
             // DO NOT MODIFY THIS LINE, IT'S UPDATED BY BUILD MACHINE AUTOMATICALLY.
         }
+        multiDexEnabled true
     }
 
     dataBinding {
@@ -85,7 +86,8 @@ android {
 
             buildConfigField 'String', 'API_DOMAIN_NAME', '"http://osg.apitest.zhongyouie.cn"'
 //            buildConfigField 'String', 'API_DOMAIN_NAME', '"http://api.zhongyouie.com"'
-            buildConfigField 'String', 'API_DOMAIN_NAME_YOYOTU', '"http://tapi.zhongyouie.cn"'//唷唷兔地址
+            buildConfigField 'String', 'API_DOMAIN_NAME_YOYOTU', '"http://tapi.zhongyouie.cn"'
+//唷唷兔地址
 
             buildConfigField 'String', 'WS_DOMAIN_NAME', '"http://wstest.zhongyouie.cn/sales"'
             buildConfigField 'String', 'WEIXIN_APP_ID', '"wx9a61fda9d6d2e0fb"' //微信id
@@ -109,7 +111,8 @@ android {
 
             buildConfigField 'String', 'API_DOMAIN_NAME', '"http://osg.apitest.zhongyouie.cn"'
 //            buildConfigField 'String', 'API_DOMAIN_NAME', '"http://api.zhongyouie.com"'
-            buildConfigField 'String', 'API_DOMAIN_NAME_YOYOTU', '"http://tapi.zhongyouie.cn"'//唷唷兔地址
+            buildConfigField 'String', 'API_DOMAIN_NAME_YOYOTU', '"http://tapi.zhongyouie.cn"'
+//唷唷兔地址
             buildConfigField 'String', 'WS_DOMAIN_NAME', '"http://wstest.zhongyouie.cn/sales"'
 //
 //            buildConfigField 'String', 'API_DOMAIN_NAME', '"http://api.zhongyouie.com"'
@@ -131,7 +134,7 @@ android {
     android.applicationVariants.all { variant ->
         variant.outputs.all {
             if (outputFileName.endsWith(".apk")) {
-                def fileName = "Guide-Mobile_" + getGitBranch() + "_" + variant.buildType.name + "_" + variant.versionName + "_" + variant.versionCode + "_" + getDate() + ".apk"
+                def fileName = "Guide-Mobile_" + "_" + variant.buildType.name + "_" + variant.versionName + "_" + variant.versionCode + "_" + getDate() + ".apk"
                 outputFileName = fileName
             }
         }
@@ -146,6 +149,7 @@ dependencies {
     implementation project(path: ':MeetingCamera')
     //城市选择
     implementation project(path: ':citypicker')
+    implementation project(path: ':YCUpdateLib')
     //    implementation project(':takephoto_library')
     androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
@@ -199,5 +203,8 @@ dependencies {
     implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.30'
     implementation 'com.github.Hitomis.transferee:Transferee:v1.0.0'
     implementation 'com.github.Hitomis.transferee:GlideLoader:v1.0.0'
+
+    implementation 'com.android.support:multidex:1.0.3'
+    implementation 'com.lxj:xpopup:1.8.10'
 
 }
