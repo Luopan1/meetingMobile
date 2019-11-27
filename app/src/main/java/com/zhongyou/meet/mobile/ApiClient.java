@@ -32,7 +32,6 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
 import static com.zhongyou.meet.mobile.utils.ToastUtils.showToast;
 
 /**
@@ -94,38 +93,38 @@ public class ApiClient {
     }
 
     public void expostorOnlineStats(Object tag, OkHttpCallback callback, Map<String, Object> values) {
-        okHttpUtil.postJson(Constant.APIHOSTURL + "/osg/app/user/expostor/online/stats", getCommonHead(), JSON.toJSONString(values), callback, tag);
+        okHttpUtil.postJson(Constant.getAPIHOSTURL() + "/osg/app/user/expostor/online/stats", getCommonHead(), JSON.toJSONString(values), callback, tag);
     }
 
     //删除聊天内容/osg/app/forum/{forumId}
 
     public void expostorDeleteChatMessage(Object tag, OkHttpCallback callback, String forumId) {
 
-        okHttpUtil.delete(Constant.APIHOSTURL + "/osg/app/forum/" + forumId, getCommonHead(), null, callback);
+        okHttpUtil.delete(Constant.getAPIHOSTURL() + "/osg/app/forum/" + forumId, getCommonHead(), null, callback);
     }
 
     public void postViewLog(String meetingid,Object tag, OkHttpCallback callback){
-        okHttpUtil.post(Constant.APIHOSTURL + "/osg/app/forum/"+meetingid+"/view/log", getCommonHead(), null,callback);
+        okHttpUtil.post(Constant.getAPIHOSTURL() + "/osg/app/forum/"+meetingid+"/view/log", getCommonHead(), null,callback);
     }
     //提交聊天内容
     public void expostorPostChatMessage(Object tag, OkHttpCallback callback, Map<String, Object> values) {
-        okHttpUtil.postJson(Constant.APIHOSTURL + "/osg/app/forum", getCommonHead(), JSON.toJSONString(values), callback, tag);
+        okHttpUtil.postJson(Constant.getAPIHOSTURL() + "/osg/app/forum", getCommonHead(), JSON.toJSONString(values), callback, tag);
     }
 
     public void meetingJoinStats(Object tag, OkHttpCallback callback, Map<String, Object> values) {
-        okHttpUtil.postJson(Constant.APIHOSTURL + "/osg/app/meeting/join/stats", getCommonHead(), JSON.toJSONString(values), callback, tag);
+        okHttpUtil.postJson(Constant.getAPIHOSTURL() + "/osg/app/meeting/join/stats", getCommonHead(), JSON.toJSONString(values), callback, tag);
     }
 
     public void meetingHostStats(Object tag, OkHttpCallback callback, Map<String, Object> values) {
-        okHttpUtil.postJson(Constant.APIHOSTURL + "/osg/app/meeting/host/stats", getCommonHead(), JSON.toJSONString(values), callback, tag);
+        okHttpUtil.postJson(Constant.getAPIHOSTURL() + "/osg/app/meeting/host/stats", getCommonHead(), JSON.toJSONString(values), callback, tag);
     }
 
     public void searchMeeting(Object tag, String meetingName, OkHttpCallback callback) {
-        okHttpUtil.get(Constant.APIHOSTURL + "/osg/app/meeting/all?title=" + meetingName, getCommonHead(), null, callback);
+        okHttpUtil.get(Constant.getAPIHOSTURL() + "/osg/app/meeting/all?title=" + meetingName, getCommonHead(), null, callback);
     }
 
     public void getAllMeeting(Object tag, String meetingName, int type, OkHttpCallback callback) {
-        String url = Constant.APIHOSTURL + "/osg/app/meeting/list";
+        String url = Constant.getAPIHOSTURL() + "/osg/app/meeting/list";
         url += "?type=" + type;
 
         if (!TextUtils.isEmpty(meetingName))
@@ -134,13 +133,13 @@ public class ApiClient {
     }
 
     public void getAllForumMeeting(Object tag, Map<String, String> params, OkHttpCallback callback) {
-        String url = Constant.APIHOSTURL + "/osg/app/forum";
+        String url = Constant.getAPIHOSTURL() + "/osg/app/forum";
         okHttpUtil.get(url, getCommonHead(), params, callback);
     }
 
     ///osg/app/forum/{meetingId}/content
     public void getChatMessages(Object tag, String meetingId, String pageNo, String pageSize, OkHttpCallback callback) {
-        String url = Constant.APIHOSTURL + "/osg/app/forum/" + meetingId + "/content";
+        String url = Constant.getAPIHOSTURL() + "/osg/app/forum/" + meetingId + "/content";
         Map<String, String> params = new HashMap<>();
         params.put("pageNo", pageNo);
         params.put("pageSize", pageSize);
@@ -148,50 +147,50 @@ public class ApiClient {
     }
 
     public void verifyRole(Object tag, OkHttpCallback callback, Map<String, Object> values) {
-        okHttpUtil.postJson(Constant.APIHOSTURL + "/osg/app/meeting/verify", getCommonHead(), JSON.toJSONString(values), callback, tag);
+        okHttpUtil.postJson(Constant.getAPIHOSTURL() + "/osg/app/meeting/verify", getCommonHead(), JSON.toJSONString(values), callback, tag);
     }
 
     public void joinMeeting(Object tag, OkHttpCallback callback, Map<String, Object> values) {
-        okHttpUtil.postJson(Constant.APIHOSTURL + "/osg/app/meeting/join", getCommonHead(), JSON.toJSONString(values), callback, tag);
+        okHttpUtil.postJson(Constant.getAPIHOSTURL() + "/osg/app/meeting/join", getCommonHead(), JSON.toJSONString(values), callback, tag);
     }
 
     public void getMeeting(Object tag, String meetingId, OkHttpCallback callback) {
-        okHttpUtil.get(Constant.APIHOSTURL + "/osg/app/meeting/" + meetingId, getCommonHead(), null, callback);
+        okHttpUtil.get(Constant.getAPIHOSTURL() + "/osg/app/meeting/" + meetingId, getCommonHead(), null, callback);
     }
 
     public void getMeetingHost(Object tag, String meetingId, OkHttpCallback callback) {
-        okHttpUtil.get(Constant.APIHOSTURL + "/osg/app/meeting/" + meetingId + "/host", getCommonHead(), null, callback);
+        okHttpUtil.get(Constant.getAPIHOSTURL() + "/osg/app/meeting/" + meetingId + "/host", getCommonHead(), null, callback);
     }
 
     public void finishMeeting(Object tag, String meetingId, int attendance, OkHttpCallback callback) {
-        okHttpUtil.postJson(Constant.APIHOSTURL + "/osg/app/meeting/" + meetingId + "/end?attendance=" + attendance, getCommonHead(), null, callback, tag);
+        okHttpUtil.postJson(Constant.getAPIHOSTURL() + "/osg/app/meeting/" + meetingId + "/end?attendance=" + attendance, getCommonHead(), null, callback, tag);
     }
 
     //  软件更新
     public void versionCheck(Object tag, OkHttpCallback<BaseBean<Version>> callback) {
-        okHttpUtil.get( Constant.DOWNLOADURL+"/dz/app/version/"
+        okHttpUtil.get( Constant.getDOWNLOADURL()+"/dz/app/version/"
                 + BuildConfig.APPLICATION_ID+"/android/GA/latest?versionCode=" + BuildConfig.VERSION_CODE, tag, callback);
     }
 
     //获取全局配置信息接口
     public void urlConfig(OkHttpCallback<BaseBean<StaticRes>> callback) {
-        okHttpUtil.get(Constant.DOWNLOADURL + "/dz/app/config", null, null, callback);
+        okHttpUtil.get(Constant.getDOWNLOADURL() + "/dz/app/config", null, null, callback);
     }
 
     //获取大区（中心）接口
     public void districts(OkHttpCallback callback, String parentId) {
-        okHttpUtil.get(Constant.APIHOSTURL + "/osg/app/user/district?parentId=" + parentId, getCommonHead(), null, callback);
+        okHttpUtil.get(Constant.getAPIHOSTURL() + "/osg/app/user/district?parentId=" + parentId, getCommonHead(), null, callback);
     }
 
     //  注册设备信息
     public void deviceRegister(Object tag, String jsonStr, OkHttpCallback callback) {
-        Logger.e(Constant.APIHOSTURL);
-        okHttpUtil.postJson(Constant.APIHOSTURL + "/osg/app/device", getCommonHead(), jsonStr, callback, tag);
+        Logger.e(Constant.getAPIHOSTURL());
+        okHttpUtil.postJson(Constant.getAPIHOSTURL() + "/osg/app/device", getCommonHead(), jsonStr, callback, tag);
     }
 
     //获取大区（中心）接口
     public void meetingAdmin(OkHttpCallback callback) {
-        okHttpUtil.get(Constant.APIHOSTURL + "/osg/app/user/meeting/admin", getCommonHead(), null, callback);
+        okHttpUtil.get(Constant.getAPIHOSTURL() + "/osg/app/user/meeting/admin", getCommonHead(), null, callback);
     }
 
     /**
@@ -202,7 +201,7 @@ public class ApiClient {
      * @return
      */
     public void startOrStopOrRejectCallExpostor(String recordId, String state, OkHttpCallback responseCallback) {
-        okHttpUtil.put(Constant.APIHOSTURL + "/osg/app/call/record/" + recordId + "?state=" + state, getCommonHead(), null, responseCallback);
+        okHttpUtil.put(Constant.getAPIHOSTURL() + "/osg/app/call/record/" + recordId + "?state=" + state, getCommonHead(), null, responseCallback);
     }
 
     /**
@@ -214,7 +213,7 @@ public class ApiClient {
      * @param jsonStr
      */
     public void updateDeviceInfo(Object tag, String deviceId, OkHttpCallback responseCallback, String jsonStr) {
-        okHttpUtil.putJson(Constant.APIHOSTURL + "/osg/app/device/" + deviceId, getCommonHead(), jsonStr, responseCallback, tag);
+        okHttpUtil.putJson(Constant.getAPIHOSTURL() + "/osg/app/device/" + deviceId, getCommonHead(), jsonStr, responseCallback, tag);
     }
 
     /**
@@ -224,7 +223,7 @@ public class ApiClient {
      * @param responseCallback
      */
     public void getAgoraKey(Object tag, Map<String, String> params, OkHttpCallback responseCallback) {
-        okHttpUtil.get(jointParamsToUrl(Constant.APIHOSTURL + "/osg/agora/key/osgV2", params), tag, responseCallback);
+        okHttpUtil.get(jointParamsToUrl(Constant.getAPIHOSTURL() + "/osg/agora/key/osgV2", params), tag, responseCallback);
     }
 
     /**
@@ -247,7 +246,7 @@ public class ApiClient {
         Map<String, String> params = new HashMap<>();
         params.put("code", code);
         params.put("state", state);
-        okHttpUtil.get(Constant.APIHOSTURL + "/osg/app/wechat", params, tag, callback);
+        okHttpUtil.get(Constant.getAPIHOSTURL() + "/osg/app/wechat", params, tag, callback);
     }
 
     /**
@@ -257,7 +256,7 @@ public class ApiClient {
      * @param callback
      */
     public void requestUser(Object tag, OkHttpCallback<BaseBean<UserData>> callback) {
-        okHttpUtil.get(Constant.APIHOSTURL + "/osg/app/user", getCommonHead(), null, callback, tag);
+        okHttpUtil.get(Constant.getAPIHOSTURL() + "/osg/app/user", getCommonHead(), null, callback, tag);
     }
 
     public void requestUser() {
@@ -291,7 +290,7 @@ public class ApiClient {
      * @param callback
      */
     public void requestUserExpostor(Object tag, Map<String, String> params, OkHttpCallback callback) {
-        okHttpUtil.putJson(Constant.APIHOSTURL + "/osg/app/user/expostor/" + Preferences.getUserId(), getCommonHead(),
+        okHttpUtil.putJson(Constant.getAPIHOSTURL() + "/osg/app/user/expostor/" + Preferences.getUserId(), getCommonHead(),
                 OkHttpUtil.getGson().toJson(params), callback, tag);
     }
 
@@ -303,7 +302,7 @@ public class ApiClient {
      * @param callback
      */
     public void requestUserExpostorState(Object tag, Map<String, String> params, OkHttpCallback callback) {
-        okHttpUtil.putJson(Constant.APIHOSTURL + "/osg/app/user/expostor/" + Preferences.getUserId() + "/state"
+        okHttpUtil.putJson(Constant.getAPIHOSTURL() + "/osg/app/user/expostor/" + Preferences.getUserId() + "/state"
                 , getCommonHead(), OkHttpUtil.getGson().toJson(params), callback, tag);
     }
 
@@ -315,7 +314,7 @@ public class ApiClient {
      */
     public void requestQiniuToken(Object tag, OkHttpCallback callback) {
         //使用唷唷兔地址
-        okHttpUtil.get(Constant.APIHOSTURL + "/osg/resource/uploadtoken/image", tag, callback);
+        okHttpUtil.get(Constant.getAPIHOSTURL() + "/osg/resource/uploadtoken/image", tag, callback);
     }
 
     /**
@@ -327,7 +326,7 @@ public class ApiClient {
     public void requestRecordTotal(Object tag, OkHttpCallback<BaseBean<RecordTotal>> callback) {
         //使用唷唷兔地址
         String userId = Preferences.getUserId();
-        okHttpUtil.get(Constant.APIHOSTURL + "/osg/app/call/expostor/" + userId + "/record/total", getCommonHead(), null, callback, tag);
+        okHttpUtil.get(Constant.getAPIHOSTURL() + "/osg/app/call/expostor/" + userId + "/record/total", getCommonHead(), null, callback, tag);
     }
 
     /**
@@ -345,7 +344,7 @@ public class ApiClient {
         }
         params.put("pageNo", pageNo);
         params.put("pageSize", pageSize);
-        okHttpUtil.get(Constant.APIHOSTURL + "/osg/app/call/expostor/" + userId + "/record", getCommonHead(), params, callback, tag);
+        okHttpUtil.get(Constant.getAPIHOSTURL() + "/osg/app/call/expostor/" + userId + "/record", getCommonHead(), params, callback, tag);
     }
 
     /**
@@ -358,10 +357,10 @@ public class ApiClient {
         try {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("mobile", mobile);
-            okHttpUtil.postJson(Constant.APIHOSTURL + "/osg/app/user/verifyCode", getCommonHead(), jsonObject.toString(), callback, tag);
+            okHttpUtil.postJson(Constant.getAPIHOSTURL() + "/osg/app/user/verifyCode", getCommonHead(), jsonObject.toString(), callback, tag);
         } catch (JSONException e) {
             e.printStackTrace();
-            Log.e(TAG, e.getMessage());
+            Logger.e(e.getMessage());
         }
 
     }
@@ -375,7 +374,7 @@ public class ApiClient {
     public void requestRankInfo(Object tag, OkHttpCallback<BaseBean<RankInfo>> callback) {
         //使用唷唷兔地址
         String userId = Preferences.getUserId();
-        okHttpUtil.get(Constant.APIHOSTURL + "/osg/app/call/rankInfo/" + userId, getCommonHead(), null, callback, tag);
+        okHttpUtil.get(Constant.getAPIHOSTURL() + "/osg/app/call/rankInfo/" + userId, getCommonHead(), null, callback, tag);
     }
 
     public void requestReplayComment(Object tag, String callRecordId, String replyRating, OkHttpCallback<BaseErrorBean> callback) {
@@ -383,10 +382,10 @@ public class ApiClient {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("callRecordId", callRecordId);
             jsonObject.put("replyRating", replyRating);
-            okHttpUtil.postJson(Constant.APIHOSTURL + "/osg/app/call/replyComment", getCommonHead(), jsonObject.toString(), callback, tag);
+            okHttpUtil.postJson(Constant.getAPIHOSTURL() + "/osg/app/call/replyComment", getCommonHead(), jsonObject.toString(), callback, tag);
         } catch (JSONException e) {
             e.printStackTrace();
-            Log.e(TAG, e.getMessage());
+            Logger.e(e.getMessage());
         }
 
     }
@@ -399,7 +398,7 @@ public class ApiClient {
      * @param callback
      */
     public void requestLoginWithPhoneNumber(Object tag, Map<String, String> params, OkHttpCallback callback) {
-        okHttpUtil.postJson(Constant.APIHOSTURL + "/osg/app/user/mobile/auth", getCommonHead(), JSON.toJSONString(params), callback, tag);
+        okHttpUtil.postJson(Constant.getAPIHOSTURL() + "/osg/app/user/mobile/auth", getCommonHead(), JSON.toJSONString(params), callback, tag);
     }
 
     /**
@@ -409,7 +408,7 @@ public class ApiClient {
      * @param callback
      */
     public void requestPostType(Object tag, OkHttpCallback callback) {
-        okHttpUtil.get(Constant.APIHOSTURL + "/osg/app/user/post/type", tag, callback);
+        okHttpUtil.get(Constant.getAPIHOSTURL() + "/osg/app/user/post/type", tag, callback);
     }
 
     /**
@@ -420,7 +419,7 @@ public class ApiClient {
      * @param callback
      */
     public void requestGrid(Object tag, Map<String, String> params, OkHttpCallback callback) {
-        okHttpUtil.get(Constant.APIHOSTURL + "/osg/app/user/area/grid", params, tag, callback);
+        okHttpUtil.get(Constant.getAPIHOSTURL() + "/osg/app/user/area/grid", params, tag, callback);
     }
 
     /**
@@ -431,27 +430,27 @@ public class ApiClient {
      * @param callback
      */
     public void requestCustom(Object tag, Map<String, String> params, OkHttpCallback callback) {
-        okHttpUtil.get(Constant.APIHOSTURL + "/osg/app/user/area/custom", params, tag, callback);
+        okHttpUtil.get(Constant.getAPIHOSTURL() + "/osg/app/user/area/custom", params, tag, callback);
     }
 
     public void meetingMaterials(Object tag, OkHttpCallback callback, String meetingId) {
-        okHttpUtil.get(Constant.APIHOSTURL + "/osg/app/meeting/materials?meetingId=" + meetingId, getCommonHead(), null, callback);
+        okHttpUtil.get(Constant.getAPIHOSTURL() + "/osg/app/meeting/materials?meetingId=" + meetingId, getCommonHead(), null, callback);
     }
 
     public void meetingMaterial(Object tag, OkHttpCallback callback, String materialsId) {
-        okHttpUtil.get(Constant.APIHOSTURL + "/osg/app/meeting/materials/" + materialsId, getCommonHead(), null, callback);
+        okHttpUtil.get(Constant.getAPIHOSTURL() + "/osg/app/meeting/materials/" + materialsId, getCommonHead(), null, callback);
     }
 
     public void meetingSetMaterial(Object tag, OkHttpCallback callback, String meetingId, String materialId) {
-        okHttpUtil.post(Constant.APIHOSTURL + "/osg/app/meeting/" + meetingId + "/materials/" + materialId, getCommonHead(), null, callback);
+        okHttpUtil.post(Constant.getAPIHOSTURL() + "/osg/app/meeting/" + meetingId + "/materials/" + materialId, getCommonHead(), null, callback);
     }
 
     public void meetingLeaveTemp(Object tag, Map<String, String> params, OkHttpCallback callback, String meetingId) {
-        okHttpUtil.post(Constant.APIHOSTURL + "/osg/app/meeting/" + meetingId + "/leave/temp", getCommonHead(), params, callback);
+        okHttpUtil.post(Constant.getAPIHOSTURL() + "/osg/app/meeting/" + meetingId + "/leave/temp", getCommonHead(), params, callback);
     }
 
     public void channelCount(Object tag, OkHttpCallback callback, String meetingId, Map<String, String> params){
-        okHttpUtil.postJson(Constant.APIHOSTURL + "/osg/app/meeting/" + meetingId + "/user/count", getCommonHead(), JSON.toJSONString(params), callback, tag);
+        okHttpUtil.postJson(Constant.getAPIHOSTURL() + "/osg/app/meeting/" + meetingId + "/user/count", getCommonHead(), JSON.toJSONString(params), callback, tag);
     }
 
     /**
@@ -463,7 +462,7 @@ public class ApiClient {
      * @param callback
      */
     public void meetingScreenshot(Object tag, Map<String, Object> values, OkHttpCallback callback) {
-        okHttpUtil.postJson(Constant.APIHOSTURL + "/osg/app/meeting/screenshot", getCommonHead(), JSON.toJSONString(values), callback, tag);
+        okHttpUtil.postJson(Constant.getAPIHOSTURL() + "/osg/app/meeting/screenshot", getCommonHead(), JSON.toJSONString(values), callback, tag);
     }
 
     /**
@@ -471,7 +470,7 @@ public class ApiClient {
      * /osg/app/user/meeting/admin
      */
     public void requestMeetingAdmin(Object tag, OkHttpCallback callback){
-        okHttpUtil.get(Constant.APIHOSTURL + "/osg/app/user/meeting/admin", getCommonHead(), null, callback);
+        okHttpUtil.get(Constant.getAPIHOSTURL() + "/osg/app/user/meeting/admin", getCommonHead(), null, callback);
     }
 
 
@@ -480,7 +479,7 @@ public class ApiClient {
      * */
 
    /* public void getImageUrlPath(Object tag, OkHttpCallback callback){
-        okHttpUtil.get(Constant.APIHOSTURL+"/osg/resource/host/image",tag,callback);
+        okHttpUtil.get(Constant.getAPIHOSTURL()+"/osg/resource/host/image",tag,callback);
     }*/
 
     /**

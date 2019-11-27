@@ -9,12 +9,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
-import com.orhanobut.logger.Logger;
 import com.zhongyou.meet.mobile.R;
 import com.zhongyou.meet.mobile.entities.ChatMesData;
 import com.zhongyou.meet.mobile.persistence.Preferences;
@@ -50,7 +46,7 @@ public class NewChatAdapter extends BaseMultiItemQuickAdapter<ChatMesData.PageDa
 	@Override
 	protected void convert(BaseViewHolder helper, ChatMesData.PageDataEntity item) {
 		if (helper.getItemViewType() == 2) {
-			Log.e("convertView", "{"+item.getType()+"} -\t- "+item.getContent());
+			Log.e("convertView", "{" + item.getType() + "} -\t- " + item.getContent());
 			if (item.getType() == 0) {
 				if (item.getUserId().equals(Preferences.getUserId())) {
 					helper.setText(R.id.tv_center, "你撤回了一条消息");
@@ -68,8 +64,8 @@ public class NewChatAdapter extends BaseMultiItemQuickAdapter<ChatMesData.PageDa
 					((TextView) helper.getView(R.id.tv_center)).setText(item.getUserName() + "  撤回了一条消息");
 					((TextView) helper.getView(R.id.tv_edit)).setVisibility(View.GONE);
 				}
-			} else if (item.getType()==1){
-				((TextView) helper.getView(R.id.tv_center)).setText("你撤回了一条消息  "+item.getReplyTime());
+			} else if (item.getType() == 1) {
+				((TextView) helper.getView(R.id.tv_center)).setText("你撤回了一条消息  " + item.getReplyTime());
 				((TextView) helper.getView(R.id.tv_edit)).setVisibility(View.GONE);
 			}
 
@@ -129,19 +125,7 @@ public class NewChatAdapter extends BaseMultiItemQuickAdapter<ChatMesData.PageDa
 						.centerCrop()
 						.error(R.drawable.load_error)
 						.placeholder(R.drawable.loading)
-						.listener(new RequestListener<String, GlideDrawable>() {
-							@Override
-							public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
-								return false;
-							}
-
-							@Override
-							public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
-
-
-								return false;
-							}
-						}).into((ImageView) helper.getView(R.id.img_pic));
+						.into((ImageView) helper.getView(R.id.img_pic));
 
 				((TextView) helper.getView(R.id.tv_content)).setVisibility(View.GONE);
 				((ImageView) helper.getView(R.id.img_arrow)).setVisibility(View.GONE);

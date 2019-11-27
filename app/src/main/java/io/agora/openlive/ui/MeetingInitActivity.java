@@ -9,7 +9,9 @@ import android.os.Message;
 import android.util.Log;
 
 import com.orhanobut.logger.Logger;
+import com.zhongyou.meet.mobile.Constant;
 import com.zhongyou.meet.mobile.R;
+import com.zhongyou.meet.mobile.ameeting.meetmodule.mvp.ui.activity.MeetChairManActivityActivity;
 import com.zhongyou.meet.mobile.entities.Agora;
 import com.zhongyou.meet.mobile.entities.MeetingJoin;
 import com.tendcloud.tenddata.TCAgent;
@@ -102,18 +104,25 @@ public class MeetingInitActivity extends BaseActivity {
     public void forwardToLiveRoom(int cRole) {
         Intent intent;
         Logger.e("cRole :"+cRole+"-----"+"meetingJoin.getMeeting().getType(): "+meetingJoin.getMeeting().getType());
+        Log.e(TAG, "forwardToLiveRoom: "+"cRole :"+cRole+"-----"+"meetingJoin.getMeeting().getType(): "+meetingJoin.getMeeting().getType() );
         if (cRole == 1) {//主持人进入
-            if (meetingJoin.getMeeting().getType() == 0) {
+            Constant.videoType=1;
+            Constant.isChairMan=true;
+            intent = new Intent(MeetingInitActivity.this, InviteMeetingBroadcastActivity.class);
+           /* if (meetingJoin.getMeeting().getType() == 0) {
                 intent = new Intent(MeetingInitActivity.this, MeetingBroadcastActivity.class);
             } else {
                 intent = new Intent(MeetingInitActivity.this, InviteMeetingBroadcastActivity.class);
-            }
+            }*/
         } else {//参会人进入
-            if (meetingJoin.getMeeting().getType() == 0) {
+            Constant.videoType=2;
+            Constant.isChairMan=false;
+            intent = new Intent(MeetingInitActivity.this, InviteMeetingAudienceActivity.class);
+           /* if (meetingJoin.getMeeting().getType() == 0) {
                 intent = new Intent(MeetingInitActivity.this, MeetingAudienceActivity.class);
             } else {
                 intent = new Intent(MeetingInitActivity.this, InviteMeetingAudienceActivity.class);
-            }
+            }*/
         }
         intent.putExtra("meeting", meetingJoin);
         intent.putExtra("agora", agora);

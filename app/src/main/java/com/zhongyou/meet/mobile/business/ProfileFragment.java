@@ -146,7 +146,7 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
 					LoginHelper.savaWeChat(wechat);
 				}
 				if (!TextUtils.isEmpty(user.getPhoto())) {
-					Glide.with(getActivity()).load(user.getPhoto()).asBitmap()
+					Glide.with(getActivity()).asBitmap().load(user.getPhoto())
 							.diskCacheStrategy(DiskCacheStrategy.ALL)
 							.error(R.mipmap.baby_default_avatar)
 							.placeholder(R.drawable.tx)

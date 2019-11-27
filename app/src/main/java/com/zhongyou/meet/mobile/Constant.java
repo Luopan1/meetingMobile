@@ -6,11 +6,15 @@ package com.zhongyou.meet.mobile;
 
 public class Constant {
 
-    public static String APIHOSTURL="";
+    public static String APIHOSTURL="http://osg.apitest.zhongyouie.cn";
     public static String WEBSOCKETURL="";
     public static String DOWNLOADURL="";
-
     public static final String RELOGIN_ACTION = ".ACTION.RELOGIN";
+
+    public static boolean isChairMan=false;
+
+    //1 为主持人 2 为参会人  3为观众 默认为观众
+    public  static int videoType=3;
 
     /**
      * 检查更新地址
@@ -26,4 +30,35 @@ public class Constant {
 
     //回复限制
     public final static int REPLY_REVIEW_MAX = 1000;
+
+
+
+    public static String getAPIHOSTURL(){
+        if (BuildConfig.DEBUG){
+            return  APIHOSTURL="http://osg.apitest.zhongyouie.cn";
+
+        }else {
+            //="http://api.zhongyouie.com";
+            return APIHOSTURL;
+        }
+    }
+
+    public static String getWEBSOCKETURL(){
+        if (BuildConfig.DEBUG){
+            return  WEBSOCKETURL="http://ws.zhongyouie.com/sales";
+        }else {
+           // ="http://api.zhongyouie.com";
+            return WEBSOCKETURL;
+        }
+    }
+
+    public static String getDOWNLOADURL(){
+        if (BuildConfig.DEBUG){
+            return DOWNLOADURL ="http://tapi.zhongyouie.cn";
+        }else {
+            //="http://api.zhongyouie.com";
+            return DOWNLOADURL;
+        }
+    }
+
 }

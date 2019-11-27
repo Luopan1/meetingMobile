@@ -37,6 +37,7 @@ import com.zhongyou.meet.mobile.BuildConfig;
 import com.zhongyou.meet.mobile.Constant;
 import com.zhongyou.meet.mobile.R;
 import com.zhongyou.meet.mobile.UserInfoActivity;
+import com.zhongyou.meet.mobile.ameeting.meetmodule.mvp.ui.activity.MeetChairManActivityActivity;
 import com.zhongyou.meet.mobile.business.BindActivity;
 import com.zhongyou.meet.mobile.business.HomeActivity;
 import com.zhongyou.meet.mobile.business.UpdateActivity;

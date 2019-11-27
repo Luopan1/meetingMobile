@@ -1,8 +1,76 @@
 package com.zhongyou.meet.mobile.entities;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.view.SurfaceView;
 
-public class AudienceVideo {
+public class AudienceVideo implements Parcelable {
+
+
+    private String uname;
+
+    private String postTypeName;
+
+    private int auditStatus; // 1.已认证
+
+    private int callStatus; // 0-未通话，1-连接中，2-正在通话
+
+    private boolean handsUp; // true-申请发言，false-未申请发言
+
+
+    public String getUname() {
+        return uname;
+    }
+
+    public void setUname(String uname) {
+        this.uname = uname;
+    }
+
+    public String getPostTypeName() {
+        return postTypeName;
+    }
+
+    public void setPostTypeName(String postTypeName) {
+        this.postTypeName = postTypeName;
+    }
+
+    public int getAuditStatus() {
+        return auditStatus;
+    }
+
+    public void setAuditStatus(int auditStatus) {
+        this.auditStatus = auditStatus;
+    }
+
+    public int getCallStatus() {
+        return callStatus;
+    }
+
+    public void setCallStatus(int callStatus) {
+        this.callStatus = callStatus;
+    }
+
+    public boolean isHandsUp() {
+        return handsUp;
+    }
+
+    public void setHandsUp(boolean handsUp) {
+        this.handsUp = handsUp;
+    }
+
+
+
+
+
+    private int position;
+
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
+    }
 
     private int uid;
 
@@ -37,6 +105,7 @@ public class AudienceVideo {
     }
 
     public void setName(String name) {
+        this.name="";
         this.name = name;
     }
 
@@ -95,4 +164,53 @@ public class AudienceVideo {
                 ", muted=" + muted +
                 '}';
     }
+
+    public AudienceVideo() {
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.uname);
+        dest.writeString(this.postTypeName);
+        dest.writeInt(this.auditStatus);
+        dest.writeInt(this.callStatus);
+        dest.writeByte(this.handsUp ? (byte) 1 : (byte) 0);
+        dest.writeInt(this.position);
+        dest.writeInt(this.uid);
+        dest.writeString(this.name);
+        dest.writeInt(this.volume);
+        dest.writeByte(this.broadcaster ? (byte) 1 : (byte) 0);
+        dest.writeByte(this.muted ? (byte) 1 : (byte) 0);
+    }
+
+    protected AudienceVideo(Parcel in) {
+        this.uname = in.readString();
+        this.postTypeName = in.readString();
+        this.auditStatus = in.readInt();
+        this.callStatus = in.readInt();
+        this.handsUp = in.readByte() != 0;
+        this.position = in.readInt();
+        this.uid = in.readInt();
+        this.name = in.readString();
+        this.volume = in.readInt();
+        this.broadcaster = in.readByte() != 0;
+        this.muted = in.readByte() != 0;
+    }
+
+    public static final Creator<AudienceVideo> CREATOR = new Creator<AudienceVideo>() {
+        @Override
+        public AudienceVideo createFromParcel(Parcel source) {
+            return new AudienceVideo(source);
+        }
+
+        @Override
+        public AudienceVideo[] newArray(int size) {
+            return new AudienceVideo[size];
+        }
+    };
 }
