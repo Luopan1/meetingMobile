@@ -19,12 +19,14 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.zhongyou.meet.mobile.BaseApplication;
+import com.zhongyou.meet.mobile.ameeting.ChairManActivity;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 
+import es.dmoral.toasty.Toasty;
 import io.agora.openlive.model.ConstantApp;
 import io.agora.openlive.model.EngineConfig;
 import io.agora.openlive.model.MyEngineEventHandler;
@@ -207,4 +209,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
 
+
+    public void  showToastyInfo(String message){
+        Toasty.info(this,message,Toast.LENGTH_SHORT,true).show();
+    }
 }

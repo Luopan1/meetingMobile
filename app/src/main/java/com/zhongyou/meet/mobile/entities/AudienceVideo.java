@@ -156,11 +156,16 @@ public class AudienceVideo implements Parcelable {
     @Override
     public String toString() {
         return "AudienceVideo{" +
-                "uid=" + uid +
+                "uname='" + uname + '\'' +
+                ", postTypeName='" + postTypeName + '\'' +
+                ", auditStatus=" + auditStatus +
+                ", callStatus=" + callStatus +
+                ", handsUp=" + handsUp +
+                ", position=" + position +
+                ", uid=" + uid +
                 ", name='" + name + '\'' +
                 ", volume=" + volume +
                 ", broadcaster=" + broadcaster +
-                ", surfaceView=" + surfaceView +
                 ", muted=" + muted +
                 '}';
     }

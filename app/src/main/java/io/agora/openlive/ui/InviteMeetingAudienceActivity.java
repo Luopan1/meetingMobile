@@ -129,7 +129,7 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
 		mGridLayoutHelper.setItemCount(8);
 
 		mVirtualLayoutManager = new VirtualLayoutManager(this);
-		mDelegateAdapter = new DelegateAdapter(mVirtualLayoutManager);
+		mDelegateAdapter = new DelegateAdapter(mVirtualLayoutManager,false);
 		RecyclerView.RecycledViewPool viewPool = new RecyclerView.RecycledViewPool();
 		audienceRecyclerView.setRecycledViewPool(viewPool);
 		viewPool.setMaxRecycledViews(0, 0);
@@ -479,10 +479,31 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
 			@Override
 			public void onMessageInstantReceive(final String account, final int uid, final String msg) {
 				super.onMessageInstantReceive(account, uid, msg);
+				mLogger.e("onMessageInstantReceive 收到主持人" + account + "发来的消息" + msg);
 				runOnUiThread(() -> {
 					if (BuildConfig.DEBUG) {
 						Toast.makeText(InviteMeetingAudienceActivity.this, "onMessageInstantReceive 收到主持人" + account + "发来的消息" + msg, Toast.LENGTH_SHORT).show();
 					}
+
+					try {
+						JSONObject obj= new JSONObject(msg);
+						if (obj.has("getInformation")){
+							JSONObject jsonObject = new JSONObject();
+							String audienceName = (TextUtils.isEmpty(Preferences.getAreaName()) ? "" : Preferences.getAreaName()) + "-" + (TextUtils.isEmpty(Preferences.getUserCustom()) ? "" : Preferences.getUserCustom()) + "-" + Preferences.getUserName();
+							jsonObject.put("uid", config().mUid);
+							jsonObject.put("uname", audienceName);
+							jsonObject.put("callStatus", 2);
+							jsonObject.put("returnInformation",1);
+							jsonObject.put("auditStatus", Preferences.getUserAuditStatus());
+							jsonObject.put("postTypeName", Preferences.getUserPostType());
+							agoraAPI.messageInstantSend(meetingJoin.getHostUser().getClientUid(), 0, jsonObject.toString(), "");
+						}
+
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+
+
 				});
 			}
 
@@ -749,6 +770,10 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
 					audienceVideo.setSurfaceView(localAudienceSurfaceView);
 					audienceVideoAdapter.insertItem(audienceVideo);
 					insertFackData();
+
+
+
+
 
 					if ("true".equals(agora.getIsTest())) {
 						worker().joinChannel(null, channelName, config().mUid);

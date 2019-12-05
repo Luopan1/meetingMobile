@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import com.alibaba.android.vlayout.DelegateAdapter;
 import com.alibaba.android.vlayout.LayoutHelper;
+import com.alibaba.android.vlayout.VirtualLayoutManager;
 import com.alibaba.android.vlayout.layout.StaggeredGridLayoutHelper;
 import com.zhongyou.meet.mobile.BuildConfig;
 import com.zhongyou.meet.mobile.R;
@@ -54,6 +55,11 @@ public class NewAudienceVideoAdapter extends DelegateAdapter.Adapter<NewAudience
 	}
 
 	public synchronized void insertItem(AudienceVideo audienceVideo) {
+		for (int i = 0; i <audienceVideos.size() ; i++) {
+			if (audienceVideos.get(i).getUid()==audienceVideo.getUid()){
+				return;
+			}
+		}
 		if (audienceVideo.isBroadcaster()) {
 			this.audienceVideos.add(0, audienceVideo);
 			notifyDataSetChanged();
@@ -104,11 +110,13 @@ public class NewAudienceVideoAdapter extends DelegateAdapter.Adapter<NewAudience
 			AudienceVideo audienceVideo = iterator.next();
 			if (audienceVideo.getUid() == uid) {
 				int position = audienceVideos.indexOf(audienceVideo);
+				audienceVideo.getSurfaceView().setZOrderMediaOverlay(false);
+				audienceVideo.getSurfaceView().setZOrderOnTop(false);
 				Log.e("deleteItem", "deleteItem: "+position);
 //                Log.v("delete", "1--" + audienceVideos.size() + "--position--" + position);
 				iterator.remove();
 //                Log.v("delete", "2--" + audienceVideos.size());
-				notifyItemRemoved(position);
+				notifyDataSetChanged();
 			}
 		}
 	}
@@ -131,6 +139,17 @@ public class NewAudienceVideoAdapter extends DelegateAdapter.Adapter<NewAudience
 			}
 		}
 		return false;
+	}
+
+
+	public int getPositionById(int uid){
+		for (int i = 0; i <audienceVideos.size() ; i++) {
+			if (audienceVideos.get(i).getUid()==uid){
+				return i;
+
+			}
+		}
+		return -1;
 	}
 
 
@@ -216,7 +235,8 @@ public class NewAudienceVideoAdapter extends DelegateAdapter.Adapter<NewAudience
 			ViewGroup.LayoutParams layoutParams = holder.itemView.getLayoutParams();
 			layoutParams.width = width;
 			layoutParams.height = height;
-			holder.itemView.setLayoutParams(layoutParams);
+			holder.itemView.setLayoutParams(
+					new VirtualLayoutManager.LayoutParams(layoutParams));
 		}
 
 		if (position == 8) {
@@ -228,9 +248,10 @@ public class NewAudienceVideoAdapter extends DelegateAdapter.Adapter<NewAudience
 
 		final AudienceVideo audienceVideo = audienceVideos.get(position);
 		if (audienceVideo.getSurfaceView() == null && !audienceVideo.isBroadcaster()) {
-			holder.itemView.setVisibility(View.GONE);
+			holder.itemView.setVisibility(View.VISIBLE);
 			holder.nameText.setText(audienceVideo.getName() + "-" + position);
 			holder.nameText.setTextColor(context.getResources().getColor(R.color.black));
+			holder.itemView.setBackgroundColor(context.getResources().getColor(R.color.red));
 		} else if (audienceVideo.isBroadcaster() && audienceVideo.getSurfaceView() == null) {
 			holder.itemView.setVisibility(View.VISIBLE);
 			holder.chairManHint.setVisibility(View.VISIBLE);
@@ -278,7 +299,6 @@ public class NewAudienceVideoAdapter extends DelegateAdapter.Adapter<NewAudience
 				holder.videoLayout.removeAllViews();
 			}
 			final SurfaceView surfaceView = audienceVideo.getSurfaceView();
-			surfaceView.setZOrderOnTop(true);
 			surfaceView.setZOrderMediaOverlay(true);
 			stripSurfaceView(surfaceView);
 			surfaceView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));

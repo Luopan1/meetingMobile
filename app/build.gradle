@@ -223,9 +223,8 @@ dependencies {
     implementation 'com.lxj:xpopup:1.8.10'
     implementation 'me.jessyan:arms:2.5.2'
     implementation 'org.ligboy.retrofit2:converter-fastjson-android:2.1.0'
-    implementation('com.alibaba.android:vlayout:1.2.8@aar') {
-        transitive = true
-    }
     implementation 'com.elvishew:xlog:1.6.1'
+    implementation project(path: ':vlayout')
+    implementation 'q.rorbin:badgeview:1.1.3'
 
 }

@@ -24,6 +24,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.elvishew.xlog.XLog;
 import com.zhongyou.meet.mobile.ApiClient;
 import com.zhongyou.meet.mobile.BaseException;
 import com.zhongyou.meet.mobile.R;
@@ -44,6 +46,7 @@ import com.zhongyou.meet.mobile.persistence.Preferences;
 import com.zhongyou.meet.mobile.utils.Logger;
 import com.zhongyou.meet.mobile.utils.OkHttpCallback;
 import com.zhongyou.meet.mobile.utils.RxBus;
+import com.zhongyou.meet.mobile.utils.SpUtil;
 import com.zhongyou.meet.mobile.utils.UIDUtil;
 
 import java.util.ArrayList;
@@ -65,7 +68,7 @@ public class MeetingsFragment extends BaseFragment {
 	private ForumMeetingAdapter forumMeetingAdapter;
 	private ArrayList<ForumMeeting> forumMeetingList = new ArrayList<>();
 
-	private View v_public,v_invite;
+	private View v_public, v_invite;
 
 	public static final int TYPE_PUBLIC_MEETING = 0;
 	public static final int TYPE_PRIVATE_MEETING = 1;
@@ -77,6 +80,8 @@ public class MeetingsFragment extends BaseFragment {
 	private int currentMeetingListPageIndex = TYPE_PUBLIC_MEETING;
 	private TextView mEmptyView;
 	private FrameLayout frameLayout;
+	private com.elvishew.xlog.Logger mLogger;
+	private int mJoinRole;
 
 	@Override
 	public String getStatisticsTag() {
@@ -156,6 +161,11 @@ public class MeetingsFragment extends BaseFragment {
 				}
 			}
 		});
+		mLogger = XLog.tag(TAG)
+				.t()
+				.st(2)
+				.b()
+				.build();
 		super.onActivityCreated(savedInstanceState);
 	}
 
@@ -328,7 +338,7 @@ public class MeetingsFragment extends BaseFragment {
 				showPrivateMeeting();
 				break;
 			default:
-				Logger.v("MeetdingsFragment","showMeeting has no current type:"+type);
+				Logger.v("MeetdingsFragment", "showMeeting has no current type:" + type);
 				break;
 		}
 	}
@@ -367,6 +377,7 @@ public class MeetingsFragment extends BaseFragment {
 
 	/**
 	 * 请求会议类型
+	 *
 	 * @param type
 	 */
 	private void requestMeetings(int type) {
@@ -422,10 +433,16 @@ public class MeetingsFragment extends BaseFragment {
 			view.findViewById(R.id.dialog_meeting_warnning_text).setVisibility(View.VISIBLE);
 		}
 		final EditText codeEdit = view.findViewById(R.id.code);
+		if (!SpUtil.getString("meetingId", "").equals("")) {
+			codeEdit.setText(SpUtil.getString("meetingId", ""));
+		} else {
+			codeEdit.setText("");
+		}
 		view.findViewById(R.id.confirm).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				dialog.dismiss();
+				SpUtil.put("meetingId", codeEdit.getText().toString().trim());
 				if (!TextUtils.isEmpty(codeEdit.getText())) {
 					enterMeeting(codeEdit.getText().toString(), meeting);
 				} else {
@@ -463,6 +480,7 @@ public class MeetingsFragment extends BaseFragment {
 
 			@Override
 			public void onSuccess(Bucket<MeetingJoin> meetingJoinBucket) {
+				mLogger.e(JSONObject.toJSONString(meetingJoinBucket));
 				HashMap<String, Object> params = new HashMap<String, Object>();
 				params.put("clientUid", UIDUtil.generatorUID(Preferences.getUserId()));
 				params.put("meetingId", meeting.getId());
@@ -482,12 +500,21 @@ public class MeetingsFragment extends BaseFragment {
 
 		@Override
 		public void onSuccess(Bucket<MeetingJoin> meetingJoinBucket) {
+			mLogger.e(JSONObject.toJSONString(meetingJoinBucket));
 			MeetingJoin meetingJoin = meetingJoinBucket.getData();
 			Map<String, String> params = new HashMap<String, String>();
 			params.put("channel", meetingJoin.getMeeting().getId());
 			params.put("account", UIDUtil.generatorUID(Preferences.getUserId()));
-			params.put("role", meetingJoin.getRole() == 0 ? "Publisher" : "Subscriber");
+			mJoinRole = meetingJoin.getRole();
+			if (mJoinRole == 0) {
+				params.put("role", "Publisher" );
+			} else if (mJoinRole == 1) {
+				params.put("role", "Publisher" );
+			} else if (mJoinRole == 2) {
+				params.put("role", "Subscriber");
+			}
 			apiClient.getAgoraKey(mContext, params, getAgoraCallback(meetingJoin));
+
 		}
 
 		@Override
@@ -503,10 +530,12 @@ public class MeetingsFragment extends BaseFragment {
 			@Override
 			public void onSuccess(Bucket<Agora> agoraBucket) {
 				com.orhanobut.logger.Logger.e(JSON.toJSONString(agoraBucket));
+				mLogger.e(JSON.toJSONString(agoraBucket));
 				dialog.dismiss();
 				Intent intent = new Intent(mContext, MeetingInitActivity.class);
 				intent.putExtra("agora", agoraBucket.getData());
 				intent.putExtra("meeting", meetingJoin);
+				intent.putExtra("role",mJoinRole);
 				startActivity(intent);
 			}
 

@@ -59,6 +59,7 @@ import com.zhongyou.meet.mobile.entities.Agora;
 import com.zhongyou.meet.mobile.entities.Audience;
 import com.zhongyou.meet.mobile.entities.AudienceVideo;
 import com.zhongyou.meet.mobile.entities.Bucket;
+import com.zhongyou.meet.mobile.entities.HostUser;
 import com.zhongyou.meet.mobile.entities.Material;
 import com.zhongyou.meet.mobile.entities.Materials;
 import com.zhongyou.meet.mobile.entities.Meeting;
@@ -144,11 +145,12 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
 	private Button mAttdenteeCountButton;
 
 	private EditText searchEdit;
-	private Button searchButton,stopButton;
+	private Button searchButton, stopButton;
 	private boolean isConnecting = false;
-	private AlertDialog pptAlertDialog, pptDetailDialog,alertDialog;
+	private AlertDialog pptAlertDialog, pptDetailDialog, alertDialog;
 	private AudienceVideo currentAudience, newAudience;
 	private int currentAiducenceId;
+	private String broadcastId;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -232,6 +234,7 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
 
 		alertDialog.show();
 	}
+
 	private ArrayList<AudienceVideo> searchAudiences(ArrayList<AudienceVideo> audiences, String keyword) {
 		ArrayList<AudienceVideo> audienceArrayList = new ArrayList<>();
 		for (AudienceVideo audience : audiences) {
@@ -425,6 +428,7 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
 	private ArrayList<AudienceVideo> audiences = new ArrayList<AudienceVideo>();
 	NewAudienceAdapter audienceAdapter;
 	private TextView audienceCountText;
+
 	private void updateAudienceList() {
 		Iterator iter = audienceHashMap.entrySet().iterator();
 		audiences.clear();
@@ -442,6 +446,7 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
 		}
 		mAttdenteeCountButton.setText("参会人（" + audiences.size() + "）");
 	}
+
 	@Override
 	protected void initUIandEvent() {
 
@@ -452,6 +457,7 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
 				.b()
 				.build();
 		event().addEventHandler(this);
+
 
 		Intent intent = getIntent();
 		agora = intent.getParcelableExtra("agora");
@@ -467,7 +473,6 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
 		mGridLayoutHelper.setHGap(10);
 		mGridLayoutHelper.setVGap(10);
 		mGridLayoutHelper.setItemCount(8);
-
 
 		mVirtualLayoutManager = new VirtualLayoutManager(this);
 		mDelegateAdapter = new DelegateAdapter(mVirtualLayoutManager);
@@ -571,7 +576,6 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
 
 			}
 		});
-
 
 
 //		audienceLayout = findViewById(R.id.audience_layout);
@@ -739,31 +743,7 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
 		});
 
 		fullScreenButton = findViewById(R.id.full_screen);
-		fullScreenButton.setOnClickListener(view -> {
-/*
 
-			fullScreenButton.setImageResource(R.drawable.ic_full_screen);
-			pptButton.setVisibility(View.VISIBLE);
-			finishMeetingButton.setVisibility(View.VISIBLE);
-			muteAudioButton.setVisibility(View.VISIBLE);
-			switchCameraButton.setVisibility(View.VISIBLE);
-			if (currentMaterial == null) {
-				if (localBroadcasterSurfaceView != null) {
-					stripSurfaceView(localBroadcasterSurfaceView);
-				}
-
-				broadcasterView.setVisibility(View.VISIBLE);
-				if (localBroadcasterSurfaceView != null) {
-					broadcasterView.addView(localBroadcasterSurfaceView);
-				}
-			} else {
-				docImage.setVisibility(View.VISIBLE);
-			}
-			audienceRecyclerView.setVisibility(View.VISIBLE);
-			isFullScreen = false;
-*/
-
-		});
 		pptButton = findViewById(R.id.meeting_doc);
 		pptButton.setOnClickListener(view -> {
 			ApiClient.getInstance().meetingMaterials(TAG, new OkHttpCallback<Bucket<Materials>>() {
@@ -780,23 +760,32 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
 			}, meetingJoin.getMeeting().getId());
 		});
 
-		worker().configEngine(Constants.CLIENT_ROLE_BROADCASTER, Constants.VIDEO_PROFILE_360P);
-		rtcEngine().enableAudioVolumeIndication(400, 3);
 
 
-		localBroadcasterSurfaceView = RtcEngine.CreateRendererView(getApplicationContext());
-		rtcEngine().setupLocalVideo(new VideoCanvas(localBroadcasterSurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, config().mUid));
-		localBroadcasterSurfaceView.setZOrderOnTop(true);
-		localBroadcasterSurfaceView.setZOrderMediaOverlay(true);
-		broadcasterView.addView(localBroadcasterSurfaceView);
+		if (Constant.videoType == 0) {
+			localBroadcasterSurfaceView = RtcEngine.CreateRendererView(getApplicationContext());
+			rtcEngine().setupLocalVideo(new VideoCanvas(localBroadcasterSurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, config().mUid));
+			localBroadcasterSurfaceView.setZOrderOnTop(true);
+			localBroadcasterSurfaceView.setZOrderMediaOverlay(true);
+			broadcasterView.addView(localBroadcasterSurfaceView);
+			worker().preview(true, localBroadcasterSurfaceView, config().mUid);
+			worker().configEngine(Constants.CLIENT_ROLE_BROADCASTER, Constants.VIDEO_PROFILE_360P);
+			rtcEngine().enableAudioVolumeIndication(400, 3);
 
-		worker().preview(true, localBroadcasterSurfaceView, config().mUid);
+		} else {
+			ApiClient.getInstance().getMeetingHost(TAG, meetingJoin.getMeeting().getId(), joinMeetingCallback(0));
+			worker().configEngine(Constants.CLIENT_ROLE_AUDIENCE, Constants.VIDEO_PROFILE_180P);
+			// TODO: 2019-11-27
+//			startMeetingCamera(meeting.getScreenshotFrequency());
+		}
 
 		if ("true".equals(agora.getIsTest())) {
 			worker().joinChannel(null, channelName, config().mUid);
 		} else {
 			worker().joinChannel(agora.getToken(), channelName, config().mUid);
 		}
+
+
 
 		agoraAPI = AgoraAPIOnlySignal.getInstance(this, agora.getAppID());
 		agoraAPI.callbackSet(new AgoraAPI.CallBack() {
@@ -967,7 +956,7 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
 					}
 
 					try {
-						JSONObject jsonObject  = new JSONObject(msg);
+						JSONObject jsonObject = new JSONObject(msg);
 						if (jsonObject.has("handsUp")) {
 							AudienceVideo audience = JSON.parseObject(jsonObject.toString(), AudienceVideo.class);
 							if (audience.getCallStatus() == 2) {
@@ -1069,6 +1058,30 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
 			}
 		});
 
+	}
+
+	private OkHttpCallback joinMeetingCallback(int uid) {
+		return new OkHttpCallback<Bucket<HostUser>>() {
+			@Override
+			public void onSuccess(Bucket<HostUser> meetingJoinBucket) {
+				mLogger.e("获取到房间的信息为："+JSON.toJSONString(meetingJoinBucket));
+				meetingJoin.setHostUser(meetingJoinBucket.getData());
+				broadcastId = meetingJoin.getHostUser().getClientUid();
+
+
+				/*if (String.valueOf(uid).equals(broadcastId)) {
+					agoraAPI.channelJoin(channelName);
+					agoraAPI.queryUserStatus(broadcastId);
+
+					localBroadcasterSurfaceView = RtcEngine.CreateRendererView(getApplicationContext());
+					localBroadcasterSurfaceView.setZOrderOnTop(false);
+					localBroadcasterSurfaceView.setZOrderMediaOverlay(false);
+					rtcEngine().setupRemoteVideo(new VideoCanvas(localBroadcasterSurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, uid));
+					broadcasterView.removeAllViews();
+					broadcasterView.addView(localBroadcasterSurfaceView);
+				}*/
+			}
+		};
 	}
 
 	private void exitSpliteMode() {
@@ -1229,7 +1242,7 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
 		}
 	}
 
-	private Dialog exitDialog,dialog;
+	private Dialog exitDialog, dialog;
 
 	private void showExitDialog() {
 		View contentView = View.inflate(this, R.layout.dialog_exit_meeting, null);
@@ -1272,7 +1285,6 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
 			Log.v("meetingTempLeave", meetingTempLeaveBucket.toString());
 		}
 	};
-
 
 
 	private void showPPTListDialog(ArrayList<Material> materials) {
@@ -1511,8 +1523,6 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
 			channelName = channel;
 
 
-
-
 			HashMap<String, Object> params = new HashMap<String, Object>();
 			params.put("meetingId", meetingJoin.getMeeting().getId());
 			params.put("status", 1);
@@ -1555,67 +1565,75 @@ public class InviteMeetingBroadcastActivity extends BaseActivity implements AGEv
 			if (isFinishing()) {
 				return;
 			}
-
 			if (BuildConfig.DEBUG) {
 				Toast.makeText(InviteMeetingBroadcastActivity.this, "参会人" + uid + "的视频流进入", Toast.LENGTH_SHORT).show();
 			}
-
 			SurfaceView remoteAudienceSurfaceView = RtcEngine.CreateRendererView(getApplicationContext());
 			remoteAudienceSurfaceView.setZOrderOnTop(true);
 			remoteAudienceSurfaceView.setZOrderMediaOverlay(true);
 			rtcEngine().setupRemoteVideo(new VideoCanvas(remoteAudienceSurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, uid));
+			if (uid==Integer.parseInt(broadcastId)){
+				//主持人的画面进来了
+				localBroadcasterSurfaceView=remoteAudienceSurfaceView;
+				localBroadcasterSurfaceView.setZOrderMediaOverlay(false);
+				localBroadcasterSurfaceView.setZOrderMediaOverlay(false);
+				broadcasterView.removeAllViews();
+				stripSurfaceView(localBroadcasterSurfaceView);
+				broadcasterView.addView(localBroadcasterSurfaceView);
+			}else {
 
-			audienceRecyclerView.setVisibility(View.VISIBLE);
+				audienceRecyclerView.setVisibility(View.VISIBLE);
+				AudienceVideo audienceVideo = new AudienceVideo();
+				audienceVideo.setUid(uid);
+				audienceVideo.setName("参会人" + uid);
+				audienceVideo.setBroadcaster(false);
+				audienceVideo.setPosition(audienceVideoAdapter.getDataSize());
+				audienceVideo.setSurfaceView(remoteAudienceSurfaceView);
+				audienceVideoAdapter.insertItem(audienceVideo);
 
-			AudienceVideo audienceVideo = new AudienceVideo();
-			audienceVideo.setUid(uid);
-			audienceVideo.setName("参会人" + uid);
-			audienceVideo.setBroadcaster(false);
-			audienceVideo.setPosition(audienceVideoAdapter.getDataSize());
-			audienceVideo.setSurfaceView(remoteAudienceSurfaceView);
-			audienceVideoAdapter.insertItem(audienceVideo);
 
+				AudienceVideo emptyVideoView = new AudienceVideo();
+				emptyVideoView.setName("虚假数据");
 
-			AudienceVideo emptyVideoView = new AudienceVideo();
-			emptyVideoView.setName("虚假数据");
+				audienceHashMap.put(uid, audienceVideo);
 
-			audienceHashMap.put(uid,audienceVideo);
+				updateAudienceList();
 
-			updateAudienceList();
+				for (int i = 0; i < audienceVideoAdapter.getDataSize(); i++) {
+					if (audienceVideoAdapter.getAudienceVideoLists().get(i).getSurfaceView() == null) {
+						audienceVideoAdapter.removeItem(i);
+					}
+				}
+				mLogger.e("当前集合大小是：" + audienceVideoAdapter.getDataSize());
+				switch (audienceVideoAdapter.getDataSize()) {
 
-			for (int i = 0; i < audienceVideoAdapter.getDataSize(); i++) {
-				if (audienceVideoAdapter.getAudienceVideoLists().get(i).getSurfaceView() == null) {
-					audienceVideoAdapter.removeItem(i);
+					case 1:
+						audienceVideoAdapter.insertItem(0, emptyVideoView);
+						break;
+					case 2:
+						audienceVideoAdapter.insertItem(0, emptyVideoView);
+						audienceVideoAdapter.insertItem(2, emptyVideoView);
+						break;
+					case 3:
+						audienceVideoAdapter.insertItem(0, emptyVideoView);
+						audienceVideoAdapter.insertItem(2, emptyVideoView);
+						audienceVideoAdapter.insertItem(4, emptyVideoView);
+						break;
+					case 4:
+						audienceVideoAdapter.insertItem(2, emptyVideoView);
+						audienceVideoAdapter.insertItem(4, emptyVideoView);
+						break;
+					case 5:
+						audienceVideoAdapter.insertItem(4, emptyVideoView);
+						break;
+
+				}
+				//分屏模式下 改变布局
+				if (isSpliteScreenModel && audienceVideoAdapter.getDataSize() <= 7) {
+					changeViewLayout();
 				}
 			}
-			mLogger.e("当前集合大小是：" + audienceVideoAdapter.getDataSize());
-			switch (audienceVideoAdapter.getDataSize()) {
 
-				case 1:
-					audienceVideoAdapter.insertItem(0, emptyVideoView);
-					break;
-				case 2:
-					audienceVideoAdapter.insertItem(0, emptyVideoView);
-					audienceVideoAdapter.insertItem(2, emptyVideoView);
-					break;
-				case 3:
-					audienceVideoAdapter.insertItem(0, emptyVideoView);
-					audienceVideoAdapter.insertItem(2, emptyVideoView);
-					audienceVideoAdapter.insertItem(4, emptyVideoView);
-					break;
-				case 4:
-					audienceVideoAdapter.insertItem(2, emptyVideoView);
-					audienceVideoAdapter.insertItem(4, emptyVideoView);
-					break;
-				case 5:
-					audienceVideoAdapter.insertItem(4, emptyVideoView);
-					break;
-
-			}
-			//分屏模式下 改变布局
-			if (isSpliteScreenModel && audienceVideoAdapter.getDataSize() <= 7) {
-				changeViewLayout();
-			}
 
 
 		});

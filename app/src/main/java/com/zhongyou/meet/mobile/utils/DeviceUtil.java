@@ -1,6 +1,7 @@
 package com.zhongyou.meet.mobile.utils;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManager.MemoryInfo;
 import android.content.ComponentName;
@@ -17,6 +18,7 @@ import android.os.Environment;
 import android.os.StatFs;
 import android.text.TextUtils;
 import android.text.format.Formatter;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -354,6 +356,29 @@ public class DeviceUtil {
 
     public static boolean isTianMall() {
         return Build.MANUFACTURER.toLowerCase().contains("tmall");
+    }
+
+
+    public static float getDensity(Activity activity) {
+        DisplayMetrics dm = new DisplayMetrics();
+        activity.getWindowManager().getDefaultDisplay().getMetrics(dm);
+        return dm.densityDpi;
+    }
+
+    public static int getHeightPixels(Activity activity){
+        DisplayMetrics metrics = new DisplayMetrics();
+        activity.getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        int width = metrics.widthPixels;
+        int height = metrics.heightPixels;
+        return height;
+
+    }
+    public static int getWidthPixels(Activity activity){
+        DisplayMetrics metrics = new DisplayMetrics();
+        activity.getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        int width = metrics.widthPixels;
+        return width;
+
     }
 
 

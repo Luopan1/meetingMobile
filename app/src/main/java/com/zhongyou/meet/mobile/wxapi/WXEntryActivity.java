@@ -168,7 +168,7 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
 
 
 	protected void initView() {
-		Logger.e("initViews");
+		Log.e("initView()","initViews");
 		if (Preferences.isLogin()) {
 			Logger.e("Preferences.isLogin()");
 
@@ -322,7 +322,7 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
 
 	private void initEntry() {
 		if (EasyPermissions.hasPermissions(this, perms)) {
-			Logger.e("hasPermissions");
+			Log.e("initEntry()","hasPermissions");
 			initView();
 		} else {
 			EasyPermissions.requestPermissions(this, "请授予必要的权限", 0, perms);
@@ -396,6 +396,9 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
 			@Override
 			public void onFailure(int errorCode, BaseException exception) {
 				super.onFailure(errorCode, exception);
+				if (BuildConfig.DEBUG){
+					initEntry();
+				}
 				if (mLoadingDialog!=null){
 					mLoadingDialog.dismiss();
 				}

@@ -13,8 +13,8 @@ public class Constant {
 
     public static boolean isChairMan=false;
 
-    //1 为主持人 2 为参会人  3为观众 默认为观众
-    public  static int videoType=3;
+    //0 为主持人 1 为参会人  2为观众 默认为观众
+    public  static int videoType=2;
 
     /**
      * 检查更新地址

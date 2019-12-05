@@ -1,5 +1,6 @@
 package io.agora.openlive.ui;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
@@ -11,6 +12,7 @@ import android.util.Log;
 import com.orhanobut.logger.Logger;
 import com.zhongyou.meet.mobile.Constant;
 import com.zhongyou.meet.mobile.R;
+import com.zhongyou.meet.mobile.ameeting.ChairManActivity;
 import com.zhongyou.meet.mobile.ameeting.meetmodule.mvp.ui.activity.MeetChairManActivityActivity;
 import com.zhongyou.meet.mobile.entities.Agora;
 import com.zhongyou.meet.mobile.entities.MeetingJoin;
@@ -22,15 +24,20 @@ public class MeetingInitActivity extends BaseActivity {
 
     private static final String TAG = MeetingInitActivity.class.getSimpleName();
 
+    @SuppressLint("HandlerLeak")
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            Logger.e("角色为:"+meetingJoin.getRole());
-            if (meetingJoin.getRole() == 0) {
-                forwardToLiveRoom(Constants.CLIENT_ROLE_BROADCASTER);
-            } else {
-                forwardToLiveRoom(Constants.CLIENT_ROLE_AUDIENCE);
+            Log.e(TAG,"角色为:"+meetingJoin.getRole());
+            int role = getIntent().getIntExtra("role", 0);
+            Log.e(TAG,"角色为role:============="+role+"======================");
+            if (role == 0) {
+                forwardToLiveRoom(0);
+            } else if (role==1){
+                forwardToLiveRoom(1);
+            }else if (role==2){
+                forwardToLiveRoom(2);
             }
         }
     };
@@ -100,29 +107,37 @@ public class MeetingInitActivity extends BaseActivity {
     @Override
     protected void deInitUIandEvent() {
     }
-
+    Intent intent;
     public void forwardToLiveRoom(int cRole) {
-        Intent intent;
+
         Logger.e("cRole :"+cRole+"-----"+"meetingJoin.getMeeting().getType(): "+meetingJoin.getMeeting().getType());
         Log.e(TAG, "forwardToLiveRoom: "+"cRole :"+cRole+"-----"+"meetingJoin.getMeeting().getType(): "+meetingJoin.getMeeting().getType() );
-        if (cRole == 1) {//主持人进入
-            Constant.videoType=1;
+        if (cRole == 0) {//主持人进入
+            Constant.videoType=0;
             Constant.isChairMan=true;
-            intent = new Intent(MeetingInitActivity.this, InviteMeetingBroadcastActivity.class);
+            intent = new Intent(MeetingInitActivity.this, ChairManActivity.class);
+
+//            intent = new Intent(MeetingInitActivity.this, InviteMeetingBroadcastActivity.class);
            /* if (meetingJoin.getMeeting().getType() == 0) {
                 intent = new Intent(MeetingInitActivity.this, MeetingBroadcastActivity.class);
             } else {
                 intent = new Intent(MeetingInitActivity.this, InviteMeetingBroadcastActivity.class);
             }*/
-        } else {//参会人进入
-            Constant.videoType=2;
+        } else if (cRole==1){//参会人进入
+            Constant.videoType=1;
             Constant.isChairMan=false;
-            intent = new Intent(MeetingInitActivity.this, InviteMeetingAudienceActivity.class);
+            intent = new Intent(MeetingInitActivity.this, MeetingAudienceActivity.class);
+//            intent = new Intent(MeetingInitActivity.this, InviteMeetingBroadcastActivity.class);
+//            intent = new Intent(MeetingInitActivity.this, InviteMeetingAudienceActivity.class);
            /* if (meetingJoin.getMeeting().getType() == 0) {
                 intent = new Intent(MeetingInitActivity.this, MeetingAudienceActivity.class);
             } else {
                 intent = new Intent(MeetingInitActivity.this, InviteMeetingAudienceActivity.class);
             }*/
+        }else if (cRole==2){
+            Constant.videoType=2;
+            Constant.isChairMan=false;
+            intent = new Intent(MeetingInitActivity.this, MeetingAudienceActivity.class);
         }
         intent.putExtra("meeting", meetingJoin);
         intent.putExtra("agora", agora);

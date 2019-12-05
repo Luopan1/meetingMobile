@@ -97,6 +97,7 @@ public class HomeActivity extends BasicActivity implements View.OnClickListener 
 		});
 
 
+
 		initView();
 		versionCheck();
 		initData();

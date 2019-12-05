@@ -78,8 +78,8 @@
 
         <!--会议界面 end-->
 
-
-        <activity android:name=".WebViewActivity"></activity>
+        <activity android:name=".ameeting.ChairManActivity" android:theme="@style/NoTitleLandscape" android:screenOrientation="landscape"/>
+        <activity android:name=".WebViewActivity" />
         <activity android:name=".business.EvaluationActivity" />
         <activity android:name=".business.VersionActivity" />
         <activity android:name=".UserInfoActivity" /> <!-- 微信登录页面 -->
