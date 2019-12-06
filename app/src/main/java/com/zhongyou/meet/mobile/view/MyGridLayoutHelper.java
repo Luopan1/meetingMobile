@@ -296,7 +296,6 @@ public class MyGridLayoutHelper extends BaseLayoutHelper {
 			int pos = layoutState.getCurrentPosition();
 			if (isOutOfRange(pos)) {
 				if (DEBUG)
-					Log.d(TAG, "pos [" + pos + "] is out of range");
 				break;
 			}
 
@@ -484,7 +483,6 @@ public class MyGridLayoutHelper extends BaseLayoutHelper {
 
 				bottom = top + maxSize;
 			}
-			Log.e(TAG, "layoutViews000: layoutInVertical   top"+top+"    bottom"+bottom );
 		} else {
 			if (layoutState.getLayoutDirection() == VirtualLayoutManager.LayoutStateWrapper.LAYOUT_START) {
 				right = layoutState.getOffset() - endSpace - (mLayoutWithAnchor || isEndLine ? 0 : mHGap);
@@ -493,11 +491,9 @@ public class MyGridLayoutHelper extends BaseLayoutHelper {
 				left = layoutState.getOffset() + startSpace + (mLayoutWithAnchor || isStartLine ? 0 : mHGap);
 				right = left + maxSize;
 			}
-			Log.e(TAG, "layoutViews111: layoutInVertical   right"+right+"    left"+left );
 		}
 
 		for (int i = 0; i < count; i++) {
-			Log.e(TAG, "count=: "+count );
 			View view = mSet[i];
 			final int index = mSpanIndices[i];
 
@@ -510,9 +506,6 @@ public class MyGridLayoutHelper extends BaseLayoutHelper {
 					}
 				} else {
 					int itemPosition = layoutState.getCurrentPosition();
-					Log.e(TAG, "itemPosition=: "+itemPosition +"params.getViewPosition()=="+params.getViewPosition());
-					Log.e(TAG, "index=: "+index );
-					Log.e(TAG, "index=: "+i );
 
 					if (params.getViewPosition()<=2){
 						left = helper.getPaddingLeft() + mMarginLeft + mPaddingLeft + mSizePerSpan * (1) + (1)* mHGap;
@@ -530,7 +523,6 @@ public class MyGridLayoutHelper extends BaseLayoutHelper {
 					}
 				}
 				right = left + orientationHelper.getDecoratedMeasurementInOther(view);
-				Log.e(TAG, "layoutInVertical2222   left" + left + "----right " + right);
 			} else {
 				if (weighted) {
 					top = helper.getPaddingTop() + mMarginTop + mPaddingTop;
@@ -543,11 +535,9 @@ public class MyGridLayoutHelper extends BaseLayoutHelper {
 				}
 
 				bottom = top + orientationHelper.getDecoratedMeasurementInOther(view);
-				Log.e(TAG, "layoutInVertical3333   top" + top + "----bottom " + bottom);
 			}
 
-			Log.e(TAG, "layout item in position: " + params.getViewPosition() +"index:"+ index + " into (" +
-						left + ", " + top + ", " + right + ", " + bottom + " )");
+
 
 			// We calculate everything with View's bounding box (which includes decor and margins)
 			// To calculate correct layout position, we subtract margins.

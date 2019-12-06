@@ -110,8 +110,10 @@ public class NewAudienceVideoAdapter extends DelegateAdapter.Adapter<NewAudience
 			AudienceVideo audienceVideo = iterator.next();
 			if (audienceVideo.getUid() == uid) {
 				int position = audienceVideos.indexOf(audienceVideo);
-				audienceVideo.getSurfaceView().setZOrderMediaOverlay(false);
-				audienceVideo.getSurfaceView().setZOrderOnTop(false);
+				if (null!=audienceVideo.getSurfaceView()){
+					audienceVideo.getSurfaceView().setZOrderMediaOverlay(false);
+					audienceVideo.getSurfaceView().setZOrderOnTop(false);
+				}
 				Log.e("deleteItem", "deleteItem: "+position);
 //                Log.v("delete", "1--" + audienceVideos.size() + "--position--" + position);
 				iterator.remove();

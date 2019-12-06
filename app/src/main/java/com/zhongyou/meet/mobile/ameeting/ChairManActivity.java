@@ -353,16 +353,15 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 		int chairManPosition = mVideoAdapter.getChairManPosition();
 		//如果主持人 在的话
 		if (chairManPosition != -1) {
-			AudienceVideo chairManVideo = mVideoAdapter.getAudienceVideoLists().get(chairManPosition);
-			SurfaceView surfaceView = chairManVideo.getSurfaceView();
 			//将主持人添加到大的画面上
-			stripSurfaceView(surfaceView);
-			broadcasterLayout.removeAllViews();
-			surfaceView.setZOrderMediaOverlay(false);
-			surfaceView.setZOrderOnTop(false);
-			broadcasterLayout.setVisibility(View.VISIBLE);
-			broadcasterLayout.addView(surfaceView, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 			mVideoAdapter.removeItem(chairManPosition);
+			stripSurfaceView(localBroadcasterSurfaceView);
+			broadcasterLayout.removeAllViews();
+			localBroadcasterSurfaceView.setZOrderMediaOverlay(false);
+			localBroadcasterSurfaceView.setZOrderOnTop(false);
+			broadcasterLayout.setVisibility(View.VISIBLE);
+			broadcasterLayout.addView(localBroadcasterSurfaceView, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+
 		} else {
 			// TODO: 2019-11-26 主持人不在
 		}
@@ -382,6 +381,12 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 		mVideoAdapter.notifyDataSetChanged();
 		mDelegateAdapter.addAdapter(mVideoAdapter);
 		mLogger.e("exitSpliteMode");
+
+		if (currentMaterial!=null){
+			broadcasterLayout.setVisibility(View.GONE);
+		}else {
+			broadcasterLayout.setVisibility(View.VISIBLE);
+		}
 
 	}
 
@@ -782,63 +787,6 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 			}, meetingJoin.getMeeting().getId());
 		});
 
-		/*fullScreenButton.setOnClickListener(v -> {
-			if (!isFullScreen) {
-				fullScreenButton.setImageResource(R.drawable.ic_full_screened);
-				*//*if (remoteAudienceSurfaceView != null) {
-					audienceView.removeView(remoteAudienceSurfaceView);
-					audienceLayout.setVisibility(View.GONE);
-					stopButton.setVisibility(View.GONE);
-				} else {
-					audienceLayout.setVisibility(View.GONE);
-					stopButton.setVisibility(View.GONE);
-				}*//*
-				if (localBroadcasterSurfaceView != null) {
-					broadcasterSmallLayout.setVisibility(View.GONE);
-				}
-				if (currentMaterial == null) {
-					docLayout.setVisibility(View.GONE);
-				} else {
-					docLayout.setVisibility(View.VISIBLE);
-				}
-				docButton.setVisibility(View.GONE);
-				muteButton.setVisibility(View.INVISIBLE);
-				audiencesButton.setVisibility(View.GONE);
-				disCussButton.setVisibility(View.GONE);
-				if (!tvContent.getText().toString().isEmpty())
-					llMsg.setVisibility(View.VISIBLE);
-				llChat.setVisibility(View.INVISIBLE);
-				isFullScreen = true;
-			} else {
-				fullScreenButton.setImageResource(R.drawable.ic_full_screen);
-				*//*if (remoteAudienceSurfaceView != null) {
-					audienceLayout.setVisibility(View.VISIBLE);
-					audienceView.removeAllViews();
-					audienceView.addView(remoteAudienceSurfaceView);
-					stopButton.setVisibility(View.VISIBLE);
-				} else {
-					audienceLayout.setVisibility(View.GONE);
-					stopButton.setVisibility(View.GONE);
-				}*//*
-				if (localBroadcasterSurfaceView != null) {
-					if (currentMaterial == null) {
-						docLayout.setVisibility(View.GONE);
-						broadcasterSmallLayout.setVisibility(View.GONE);
-					} else {
-						docLayout.setVisibility(View.VISIBLE);
-						broadcasterSmallLayout.setVisibility(View.VISIBLE);
-					}
-				}
-				llMsg.setVisibility(View.GONE);
-//                if(!tvChat.getText().toString().isEmpty())
-//                llChat.setVisibility(View.VISIBLE);
-				disCussButton.setVisibility(View.VISIBLE);
-				docButton.setVisibility(View.VISIBLE);
-				muteButton.setVisibility(View.VISIBLE);
-				audiencesButton.setVisibility(View.VISIBLE);
-				isFullScreen = false;
-			}
-		});*/
 		muteButton = findViewById(R.id.mute_audio);
 		muteButton.setOnClickListener(v -> {
 			if (!isMuted) {
@@ -1068,7 +1016,6 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 			@Override
 			public void onMessageSendSuccess(String messageID) {
 				super.onMessageSendSuccess(messageID);
-				mLogger.e(messageID + "----发送成功");
 				if (BuildConfig.DEBUG) {
 					runOnUiThread(() -> Toast.makeText(ChairManActivity.this, messageID + "-发送成功", Toast.LENGTH_SHORT).show());
 				}
@@ -1092,9 +1039,9 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 
 						if (jsonObject.has("handsUp")) {
 							AudienceVideo audience = JSON.parseObject(jsonObject.toString(), AudienceVideo.class);
-							if (audience.getCallStatus() == 2) {
+							/*if (audience.getCallStatus() == 2) {
 								currentAudience = audience;
-							}
+							}*/
 							audienceHashMap.put(audience.getUid(), audience);
 							updateAudienceList();
 							if (audience.isHandsUp()) {
@@ -1121,6 +1068,7 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 
 							AudienceVideo audience = JSON.parseObject(jsonObject.toString(), AudienceVideo.class);
 							if (Integer.parseInt(account)==currentAiducenceId){
+								mLogger.e("参会人的视频流进入了  更新列表信息");
 								currentAudience=audience;
 							}
 
@@ -1163,9 +1111,6 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 							}*/
 						} else {
 							currentAiducenceId = Integer.parseInt(value);
-//							nextButton.setVisibility(View.VISIBLE);
-//							previewButton.setVisibility(View.VISIBLE);
-//							exitDocButton.setVisibility(View.VISIBLE);
 						}
 					}
 
@@ -1315,7 +1260,7 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 						JSONObject jsonObject = new JSONObject();
 						jsonObject.put("finish", true);
 						agoraAPI.messageInstantSend("" + currentAudience.getUid(), 0, jsonObject.toString(), "");
-						mLogger.e("发送了结束消息");
+						mLogger.e("使用connectingHandler发送了消息type=="+type);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -1329,7 +1274,7 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 							JSONObject jsonObject = new JSONObject();
 							jsonObject.put("finish", true);
 							agoraAPI.messageInstantSend("" + currentAiducenceId, 0, jsonObject.toString(), "");
-							mLogger.e("发送了结束消息");
+							mLogger.e("使用connectingHandler发送了消息type=="+type);
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
@@ -1355,7 +1300,7 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 				currentAudience.setCallStatus(1);
 				currentAudience.setHandsUp(false);
 				audienceHashMap.put(currentAudience.getUid(), currentAudience);
-				mLogger.e("使用connectingHandler发送了消息");
+				mLogger.e("使用connectingHandler发送了消息type=="+type);
 				updateAudienceList();
 //				audienceNameText.setText(currentAudience.getUname());
 
@@ -1407,7 +1352,7 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 					JSONObject jsonObject = new JSONObject();
 					jsonObject.put("finish", true);
 					agoraAPI.messageInstantSend("" + audience.getUid(), 0, jsonObject.toString(), "");
-					mLogger.e("发送了结束消息");
+					mLogger.e("发送了结束消息type==3");
 					//rtcEngine().muteRemoteAudioStream(audience.getUid(),true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -1417,7 +1362,7 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 
 				isConnecting = true;
 				connectingHandler.sendEmptyMessageDelayed(0, 10000);
-				mLogger.e("使用connectingHandler发送了消息");
+				mLogger.e("使用connectingHandler发送了消息type==4");
 				if (currentAudience != null) {
 					currentAudience.setCallStatus(0);
 					currentAudience.setHandsUp(false);
@@ -1926,7 +1871,6 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 			}
 
 
-			//只能以参会人的身份进入视频 如果为第8个  则应该是观众
 			if (currentMaterial == null) {
 				mAudienceRecyclerView.setVisibility(View.VISIBLE);
 			} else {
@@ -1941,10 +1885,11 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 			audienceVideo.setUid(uid);
 			audienceVideo.setName("参会人" + uid);
 			audienceVideo.setBroadcaster(false);
+			audienceVideo.setCallStatus(2);
 			audienceVideo.setSurfaceView(remoteAudienceSurfaceView);
 			mVideoAdapter.insertItem(audienceVideo);
 
-			audienceVideo.setCallStatus(2);
+
 			audienceHashMap.put(uid, audienceVideo);
 			updateAudienceList();
 
@@ -1953,6 +1898,7 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 
 			//观众上线
 			if (uid!=0&&uid==currentAiducenceId){
+				mLogger.e("观众视频进入了……"+uid);
 				stopButton.setVisibility(View.VISIBLE);
 				currentAudience = audienceVideo;
 				isConnecting=false;
@@ -1975,38 +1921,6 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
-
-
-            /*fullScreenButton.setVisibility(View.VISIBLE);
-
-            currentAiducenceId = uid;
-
-            *//*audienceLayout.setVisibility(View.VISIBLE);
-            audienceView.removeAllViews();
-            remoteAudienceSurfaceView = RtcEngine.CreateRendererView(getApplicationContext());
-            remoteAudienceSurfaceView.setZOrderOnTop(true);
-            remoteAudienceSurfaceView.setZOrderMediaOverlay(true);
-            rtcEngine().setupRemoteVideo(new VideoCanvas(remoteAudienceSurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, uid));
-            audienceView.addView(remoteAudienceSurfaceView);*//*
-
-            agoraAPI.getUserAttr(String.valueOf(uid), "uname");
-
-
-
-            isConnecting = false;
-
-            if (newAudience != null) {
-                currentAudience = newAudience;
-                newAudience = null;
-            }
-            if (currentAudience != null) {
-                currentAudience.setCallStatus(2);
-                audienceHashMap.put(currentAudience.getUid(), currentAudience);
-                updateAudienceList();
-            } else {
-                Toast.makeText(this, "current audience is null", Toast.LENGTH_SHORT).show();
-            }
-            stopButton.setVisibility(View.VISIBLE);*/
 
 
 		});
@@ -2063,6 +1977,7 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 						updateAudienceList();
 						currentAudience = null;
 					}
+					changeView(broadcasterLayout,localBroadcasterSurfaceView);
 					currentAudience = null;
 
 					remoteAudienceSurfaceView = null;
@@ -2101,6 +2016,24 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 		doRemoveRemoteUi(uid);
 	}
 
+	/**
+	 * 当用户退出 或者变成观众的时候
+	 * 需要判断主持人是否在列表中
+	 * 如果主持人在列表中 就需要将主持人放大
+	 * 然后列表中移除参会人
+	 *
+	 * */
+	public void changeView(FrameLayout broadcasterLayout,SurfaceView broadCastView){
+		if (mVideoAdapter.isHaveChairMan()){
+			int chairManPosition = mVideoAdapter.getChairManPosition();
+			if (chairManPosition!=-1){
+				mVideoAdapter.deleteItem(chairManPosition);
+				stripSurfaceView(broadCastView);
+				broadcasterLayout.addView(broadcasterLayout);
+			}
+		}
+	}
+
 	private void doRemoveRemoteUi(final int uid) {
 		runOnUiThread(() -> {
 			if (isFinishing()) {
@@ -2126,7 +2059,11 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 						stripSurfaceView(localBroadcasterSurfaceView);
 						localBroadcasterSurfaceView.setZOrderMediaOverlay(false);
 						broadcasterLayout.addView(localBroadcasterSurfaceView);
-						broadcasterLayout.setVisibility(View.VISIBLE);
+						if (currentMaterial!=null){
+							broadcasterLayout.setVisibility(View.GONE);
+						}else {
+							broadcasterLayout.setVisibility(View.VISIBLE);
+						}
 						mAudienceRecyclerView.setVisibility(View.GONE);
 						mVideoAdapter.removeItem(chairManPosition);
 					}

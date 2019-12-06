@@ -149,10 +149,11 @@
 
         <Button
             android:id="@+id/preview"
-            android:layout_width="70sp"
-            android:layout_height="30sp"
-            android:background="@drawable/bg_meeting_button_selector"
-            android:shadowColor="@color/black"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/transparent"
+            android:drawableTop="@drawable/icon_previous"
+            android:drawablePadding="@dimen/my_px_10"
             android:shadowDx="3"
             android:shadowDy="3"
             android:shadowRadius="5"
@@ -162,10 +163,12 @@
 
         <Button
             android:id="@+id/next"
-            android:layout_width="70sp"
-            android:layout_height="30sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:background="@drawable/bg_meeting_button_selector"
+            android:background="@color/transparent"
+            android:drawableTop="@drawable/icon_next"
+            android:drawablePadding="@dimen/my_px_10"
             android:shadowColor="@color/black"
             android:shadowDx="3"
             android:shadowDy="3"
@@ -176,10 +179,12 @@
 
         <Button
             android:id="@+id/exit_ppt"
-            android:layout_width="110sp"
-            android:layout_height="17dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:background="@drawable/bg_meeting_button_selector"
+            android:background="@color/transparent"
+            android:drawableTop="@drawable/icon_exit_ppt"
+            android:drawablePadding="@dimen/my_px_10"
             android:shadowColor="@color/black"
             android:shadowDx="3"
             android:shadowDy="3"
@@ -194,7 +199,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:layout_marginLeft="@dimen/my_px_200"
+        android:layout_marginLeft="@dimen/my_px_100"
         android:layout_marginBottom="@dimen/my_px_10"
         android:background="@color/transparent"
         android:orientation="horizontal">
@@ -317,7 +322,6 @@
 
 
     </LinearLayout>
-
 
 
     <LinearLayout
