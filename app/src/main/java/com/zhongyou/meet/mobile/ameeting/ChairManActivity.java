@@ -380,11 +380,11 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 		mVideoAdapter.setLayoutHelper(helper);
 		mVideoAdapter.notifyDataSetChanged();
 		mDelegateAdapter.addAdapter(mVideoAdapter);
-		mLogger.e("exitSpliteMode");
 
-		if (currentMaterial!=null){
+
+		if (currentMaterial != null) {
 			broadcasterLayout.setVisibility(View.GONE);
-		}else {
+		} else {
 			broadcasterLayout.setVisibility(View.VISIBLE);
 		}
 
@@ -592,7 +592,7 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 		mVideoAdapter.setOnDoucleClickListener(new NewAudienceVideoAdapter.onDoubleClickListener() {
 			@Override
 			public void onDoubleClick(View parent, View view, int position) {
-				if (isSplitMode){
+				if (isSplitMode) {
 					return;
 				}
 				if (mVideoAdapter.isHaveChairMan()) {
@@ -607,6 +607,7 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 							stripSurfaceView(localBroadcasterSurfaceView);
 							broadcasterLayout.addView(localBroadcasterSurfaceView);
 						}
+						mCurrentAudienceVideo = null;
 						return;
 					} else {
 						//如果点击的不是主持人 先将大的画面broadcasterView   添加到列表中
@@ -1064,12 +1065,12 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 								}
 							}
 						}
-						if (jsonObject.has("returnInformation")){
+						if (jsonObject.has("returnInformation")) {
 
 							AudienceVideo audience = JSON.parseObject(jsonObject.toString(), AudienceVideo.class);
-							if (Integer.parseInt(account)==currentAiducenceId){
+							if (Integer.parseInt(account) == currentAiducenceId) {
 								mLogger.e("参会人的视频流进入了  更新列表信息");
-								currentAudience=audience;
+								currentAudience = audience;
 							}
 
 							audienceHashMap.put(audience.getUid(), audience);
@@ -1095,10 +1096,10 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 								updateAudienceList();
 							}
 							currentAudience = null;
-							currentAiducenceId=0;
+							currentAiducenceId = 0;
 							remoteAudienceSurfaceView = null;
 
-							isConnecting=false;
+							isConnecting = false;
 
 							/*stopButton.setVisibility(View.GONE);
 							audienceView.removeAllViews();
@@ -1128,8 +1129,8 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 					if (TextUtils.isEmpty(name) && TextUtils.isEmpty(value) && type.equals("clear")) {
 
 						mLogger.e("ppt退出时的集合大小为" + mVideoAdapter.getDataSize());
-						currentAiducenceId=0;
-						isConnecting=false;
+						currentAiducenceId = 0;
+						isConnecting = false;
 						exitPPT();
 					}
 				});
@@ -1260,7 +1261,7 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 						JSONObject jsonObject = new JSONObject();
 						jsonObject.put("finish", true);
 						agoraAPI.messageInstantSend("" + currentAudience.getUid(), 0, jsonObject.toString(), "");
-						mLogger.e("使用connectingHandler发送了消息type=="+type);
+						mLogger.e("使用connectingHandler发送了消息type==" + type);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -1274,7 +1275,7 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 							JSONObject jsonObject = new JSONObject();
 							jsonObject.put("finish", true);
 							agoraAPI.messageInstantSend("" + currentAiducenceId, 0, jsonObject.toString(), "");
-							mLogger.e("使用connectingHandler发送了消息type=="+type);
+							mLogger.e("使用connectingHandler发送了消息type==" + type);
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
@@ -1300,7 +1301,7 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 				currentAudience.setCallStatus(1);
 				currentAudience.setHandsUp(false);
 				audienceHashMap.put(currentAudience.getUid(), currentAudience);
-				mLogger.e("使用connectingHandler发送了消息type=="+type);
+				mLogger.e("使用connectingHandler发送了消息type==" + type);
 				updateAudienceList();
 //				audienceNameText.setText(currentAudience.getUname());
 
@@ -1897,11 +1898,11 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 //			agoraAPI.getUserAttr(String.valueOf(uid), "uname");
 
 			//观众上线
-			if (uid!=0&&uid==currentAiducenceId){
-				mLogger.e("观众视频进入了……"+uid);
+			if (uid != 0 && uid == currentAiducenceId) {
+				mLogger.e("观众视频进入了……" + uid);
 				stopButton.setVisibility(View.VISIBLE);
 				currentAudience = audienceVideo;
-				isConnecting=false;
+				isConnecting = false;
 			}
 
 			if (connectingHandler.hasMessages(0)) {
@@ -1916,8 +1917,8 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 			JSONObject jsonObject = new JSONObject();
 			try {
 				jsonObject.put("uid", uid);
-				jsonObject.put("getInformation",true);
-				agoraAPI.messageInstantSend(uid+"", 0, jsonObject.toString(), "");
+				jsonObject.put("getInformation", true);
+				agoraAPI.messageInstantSend(uid + "", 0, jsonObject.toString(), "");
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
@@ -1966,7 +1967,7 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 					mLogger.e("用户变成了观众模式");
 					if (currentAudience != null) {
 						AudienceVideo audienceVideo = audienceHashMap.get(currentAudience.getUid());
-						if (audienceVideo==null){
+						if (audienceVideo == null) {
 							return;
 						}
 						audienceVideo.setCallStatus(0);
@@ -1977,7 +1978,7 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 						updateAudienceList();
 						currentAudience = null;
 					}
-					changeView(broadcasterLayout,localBroadcasterSurfaceView);
+					changeView(broadcasterLayout, localBroadcasterSurfaceView);
 					currentAudience = null;
 
 					remoteAudienceSurfaceView = null;
@@ -2010,7 +2011,6 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 			});
 
 
-
 		}
 
 		doRemoveRemoteUi(uid);
@@ -2021,15 +2021,14 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 	 * 需要判断主持人是否在列表中
 	 * 如果主持人在列表中 就需要将主持人放大
 	 * 然后列表中移除参会人
-	 *
-	 * */
-	public void changeView(FrameLayout broadcasterLayout,SurfaceView broadCastView){
-		if (mVideoAdapter.isHaveChairMan()){
+	 */
+	public void changeView(FrameLayout broadcasterLayout, SurfaceView broadCastView) {
+		if (mVideoAdapter.isHaveChairMan()) {
 			int chairManPosition = mVideoAdapter.getChairManPosition();
-			if (chairManPosition!=-1){
+			if (chairManPosition != -1) {
 				mVideoAdapter.deleteItem(chairManPosition);
 				stripSurfaceView(broadCastView);
-				broadcasterLayout.addView(broadcasterLayout);
+				broadcasterLayout.addView(broadCastView);
 			}
 		}
 	}
@@ -2043,33 +2042,112 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 				Toast.makeText(ChairManActivity.this, uid + "退出了", Toast.LENGTH_SHORT).show();
 			}
 
-			if (currentAiducenceId==uid){
+			if (currentAiducenceId == uid) {
 				stopButton.setVisibility(View.INVISIBLE);
+			} else if (currentAiducenceId != 0) {
+				stopButton.setVisibility(View.VISIBLE);
 			}
+			if (isSplitMode) {
+				//没有使用ppt 只有主持人 参会人是 集合大小为2
+				//使用ppt 只有主持人 参会人 集合大小是 集合大小是1
+				//没有使用ppt 只有主持人  观众是 集合大小是2
+				//使用ppt 只有主持人 观众时  集合大小是 集合大小是1
 
-			//如果是分屏模式 当集合中有主持人和一个参会人的时候 这个参会人退出了
-			//需要将主持人移动到大的view上  在删除这个参会人
-			if (mVideoAdapter.getDataSize()<=2){
-				if (isSplitMode){
-					if (mVideoAdapter.isHaveChairMan()){
+				// 使用了ppt  集合大小为1  没有使用ppt 集合大小为2
+
+				mLogger.e("当前集合大小是：" + mVideoAdapter.getDataSize());
+				//集合大小为1 代表只有主持人在了
+				if (currentMaterial!=null&&mVideoAdapter.getDataSize() == 1||currentMaterial==null&&mVideoAdapter.getDataSize()==2) {
+
+					if (mVideoAdapter.isHaveChairMan() ) {
+						mLogger.e("此时没有在使用ppt   主持人在列表中");
 						int chairManPosition = mVideoAdapter.getChairManPosition();
-						if (chairManPosition==-1){
-							return;
+						if (chairManPosition != -1) {
+							AudienceVideo audienceVideo = mVideoAdapter.getAudienceVideoLists().get(chairManPosition);
+							if (audienceVideo != null && audienceVideo.getSurfaceView() != null) {
+								mVideoAdapter.removeItem(chairManPosition);
+							}
 						}
-						stripSurfaceView(localBroadcasterSurfaceView);
-						localBroadcasterSurfaceView.setZOrderMediaOverlay(false);
-						broadcasterLayout.addView(localBroadcasterSurfaceView);
-						if (currentMaterial!=null){
-							broadcasterLayout.setVisibility(View.GONE);
-						}else {
-							broadcasterLayout.setVisibility(View.VISIBLE);
+
+						int positionById = mVideoAdapter.getPositionById(uid);
+						if (positionById != -1) {
+							AudienceVideo audienceVideo = mVideoAdapter.getAudienceVideoLists().get(positionById);
+							if (audienceVideo != null) {
+								audienceVideo.getSurfaceView().setZOrderMediaOverlay(false);
+								audienceVideo.getSurfaceView().setZOrderOnTop(false);
+							}
 						}
-						mAudienceRecyclerView.setVisibility(View.GONE);
-						mVideoAdapter.removeItem(chairManPosition);
+						mVideoAdapter.deleteItem(uid);
+
+					} else if (currentMaterial!=null) {
+						//在使用ppt的时候 主持人是不再列表中 此时有人退出 就直接移除此人就行
+						mLogger.e("此时在使用ppt 主持人不再列表中");
+						int positionById = mVideoAdapter.getPositionById(uid);
+						if (positionById != -1) {
+							AudienceVideo audienceVideo = mVideoAdapter.getAudienceVideoLists().get(positionById);
+							if (audienceVideo != null && audienceVideo.getSurfaceView() != null) {
+								audienceVideo.getSurfaceView().setZOrderOnTop(false);
+								audienceVideo.getSurfaceView().setZOrderMediaOverlay(false);
+							}
+							mVideoAdapter.deleteItem(uid);
+						}
 					}
+					if (currentMaterial==null) {
+						localBroadcasterSurfaceView.setZOrderOnTop(false);
+						localBroadcasterSurfaceView.setZOrderMediaOverlay(false);
+						stripSurfaceView(localBroadcasterSurfaceView);
+						broadcasterLayout.removeAllViews();
+						broadcasterLayout.addView(localBroadcasterSurfaceView);
+					}
+
+					isSplitMode = false;
+					mSpilteView.setText("均分模式");
+					exitSpliteMode();
+				} else {
+					//如果大2的话 直接移除此人就行
+					int positionById = mVideoAdapter.getPositionById(uid);
+					if (positionById != -1) {
+						AudienceVideo audienceVideo = mVideoAdapter.getAudienceVideoLists().get(positionById);
+						if (audienceVideo != null) {
+							audienceVideo.getSurfaceView().setZOrderMediaOverlay(false);
+							audienceVideo.getSurfaceView().setZOrderOnTop(false);
+						}
+					}
+					mVideoAdapter.deleteItem(uid);
+
 				}
+			} else {
+				//不是分屏模式 如果此人在大的视图 直接移除大视图 将主持人拿出来放到大的视图
+				if (mCurrentAudienceVideo != null && mCurrentAudienceVideo.getUid() == uid) {
+					broadcasterLayout.removeAllViews();
+					if (mVideoAdapter.isHaveChairMan()) {
+						int chairManPosition = mVideoAdapter.getChairManPosition();
+						if (chairManPosition != -1) {
+							AudienceVideo audienceVideo = mVideoAdapter.getAudienceVideoLists().get(chairManPosition);
+							if (audienceVideo != null && audienceVideo.getSurfaceView() != null) {
+								mVideoAdapter.removeItem(chairManPosition);
+							}
+
+						}
+					}
+					localBroadcasterSurfaceView.setZOrderOnTop(true);
+					localBroadcasterSurfaceView.setZOrderMediaOverlay(false);
+					stripSurfaceView(localBroadcasterSurfaceView);
+					broadcasterLayout.addView(localBroadcasterSurfaceView);
+				} else {
+					//如果此人不再大的视图里面 直接删除此人
+					int positionById = mVideoAdapter.getPositionById(uid);
+					if (positionById != -1) {
+						AudienceVideo audienceVideo = mVideoAdapter.getAudienceVideoLists().get(positionById);
+						if (audienceVideo != null) {
+							audienceVideo.getSurfaceView().setZOrderMediaOverlay(false);
+							audienceVideo.getSurfaceView().setZOrderOnTop(false);
+						}
+					}
+					mVideoAdapter.deleteItem(uid);
+				}
+
 			}
-			mVideoAdapter.deleteItem(uid);
 		});
 	}
 

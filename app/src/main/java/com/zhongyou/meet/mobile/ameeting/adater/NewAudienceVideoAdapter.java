@@ -109,12 +109,13 @@ public class NewAudienceVideoAdapter extends DelegateAdapter.Adapter<NewAudience
 		while (iterator.hasNext()) {
 			AudienceVideo audienceVideo = iterator.next();
 			if (audienceVideo.getUid() == uid) {
-				int position = audienceVideos.indexOf(audienceVideo);
+
 				if (null!=audienceVideo.getSurfaceView()){
 					audienceVideo.getSurfaceView().setZOrderMediaOverlay(false);
 					audienceVideo.getSurfaceView().setZOrderOnTop(false);
+					stripSurfaceView(audienceVideo.getSurfaceView());
 				}
-				Log.e("deleteItem", "deleteItem: "+position);
+				Log.e("deleteItem", "deleteItem: "+iterator.toString());
 //                Log.v("delete", "1--" + audienceVideos.size() + "--position--" + position);
 				iterator.remove();
 //                Log.v("delete", "2--" + audienceVideos.size());
@@ -327,6 +328,9 @@ public class NewAudienceVideoAdapter extends DelegateAdapter.Adapter<NewAudience
 	}
 
 	private void stripSurfaceView(SurfaceView view) {
+		if(view==null){
+			return;
+		}
 		ViewParent parent = view.getParent();
 		if (parent != null) {
 			((FrameLayout) parent).removeView(view);

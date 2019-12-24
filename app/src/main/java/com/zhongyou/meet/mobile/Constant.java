@@ -12,6 +12,7 @@ public class Constant {
     public static final String RELOGIN_ACTION = ".ACTION.RELOGIN";
 
     public static boolean isChairMan=false;
+    static boolean debug = BuildConfig.DEBUG;
 
     //0 为主持人 1 为参会人  2为观众 默认为观众
     public  static int videoType=2;
@@ -33,32 +34,33 @@ public class Constant {
 
 
 
-    public static String getAPIHOSTURL(){
-        if (BuildConfig.DEBUG){
-            return  APIHOSTURL="http://osg.apitest.zhongyouie.cn";
+    public static String getAPIHOSTURL() {
 
-        }else {
-            //="http://api.zhongyouie.com";
-            return APIHOSTURL;
+        if (debug) {
+            APIHOSTURL = "http://osg.apitest.zhongyouie.cn";
+
+        } else {
+            APIHOSTURL = "http://api.zhongyouie.com";
         }
+        return APIHOSTURL;
     }
 
-    public static String getWEBSOCKETURL(){
-        if (BuildConfig.DEBUG){
-            return  WEBSOCKETURL="http://ws.zhongyouie.com/sales";
-        }else {
-           // ="http://api.zhongyouie.com";
-            return WEBSOCKETURL;
+    public static String getWEBSOCKETURL() {
+        if (BuildConfig.DEBUG) {
+            WEBSOCKETURL = "http://ws.zhongyouie.com/sales";
+        } else {
+            WEBSOCKETURL = "http://ws.zhongyouie.com/sales";
         }
+        return WEBSOCKETURL;
     }
 
-    public static String getDOWNLOADURL(){
-        if (BuildConfig.DEBUG){
-            return DOWNLOADURL ="http://tapi.zhongyouie.cn";
-        }else {
-            //="http://api.zhongyouie.com";
-            return DOWNLOADURL;
+    public static String getDOWNLOADURL() {
+        if (BuildConfig.DEBUG) {
+            DOWNLOADURL = "http://tapi.zhongyouie.cn";
+        } else {
+            DOWNLOADURL = "http://api.zhongyouie.cn";
         }
+        return DOWNLOADURL;
     }
 
 }

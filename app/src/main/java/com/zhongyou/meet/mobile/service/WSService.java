@@ -403,6 +403,9 @@ public class WSService extends Service {
         }
         ZYAgent.onEvent(getApplicationContext(),"长连接 主动调用连接");
 
+        if (mSocket==null){
+            return;
+        }
         mSocket.on(Socket.EVENT_DISCONNECT, onChatDisconnect);
         mSocket.on(Socket.EVENT_CONNECT_ERROR, onChatConnectError);
         mSocket.on(Socket.EVENT_CONNECT_TIMEOUT, onChatConnectError);
