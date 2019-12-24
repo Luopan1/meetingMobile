@@ -1,5 +1,6 @@
 package io.agora.openlive.ui;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.os.Handler;
@@ -23,6 +24,7 @@ import com.zhongyou.meet.mobile.R;
 import com.zhongyou.meet.mobile.business.BaseFragment;
 import com.zhongyou.meet.mobile.entities.Bucket;
 import com.zhongyou.meet.mobile.entities.ChatMesData;
+import com.zhongyou.meet.mobile.entities.MeetingScreenShot;
 import com.zhongyou.meet.mobile.entities.base.BaseBean;
 import com.zhongyou.meet.mobile.event.ForumRevokeEvent;
 import com.zhongyou.meet.mobile.event.ForumSendEvent;
@@ -54,6 +56,9 @@ public class InMeetChatFragment extends BaseFragment implements InMeetingAdapter
     private static int delayTime = 2000;
     private Subscription subscription;
     private boolean onCreate = true;
+    private int charMessgageWhat;
+    private ChatMesData.PageDataEntity mPageDataEntity;
+
     @Override
     public String getStatisticsTag() {
         return "会议中聊天";
@@ -157,23 +162,24 @@ public class InMeetChatFragment extends BaseFragment implements InMeetingAdapter
                     ToastUtils.showToast("发送内容不能为空");
                     return;
                 }
-                ChatMesData.PageDataEntity entity = new ChatMesData.PageDataEntity();
+                mPageDataEntity = new ChatMesData.PageDataEntity();
                 long ts = System.currentTimeMillis();
-                entity.setContent(editText.getText().toString());
-                entity.setId("");
-                entity.setMsgType(0);
-                entity.setTs(ts);
-                entity.setType(0);
-                entity.setUserName(Preferences.getUserName());
-                entity.setUserId(Preferences.getUserId());
-                entity.setUserLogo(Preferences.getUserPhoto());
-                entity.setLocalState(1);
+                mPageDataEntity.setContent(editText.getText().toString());
+                mPageDataEntity.setId("");
+                mPageDataEntity.setMsgType(0);
+                mPageDataEntity.setTs(ts);
+                mPageDataEntity.setType(0);
+                mPageDataEntity.setUserName(Preferences.getUserName());
+                mPageDataEntity.setUserId(Preferences.getUserId());
+                mPageDataEntity.setUserLogo(Preferences.getUserPhoto());
+                mPageDataEntity.setLocalState(1);
                 Message msg = new Message();
-                msg.what = dataChat.size();;
+                charMessgageWhat = dataChat.size();
+                msg.what = charMessgageWhat;
 //                msg.arg1 = dataChat.size();
-                msg.obj = entity;
+                msg.obj = mPageDataEntity;
                 handler.sendMessageDelayed(msg,delayTime);
-                dataChat.add((ChatMesData.PageDataEntity) entity);
+                dataChat.add((ChatMesData.PageDataEntity) mPageDataEntity);
                 initLastData(dataChat,true);
                 sendAction(ts,editText.getText().toString());
             }
@@ -200,10 +206,12 @@ public class InMeetChatFragment extends BaseFragment implements InMeetingAdapter
             handler.sendEmptyMessageDelayed(10, 100);
         }
     }
+    @SuppressLint("HandlerLeak")
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
+
             if (msg.what == 11) {
 //                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.WRAP_CONTENT);
 //                params.bottomMargin = (int)getResources().getDimension(R.dimen.my_px_500);
@@ -224,13 +232,16 @@ public class InMeetChatFragment extends BaseFragment implements InMeetingAdapter
 
             }else if(msg.what == 16){
                 initLastData(dataChat, true);
-            }else if(msg.obj instanceof ChatMesData.PageDataEntity){
+            }else if(msg.obj instanceof ChatMesData.PageDataEntity&&msg.what!=17){
                 ((ChatMesData.PageDataEntity)msg.obj).setLocalState(2);
                 dataChat.set(msg.what,((ChatMesData.PageDataEntity)msg.obj));
                 adapter.notifyItemChanged(msg.what);
 
+            }else if (msg.obj instanceof ChatMesData.PageDataEntity&&msg.what==17){
+                ((ChatMesData.PageDataEntity)msg.obj).setLocalState(0);
+                dataChat.set(charMessgageWhat,((ChatMesData.PageDataEntity)msg.obj));
+                adapter.notifyItemChanged(charMessgageWhat);
             }
-
         }
     };
 
@@ -238,8 +249,16 @@ public class InMeetChatFragment extends BaseFragment implements InMeetingAdapter
 
         @Override
         public void onSuccess(Bucket<ChatMesData.PageDataEntity> entity) {
-
 //            ToastUtils.showToast("提交成功");
+
+            if (mPageDataEntity!=null){
+                Message message=new Message();
+                mPageDataEntity.setLocalState(0);
+                message.obj=mPageDataEntity;
+                message.what=17;
+                handler.sendMessage(message);
+            }
+
         }
 
         @Override

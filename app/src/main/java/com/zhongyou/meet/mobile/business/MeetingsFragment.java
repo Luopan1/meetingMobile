@@ -433,8 +433,8 @@ public class MeetingsFragment extends BaseFragment {
 			view.findViewById(R.id.dialog_meeting_warnning_text).setVisibility(View.VISIBLE);
 		}
 		final EditText codeEdit = view.findViewById(R.id.code);
-		if (!SpUtil.getString("meetingId", "").equals("")) {
-			codeEdit.setText(SpUtil.getString("meetingId", ""));
+		if (!SpUtil.getString(meeting.getId(), "").equals("")) {
+			codeEdit.setText(SpUtil.getString(meeting.getId(), ""));
 		} else {
 			codeEdit.setText("");
 		}
@@ -442,7 +442,7 @@ public class MeetingsFragment extends BaseFragment {
 			@Override
 			public void onClick(View v) {
 				dialog.dismiss();
-				SpUtil.put("meetingId", codeEdit.getText().toString().trim());
+
 				if (!TextUtils.isEmpty(codeEdit.getText())) {
 					enterMeeting(codeEdit.getText().toString(), meeting);
 				} else {
@@ -480,6 +480,7 @@ public class MeetingsFragment extends BaseFragment {
 
 			@Override
 			public void onSuccess(Bucket<MeetingJoin> meetingJoinBucket) {
+				SpUtil.put(meeting.getId(), token.trim());
 				mLogger.e(JSONObject.toJSONString(meetingJoinBucket));
 				HashMap<String, Object> params = new HashMap<String, Object>();
 				params.put("clientUid", UIDUtil.generatorUID(Preferences.getUserId()));
