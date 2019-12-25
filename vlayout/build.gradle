@@ -118,7 +118,7 @@ dependencies {
         implementation 'com.android.support:support-annotations:23.1.1'
     }
 
-    androidTestApi "org.robolectric:robolectric:3.0"
+    androidTestImplementation "org.robolectric:robolectric:3.0"
 }
 
 

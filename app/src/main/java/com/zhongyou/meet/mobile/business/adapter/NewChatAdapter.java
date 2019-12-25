@@ -146,7 +146,8 @@ public class NewChatAdapter extends BaseMultiItemQuickAdapter<ChatMesData.PageDa
 							// 每次点击 都清空集合 不然会导致重复
 							mImagePathLists.clear();
 							mImageViewList.clear();
-							if (item.getContent().startsWith("null") || !item.getContent().startsWith("http") || !item.getContent().startsWith("https")) {
+							Logger.e(item.getContent());
+							if (item.getContent().startsWith("null") || !item.getContent().startsWith("http")) {
 								return;
 							}
 							//遍历所有的当前adapter的所有数据，如果是图片类型  就添加进入集合

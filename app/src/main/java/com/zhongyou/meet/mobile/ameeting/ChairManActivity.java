@@ -22,6 +22,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -157,6 +158,10 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 	private com.elvishew.xlog.Logger mLogger;
 	private NewAudienceVideoAdapter mVideoAdapter;
 
+
+
+
+
 	@SuppressLint("HandlerLeak")
 	private Handler ChatHandler = new Handler() {
 		@Override
@@ -172,9 +177,9 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 				FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
 				Log.v("llchat9898llChat", findViewById(R.id.small_chat).getWidth() + "*******后");
 				Log.v("llchat9898", disCussButton.getLeft() + "*******2");
-				params.bottomMargin = 106;
+				params.bottomMargin = 160;
 				params.gravity = Gravity.BOTTOM;
-				params.leftMargin = disCussButton.getLeft() - (llSmallChat.getWidth() / 2) + disCussButton.getWidth() / 2;
+				params.leftMargin = disCussButton.getLeft() - (llSmallChat.getWidth() / 2) + disCussButton.getWidth();
 				Log.v("llchat9898", params.leftMargin + "*******3");
 				if (params.leftMargin < 90) {
 					params.leftMargin = 90;
@@ -240,9 +245,6 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 				tvChat.setText("[撤回一条消息]");
 			}
 			tvChatName.setText(((ChatMesData.PageDataEntity) msg.obj).getUserName() + " : ");
-//            Log.v("llchat989891",tvChatName.getWidth()+"*******中");
-			Log.v("llchat9898llChat", findViewById(R.id.small_chat).getWidth() + "*******中");
-			Log.v("llchat989891", tvChatAddress.getWidth() + tvChatName.getWidth() + tvChat.getWidth() + "*******前");
 			ChatHandler.sendEmptyMessageDelayed(22, 100);
 
 		}
@@ -1692,7 +1694,7 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 					hideFragment();
 					if (isFullScreen) {
 						if (!tvContent.getText().toString().isEmpty())
-							llMsg.setVisibility(View.VISIBLE);
+							llMsg.setVisibility(View.INVISIBLE);
 					} else {
 						if (!tvChat.getText().toString().isEmpty()) {
 //                            llChat.setVisibility(View.VISIBLE);
@@ -2057,9 +2059,9 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 
 				mLogger.e("当前集合大小是：" + mVideoAdapter.getDataSize());
 				//集合大小为1 代表只有主持人在了
-				if (currentMaterial!=null&&mVideoAdapter.getDataSize() == 1||currentMaterial==null&&mVideoAdapter.getDataSize()==2) {
+				if (currentMaterial != null && mVideoAdapter.getDataSize() == 1 || currentMaterial == null && mVideoAdapter.getDataSize() == 2) {
 
-					if (mVideoAdapter.isHaveChairMan() ) {
+					if (mVideoAdapter.isHaveChairMan()) {
 						mLogger.e("此时没有在使用ppt   主持人在列表中");
 						int chairManPosition = mVideoAdapter.getChairManPosition();
 						if (chairManPosition != -1) {
@@ -2079,7 +2081,7 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 						}
 						mVideoAdapter.deleteItem(uid);
 
-					} else if (currentMaterial!=null) {
+					} else if (currentMaterial != null) {
 						//在使用ppt的时候 主持人是不再列表中 此时有人退出 就直接移除此人就行
 						mLogger.e("此时在使用ppt 主持人不再列表中");
 						int positionById = mVideoAdapter.getPositionById(uid);
@@ -2092,7 +2094,7 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 							mVideoAdapter.deleteItem(uid);
 						}
 					}
-					if (currentMaterial==null) {
+					if (currentMaterial == null) {
 						localBroadcasterSurfaceView.setZOrderOnTop(false);
 						localBroadcasterSurfaceView.setZOrderMediaOverlay(false);
 						stripSurfaceView(localBroadcasterSurfaceView);

@@ -323,15 +323,16 @@
 
     </LinearLayout>
 
-
+    <!--此处已经使用popwindow代替-->
     <LinearLayout
         android:id="@+id/ll_chat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:layout_marginBottom="@dimen/my_px_106"
+        android:layout_marginBottom="135px"
         android:orientation="vertical"
-        android:visibility="invisible">
+        tools:visibility="visible"
+        android:visibility="gone">
 
         <LinearLayout
             android:id="@+id/small_chat"
@@ -345,7 +346,6 @@
                 android:id="@+id/tv_chat_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="月二"
                 android:textColor="#ffffff"
                 android:textSize="@dimen/my_px_42" />
 
@@ -376,10 +376,10 @@
         </LinearLayout>
 
         <ImageView
+            android:layout_marginLeft="20px"
             android:id="@+id/img_tri"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
             android:background="@drawable/inverted_tri" />
     </LinearLayout>
 

@@ -216,10 +216,19 @@ public class BaseApplication extends com.jess.arms.base.BaseApplication {
 	}
 
 	public Socket getSocket() {
-		/*if (mSocket == null) {
-
-		}*/
-
+		if (mSocket == null) {
+			try {
+				IO.Options options = new IO.Options();
+				options.forceNew = false;
+				options.reconnection = true;
+				options.reconnectionDelay = 1000;
+				options.reconnectionDelayMax = 5000;
+				options.reconnectionAttempts = 10;
+				options.query = "userId=" + Preferences.getUserId();
+				mSocket = IO.socket(Constant.getWEBSOCKETURL(), options);
+			} catch (URISyntaxException e) {
+			}
+		}
 		return mSocket;
 	}
 
