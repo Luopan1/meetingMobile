@@ -85,7 +85,7 @@ public class HomeActivity extends BasicActivity implements View.OnClickListener 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.home_activity);
 
-//		WSService.actionStart(mContext);
+		WSService.actionStart(mContext);
 
 		subscription = RxBus.handleMessage(new Action1() {
 			@Override

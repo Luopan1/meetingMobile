@@ -38,13 +38,13 @@
             android:focusableInTouchMode="true"
             android:orientation="horizontal">
             <EditText
+                android:imeOptions="actionSend"
                 android:id="@+id/edit_text"
                 android:layout_width="0dp"
                 android:layout_weight="3"
                 android:layout_height="@dimen/my_px_132"
                 android:paddingLeft="@dimen/my_px_10"
                 android:maxLength="500"
-
                 android:background="@drawable/insertdrawable"
                 />
             <Button

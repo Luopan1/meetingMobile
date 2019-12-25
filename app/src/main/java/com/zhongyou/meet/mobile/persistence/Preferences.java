@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.zhongyou.meet.mobile.BaseApplication;
+import com.zhongyou.meet.mobile.Constant;
 
 
 public class Preferences {
@@ -90,7 +91,7 @@ public class Preferences {
     }
 
     public static String getUserId() {
-        return getPreferences().getString(PREFERENCE_USER_ID, null);
+        return getPreferences().getString(PREFERENCE_USER_ID, "");
     }
 
     public static void setUserId(String userId) {
@@ -416,7 +417,7 @@ public class Preferences {
     }
 
     public static String getImgUrl() {
-        return getPreferences().getString(PREFERENCE_IMG_URL, null);
+        return Constant.getImageHost();
     }
 
     public static void setImgUrl(String str) {

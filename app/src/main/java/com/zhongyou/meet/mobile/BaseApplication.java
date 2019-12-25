@@ -54,17 +54,13 @@ public class BaseApplication extends com.jess.arms.base.BaseApplication {
 	public void onCreate() {
 		super.onCreate();
 		FormatStrategy formatStrategy = PrettyFormatStrategy.newBuilder()
-				.showThreadInfo(false)  // (Optional) Whether to show thread info or not. Default true
-				.methodCount(0)         // (Optional) How many method line to show. Default 2
+				.showThreadInfo(true)  // (Optional) Whether to show thread info or not. Default true
+				.methodCount(2)         // (Optional) How many method line to show. Default 2
 				.methodOffset(7)        // (Optional) Hides internal method calls up to offset. Default 5
 				.build();
-
-		com.orhanobut.logger.Logger.addLogAdapter(new AndroidLogAdapter(formatStrategy) {
-			@Override
-			public boolean isLoggable(int priority, @Nullable String tag) {
-				return false;
-			}
-		});
+		instance = this;
+		initSocket();
+		com.orhanobut.logger.Logger.addLogAdapter(new AndroidLogAdapter());
 
 		LogConfiguration config = new LogConfiguration.Builder()
 				.logLevel(BuildConfig.DEBUG ? LogLevel.ALL : LogLevel.NONE)
@@ -83,9 +79,8 @@ public class BaseApplication extends com.jess.arms.base.BaseApplication {
 				androidPrinter,                                        // Specify printers, if no printer is specified, AndroidPrinter(for Android)/ConsolePrinter(for java) will be used.
 				filePrinter);
 
-		instance = this;
+
 		MultiDex.install(this);
-		getHostUrl();
 
 		Toasty.Config.getInstance()
 				.setToastTypeface(Typeface.createFromAsset(getAssets(), "PCap Terminal.otf"))
@@ -137,7 +132,7 @@ public class BaseApplication extends com.jess.arms.base.BaseApplication {
 				.setSupportSubunits(Subunits.PT);
 	}
 
-	private void getHostUrl() {
+	/*private void getHostUrl() {
 		ApiClient.getInstance().getHttpBaseUrl(this, new OkHttpCallback<com.alibaba.fastjson.JSONObject>() {
 
 			@Override
@@ -153,7 +148,7 @@ public class BaseApplication extends com.jess.arms.base.BaseApplication {
 					if (Constant.WEBSOCKETURL == null || Constant.APIHOSTURL == null) {
 						return;
 					}
-					initSocket();
+
 					ApiClient.getInstance().urlConfig(staticResCallback);
 				}
 
@@ -171,7 +166,7 @@ public class BaseApplication extends com.jess.arms.base.BaseApplication {
 			}
 		});
 	}
-
+*/
 	public static BaseApplication getInstance() {
 		return instance;
 	}
@@ -221,20 +216,10 @@ public class BaseApplication extends com.jess.arms.base.BaseApplication {
 	}
 
 	public Socket getSocket() {
-		if (mSocket == null) {
-			try {
-				IO.Options options = new IO.Options();
-				options.forceNew = false;
-				options.reconnection = true;
-				options.reconnectionDelay = 1000;
-				options.reconnectionDelayMax = 5000;
-				options.reconnectionAttempts = 10;
-				options.query = "userId=" + Preferences.getUserId();
-				mSocket = IO.socket(Constant.getWEBSOCKETURL(), options);
-			} catch (URISyntaxException e) {
-				e.printStackTrace();
-			}
-		}
+		/*if (mSocket == null) {
+
+		}*/
+
 		return mSocket;
 	}
 

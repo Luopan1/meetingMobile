@@ -115,19 +115,18 @@ public class DiscussFragment extends BaseFragment {
 			if (o instanceof ForumSendEvent) {
 
 				ChatMesData.PageDataEntity entity=((ForumSendEvent) o).getEntity();
-				Observable.create((Observable.OnSubscribe<ForumMeeting>) subscriber -> {
-
-					for (ForumMeeting forumMeeting : forumMeetingAdapter.getData()) {
-						subscriber.onNext(forumMeeting);
-					}
-
-				}).subscribeOn(Schedulers.io())
-						.observeOn(AndroidSchedulers.mainThread())
-						.subscribe(forumMeeting -> {
-							if (entity.getMeetingId().equals(forumMeeting.getMeetingId())) {
+				for (ForumMeeting forumMeeting : forumMeetingAdapter.getData()) {
+					if (entity.getMeetingId().equals(forumMeeting.getMeetingId())) {
+						getActivity().runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
 								updateForumListUnReadInformationAndAtailFlag(forumMeeting, entity, forumMeetingAdapter);
 							}
 						});
+
+					}
+				}
+
 
 				for (ForumMeeting forumMeeting : forumMeetingAdapter.getData()) {
 

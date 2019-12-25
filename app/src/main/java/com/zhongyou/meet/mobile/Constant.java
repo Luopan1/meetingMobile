@@ -6,61 +6,68 @@ package com.zhongyou.meet.mobile;
 
 public class Constant {
 
-    public static String APIHOSTURL="http://osg.apitest.zhongyouie.cn";
-    public static String WEBSOCKETURL="";
-    public static String DOWNLOADURL="";
-    public static final String RELOGIN_ACTION = ".ACTION.RELOGIN";
+	public static String APIHOSTURL = "http://osg.apitest.zhongyouie.cn";
+	public static String WEBSOCKETURL = "";
+	public static String DOWNLOADURL = "";
+	public static final String RELOGIN_ACTION = ".ACTION.RELOGIN";
 
-    public static boolean isChairMan=false;
-    static boolean debug = BuildConfig.DEBUG;
+	public static boolean isChairMan = false;
+	static boolean debug = BuildConfig.DEBUG;
 
-    //0 为主持人 1 为参会人  2为观众 默认为观众
-    public  static int videoType=2;
+	//0 为主持人 1 为参会人  2为观众 默认为观众
+	public static int videoType = 2;
 
-    /**
-     * 检查更新地址
-     */
+	/**
+	 * 检查更新地址
+	 */
    /* public static final String VERSION_UPDATE_URL = DOWNLOADURL+"/dz/app/version/"
             + BuildConfig.APPLICATION_ID+"/android/GA/latest?versionCode=" + BuildConfig.VERSION_CODE;*/
 
-    public final static int NICKNAME_MAX = 8;
-    public final static int NICKNAME_MIN = 2;
+	public final static int NICKNAME_MAX = 8;
+	public final static int NICKNAME_MIN = 2;
 
-    //签名限制
-    public final static int SIGNATURE_MAX = 30;
+	//签名限制
+	public final static int SIGNATURE_MAX = 30;
 
-    //回复限制
-    public final static int REPLY_REVIEW_MAX = 1000;
+	//回复限制
+	public final static int REPLY_REVIEW_MAX = 1000;
 
 
+	public static String getAPIHOSTURL() {
 
-    public static String getAPIHOSTURL() {
+		if (debug) {
+			APIHOSTURL = "http://osg.apitest.zhongyouie.cn";
 
-        if (debug) {
-            APIHOSTURL = "http://osg.apitest.zhongyouie.cn";
+		} else {
+			APIHOSTURL = "http://api.zhongyouie.com";
+		}
+		return APIHOSTURL;
+	}
 
-        } else {
-            APIHOSTURL = "http://api.zhongyouie.com";
-        }
-        return APIHOSTURL;
-    }
+	public static String getImageHost() {
+		if (debug) {
+			return "http://syimage.zhongyouie.com/";
+		} else {
+			return "http://image.zhongyouie.com/";
+		}
+	}
 
-    public static String getWEBSOCKETURL() {
-        if (BuildConfig.DEBUG) {
-            WEBSOCKETURL = "http://ws.zhongyouie.com/sales";
-        } else {
-            WEBSOCKETURL = "http://ws.zhongyouie.com/sales";
-        }
-        return WEBSOCKETURL;
-    }
+	public static String getWEBSOCKETURL() {
+		if (BuildConfig.DEBUG) {
+			WEBSOCKETURL = "http://wstest.zhongyouie.cn/sales";
+		} else {
+			WEBSOCKETURL = "http://ws.zhongyouie.com/sales";
+		}
+		return WEBSOCKETURL;
+	}
 
-    public static String getDOWNLOADURL() {
-        if (BuildConfig.DEBUG) {
-            DOWNLOADURL = "http://tapi.zhongyouie.cn";
-        } else {
-            DOWNLOADURL = "http://api.zhongyouie.cn";
-        }
-        return DOWNLOADURL;
-    }
+	public static String getDOWNLOADURL() {
+		if (BuildConfig.DEBUG) {
+			DOWNLOADURL = "http://tapi.zhongyouie.cn";
+		} else {
+			DOWNLOADURL = "http://api.zhongyouie.cn";
+		}
+		return DOWNLOADURL;
+	}
 
 }

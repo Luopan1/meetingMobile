@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
+import com.orhanobut.logger.Logger;
 import com.zhongyou.meet.mobile.R;
 import com.zhongyou.meet.mobile.entities.ChatMesData;
 import com.zhongyou.meet.mobile.persistence.Preferences;
@@ -45,6 +46,11 @@ public class NewChatAdapter extends BaseMultiItemQuickAdapter<ChatMesData.PageDa
 
 	@Override
 	protected void convert(BaseViewHolder helper, ChatMesData.PageDataEntity item) {
+
+		if (item.getMsgType() == 2) {
+			helper.itemView.setVisibility(View.GONE);
+			return;
+		}
 		if (helper.getItemViewType() == 2) {
 			Log.e("convertView", "{" + item.getType() + "} -\t- " + item.getContent());
 			if (item.getType() == 0) {
@@ -140,13 +146,19 @@ public class NewChatAdapter extends BaseMultiItemQuickAdapter<ChatMesData.PageDa
 							// 每次点击 都清空集合 不然会导致重复
 							mImagePathLists.clear();
 							mImageViewList.clear();
+							if (item.getContent().startsWith("null") || !item.getContent().startsWith("http") || !item.getContent().startsWith("https")) {
+								return;
+							}
 							//遍历所有的当前adapter的所有数据，如果是图片类型  就添加进入集合
 							for (int i = 0; i < getData().size(); i++) {
-								if (getData().get(i).getType() == 1) {
-									createImages(getData().get(i).getContent(), view);
-									mImagePathLists.add(getData().get(i).getContent());
+								if (getData().get(i).getType() == 1 && getData().get(i).getMsgType() != 2) {
+									if (!getData().get(i).getContent().startsWith("null")) {
+										createImages(getData().get(i).getContent(), view);
+										mImagePathLists.add(getData().get(i).getContent());
+									}
 								}
 							}
+							Logger.e(mImagePathLists.toString());
 							mOnItemClickListener.onItemClick(helper.getPosition(), helper.getView(R.id.img_pic), mImageViewList, mImagePathLists);
 						}
 					}

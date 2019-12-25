@@ -42,6 +42,7 @@ import com.hitomi.tilibrary.style.index.NumberIndexIndicator;
 import com.hitomi.tilibrary.style.progress.ProgressPieIndicator;
 import com.hitomi.tilibrary.transfer.TransferConfig;
 import com.hitomi.tilibrary.transfer.Transferee;
+import com.hitomi.universalloader.UniversalImageLoader;
 import com.jph.takephoto.app.TakePhoto;
 import com.jph.takephoto.app.TakePhotoImpl;
 import com.jph.takephoto.compress.CompressConfig;
@@ -61,6 +62,7 @@ import com.qiniu.android.storage.UploadManager;
 import com.qiniu.android.storage.UploadOptions;
 import com.zhongyou.meet.mobile.ApiClient;
 import com.zhongyou.meet.mobile.BaseException;
+import com.zhongyou.meet.mobile.Constant;
 import com.zhongyou.meet.mobile.R;
 import com.zhongyou.meet.mobile.business.adapter.ImageBrowerAdapter;
 import com.zhongyou.meet.mobile.business.adapter.NewChatAdapter;
@@ -161,10 +163,11 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 				}
 				Configuration config = new Configuration.Builder().connectTimeout(5).responseTimeout(5).build();
 				UploadManager uploadManager = new UploadManager(config);
+				String key="osg/forum/" + mMeetingId + "/" + UUID.randomUUID().toString().replace("-", "") + ".jpg";
 				System.out.println(imagePath);
 				uploadManager.put(
 						new File(imagePath),
-						"osg/forum/" + mMeetingId + "/" + UUID.randomUUID().toString().replace("-", "") + ".jpg",
+						key,
 						token,
 						new UpCompletionHandler() {
 							@Override
@@ -187,10 +190,11 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 //									int i = adapter.getData().indexOf(entity);
 //									adapter.getData().get(i).setContent(Preferences.getImgUrl() + key);
 									entity.setUpLoadScuucess(true);
+									entity.setContent( Constant.getImageHost()+ key);
 									HashMap<String, Object> params = new HashMap<String, Object>();
 									params.put("meetingId", mMeetingId);
 									params.put("ts", ts);
-									params.put("content", Preferences.getImgUrl() + key);
+									params.put("content", Constant.getImageHost()+ key);
 									params.put("type", 1);
 									ApiClient.getInstance().expostorPostChatMessage(TAG, expostorStatsCallback, params);
 
@@ -656,7 +660,7 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 									.setOriginImageList(imageViewList)
 									.setProgressIndicator(new ProgressPieIndicator())
 									.setIndexIndicator(new NumberIndexIndicator())
-									.setImageLoader(GlideImageLoader.with(ChatFragment.this.getActivity()))
+									.setImageLoader(UniversalImageLoader.with(getActivity()))
 									.create();
 							mTransferee.apply(config).show();
 						}
@@ -734,8 +738,6 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 		});
 	}
 
-	private int clickCounts = 0;
-	List<ImageView> imageViewList;
 
 	@Override
 	protected void normalOnClick(View v) {
@@ -869,6 +871,7 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 		recyclerViewChat.smoothScrollToPosition(adapter.getData().size());
 		recyclerViewInput.setVisibility(View.GONE);
 //		initLastData(dataChat, true);
+		Logger.e(JSON.toJSONString(entity));
 
 		uploadImage(ts, entity);
 		Log.i(TAG, "takeSuccess：" + result.getImage().getOriginalPath());
