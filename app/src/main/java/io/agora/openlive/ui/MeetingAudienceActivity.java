@@ -314,7 +314,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 				FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
 				Log.v("llchat9898llChat", findViewById(R.id.small_chat).getWidth() + "*******后");
 				Log.v("llchat9898", disCussButton.getLeft() + "*******2");
-				params.bottomMargin = 106;
+				params.bottomMargin = 166;
 				params.gravity = Gravity.BOTTOM;
 				params.leftMargin = disCussButton.getLeft() - (llSmallChat.getWidth() / 2) + disCussButton.getWidth() / 2;
 				Log.v("llchat9898", params.leftMargin + "*******3");
