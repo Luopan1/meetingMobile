@@ -162,6 +162,7 @@
             tools:visibility="visible" />
 
         <Button
+            android:drawablePadding="3dp"
             android:id="@+id/mute_audio"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -177,21 +178,22 @@
             tools:visibility="visible"
             android:textSize="14sp" />
 
-        <TextView
+
+        <Button
             android:id="@+id/switch_camera"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:layout_marginRight="8dp"
+            android:layout_marginRight="15dp"
+            android:background="@color/transparent"
             android:drawableTop="@drawable/icon_switch_camera"
-            android:gravity="center_horizontal"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:text="切换摄像"
             android:textColor="@color/white"
-            android:textSize="14sp"
             android:visibility="gone"
-            tools:visibility="visible" />
+            tools:visibility="visible"
+            android:textSize="14sp" />
+
 
         <Button
             android:id="@+id/discuss"

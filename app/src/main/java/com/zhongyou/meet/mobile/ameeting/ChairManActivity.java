@@ -100,6 +100,7 @@ import io.agora.openlive.ui.AudienceAdapter;
 import io.agora.openlive.ui.BaseActivity;
 import io.agora.openlive.ui.InMeetChatFragment;
 import io.agora.openlive.ui.MaterialAdapter;
+import io.agora.openlive.ui.MeetingBroadcastActivity;
 import io.agora.openlive.ui.NewAudienceAdapter;
 import io.agora.rtc.Constants;
 import io.agora.rtc.IRtcEngineEventHandler;
@@ -132,7 +133,7 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 
 	private FrameLayout broadcasterLayout, broadcasterSmallLayout, broadcasterSmallView;
 	private TextView broadcastNameText, broadcastTipsText, tvChat, switchCamera;
-	private Button previewButton, nextButton, exitDocButton;
+	private TextView previewButton, nextButton, exitDocButton;
 	private ImageView exitButton;
 	private AgoraAPIOnlySignal agoraAPI;
 	private TextView audiencesButton, stopButton, disCussButton, docButton, muteButton;
@@ -1121,6 +1122,10 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 						nextButton.setVisibility(View.VISIBLE);
 						previewButton.setVisibility(View.VISIBLE);
 						exitDocButton.setVisibility(View.VISIBLE);
+						if (currentMaterial==null){
+							position = JSON.parseObject(value).getInteger("doc_index");
+							ApiClient.getInstance().meetingMaterial(TAG, meetingMaterialCallback, JSON.parseObject(value).getString("material_id"));
+						}
 					}
 
 					if (DOC_INFO.equals(name) && type.equals("del")) {
@@ -1132,6 +1137,7 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 
 						mLogger.e("ppt退出时的集合大小为" + mVideoAdapter.getDataSize());
 						currentAiducenceId = 0;
+						currentAudience=null;
 						isConnecting = false;
 						exitPPT();
 					}
@@ -1164,6 +1170,20 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 		});
 
 	}
+
+	private OkHttpCallback meetingMaterialCallback = new OkHttpCallback<Bucket<Material>>() {
+
+		@Override
+		public void onSuccess(Bucket<Material> materialBucket) {
+			changeViewByPPTModel(materialBucket.getData());
+		}
+
+		@Override
+		public void onFailure(int errorCode, BaseException exception) {
+			super.onFailure(errorCode, exception);
+			Toast.makeText(ChairManActivity.this, errorCode + "---" + exception.getMessage(), Toast.LENGTH_SHORT).show();
+		}
+	};
 
 	private void exitPPT() {
 		if (mVideoAdapter.getDataSize() > 0) {
@@ -1640,90 +1660,14 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 		@Override
 		public void onSuccess(Bucket bucket) {
 			Log.v("material_set", bucket.toString());
-			if (pptDetailDialog.isShowing()) {
+			if (pptDetailDialog!=null&&pptDetailDialog.isShowing()) {
 				pptDetailDialog.dismiss();
 			}
-			if (pptAlertDialog.isShowing()) {
+			if (pptAlertDialog!=null&&pptAlertDialog.isShowing()) {
 				pptAlertDialog.dismiss();
 			}
 
-			//如果当前列表里面有主持人 则需要将主持人拿出来放在右下角  然后将大的参会人放在列表中去
-			if (mVideoAdapter.isHaveChairMan()) {
-				int chairManPosition = mVideoAdapter.getChairManPosition();
-				if (chairManPosition != -1) {
-					mVideoAdapter.removeItem(chairManPosition);
-				}
-				if (mCurrentAudienceVideo != null) {
-					mVideoAdapter.insertItem(mCurrentAudienceVideo);
-				}
-			}
-
-			mLogger.e("使用ppt成功时的集合大小为：" + mVideoAdapter.getDataSize());
-
-			mAudienceRecyclerView.setVisibility(View.INVISIBLE);
-
-			broadcasterLayout.removeAllViews();
-			broadcasterLayout.setVisibility(View.GONE);
-			broadcasterSmallLayout.setVisibility(View.VISIBLE);
-			broadcasterSmallView.removeAllViews();
-			stripSurfaceView(localBroadcasterSurfaceView);
-
-			broadcasterSmallView.addView(localBroadcasterSurfaceView);
-
-
-			mSpilteView.setVisibility(View.GONE);
-			docLayout.setVisibility(View.VISIBLE);
-			docLayout.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View view) {
-					hideFragment();
-					if (isFullScreen) {
-						if (!tvContent.getText().toString().isEmpty())
-							llMsg.setVisibility(View.VISIBLE);
-					} else {
-//                        if(!tvChat.getText().toString().isEmpty())
-//                        llChat.setVisibility(View.VISIBLE);
-					}
-				}
-			});
-
-			docImage.setVisibility(View.VISIBLE);
-			docImage.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View view) {
-					hideFragment();
-					if (isFullScreen) {
-						if (!tvContent.getText().toString().isEmpty())
-							llMsg.setVisibility(View.INVISIBLE);
-					} else {
-						if (!tvChat.getText().toString().isEmpty()) {
-//                            llChat.setVisibility(View.VISIBLE);
-						}
-
-					}
-				}
-			});
-
-//			fullScreenButton.setVisibility(View.VISIBLE);
-
-			position = 0;
-			MeetingMaterialsPublish currentMaterialPublish = currentMaterial.getMeetingMaterialsPublishList().get(position);
-
-			pageText.setVisibility(View.VISIBLE);
-			pageText.setText("第" + currentMaterialPublish.getPriority() + "/" + currentMaterial.getMeetingMaterialsPublishList().size() + "页");
-
-			String imageUrl = ImageHelper.getThumb(currentMaterialPublish.getUrl());
-			Picasso.with(ChairManActivity.this).load(imageUrl).into(docImage);
-
-			try {
-				JSONObject jsonObject = new JSONObject();
-				jsonObject.put("material_id", currentMaterial.getId());
-				jsonObject.put("doc_index", position);
-				agoraAPI.channelSetAttr(channelName, DOC_INFO, jsonObject.toString());
-//                agoraAPI.messageChannelSend(channelName, jsonObject.toString(), "");
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			changeViewByPPTModel(null);
 		}
 
 		@Override
@@ -1732,6 +1676,87 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 			Toast.makeText(ChairManActivity.this, exception.getMessage(), Toast.LENGTH_SHORT).show();
 		}
 	};
+
+	private void changeViewByPPTModel(Material material) {
+
+		//如果当前列表里面有主持人 则需要将主持人拿出来放在右下角  然后将大的参会人放在列表中去
+		if (mVideoAdapter.isHaveChairMan()) {
+			int chairManPosition = mVideoAdapter.getChairManPosition();
+			if (chairManPosition != -1) {
+				mVideoAdapter.removeItem(chairManPosition);
+			}
+			if (mCurrentAudienceVideo != null) {
+				mVideoAdapter.insertItem(mCurrentAudienceVideo);
+			}
+		}
+
+		mLogger.e("使用ppt成功时的集合大小为：" + mVideoAdapter.getDataSize());
+
+		mAudienceRecyclerView.setVisibility(View.INVISIBLE);
+
+		broadcasterLayout.removeAllViews();
+		broadcasterLayout.setVisibility(View.GONE);
+		broadcasterSmallLayout.setVisibility(View.VISIBLE);
+		broadcasterSmallView.removeAllViews();
+		stripSurfaceView(localBroadcasterSurfaceView);
+
+		broadcasterSmallView.addView(localBroadcasterSurfaceView);
+
+
+		mSpilteView.setVisibility(View.GONE);
+		docLayout.setVisibility(View.VISIBLE);
+		docLayout.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				hideFragment();
+				if (isFullScreen) {
+					if (!tvContent.getText().toString().isEmpty())
+						llMsg.setVisibility(View.VISIBLE);
+				} else {
+//                        if(!tvChat.getText().toString().isEmpty())
+//                        llChat.setVisibility(View.VISIBLE);
+				}
+			}
+		});
+
+		docImage.setVisibility(View.VISIBLE);
+		docImage.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				hideFragment();
+				if (isFullScreen) {
+					if (!tvContent.getText().toString().isEmpty())
+						llMsg.setVisibility(View.INVISIBLE);
+				} else {
+					if (!tvChat.getText().toString().isEmpty()) {
+//                            llChat.setVisibility(View.VISIBLE);
+					}
+
+				}
+			}
+		});
+
+//			fullScreenButton.setVisibility(View.VISIBLE);
+
+		position = 0;
+		MeetingMaterialsPublish currentMaterialPublish = currentMaterial.getMeetingMaterialsPublishList().get(position);
+
+		pageText.setVisibility(View.VISIBLE);
+		pageText.setText("第" + currentMaterialPublish.getPriority() + "/" + currentMaterial.getMeetingMaterialsPublishList().size() + "页");
+
+		String imageUrl = ImageHelper.getThumb(currentMaterialPublish.getUrl());
+		Picasso.with(ChairManActivity.this).load(imageUrl).into(docImage);
+
+		try {
+			JSONObject jsonObject = new JSONObject();
+			jsonObject.put("material_id", currentMaterial.getId());
+			jsonObject.put("doc_index", position);
+			agoraAPI.channelSetAttr(channelName, DOC_INFO, jsonObject.toString());
+//                agoraAPI.messageChannelSend(channelName, jsonObject.toString(), "");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 	private OkHttpCallback finishMeetingCallback = new OkHttpCallback<Bucket<Meeting>>() {
 		@Override
