@@ -30,7 +30,6 @@ import android.widget.Toast;
 
 import com.alibaba.android.vlayout.DelegateAdapter;
 import com.alibaba.android.vlayout.VirtualLayoutManager;
-import com.alibaba.android.vlayout.layout.GridLayoutHelper;
 import com.alibaba.fastjson.JSON;
 import com.elvishew.xlog.XLog;
 import com.orhanobut.logger.Logger;
@@ -134,7 +133,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 	private LinearLayout llMsg, llChat, llSmallChat;
 	private static final String DOC_INFO = "doc_info";
 	private static final String CALLING_AUDIENCE = "calling_audience";
-	private int count=0;//当意外退出时  再重新进入会议 会重复收到几条一样的消息 导致视频画面可能不可见 使用次数来判断
+	private int count = 0;//当意外退出时  再重新进入会议 会重复收到几条一样的消息 导致视频画面可能不可见 使用次数来判断
 	private int currentAudienceId;
 	InMeetChatFragment fragment;
 	boolean hideFragment = false;
@@ -227,6 +226,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 					broadcastTipsText.setVisibility(View.GONE);
 				} else {
 					broadcastTipsText.setVisibility(View.VISIBLE);
+					count=0;
 				}
 				//点击的如果是主持人
 				if (mVideoAdapter.getAudienceVideoLists().get(position).isBroadcaster()) {
@@ -515,6 +515,12 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 					jsonObject.put("callStatus", 0);
 					jsonObject.put("auditStatus", Preferences.getUserAuditStatus());
 					jsonObject.put("postTypeName", Preferences.getUserPostType());
+					if (Constant.videoType==1){
+						jsonObject.put("isAudience",false);
+					}else {
+						jsonObject.put("isAudience",true);
+					}
+
 					agoraAPI.messageInstantSend(broadcastId, 0, jsonObject.toString(), "");
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -663,14 +669,18 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 
 						if (Constant.videoType == 1) {
 							jsonObject.put("callStatus", 2);
+							jsonObject.put("isAudience",false);
 						} else {
-							if (currentAudienceId==config().mUid){
+							if (currentAudienceId == config().mUid) {
 								jsonObject.put("callStatus", 2);
-							}else {
+								jsonObject.put("isAudience",true);
+							} else {
 								jsonObject.put("callStatus", 0);
+								jsonObject.put("isAudience",true);
 							}
 
 						}
+
 						jsonObject.put("handsUp", handsUp);
 						jsonObject.put("auditStatus", Preferences.getUserAuditStatus());
 						jsonObject.put("postTypeName", Preferences.getUserPostType());
@@ -850,6 +860,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 									broadcasterLayout.removeAllViews();
 									broadcasterLayout.setVisibility(View.GONE);
 									broadcastTipsText.setVisibility(View.VISIBLE);
+									count=0;
 
 									if (mVideoAdapter.getDataSize() > 0) {
 										mAudienceRecyclerView.setVisibility(View.VISIBLE);
@@ -974,13 +985,11 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 				mLogger.e("channelID:" + channelID + ", name:" + name + ", value:" + value + ", type:" + type);
 				runOnUiThread(() -> {
 					if (CALLING_AUDIENCE.equals(name)) {
-						if (TextUtils.isEmpty(value)) {
+						if (TextUtils.isEmpty(value)) {//取消连麦
 							if (remoteAudienceSurfaceView != null) {
 								remoteAudienceSurfaceView = null;
 							}
-							currentAudienceId=0;
 
-							count=0;//取消连麦 重置count
 							if (localSurfaceView != null) {
 								worker().getRtcEngine().setClientRole(Constants.CLIENT_ROLE_AUDIENCE);
 								localSurfaceView = null;
@@ -1043,6 +1052,8 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 
 								handsUp = false;
 								requestTalkButton.setText("申请发言");
+								currentAudienceId = 0;
+								count = 0;//取消连麦 重置count
 							}
 						} else {
 							if (BuildConfig.DEBUG) {
@@ -1051,8 +1062,42 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 							currentAudienceId = Integer.parseInt(value);
 							if (currentAudienceId == config().mUid) { // 连麦人是我
 								mLogger.e("连麦人是我" + currentAudienceId);
+								if (!isDocShow) {
+									mAudienceRecyclerView.setVisibility(View.VISIBLE);
+								} else {
+									mAudienceRecyclerView.setVisibility(View.GONE);
+								}
 
-								if (count!=0){//当意外退出后再进入会议 会收到重复的连麦消息 导致视频画面显示错误 当count不等于0 就不往下走
+								mMuteAudio.setVisibility(View.VISIBLE);
+								mSwtichCamera.setVisibility(View.VISIBLE);
+
+
+								JSONObject jsonObject = new JSONObject();
+								try {
+									jsonObject.put("uid", config().mUid);
+									jsonObject.put("uname", audienceName);
+									jsonObject.put("handsUp", handsUp);
+									if (Constant.videoType == 1) {
+										jsonObject.put("callStatus", 2);
+										jsonObject.put("isAudience",false);
+									} else {
+										if (currentAudienceId == config().mUid) {
+											jsonObject.put("callStatus", 2);
+											jsonObject.put("isAudience",true);
+										} else {
+											jsonObject.put("callStatus", 0);
+											jsonObject.put("isAudience",true);
+										}
+
+									}
+									jsonObject.put("auditStatus", Preferences.getUserAuditStatus());
+									jsonObject.put("postTypeName", Preferences.getUserPostType());
+									agoraAPI.messageInstantSend(broadcastId, 0, jsonObject.toString(), "");
+								} catch (JSONException e) {
+									e.printStackTrace();
+								}
+
+								if (count != 0) {//当意外退出后再进入会议 会收到重复的连麦消息 导致视频画面显示错误 当count不等于0 就不往下走
 									return;
 								}
 								count++;
@@ -1086,44 +1131,16 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 									params.put("meetingId", meetingJoin.getMeeting().getId());
 									ApiClient.getInstance().meetingHostStats(TAG, meetingHostJoinTraceCallback, params);
 
-									JSONObject jsonObject = new JSONObject();
-									try {
-										jsonObject.put("uid", config().mUid);
-										jsonObject.put("uname", audienceName);
-										jsonObject.put("handsUp", handsUp);
-										if (Constant.videoType==1){
-											jsonObject.put("callStatus", 2);
-										}else {
-											if (currentAudienceId==config().mUid){
-												jsonObject.put("callStatus", 2);
-											}else {
-												jsonObject.put("callStatus", 0);
-											}
-
-										}
-										jsonObject.put("auditStatus", Preferences.getUserAuditStatus());
-										jsonObject.put("postTypeName", Preferences.getUserPostType());
-										agoraAPI.messageInstantSend(broadcastId, 0, jsonObject.toString(), "");
-									} catch (JSONException e) {
-										e.printStackTrace();
-									}
 
 								}
 
 
-								if (!isDocShow) {
-									mAudienceRecyclerView.setVisibility(View.VISIBLE);
-								} else {
-									mAudienceRecyclerView.setVisibility(View.GONE);
-								}
 
-								mMuteAudio.setVisibility(View.VISIBLE);
-								mSwtichCamera.setVisibility(View.VISIBLE);
 
 
 							} else {  // 连麦人不是我
 								mLogger.e("连麦人不是我！！" + currentAudienceId);
-								count=0;//连麦人不是我 重置count
+								count = 0;//连麦人不是我 重置count
 								if (Constant.videoType == 2) {
 									worker().getRtcEngine().setClientRole(Constants.CLIENT_ROLE_AUDIENCE);
 									requestTalkButton.setVisibility(View.VISIBLE);
@@ -1263,10 +1280,8 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 						}
 					}
 					if (TextUtils.isEmpty(name) && type.equals("clear")) {
-						isDocShow=false;
-						count=0;//清除所有  重置count
-						stopTalkButton.setVisibility(View.GONE);
-						currentAudienceId=0;
+						isDocShow = false;
+
 						if (Constant.videoType == 2) {
 							requestTalkButton.setVisibility(View.VISIBLE);
 						} else {
@@ -1285,7 +1300,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 						setTextViewDrawableTop(mMuteAudio, R.drawable.icon_speek);
 						mMuteAudio.setText("话筒打开");
 
-						currentMaterial = null;
+
 
 						/*观众此时在列表中*/
 						if (mVideoAdapter.getPositionById(currentAudienceId) != -1 && remoteBroadcasterSurfaceView != null) {
@@ -1336,6 +1351,10 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 						} else {
 							mAudienceRecyclerView.setVisibility(View.VISIBLE);
 						}
+						count = 0;//清除所有  重置count
+						stopTalkButton.setVisibility(View.GONE);
+						currentAudienceId = 0;
+						currentMaterial = null;
 
 					}
 
@@ -1568,13 +1587,17 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 					jsonObject.put("uid", config().mUid);
 					jsonObject.put("uname", audienceName);
 					jsonObject.put("handsUp", handsUp);
-					if (Constant.videoType==1){
+					if (Constant.videoType == 1) {
 						jsonObject.put("callStatus", 2);
-					}else {
-						if (currentAudienceId==config().mUid){
+						jsonObject.put("isAudience",false);
+
+					} else {
+						if (currentAudienceId == config().mUid) {
 							jsonObject.put("callStatus", 2);
-						}else {
+							jsonObject.put("isAudience",true);
+						} else {
 							jsonObject.put("callStatus", 0);
+							jsonObject.put("isAudience",true);
 						}
 
 					}
@@ -1844,11 +1867,11 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 				return;
 			}
 			if (String.valueOf(uid).equals(broadcastId)) {
-				if (reason==Constants.USER_OFFLINE_DROPPED){//因过长时间收不到对方数据包，超时掉线
-					if (Constant.videoType==2&&config().mUid==currentAudienceId){//我是连麦观众
-						if (mVideoAdapter.getPositionById(config().mUid)!=1){
+				if (reason == Constants.USER_OFFLINE_DROPPED) {//因过长时间收不到对方数据包，超时掉线
+					if (Constant.videoType == 2 && config().mUid == currentAudienceId) {//我是连麦观众
+						if (mVideoAdapter.getPositionById(config().mUid) != 1) {
 							AudienceVideo video = mVideoAdapter.getAudienceVideoLists().get(mVideoAdapter.getPositionById(config().mUid));
-							if (video!=null&&video.getSurfaceView()!=null){
+							if (video != null && video.getSurfaceView() != null) {
 								video.getSurfaceView().setVisibility(View.GONE);
 								video.getSurfaceView().setZOrderMediaOverlay(false);
 							}
@@ -1876,6 +1899,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 				broadcasterLayout.removeAllViews();
 				broadcastTipsText.setText("等待主持人进入...");
 				broadcastTipsText.setVisibility(View.VISIBLE);
+				count=0;
 				broadcastNameText.setText("");
 				remoteBroadcasterSurfaceView = null;
 
@@ -1932,7 +1956,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 						int chairManPosition = mVideoAdapter.getChairManPosition();
 						if (chairManPosition != -1) {
 							AudienceVideo video = mVideoAdapter.getAudienceVideoLists().get(chairManPosition);
-							if (video!=null&&video.getSurfaceView()!=null){
+							if (video != null && video.getSurfaceView() != null) {
 								video.getSurfaceView().setZOrderMediaOverlay(false);
 								video.getSurfaceView().setZOrderOnTop(false);
 								stripSurfaceView(video.getSurfaceView());

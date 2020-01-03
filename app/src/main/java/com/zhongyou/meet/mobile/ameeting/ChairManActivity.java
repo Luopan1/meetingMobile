@@ -160,9 +160,6 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 	private NewAudienceVideoAdapter mVideoAdapter;
 
 
-
-
-
 	@SuppressLint("HandlerLeak")
 	private Handler ChatHandler = new Handler() {
 		@Override
@@ -397,6 +394,7 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 
 		int dataSize = mVideoAdapter.getDataSize();
 		mLogger.e("集合大小：%d", dataSize);
+
 		if (dataSize == 1) {
 			return;
 		} else if (dataSize == 2) {
@@ -1043,9 +1041,10 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 
 						if (jsonObject.has("handsUp")) {
 							AudienceVideo audience = JSON.parseObject(jsonObject.toString(), AudienceVideo.class);
-							/*if (audience.getCallStatus() == 2) {
+							audience.setName(audience.getUname());
+							if (jsonObject.has("isAudience") && jsonObject.getBoolean("isAudience") && audience.getCallStatus() == 2) {
 								currentAudience = audience;
-							}*/
+							}
 							audienceHashMap.put(audience.getUid(), audience);
 							updateAudienceList();
 							if (audience.isHandsUp()) {
@@ -1122,7 +1121,7 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 						nextButton.setVisibility(View.VISIBLE);
 						previewButton.setVisibility(View.VISIBLE);
 						exitDocButton.setVisibility(View.VISIBLE);
-						if (currentMaterial==null){
+						if (currentMaterial == null) {
 							position = JSON.parseObject(value).getInteger("doc_index");
 							ApiClient.getInstance().meetingMaterial(TAG, meetingMaterialCallback, JSON.parseObject(value).getString("material_id"));
 						}
@@ -1137,7 +1136,7 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 
 						mLogger.e("ppt退出时的集合大小为" + mVideoAdapter.getDataSize());
 						currentAiducenceId = 0;
-						currentAudience=null;
+						currentAudience = null;
 						isConnecting = false;
 						exitPPT();
 					}
@@ -1381,6 +1380,8 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 					e.printStackTrace();
 				}
 			} else if (type == 4) {
+
+
 				newAudience = audience;
 
 				isConnecting = true;
@@ -1660,10 +1661,10 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 		@Override
 		public void onSuccess(Bucket bucket) {
 			Log.v("material_set", bucket.toString());
-			if (pptDetailDialog!=null&&pptDetailDialog.isShowing()) {
+			if (pptDetailDialog != null && pptDetailDialog.isShowing()) {
 				pptDetailDialog.dismiss();
 			}
-			if (pptAlertDialog!=null&&pptAlertDialog.isShowing()) {
+			if (pptAlertDialog != null && pptAlertDialog.isShowing()) {
 				pptAlertDialog.dismiss();
 			}
 
@@ -1911,18 +1912,26 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 
 			AudienceVideo audienceVideo = new AudienceVideo();
 			audienceVideo.setUid(uid);
-			audienceVideo.setName("参会人" + uid);
+
+			/*if (currentAiducenceId!=-1&&currentAudience!=null&&currentAudience.getName()!=null&&!currentAudience.getName().isEmpty()){
+				audienceVideo.setName(currentAudience.getUname());
+			}else if (currentAudience!=null&&currentAudience.getUname()!=null&&!currentAudience.getUname().isEmpty()){
+				audienceVideo.setName(currentAudience.getUname());
+			}else {
+				audienceVideo.setName("参会人:"+uid);
+			}
+*/
 			audienceVideo.setBroadcaster(false);
 			audienceVideo.setCallStatus(2);
 			audienceVideo.setSurfaceView(remoteAudienceSurfaceView);
 			mVideoAdapter.insertItem(audienceVideo);
 
 
-			audienceHashMap.put(uid, audienceVideo);
-			updateAudienceList();
+//			audienceHashMap.put(uid, audienceVideo);
+//			updateAudienceList();
 
 			//调用这个方法  会得到取某个特定用户的用户属性  调用成功会回调 onUserAttrResult
-//			agoraAPI.getUserAttr(String.valueOf(uid), "uname");
+			agoraAPI.getUserAttr(String.valueOf(uid), "uname");
 
 			//观众上线
 			if (uid != 0 && uid == currentAiducenceId) {
@@ -1992,7 +2001,7 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 				@Override
 				public void run() {
 					mLogger.e("用户变成了观众模式");
-					if (currentAudience != null) {
+					if (currentAudience != null && currentAiducenceId == uid) {
 						AudienceVideo audienceVideo = audienceHashMap.get(currentAudience.getUid());
 						if (audienceVideo == null) {
 							return;
@@ -2003,14 +2012,11 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 						Logger.e("currentAudience?=null:===" + currentAudience);
 
 						updateAudienceList();
-						currentAudience = null;
+//						currentAudience = null;
+						stopButton.setVisibility(View.INVISIBLE);
 					}
 					changeView(broadcasterLayout, localBroadcasterSurfaceView);
-					currentAudience = null;
 
-					remoteAudienceSurfaceView = null;
-
-					stopButton.setVisibility(View.INVISIBLE);
 				/*	audienceView.removeAllViews();
 					audienceNameText.setText("");
 					audienceLayout.setVisibility(View.GONE);*/
@@ -2142,6 +2148,9 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 					}
 					mVideoAdapter.deleteItem(uid);
 
+				}
+				if (isSplitMode) {
+					changeViewLayout();
 				}
 			} else {
 				//不是分屏模式 如果此人在大的视图 直接移除大视图 将主持人拿出来放到大的视图
