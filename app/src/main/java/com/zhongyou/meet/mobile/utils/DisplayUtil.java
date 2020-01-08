@@ -9,6 +9,7 @@ import android.graphics.Rect;
 import android.os.Build;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -228,5 +229,22 @@ public class DisplayUtil {
 		int height = resources.getDimensionPixelSize(resourceId);
 		Log.v("dbw", "Navi height:" + height);
 		return height;
+	}
+
+	public static int[] getLocation(View v) {
+		int[] loc = new int[4];
+		int[] location = new int[2];
+		v.getLocationOnScreen(location);
+		loc[0] = location[0];
+		loc[1] = location[1];
+		int w = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+		int h = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+		v.measure(w, h);
+
+		loc[2] = v.getMeasuredWidth();
+		loc[3] = v.getMeasuredHeight();
+
+		//base = computeWH();
+		return loc;
 	}
 }

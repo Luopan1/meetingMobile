@@ -59,6 +59,11 @@ public class BaseApplication extends com.jess.arms.base.BaseApplication {
 				.methodOffset(7)        // (Optional) Hides internal method calls up to offset. Default 5
 				.build();
 		instance = this;
+		AutoSizeConfig.getInstance().getUnitsManager()
+				.setSupportDP(false)
+				.setSupportSP(false)
+				.setSupportSubunits(Subunits.PT);
+
 		initSocket();
 		com.orhanobut.logger.Logger.addLogAdapter(new AndroidLogAdapter());
 

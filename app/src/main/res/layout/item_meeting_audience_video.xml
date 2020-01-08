@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@drawable/shap_rantage_blue"
     android:layout_width="114dp"
+    android:padding="@dimen/my_px_3"
+    android:layout_margin="@dimen/my_px_10"
     android:layout_height="70dp">
 
     <FrameLayout

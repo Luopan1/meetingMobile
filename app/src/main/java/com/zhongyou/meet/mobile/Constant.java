@@ -11,8 +11,15 @@ public class Constant {
 	public static String DOWNLOADURL = "";
 	public static final String RELOGIN_ACTION = ".ACTION.RELOGIN";
 
+
+	public static final String MODEL_CHANGE = "model_change";
+	public static final String EQUALLY = "equally";
+	public static final String BIGSCREEN = "bigScreen";
+
 	public static boolean isChairMan = false;
 	static boolean debug = BuildConfig.DEBUG;
+
+	public final static int delayTime=5000;
 
 	//0 为主持人 1 为参会人  2为观众 默认为观众
 	public static int videoType = 2;

@@ -509,14 +509,13 @@ public class MyGridLayoutHelper extends BaseLayoutHelper {
 
 					if (params.getViewPosition()<=2){
 						left = helper.getPaddingLeft() + mMarginLeft + mPaddingLeft + mSizePerSpan * (1) + (1)* mHGap;
-						top=maxSize*params.getViewPosition();
+						top=maxSize*params.getViewPosition()+index * mVGap;
 						bottom = top + maxSize;
 					}else if (params.getViewPosition()>=3&&params.getViewPosition()<=6){
 						left=0;
-						top=maxSize*(params.getViewPosition()-3);
+						top=maxSize*(params.getViewPosition()-3)+index * mVGap;
 						bottom=top + maxSize;
 					}else if (params.getViewPosition()>6&&params.getViewPosition()<=7){
-
 						left = helper.getPaddingLeft() + mMarginLeft + mPaddingLeft + mSizePerSpan * (1) + (1)* mHGap;
 					}else {
 						return;

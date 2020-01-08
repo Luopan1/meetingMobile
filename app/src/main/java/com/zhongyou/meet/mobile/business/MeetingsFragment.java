@@ -43,6 +43,7 @@ import com.zhongyou.meet.mobile.entities.MeetingJoin;
 import com.zhongyou.meet.mobile.entities.base.BaseArrayBean;
 import com.zhongyou.meet.mobile.event.ForumSendEvent;
 import com.zhongyou.meet.mobile.persistence.Preferences;
+import com.zhongyou.meet.mobile.utils.DeviceUtil;
 import com.zhongyou.meet.mobile.utils.Logger;
 import com.zhongyou.meet.mobile.utils.OkHttpCallback;
 import com.zhongyou.meet.mobile.utils.RxBus;
@@ -166,6 +167,7 @@ public class MeetingsFragment extends BaseFragment {
 				.st(2)
 				.b()
 				.build();
+
 		super.onActivityCreated(savedInstanceState);
 	}
 

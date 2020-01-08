@@ -19,6 +19,7 @@ import android.widget.TextView;
 import com.alibaba.android.vlayout.DelegateAdapter;
 import com.alibaba.android.vlayout.LayoutHelper;
 import com.alibaba.android.vlayout.VirtualLayoutManager;
+import com.alibaba.android.vlayout.layout.OnePlusNLayoutHelper;
 import com.alibaba.android.vlayout.layout.StaggeredGridLayoutHelper;
 import com.zhongyou.meet.mobile.BuildConfig;
 import com.zhongyou.meet.mobile.R;
@@ -66,6 +67,16 @@ public class NewAudienceVideoAdapter extends DelegateAdapter.Adapter<NewAudience
 		} else {
 			this.audienceVideos.add(audienceVideos.size(), audienceVideo);
 			notifyDataSetChanged();
+		}
+	}
+
+	public void setVisibility(int visibility){
+		for (AudienceVideo audienceVideo : this.audienceVideos) {
+			if (visibility==View.VISIBLE){
+				audienceVideo.getSurfaceView().setVisibility(View.VISIBLE);
+			}else {
+				audienceVideo.getSurfaceView().setVisibility(View.GONE);
+			}
 		}
 	}
 
@@ -232,6 +243,18 @@ public class NewAudienceVideoAdapter extends DelegateAdapter.Adapter<NewAudience
 				ViewGroup.LayoutParams layoutParams = holder.itemView.getLayoutParams();
 				layoutParams.width = DisplayUtil.getWidth(context) / 2;
 				layoutParams.height = DisplayUtil.getHeight(context) / 3;
+				holder.itemView.setLayoutParams(layoutParams);
+			}
+		}else if (mLayoutHelper instanceof OnePlusNLayoutHelper){
+			if (position==0){
+				ViewGroup.LayoutParams layoutParams = holder.itemView.getLayoutParams();
+				layoutParams.width = DisplayUtil.getWidth(context) / 2;
+				layoutParams.height = DisplayUtil.getHeight(context);
+				holder.itemView.setLayoutParams(layoutParams);
+			}else if (position==1||position==2){
+				ViewGroup.LayoutParams layoutParams = holder.itemView.getLayoutParams();
+				layoutParams.width = DisplayUtil.getWidth(context) / 2;
+				layoutParams.height = DisplayUtil.getHeight(context)/2;
 				holder.itemView.setLayoutParams(layoutParams);
 			}
 		} else {

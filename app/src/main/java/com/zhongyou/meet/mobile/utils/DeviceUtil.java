@@ -368,7 +368,6 @@ public class DeviceUtil {
     public static int getHeightPixels(Activity activity){
         DisplayMetrics metrics = new DisplayMetrics();
         activity.getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        int width = metrics.widthPixels;
         int height = metrics.heightPixels;
         return height;
 

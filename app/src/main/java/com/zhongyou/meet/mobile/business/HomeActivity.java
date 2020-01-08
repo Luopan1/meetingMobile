@@ -135,7 +135,7 @@ public class HomeActivity extends BasicActivity implements View.OnClickListener 
 		//讨论
 		discussRadio = findViewById(R.id.meeting_discuss);
 		//日志
-		logRadio = findViewById(R.id.meeting_log);
+//		logRadio = findViewById(R.id.meeting_log);
 		// 我的
 		myRadio = findViewById(R.id.meeting_my);
 
@@ -150,11 +150,11 @@ public class HomeActivity extends BasicActivity implements View.OnClickListener 
 					case R.id.meeting_discuss:
 						viewPager.setCurrentItem(1);
 						break;
-					case R.id.meeting_log:
+					/*case R.id.meeting_log:
 						viewPager.setCurrentItem(2);
-						break;
+						break;*/
 					case R.id.meeting_my:
-						viewPager.setCurrentItem(3);
+						viewPager.setCurrentItem(2);
 						break;
 					default:
 						Log.v("HomeActivity", "onCheckedChanged   has no current index:" + i);
@@ -179,7 +179,8 @@ public class HomeActivity extends BasicActivity implements View.OnClickListener 
 						discussRadio.setChecked(true);
 						break;
 					case 2:
-						logRadio.setChecked(true);
+						myRadio.setChecked(true);
+//						logRadio.setChecked(true);
 						break;
 					case 3:
 						myRadio.setChecked(true);
@@ -204,12 +205,12 @@ public class HomeActivity extends BasicActivity implements View.OnClickListener 
 		//讨论
 		mFragments.add(DiscussFragment.newInstance());
 		//日志
-		mFragments.add(RecordFragment.newInstance());
+//		mFragments.add(RecordFragment.newInstance());
 		// 我的
 		mFragments.add(ProfileFragment.newInstance());
 		mHomePagerAdapter.setData(mFragments);
 		viewPager.setAdapter(mHomePagerAdapter);
-		viewPager.setOffscreenPageLimit(4);
+		viewPager.setOffscreenPageLimit(3);
 		phoneReceiver = new PhoneReceiver();
 		intentFilter = new IntentFilter();
 		intentFilter.addAction("android.intent.action.PHONE_STATE");
