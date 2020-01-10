@@ -1344,6 +1344,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 					if ("doc_info".equals(name)) {
 						agoraAPI.channelQueryUserNum(channelName);
 						if (!TextUtils.isEmpty(value)) {
+							mLogger.e("当前是ppt模式");
 							isDocShow = true;
 							try {
 								JSONObject jsonObject = new JSONObject(value);
@@ -1396,7 +1397,8 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 								e.printStackTrace();
 							}
 						} else {
-
+							mLogger.e("当前是取消ppt模式");
+							model=0;
 							pageText.setVisibility(View.GONE);
 							docImage.setVisibility(View.GONE);
 
@@ -1462,12 +1464,14 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 
 					if (Constant.MODEL_CHANGE.equals(name)) {
 						if (value.equals(Constant.EQUALLY)) {//均分
+							mLogger.e("均分模式");
 							isSplitView = true;
 							mVideoAdapter.setVisibility(View.VISIBLE);
 							mVideoAdapter.notifyDataSetChanged();
 							mAudienceRecyclerView.setVisibility(View.VISIBLE);
 
-							if (mVideoAdapter.getChairManPosition() == -1) {
+							if (!mVideoAdapter.isHaveChairMan()) {
+								mLogger.e("均分模式中  列表中没有主持人");
 								if (remoteBroadcasterSurfaceView != null) {
 									stripSurfaceView(remoteBroadcasterSurfaceView);
 								}
@@ -1480,37 +1484,39 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 								mVideoAdapter.notifyDataSetChanged();
 								broadcasterLayout.removeAllViews();
 							}
-							mLogger.e("当前集合的大小=  "+mVideoAdapter.getDataSize());
-							if (isHostCommeIn && mVideoAdapter.getDataSize() >1) {
+							mLogger.e("当前集合的大小=  " + mVideoAdapter.getDataSize());
+							if (isHostCommeIn && mVideoAdapter.getDataSize() > 1 && !isDocShow) {
 								SpliteViews(5);
-							}else {
+							} /*else {
 								int chairManPosition = mVideoAdapter.getChairManPosition();
-								if (chairManPosition!=-1){
+								if (chairManPosition != -1) {
 									mVideoAdapter.removeItem(chairManPosition);
 								}
-								if (remoteBroadcasterSurfaceView!=null){
+								if (remoteBroadcasterSurfaceView != null) {
 									stripSurfaceView(remoteBroadcasterSurfaceView);
 									broadcasterLayout.removeAllViews();
 									broadcasterLayout.addView(remoteBroadcasterSurfaceView);
-								}else {
+								} else {
 									broadcastTipsText.setVisibility(View.VISIBLE);
 								}
 
+							}*/
+							if (isDocShow) {
+								fullScreenButton.setVisibility(View.VISIBLE);
+							} else {
+								fullScreenButton.setVisibility(View.GONE);
 							}
-							fullScreenButton.setVisibility(View.GONE);
-
 							mLogger.e("分屏模式");
 
 
 						} else if (value.equals(Constant.BIGSCREEN)) {//大屏
-
+							mLogger.e("大屏模式");
 							isSplitView = false;
 							mVideoAdapter.notifyDataSetChanged();
 							if (isFullScreen || model == 2 || model == 3) {
 								mVideoAdapter.setVisibility(View.GONE);
 								mAudienceRecyclerView.setVisibility(View.GONE);
 							} else {
-
 								mVideoAdapter.setVisibility(View.VISIBLE);
 								mAudienceRecyclerView.setVisibility(View.VISIBLE);
 							}
@@ -1921,18 +1927,23 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 
 				agoraAPI.messageInstantSend(broadcastId, 0, jsonObject.toString(), "");
 
+
+				if (isSplitView && mVideoAdapter.getDataSize() > 1) {
+					SpliteViews(3);
+				}
+
+
 				if (model == 2 || model == 3 || isFullScreen) {
 					mVideoAdapter.setVisibility(View.GONE);
 					mAudienceRecyclerView.setVisibility(View.GONE);
 				} else {
+					if (model == 0 || model == 1) {
+						notFullScreenState();
+					}
 					mVideoAdapter.setVisibility(View.VISIBLE);
 					mAudienceRecyclerView.setVisibility(View.VISIBLE);
 				}
 
-
-				if (isSplitView&&mVideoAdapter.getDataSize()>1) {
-					SpliteViews(3);
-				}
 
 				if (isDocShow) {
 					mVideoAdapter.notifyDataSetChanged();
@@ -2581,10 +2592,12 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 	}
 
 	private void SpliteViews(int x) {
-		mLogger.e("SpliteViews:="+x);
+		mLogger.e("SpliteViews:=" + x);
 		//主持人在列表中 则将大的broadcasterView的视频加入到receclerview中去  将主持人移动到集合第一个去
 		if (mVideoAdapter.isHaveChairMan()) {
 			mLogger.e("主持人再列表中");
+			mVideoAdapter.getAudienceVideoLists().get(mVideoAdapter.getChairManPosition()).setSurfaceView(remoteBroadcasterSurfaceView);
+			mVideoAdapter.notifyDataSetChanged();
 			if (mCurrentAudienceVideo != null) {
 				broadcasterLayout.removeAllViews();
 				stripSurfaceView(mCurrentAudienceVideo.getSurfaceView());
@@ -2596,7 +2609,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 								audienceVideoAdapter.insertItem(0,audienceVideoAdapter.getAudienceVideoLists().get(chairManPosition));
 								audienceVideoAdapter.removeItem(chairManPosition+1);
 							}*/
-
+				mCurrentAudienceVideo = null;
 			}
 		} else {
 			mLogger.e("主持人不再列表中");
@@ -2640,10 +2653,10 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 	}
 
 	private void changeViewLayout(int x) {
-		mLogger.e("changeViewLayout:="+x);
+		mLogger.e("changeViewLayout:=" + x);
 		int dataSize = mVideoAdapter.getDataSize();
 		mLogger.e("集合大小：%d", dataSize);
-		mLogger.e("当前currentMaterial==null   "+(currentMaterial == null));
+		mLogger.e("当前currentMaterial==null   " + (currentMaterial == null));
 
 		if (dataSize == 1) {
 			if (currentMaterial == null) {
@@ -2836,6 +2849,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 				remoteBroadcasterSurfaceView.setZOrderOnTop(false);
 				broadcasterLayout.setVisibility(View.VISIBLE);
 
+				remoteBroadcasterSurfaceView.setVisibility(View.VISIBLE);
 				mVideoAdapter.getAudienceVideoLists().remove(chairManPosition);
 				mVideoAdapter.notifyDataSetChanged();
 				broadcasterLayout.addView(remoteBroadcasterSurfaceView, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
@@ -2892,6 +2906,10 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 			audienceVideo.setBroadcaster(true);
 			audienceVideo.setSurfaceView(remoteBroadcasterSurfaceView);
 			mVideoAdapter.getAudienceVideoLists().add(audienceVideo);
+			mVideoAdapter.notifyDataSetChanged();
+		}else {
+			mVideoAdapter.getAudienceVideoLists().get(mVideoAdapter.getChairManPosition()).setSurfaceView(remoteBroadcasterSurfaceView);
+			mVideoAdapter.notifyDataSetChanged();
 		}
 
 		localAudienceFrameView.removeAllViews();
