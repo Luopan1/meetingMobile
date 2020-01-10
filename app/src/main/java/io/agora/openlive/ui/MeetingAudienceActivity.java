@@ -162,7 +162,11 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 	private TextView mSwtichCamera;
 	private SizeUtils mSizeUtils;
 	private TransformersTip mTransformersTipPop;
+	private int lastX, lastY;
 
+	int touchCount = 0;
+
+	@SuppressLint("ClickableViewAccessibility")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -211,6 +215,61 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 			}
 		});
 		localAudienceFrameView = findViewById(R.id.localAudienceFrameView);
+		View mRlayout = findViewById(R.id.parentContainer);
+		localAudienceFrameView.setOnTouchListener((v, event) -> {
+			switch (event.getAction()) {
+				case MotionEvent.ACTION_DOWN:
+					if (touchCount != 0) {
+						lastX = (int) event.getRawX();
+						lastY = (int) event.getRawY();
+					}
+					touchCount++;
+					break;
+				case MotionEvent.ACTION_MOVE:
+					int dx = (int) event.getRawX() - lastX;
+					int dy = (int) event.getRawY() - lastY;
+
+//						mLogger.e("dx="+dx+"   event.getRawX()"+event.getRawX()+"   lastX="+lastX);
+//						mLogger.e("dy="+dy+"   event.getRawY()"+event.getRawY()+"   lastY="+lastY);
+					FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) v.getLayoutParams();
+
+					int l = layoutParams.leftMargin + dx;
+					int t = layoutParams.topMargin + dy;
+					int b = mRlayout.getHeight() - t - v.getHeight();
+					int r = mRlayout.getWidth() - l - v.getWidth();
+					if (l < 0) {//处理按钮被移动到上下左右四个边缘时的情况，决定着按钮不会被移动到屏幕外边去
+						l = 0;
+						r = mRlayout.getWidth() - v.getWidth();
+					}
+					if (t < 0) {
+						t = 0;
+						b = mRlayout.getHeight() - v.getHeight();
+					}
+
+					if (r < 0) {
+						r = 0;
+						l = mRlayout.getWidth() - v.getWidth();
+					}
+					if (b < 0) {
+						b = 0;
+						t = mRlayout.getHeight() - v.getHeight();
+					}
+					layoutParams.leftMargin = l;
+					layoutParams.topMargin = t;
+					layoutParams.bottomMargin = b;
+					layoutParams.rightMargin = r;
+//						mLogger.e("left="+l+"   top="+t+"    right="+r+"   bottom="+b);
+					v.setLayoutParams(layoutParams);
+
+					lastX = (int) event.getRawX();
+					lastY = (int) event.getRawY();
+					v.postInvalidate();
+					break;
+				case MotionEvent.ACTION_UP:
+					break;
+			}
+			return true;
+		});
 
 		mAudienceRecyclerView = findViewById(R.id.audience_list);
 
@@ -302,7 +361,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 			stripSurfaceView(remoteBroadcasterSurfaceView);
 			//主持人画面 加入到列表中
 			AudienceVideo audienceVideo = new AudienceVideo();
-			audienceVideo.setUid(config().mUid);
+			audienceVideo.setUid(Integer.parseInt(meetingJoin.getHostUser().getClientUid()));
 			audienceVideo.setName("主持人" + meetingJoin.getHostUser().getHostUserName());
 			audienceVideo.setBroadcaster(true);
 			audienceVideo.setSurfaceView(remoteBroadcasterSurfaceView);
@@ -1476,7 +1535,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 									stripSurfaceView(remoteBroadcasterSurfaceView);
 								}
 								AudienceVideo audienceVideo = new AudienceVideo();
-								audienceVideo.setUid(config().mUid);
+								audienceVideo.setUid(Integer.parseInt(meetingJoin.getHostUser().getClientUid()));
 								audienceVideo.setName("主持人" + meetingJoin.getHostUser().getHostUserName());
 								audienceVideo.setBroadcaster(true);
 								audienceVideo.setSurfaceView(remoteBroadcasterSurfaceView);
@@ -2622,7 +2681,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 			}*/
 			stripSurfaceView(remoteBroadcasterSurfaceView);
 			AudienceVideo audienceVideo = new AudienceVideo();
-			audienceVideo.setUid(config().mUid);
+			audienceVideo.setUid(Integer.parseInt(meetingJoin.getHostUser().getClientUid()));
 			audienceVideo.setName("主持人" + meetingJoin.getHostUser().getHostUserName());
 			audienceVideo.setBroadcaster(true);
 			audienceVideo.setSurfaceView(remoteBroadcasterSurfaceView);
@@ -2691,7 +2750,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 				mVideoAdapter.notifyDataSetChanged();
 
 			} else {
-				mVideoAdapter.setItemSize(DisplayUtil.dip2px(this, 70), DisplayUtil.dip2px(this, 114));
+				mVideoAdapter.setItemSize(DisplayUtil.dip2px(this, 112), DisplayUtil.dip2px(this, 150));
 				mVideoAdapter.notifyDataSetChanged();
 
 				MyGridLayoutHelper mGridLayoutHelper = new MyGridLayoutHelper(2);
@@ -2708,17 +2767,21 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 			mDelegateAdapter.clear();
 			if (currentMaterial == null) {
 				mVideoAdapter.setItemSize(DisplayUtil.getHeight(this), DisplayUtil.getWidth(this));
+
+				OnePlusNLayoutHelper helper = new OnePlusNLayoutHelper(3);
+				helper.setItemCount(3);
+				helper.setColWeights(new float[]{50f});
+				helper.setRowWeight(50f);
+				mVideoAdapter.setLayoutHelper(helper);
+
 			} else {
-				mVideoAdapter.setItemSize(DisplayUtil.dip2px(this, 70), DisplayUtil.dip2px(this, 114));
+				mVideoAdapter.setItemSize(DisplayUtil.dip2px(this, 112), DisplayUtil.dip2px(this, 150));
+				MyGridLayoutHelper mGridLayoutHelper = new MyGridLayoutHelper(2);
+				mGridLayoutHelper.setItemCount(8);
+				mGridLayoutHelper.setGap(10);
+				mGridLayoutHelper.setAutoExpand(false);
+				mVideoAdapter.setLayoutHelper(mGridLayoutHelper);
 			}
-
-			mVideoAdapter.notifyDataSetChanged();
-
-			OnePlusNLayoutHelper helper = new OnePlusNLayoutHelper(3);
-			helper.setItemCount(3);
-			helper.setColWeights(new float[]{50f});
-			helper.setRowWeight(50f);
-			mVideoAdapter.setLayoutHelper(helper);
 
 			mVideoAdapter.notifyDataSetChanged();
 			mDelegateAdapter.addAdapter(mVideoAdapter);
@@ -2734,7 +2797,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 				mGridLayoutHelper.setItemCount(4);
 				mVideoAdapter.setLayoutHelper(mGridLayoutHelper);
 			} else {
-				mVideoAdapter.setItemSize(DisplayUtil.dip2px(this, 70), DisplayUtil.dip2px(this, 114));
+				mVideoAdapter.setItemSize(DisplayUtil.dip2px(this, 112), DisplayUtil.dip2px(this, 150));
 				mVideoAdapter.notifyDataSetChanged();
 
 				MyGridLayoutHelper mGridLayoutHelper = new MyGridLayoutHelper(2);
@@ -2750,10 +2813,22 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 		} else if (dataSize == 5) {
 			mDelegateAdapter.clear();
 			mVideoAdapter.notifyDataSetChanged();
+			if (currentMaterial==null){
+				StaggeredGridLayoutHelper helper = new StaggeredGridLayoutHelper(2, 10);
+				helper.setItemCount(5);
+				mVideoAdapter.setLayoutHelper(helper);
+			}else {
+				mVideoAdapter.setItemSize(DisplayUtil.dip2px(this, 112), DisplayUtil.dip2px(this, 150));
+				mVideoAdapter.notifyDataSetChanged();
 
-			StaggeredGridLayoutHelper helper = new StaggeredGridLayoutHelper(2, 10);
-			helper.setItemCount(5);
-			mVideoAdapter.setLayoutHelper(helper);
+				MyGridLayoutHelper mGridLayoutHelper = new MyGridLayoutHelper(2);
+				mGridLayoutHelper.setItemCount(4);
+				mGridLayoutHelper.setGap(10);
+				mGridLayoutHelper.setAutoExpand(false);
+				mVideoAdapter.setLayoutHelper(mGridLayoutHelper);
+			}
+
+
 			mVideoAdapter.notifyDataSetChanged();
 			mDelegateAdapter.addAdapter(mVideoAdapter);
 		} else if (dataSize == 6) {
@@ -2767,7 +2842,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 				mVideoAdapter.setLayoutHelper(helper);
 
 			} else {
-				mVideoAdapter.setItemSize(DisplayUtil.dip2px(this, 70), DisplayUtil.dip2px(this, 114));
+				mVideoAdapter.setItemSize(DisplayUtil.dip2px(this, 112), DisplayUtil.dip2px(this, 150));
 				mVideoAdapter.notifyDataSetChanged();
 				MyGridLayoutHelper mGridLayoutHelper = new MyGridLayoutHelper(2);
 				mGridLayoutHelper.setItemCount(6);
@@ -2799,7 +2874,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 				mVideoAdapter.setLayoutHelper(helper);
 
 			} else {
-				mVideoAdapter.setItemSize(DisplayUtil.dip2px(this, 70), DisplayUtil.dip2px(this, 114));
+				mVideoAdapter.setItemSize(DisplayUtil.dip2px(this, 112), DisplayUtil.dip2px(this, 150));
 				mVideoAdapter.notifyDataSetChanged();
 				MyGridLayoutHelper mGridLayoutHelper = new MyGridLayoutHelper(2);
 				mGridLayoutHelper.setItemCount(6);
@@ -2821,7 +2896,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 				helper.setItemCount(8);
 				mVideoAdapter.setLayoutHelper(helper);
 			} else {
-				mVideoAdapter.setItemSize(DisplayUtil.dip2px(this, 70), DisplayUtil.dip2px(this, 114));
+				mVideoAdapter.setItemSize(DisplayUtil.dip2px(this, 112), DisplayUtil.dip2px(this, 150));
 				mVideoAdapter.notifyDataSetChanged();
 				MyGridLayoutHelper mGridLayoutHelper = new MyGridLayoutHelper(2);
 				mGridLayoutHelper.setItemCount(6);
@@ -2857,8 +2932,17 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 				mLogger.e("remoteBroadcasterSurfaceView == null");
 			}
 
-		} else {
-			// TODO: 2019-11-26 主持人不在
+		}
+		if (mVideoAdapter.getPositionById(config().mUid)==-1){//自己不在列表中
+			if (Constant.videoType==1||currentAudienceId==config().mUid){
+				AudienceVideo audienceVideo = new AudienceVideo();
+				audienceVideo.setUid(config().mUid);
+				audienceVideo.setName("参会人" + meetingJoin.getHostUser().getHostUserName());
+				audienceVideo.setBroadcaster(false);
+				audienceVideo.setSurfaceView(localSurfaceView);
+				mVideoAdapter.getAudienceVideoLists().add(audienceVideo);
+				mVideoAdapter.notifyDataSetChanged();
+			}
 		}
 		RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(DisplayUtil.dip2px(this, 240), RelativeLayout.LayoutParams.WRAP_CONTENT);
 		layoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
@@ -2935,9 +3019,9 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 
 
 		if (mVideoAdapter.getDataSize() > 8) {
-			int chairManPosition = mVideoAdapter.getChairManPosition();
+			int myPosition = mVideoAdapter.getPositionById(config().mUid);
 			if (mVideoAdapter.getChairManPosition() != -1) {
-				mVideoAdapter.getAudienceVideoLists().get(chairManPosition).getSurfaceView().setVisibility(View.GONE);
+				mVideoAdapter.getAudienceVideoLists().get(myPosition).getSurfaceView().setVisibility(View.GONE);
 				mVideoAdapter.removeItem(mVideoAdapter.getChairManPosition());
 			}
 		}
@@ -3003,6 +3087,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 		localAudienceFrameView.removeAllViews();
 		localAudienceFrameView.setVisibility(View.VISIBLE);
 		localSurfaceView.setVisibility(View.VISIBLE);
+
 		localSurfaceView.setZOrderOnTop(true);
 		localSurfaceView.setZOrderMediaOverlay(true);
 		stripSurfaceView(localSurfaceView);
