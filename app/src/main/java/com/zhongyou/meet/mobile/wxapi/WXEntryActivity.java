@@ -93,10 +93,7 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
 
 	@Override
 	public void onPermissionsGranted(int i, @NonNull List<String> list) {
-		/*registerDevice();
-
-		*/
-
+		registerDevice();
 
 	}
 
@@ -152,12 +149,13 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
 		});
 
 		reToWx();
-		if (TextUtils.isEmpty(Preferences.getWeiXinHead())){
+
+		/*if (TextUtils.isEmpty(Preferences.getWeiXinHead())){
 			getHostUrl(2);
 		}else {
 			getHostUrl(1);
-		}
-
+		}*/
+		registerDevice();
 		if (EasyPermissions.hasPermissions(this, perms)) {
 		} else {
 			EasyPermissions.requestPermissions(this, "请授予必要的权限", 0, perms);
@@ -271,6 +269,11 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
 	 * 上传设备信息
 	 */
 	private void registerDevice() {
+		mLoadingDialog = new XPopup.Builder(this)
+				.dismissOnBackPressed(false)
+				.dismissOnTouchOutside(false)
+				.asLoading("正在加载中")
+				.show();
 		Logger.e(Constant.APIHOSTURL);
 		String uuid = Installation.id(this);
 		DisplayMetrics metric = new DisplayMetrics();

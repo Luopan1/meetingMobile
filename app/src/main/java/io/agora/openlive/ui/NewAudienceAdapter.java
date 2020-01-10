@@ -72,10 +72,12 @@ public class NewAudienceAdapter extends BaseAdapter {
         }
 
         AudienceVideo audience = audiences.get(position);
-        if (audience.getUname().isEmpty()){
-            viewHolder.nameText.setText((position + 1) + ". " + audience.getName());
-        }else {
-            viewHolder.nameText.setText((position + 1) + ". " + audience.getUname());
+        if (audience.getUname()!=null){
+            if (audience.getUname().isEmpty()){
+                viewHolder.nameText.setText((position + 1) + ". " + audience.getName());
+            }else {
+                viewHolder.nameText.setText((position + 1) + ". " + audience.getUname());
+            }
         }
 
         if (audience.getAuditStatus() == 1) {

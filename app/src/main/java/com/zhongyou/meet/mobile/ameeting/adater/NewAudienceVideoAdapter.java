@@ -21,11 +21,11 @@ import com.alibaba.android.vlayout.LayoutHelper;
 import com.alibaba.android.vlayout.VirtualLayoutManager;
 import com.alibaba.android.vlayout.layout.OnePlusNLayoutHelper;
 import com.alibaba.android.vlayout.layout.StaggeredGridLayoutHelper;
+import com.orhanobut.logger.Logger;
 import com.zhongyou.meet.mobile.BuildConfig;
 import com.zhongyou.meet.mobile.R;
 import com.zhongyou.meet.mobile.entities.AudienceVideo;
 import com.zhongyou.meet.mobile.utils.DisplayUtil;
-import com.zhongyou.meet.mobile.utils.Logger;
 import com.zhongyou.meet.mobile.utils.SizeUtils;
 import com.zhongyou.meet.mobile.utils.listener.OnDoubleClickListener;
 
@@ -73,9 +73,14 @@ public class NewAudienceVideoAdapter extends DelegateAdapter.Adapter<NewAudience
 	public void setVisibility(int visibility){
 		for (AudienceVideo audienceVideo : this.audienceVideos) {
 			if (visibility==View.VISIBLE){
-				audienceVideo.getSurfaceView().setVisibility(View.VISIBLE);
+				if (audienceVideo!=null&&audienceVideo.getSurfaceView()!=null){
+					audienceVideo.getSurfaceView().setVisibility(View.VISIBLE);
+				}
+
 			}else {
-				audienceVideo.getSurfaceView().setVisibility(View.GONE);
+				if (audienceVideo!=null&&audienceVideo.getSurfaceView()!=null){
+					audienceVideo.getSurfaceView().setVisibility(View.GONE);
+				}
 			}
 		}
 	}
@@ -222,6 +227,7 @@ public class NewAudienceVideoAdapter extends DelegateAdapter.Adapter<NewAudience
 	public void setItemSize(int height, int width) {
 		this.height = height;
 		this.width = width;
+		notifyDataSetChanged();
 	}
 
 	public AudienceVideoViewHolder getHolder() {
@@ -261,10 +267,10 @@ public class NewAudienceVideoAdapter extends DelegateAdapter.Adapter<NewAudience
 			ViewGroup.LayoutParams layoutParams = holder.itemView.getLayoutParams();
 			layoutParams.width = width;
 			layoutParams.height = height;
-			holder.itemView.setLayoutParams(
-					new VirtualLayoutManager.LayoutParams(layoutParams));
+			holder.itemView.setLayoutParams(layoutParams);
 		}
 
+		Logger.e("width    "+holder.itemView.getLayoutParams().width+"-----height    "+holder.itemView.getLayoutParams().height);
 		if (position == 8) {
 			ViewGroup.LayoutParams layoutParams = holder.itemView.getLayoutParams();
 			layoutParams.width = 0;

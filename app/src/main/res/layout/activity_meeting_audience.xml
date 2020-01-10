@@ -352,4 +352,16 @@
 
     </LinearLayout>
 
+    <FrameLayout
+        android:id="@+id/localAudienceFrameView"
+        android:layout_width="@dimen/my_px_400"
+        android:layout_height="@dimen/my_px_260"
+        android:layout_gravity="right|bottom"
+        android:layout_marginBottom="60dp"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+
+    </FrameLayout>
+
 </FrameLayout>
