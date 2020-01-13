@@ -1237,6 +1237,12 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 									mAudienceRecyclerView.setVisibility(View.VISIBLE);
 								}
 
+
+								//不管取消谁 需要判断当前集合大小 如果集合小于等于1 就不再分屏
+								if (mVideoAdapter.getDataSize()<=1){
+									exitSpliteMode();
+								}
+
 							}
 						} else {
 							if (BuildConfig.DEBUG) {

@@ -415,7 +415,7 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 		}
 		RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(DisplayUtil.dip2px(this, 240), RelativeLayout.LayoutParams.WRAP_CONTENT);
 		layoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
-		layoutParams.setMargins(0, DisplayUtil.dip2px(this, 40), DisplayUtil.dip2px(this, 32), DisplayUtil.dip2px(this, 60));
+		layoutParams.setMargins(0, DisplayUtil.dip2px(this, 0), DisplayUtil.dip2px(this, 16), DisplayUtil.dip2px(this, 60));
 		mAudienceRecyclerView.setLayoutParams(layoutParams);
 
 		mDelegateAdapter.clear();
@@ -455,7 +455,7 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 				GridLayoutHelper mGridLayoutHelper = new GridLayoutHelper(2);
 				mGridLayoutHelper.setWeights(new float[]{50f});
 				mGridLayoutHelper.setWeights(new float[]{50f});
-				mVideoAdapter.setItemSize(DisplayUtil.getHeight(this)-AutoSizeUtils.dp2px(this,10), DisplayUtil.getWidth(this) / 2-AutoSizeUtils.dp2px(this,10));
+				mVideoAdapter.setItemSize(DisplayUtil.getHeight(this) - AutoSizeUtils.dp2px(this, 10), DisplayUtil.getWidth(this) / 2 - AutoSizeUtils.dp2px(this, 10));
 				mVideoAdapter.notifyDataSetChanged();
 				mGridLayoutHelper.setItemCount(8);
 				mVideoAdapter.setLayoutHelper(mGridLayoutHelper);
@@ -477,7 +477,7 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 		} else if (dataSize == 3) {
 			mDelegateAdapter.clear();
 			if (currentMaterial == null) {
-				mVideoAdapter.setItemSize(DisplayUtil.getHeight(this)-AutoSizeUtils.dp2px(this,10), DisplayUtil.getWidth(this)-AutoSizeUtils.dp2px(this,10));
+				mVideoAdapter.setItemSize(DisplayUtil.getHeight(this) - AutoSizeUtils.dp2px(this, 10), DisplayUtil.getWidth(this) - AutoSizeUtils.dp2px(this, 10));
 			} else {
 				mVideoAdapter.setItemSize(DisplayUtil.dip2px(this, 70), DisplayUtil.dip2px(this, 114));
 			}
@@ -496,7 +496,7 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 		} else if (dataSize == 4) {
 			mDelegateAdapter.clear();
 			if (currentMaterial == null) {
-				mVideoAdapter.setItemSize(DisplayUtil.getHeight(this) / 2-AutoSizeUtils.dp2px(this,10), DisplayUtil.getWidth(this) / 2-AutoSizeUtils.dp2px(this,10));
+				mVideoAdapter.setItemSize(DisplayUtil.getHeight(this) / 2 - AutoSizeUtils.dp2px(this, 10), DisplayUtil.getWidth(this) / 2 - AutoSizeUtils.dp2px(this, 10));
 				mVideoAdapter.notifyDataSetChanged();
 
 				GridLayoutHelper mGridLayoutHelper = new GridLayoutHelper(2);
@@ -529,7 +529,7 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 		} else if (dataSize == 6) {
 			mDelegateAdapter.clear();
 			if (currentMaterial == null) {
-				mVideoAdapter.setItemSize(DisplayUtil.getHeight(this) / 3-AutoSizeUtils.dp2px(this,20), DisplayUtil.getWidth(this) / 2-AutoSizeUtils.dp2px(this,20));
+				mVideoAdapter.setItemSize(DisplayUtil.getHeight(this) / 3 - AutoSizeUtils.dp2px(this, 20), DisplayUtil.getWidth(this) / 2 - AutoSizeUtils.dp2px(this, 20));
 				mVideoAdapter.notifyDataSetChanged();
 				GridLayoutHelper helper = new GridLayoutHelper(2);
 				helper.setWeights(new float[]{50f});
@@ -551,7 +551,7 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 		} else if (dataSize == 7) {
 			mDelegateAdapter.clear();
 			if (currentMaterial == null) {
-				mVideoAdapter.setItemSize(DisplayUtil.getHeight(this) / 2-AutoSizeUtils.dp2px(this,10), DisplayUtil.getWidth(this) / 4-AutoSizeUtils.dp2px(this,10));
+				mVideoAdapter.setItemSize(DisplayUtil.getHeight(this) / 2 - AutoSizeUtils.dp2px(this, 10), DisplayUtil.getWidth(this) / 4 - AutoSizeUtils.dp2px(this, 10));
 				mVideoAdapter.notifyDataSetChanged();
 
 				GridLayoutHelper helper = new GridLayoutHelper(4);
@@ -584,7 +584,7 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 		} else if (dataSize >= 8) {
 			mDelegateAdapter.clear();
 			if (currentMaterial == null) {
-				mVideoAdapter.setItemSize(DisplayUtil.getHeight(this) / 2-AutoSizeUtils.dp2px(this,10), DisplayUtil.getWidth(this) / 4-AutoSizeUtils.dp2px(this,10));
+				mVideoAdapter.setItemSize(DisplayUtil.getHeight(this) / 2 - AutoSizeUtils.dp2px(this, 10), DisplayUtil.getWidth(this) / 4 - AutoSizeUtils.dp2px(this, 10));
 				mVideoAdapter.notifyDataSetChanged();
 				GridLayoutHelper helper = new GridLayoutHelper(4);
 				helper.setWeights(new float[]{100f / 4});
@@ -870,6 +870,12 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 
 		mAudienceRecyclerView = findViewById(R.id.audience_list);
 
+
+		RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(DisplayUtil.dip2px(this, 240), RelativeLayout.LayoutParams.WRAP_CONTENT);
+		layoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
+		layoutParams.setMargins(0, DisplayUtil.dip2px(this, 0), DisplayUtil.dip2px(this, 16), DisplayUtil.dip2px(this, 60));
+		mAudienceRecyclerView.setLayoutParams(layoutParams);
+
 		mGridLayoutHelper = new MyGridLayoutHelper(2);
 		mGridLayoutHelper.setHGap(10);
 		mGridLayoutHelper.setVGap(10);
@@ -1140,7 +1146,8 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 		stopButton = findViewById(R.id.stop_audience);
 		stopButton.setOnClickListener(view -> {
 			if (currentAudience != null) {
-				showDialog(3, "结束" + currentAudience.getUname() + "的发言？", "取消", "确定", currentAudience);
+				mLogger.e("当前连麦人的信息：" + JSON.toJSONString(currentAudience.toString()));
+				showDialog(3, "结束" + currentAudience.getName() + "的发言？", "取消", "确定", currentAudience);
 			} else {
 				Toast.makeText(this, "当前没有连麦的参会人", Toast.LENGTH_SHORT).show();
 			}
@@ -1332,6 +1339,13 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 			public void onUserAttrResult(String account, String name, String value) {
 				super.onUserAttrResult(account, name, value);
 				mLogger.e("获取到用户" + account + "的属性" + name + "的值为" + value);
+
+				int key = Integer.parseInt(account);
+				if (audienceHashMap.containsKey(key)) {
+					audienceHashMap.get(key).setUname(value);
+					audienceHashMap.get(key).setName(value);
+				}
+
 				runOnUiThread(() -> {
 					if (BuildConfig.DEBUG) {
 						Toast.makeText(ChairManActivity.this, "获取到用户" + account + "的属性" + name + "的值为" + value, Toast.LENGTH_SHORT).show();
@@ -1367,8 +1381,10 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 						if (jsonObject.has("handsUp")) {
 							AudienceVideo audience = JSON.parseObject(jsonObject.toString(), AudienceVideo.class);
 							audience.setName(audience.getUname());
+							audience.setUname(audience.getUname());
 							if (jsonObject.has("isAudience") && jsonObject.getBoolean("isAudience") && audience.getCallStatus() == 2) {
 								currentAudience = audience;
+
 							}
 							audienceHashMap.put(audience.getUid(), audience);
 							updateAudienceList();
@@ -1392,17 +1408,7 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 								}
 							}
 						}
-						if (jsonObject.has("returnInformation")) {
 
-							AudienceVideo audience = JSON.parseObject(jsonObject.toString(), AudienceVideo.class);
-							if (Integer.parseInt(account) == currentAiducenceId) {
-								mLogger.e("参会人的视频流进入了  更新列表信息");
-								currentAudience = audience;
-							}
-
-							audienceHashMap.put(audience.getUid(), audience);
-							updateAudienceList();
-						}
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -1574,23 +1580,42 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 		}
 
 		//如果是分屏模式 清除掉ppt的时候 需要重新分屏
-		mLogger.e(isSplitMode + "-----" + model + "--------" + mVideoAdapter.getDataSize());
+		mLogger.e("isSplitMode:   " + isSplitMode + "-----  model:  " + model + "--------   mVideoAdapter.getDataSize():  " + mVideoAdapter.getDataSize());
 		if (isSplitMode) {
-			if (mVideoAdapter.getDataSize() == 1||mVideoAdapter.getDataSize()==0) {//此时只有主持人 不需要进行重新分屏
-				if (mVideoAdapter.isHaveChairMan()) {
-					mVideoAdapter.removeItem(mVideoAdapter.getChairManPosition());
+			//当是分屏模式时
+			//如果mode==2 两人退出一个时 集合大小为0
+			// 如果mode==1, 两人退出一个时  集合大小为1
+			//如果 mode==3时 两人退出一个时 集合大小为1
+			if (model == 1||model==3) {
+				if (mVideoAdapter.getDataSize() == 1) {
+					if (mVideoAdapter.isHaveChairMan()) {
+						mVideoAdapter.removeItem(mVideoAdapter.getChairManPosition());
+					}
+					stripSurfaceView(localBroadcasterSurfaceView);
+					broadcasterLayout.removeAllViews();
+					localBroadcasterSurfaceView.setVisibility(View.VISIBLE);
+					broadcasterLayout.addView(localBroadcasterSurfaceView);
+					broadcasterLayout.setVisibility(View.VISIBLE);
+					broadcasterLayout.setVisibility(View.VISIBLE);
 				}
-				stripSurfaceView(localBroadcasterSurfaceView);
-				broadcasterLayout.removeAllViews();
-				localBroadcasterSurfaceView.setVisibility(View.VISIBLE);
-				broadcasterLayout.addView(localBroadcasterSurfaceView);
-				broadcasterLayout.setVisibility(View.VISIBLE);
-				broadcasterLayout.setVisibility(View.VISIBLE);
-			} else {
-				SpliteViews();
-				broadcasterLayout.setVisibility(View.GONE);
-				if (currentMaterial == null) {
-					full_screen.setVisibility(View.GONE);
+			} else if (model == 2) {
+				if (mVideoAdapter.getDataSize() <= 0) {//此时列表中没有参会人或者观众 就直接将主持人画面移动到大的视图
+					if (mVideoAdapter.isHaveChairMan()) {
+						mVideoAdapter.removeItem(mVideoAdapter.getChairManPosition());
+					}
+					stripSurfaceView(localBroadcasterSurfaceView);
+					broadcasterLayout.removeAllViews();
+					localBroadcasterSurfaceView.setVisibility(View.VISIBLE);
+					broadcasterLayout.addView(localBroadcasterSurfaceView);
+					broadcasterLayout.setVisibility(View.VISIBLE);
+					broadcasterLayout.setVisibility(View.VISIBLE);
+
+				} else {
+					SpliteViews();
+					broadcasterLayout.setVisibility(View.GONE);
+//					if (currentMaterial == null) {
+//						full_screen.setVisibility(View.GONE);
+//					}
 				}
 			}
 
@@ -1830,6 +1855,7 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 	private NewAudienceAdapter.OnAudienceButtonClickListener listener = new NewAudienceAdapter.OnAudienceButtonClickListener() {
 		@Override
 		public void onTalkButtonClick(AudienceVideo audience) {
+			mLogger.e(JSON.toJSONString(audience.toString()));
 			if (isConnecting) {
 				Toast.makeText(ChairManActivity.this, "暂时无法切换连麦，请10秒后尝试", Toast.LENGTH_SHORT).show();
 			} else {
@@ -1840,6 +1866,7 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 						Toast.makeText(ChairManActivity.this, "正在与当前参会人连麦中", Toast.LENGTH_SHORT).show();
 					}
 				} else {
+
 					if (audience.getCallStatus() == 0) {
 						if (audience.isHandsUp()) {
 							showDialog(2, audience.getUname() + "请求连麦", "接受", "拒绝", audience);
@@ -1990,6 +2017,9 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 		AlertDialog.Builder builder = new AlertDialog.Builder(ChairManActivity.this, R.style.MyDialog);
 		builder.setView(view);
 		pptAlertDialog = builder.create();
+		pptAlertDialog.setCancelable(true);
+		pptAlertDialog.setCanceledOnTouchOutside(true);
+
 		if (!pptAlertDialog.isShowing()) {
 			pptAlertDialog.show();
 		}
@@ -2062,6 +2092,8 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 		AlertDialog.Builder builder = new AlertDialog.Builder(ChairManActivity.this, R.style.MyDialog);
 		builder.setView(view);
 		pptDetailDialog = builder.create();
+		pptDetailDialog.setCanceledOnTouchOutside(true);
+		pptDetailDialog.setCanceledOnTouchOutside(true);
 		if (!pptDetailDialog.isShowing()) {
 			pptDetailDialog.show();
 		}
@@ -2121,7 +2153,7 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 
 		RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(DisplayUtil.dip2px(this, 240), RelativeLayout.LayoutParams.WRAP_CONTENT);
 		layoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
-		layoutParams.setMargins(0, DisplayUtil.dip2px(this, 40), DisplayUtil.dip2px(this, 32), DisplayUtil.dip2px(this, 60));
+		layoutParams.setMargins(0, DisplayUtil.dip2px(this, 0), DisplayUtil.dip2px(this, 16), DisplayUtil.dip2px(this, 60));
 		mAudienceRecyclerView.setLayoutParams(layoutParams);
 
 		mDelegateAdapter.clear();
@@ -2423,14 +2455,16 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 			AudienceVideo audienceVideo = new AudienceVideo();
 			audienceVideo.setUid(uid);
 
+
 			/*if (currentAiducenceId!=-1&&currentAudience!=null&&currentAudience.getName()!=null&&!currentAudience.getName().isEmpty()){
 				audienceVideo.setName(currentAudience.getUname());
 			}else if (currentAudience!=null&&currentAudience.getUname()!=null&&!currentAudience.getUname().isEmpty()){
 				audienceVideo.setName(currentAudience.getUname());
+				audienceVideo.setUname(currentAudience.getUname());
 			}else {
 				audienceVideo.setName("参会人:"+uid);
-			}
-*/
+			}*/
+
 			audienceVideo.setBroadcaster(false);
 			audienceVideo.setCallStatus(2);
 			audienceVideo.setSurfaceView(remoteAudienceSurfaceView);
@@ -2445,8 +2479,10 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 
 			//观众上线
 			if (uid != 0 && uid == currentAiducenceId) {
-				mLogger.e("观众视频进入了……" + uid);
+				mLogger.e("观众视频进入了……" + JSON.toJSONString(currentAudience.toString()));
 				stopButton.setVisibility(View.VISIBLE);
+				audienceVideo.setName(currentAudience.getUname());
+				audienceVideo.setUname(currentAudience.getUname());
 				currentAudience = audienceVideo;
 				isConnecting = false;
 			}
@@ -2476,6 +2512,13 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 				mVideoAdapter.setVisibility(View.VISIBLE);
 				mAudienceRecyclerView.setVisibility(View.VISIBLE);
 
+			}
+
+
+			if (isSplitMode&&currentMaterial==null){
+				full_screen.setVisibility(View.GONE);
+			}else {
+				full_screen.setVisibility(View.GONE);
 			}
 
 
@@ -2540,6 +2583,7 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 					mLogger.e("用户变成了观众模式");
 					if (currentAudience != null && currentAiducenceId == uid) {
 						AudienceVideo audienceVideo = audienceHashMap.get(currentAudience.getUid());
+						mLogger.e(JSON.toJSONString(audienceVideo));
 						if (audienceVideo == null) {
 							return;
 						}
@@ -2999,6 +3043,18 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 				if (showOperatorHandler.hasMessages(0)) {
 					showOperatorHandler.removeMessages(0);
 				}
+
+
+				int[] position = new int[2];
+				rlContent.getLocationInWindow(position);
+				/*mLogger.e("getLocationInWindow:" + position[0] + "," + position[1]);
+
+				mLogger.e(ev.getY()+"----"+ev.getRawY());*/
+
+				if (ev.getRawY() < position[1]) {
+					hideFragment();
+				}
+
 				if (mOperaTools.getVisibility() == View.VISIBLE) {
 					showOperatorHandler.sendEmptyMessageDelayed(0, Constant.delayTime);
 				} else if (mOperaTools.getVisibility() == View.GONE) {
