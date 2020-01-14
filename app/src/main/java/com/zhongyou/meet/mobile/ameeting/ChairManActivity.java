@@ -8,8 +8,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
@@ -47,6 +50,12 @@ import com.alibaba.android.vlayout.layout.GridLayoutHelper;
 import com.alibaba.android.vlayout.layout.OnePlusNLayoutHelper;
 import com.alibaba.android.vlayout.layout.StaggeredGridLayoutHelper;
 import com.alibaba.fastjson.JSON;
+import com.bumptech.glide.Glide;
+import com.dou361.ijkplayer.bean.VideoijkBean;
+import com.dou361.ijkplayer.listener.OnPlayerBackListener;
+import com.dou361.ijkplayer.listener.OnShowThumbnailListener;
+import com.dou361.ijkplayer.widget.PlayStateParams;
+import com.dou361.ijkplayer.widget.PlayerView;
 import com.elvishew.xlog.XLog;
 import com.example.zhouwei.library.CustomPopWindow;
 import com.lxj.xpopup.XPopup;
@@ -91,6 +100,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Text;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -275,6 +285,7 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 			switch (msg.what) {
 				case 0:
 					mOperaTools.setVisibility(View.GONE);
+					findViewById(R.id.ll_bottom_bar).setVisibility(View.GONE);//视频播放底部操作栏
 					if (mTransformersTipPop != null) {
 						if (mTransformersTipPop.isShowing()) {
 							mTransformersTipPop.dismissTip();
@@ -283,6 +294,10 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 					break;
 				case 1:
 					mOperaTools.setVisibility(View.VISIBLE);
+					//视频播放底部操作栏
+					if (currentMaterial!=null&&!currentMaterial.isVideo()){
+						findViewById(R.id.ll_bottom_bar).setVisibility(View.VISIBLE);
+					}
 					showOperatorHandler.sendEmptyMessageDelayed(0, Constant.delayTime);
 					break;
 			}
@@ -332,11 +347,14 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 	private TextView mSpilteView;
 	private LinearLayout mOperaTools;
 	private TransformersTip mTransformersTipPop;
+	private View mRootView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.chairman_activity);
+		mRootView = LayoutInflater.from(this).inflate(R.layout.chairman_activity, null);
+		setContentView(mRootView);
+
 //        if (!WSService.isOnline()) {
 //            //当前状态离线,可切换在线
 //            ZYAgent.onEvent(this, "在线按钮,当前离线,切换到在线");
@@ -615,12 +633,18 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 	protected void onResume() {
 		super.onResume();
 //        initFragment();
+		if (player != null) {
+			player.onResume();
+		}
 		TCAgent.onPageStart(this, "视频通话");
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
+		if (player != null) {
+			player.onPause();
+		}
 		TCAgent.onPageEnd(this, "视频通话");
 	}
 
@@ -1045,6 +1069,13 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 
 		exitDocButton = findViewById(R.id.exit_ppt);
 		exitDocButton.setOnClickListener(view -> {
+			mLogger.e("退出ppt");
+
+			if (player!=null){
+				player.stopPlay();
+				player.onDestroy();
+			}
+			findViewById(R.id.app_video_box).setVisibility(View.GONE);
 			isFullScreen = false;
             /*docImage.setVisibility(View.GONE);
             pageText.setVisibility(View.GONE);
@@ -2224,83 +2255,131 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 		broadcasterSmallLayout.setVisibility(View.GONE);
 		broadcasterSmallView.setVisibility(View.GONE);
 	}
+	private PlayerView player;
+	/**
+	 * 播放本地视频
+	 */
 
+	private String getLocalVideoPath(String name) {
+		String sdCard = Environment.getExternalStorageDirectory().getPath();
+		String uri = sdCard + File.separator + name;
+		return uri;
+	}
 	private void changeViewByPPTModel(Material material) {
+
 		if (currentMaterial == null && material != null) {
 			currentMaterial = material;
 		}
+		mLogger.e(JSON.toJSONString(currentMaterial.toString()));
 
+		if (currentMaterial!=null&&!currentMaterial.isVideo()){
+			findViewById(R.id.app_video_box).setVisibility(View.VISIBLE);
+			String url = "http://9890.vod.myqcloud.com/9890_4e292f9a3dd011e6b4078980237cc3d3.f20.mp4";
+			player = new PlayerView(this)
+					.setTitle("什么")
+					.setScaleType(PlayStateParams.wrapcontent)
+					.forbidTouch(true)
+					.hideBack(true)
+					.setShowSpeed(true)
+					.hideFullscreen(true)
+					.hideHideTopBar(true)
+					.hideMenu(true)
+					.hideRotation(true)
+					.hideSteam(true)
+					.hideMenu(true)
+					.showThumbnail(new OnShowThumbnailListener() {
+						@Override
+						public void onShowThumbnail(ImageView ivThumbnail) {
+							Glide.with(ChairManActivity.this)
+									.load(R.mipmap.logo)
+									.placeholder(R.color.cl_default)
+									.error(R.color.cl_error)
+									.into(ivThumbnail);
+						}
+					})
+					.setPlaySource(url)
+					.setPlayerBackListener(new OnPlayerBackListener() {
+						@Override
+						public void onPlayerBack() {
+							//这里可以简单播放器点击返回键
+							mLogger.e("videoPlayer  onPlayerBack");
+							findViewById(R.id.app_video_box).setVisibility(View.GONE);
+						}
+					}).startPlay();
+		}else {
+			docLayout.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View view) {
+					hideFragment();
+					if (isFullScreen) {
+						if (!tvContent.getText().toString().isEmpty())
+							llMsg.setVisibility(View.GONE);
+					} else {
+//                        if(!tvChat.getText().toString().isEmpty())
+//                        llChat.setVisibility(View.VISIBLE);
+					}
+				}
+			});
+
+			docImage.setVisibility(View.VISIBLE);
+			docImage.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View view) {
+					hideFragment();
+					if (isFullScreen) {
+						if (!tvContent.getText().toString().isEmpty())
+							llMsg.setVisibility(View.GONE);
+					} else {
+						if (!tvChat.getText().toString().isEmpty()) {
+//                            llChat.setVisibility(View.VISIBLE);
+						}
+
+					}
+				}
+			});
+
+//			fullScreenButton.setVisibility(View.VISIBLE);
+
+			position = 0;
+			MeetingMaterialsPublish currentMaterialPublish = currentMaterial.getMeetingMaterialsPublishList().get(position);
+
+			pageText.setVisibility(View.VISIBLE);
+			pageText.setText("第" + currentMaterialPublish.getPriority() + "/" + currentMaterial.getMeetingMaterialsPublishList().size() + "页");
+
+			String imageUrl = ImageHelper.getThumb(currentMaterialPublish.getUrl());
+			Picasso.with(ChairManActivity.this).load(imageUrl).into(docImage);
+
+			try {
+				JSONObject jsonObject = new JSONObject();
+				jsonObject.put("material_id", currentMaterial.getId());
+				jsonObject.put("doc_index", position);
+				agoraAPI.channelSetAttr(channelName, DOC_INFO, jsonObject.toString());
+//                agoraAPI.messageChannelSend(channelName, jsonObject.toString(), "");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		docLayout.setVisibility(View.VISIBLE);
 		//非全屏状态：画面背景为PPT内容，主持人+各参会人画面悬浮在PPT内容上，悬浮窗口不能移动（该状态3种角色统一）；
 		//全屏状态：画面背景为PPT内容，右下角悬浮自己的画面（主持人角色显示主持人自己画面、各参会人角色显示各自参会人自己画面、观众不显示浮窗画面），悬窗支持移动；
 		//隐藏浮窗状态：画面只有PPT内容；
 
 		//进入ppt模式后 默认为非全屏状态
 		notFullScreenState();
-
 		broadcasterLayout.removeAllViews();
 		broadcasterLayout.setVisibility(View.GONE);
-
 
 		if (isSplitMode && currentMaterial == null) {
 			full_screen.setVisibility(View.GONE);
 		} else {
 			full_screen.setVisibility(View.VISIBLE);
 		}
-
-
 		mSpilteView.setVisibility(View.GONE);
-		docLayout.setVisibility(View.VISIBLE);
-		docLayout.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View view) {
-				hideFragment();
-				if (isFullScreen) {
-					if (!tvContent.getText().toString().isEmpty())
-						llMsg.setVisibility(View.GONE);
-				} else {
-//                        if(!tvChat.getText().toString().isEmpty())
-//                        llChat.setVisibility(View.VISIBLE);
-				}
-			}
-		});
 
-		docImage.setVisibility(View.VISIBLE);
-		docImage.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View view) {
-				hideFragment();
-				if (isFullScreen) {
-					if (!tvContent.getText().toString().isEmpty())
-						llMsg.setVisibility(View.GONE);
-				} else {
-					if (!tvChat.getText().toString().isEmpty()) {
-//                            llChat.setVisibility(View.VISIBLE);
-					}
 
-				}
-			}
-		});
 
-//			fullScreenButton.setVisibility(View.VISIBLE);
 
-		position = 0;
-		MeetingMaterialsPublish currentMaterialPublish = currentMaterial.getMeetingMaterialsPublishList().get(position);
-
-		pageText.setVisibility(View.VISIBLE);
-		pageText.setText("第" + currentMaterialPublish.getPriority() + "/" + currentMaterial.getMeetingMaterialsPublishList().size() + "页");
-
-		String imageUrl = ImageHelper.getThumb(currentMaterialPublish.getUrl());
-		Picasso.with(ChairManActivity.this).load(imageUrl).into(docImage);
-
-		try {
-			JSONObject jsonObject = new JSONObject();
-			jsonObject.put("material_id", currentMaterial.getId());
-			jsonObject.put("doc_index", position);
-			agoraAPI.channelSetAttr(channelName, DOC_INFO, jsonObject.toString());
-//                agoraAPI.messageChannelSend(channelName, jsonObject.toString(), "");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 
 	}
 
@@ -2959,7 +3038,19 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 		}
 		agoraAPI.destroy();
 
+		if (player != null) {
+			player.onDestroy();
+		}
+
 //        BaseApplication.getInstance().deInitWorkerThread();
+	}
+
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		if (player != null) {
+			player.onConfigurationChanged(newConfig);
+		}
 	}
 
 	private void initFragment() {

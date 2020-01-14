@@ -231,6 +231,7 @@ dependencies {
     implementation 'com.lzy.net:okgo:3.0.4'
     implementation 'com.github.pinguo-zhouwei:CustomPopwindow:2.1.1'
     implementation project(path: ':anglePop')
+    implementation project(path: ':jjdxm-ijkplayer')
 
 
 }
