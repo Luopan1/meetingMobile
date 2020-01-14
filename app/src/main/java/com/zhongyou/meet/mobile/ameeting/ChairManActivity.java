@@ -2683,6 +2683,11 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 							}
 						}
 
+						localBroadcasterSurfaceView.setZOrderOnTop(true);
+						localBroadcasterSurfaceView.setZOrderMediaOverlay(false);
+						stripSurfaceView(localBroadcasterSurfaceView);
+						broadcasterLayout.addView(localBroadcasterSurfaceView);
+
 						int positionById = mVideoAdapter.getPositionById(uid);
 						if (positionById != -1) {
 							AudienceVideo audienceVideo = mVideoAdapter.getAudienceVideoLists().get(positionById);

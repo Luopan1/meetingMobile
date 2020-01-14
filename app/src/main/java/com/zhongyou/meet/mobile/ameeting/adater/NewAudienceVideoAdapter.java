@@ -270,7 +270,7 @@ public class NewAudienceVideoAdapter extends DelegateAdapter.Adapter<NewAudience
 			holder.itemView.setLayoutParams(layoutParams);
 		}
 
-		Logger.e("width    "+holder.itemView.getLayoutParams().width+"-----height    "+holder.itemView.getLayoutParams().height);
+		//Logger.e("width    "+holder.itemView.getLayoutParams().width+"-----height    "+holder.itemView.getLayoutParams().height);
 		if (position == 8) {
 			ViewGroup.LayoutParams layoutParams = holder.itemView.getLayoutParams();
 			layoutParams.width = 0;
