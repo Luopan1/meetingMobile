@@ -28,6 +28,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.elvishew.xlog.XLog;
 import com.zhongyou.meet.mobile.ApiClient;
 import com.zhongyou.meet.mobile.BaseException;
+import com.zhongyou.meet.mobile.Constant;
 import com.zhongyou.meet.mobile.R;
 import com.zhongyou.meet.mobile.business.adapter.ForumMeetingAdapter;
 import com.zhongyou.meet.mobile.business.adapter.GeneralAdapter;
@@ -439,6 +440,12 @@ public class MeetingsFragment extends BaseFragment {
 			codeEdit.setText(SpUtil.getString(meeting.getId(), ""));
 		} else {
 			codeEdit.setText("");
+		}
+		//需要录制
+		if(meeting.getIsRecord()==1){
+			Constant.isNeedRecord=true;
+		}else {
+			Constant.isNeedRecord=false;
 		}
 		view.findViewById(R.id.confirm).setOnClickListener(new View.OnClickListener() {
 			@Override

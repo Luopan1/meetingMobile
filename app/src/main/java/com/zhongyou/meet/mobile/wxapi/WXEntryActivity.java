@@ -168,7 +168,7 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
 	protected void initView() {
 		Log.e("initView()","initViews");
 		if (Preferences.isLogin()) {
-			Logger.e("Preferences.isLogin()");
+			Log.e("initView()","Preferences.isLogin()");
 
 			ApiClient.getInstance().requestUser(this, new OkHttpCallback<BaseBean<UserData>>() {
 				@Override
@@ -177,7 +177,7 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
 						Toast.makeText(WXEntryActivity.this, "用户数据为空", Toast.LENGTH_SHORT).show();
 						return;
 					}
-					Logger.i(JSON.toJSONString(entity));
+					Log.e("initView", "onSuccess: "+JSON.toJSONString(entity));
 
 //                    BindActivity.actionStart(WXEntryActivity.this,true,true);
 
@@ -201,6 +201,11 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
 					finish();
 				}
 			});
+		}else {
+			if (mLoadingDialog!=null){
+				mLoadingDialog.dismiss();
+			}
+			Log.e("initView", "initView: 11111" );
 		}
 
 		mWxApi.handleIntent(getIntent(), this);
@@ -393,15 +398,14 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
 
 
 
+
 			}
 
 
 			@Override
 			public void onFailure(int errorCode, BaseException exception) {
 				super.onFailure(errorCode, exception);
-				if (BuildConfig.DEBUG){
-					initEntry();
-				}
+				initEntry();
 				if (mLoadingDialog!=null){
 					mLoadingDialog.dismiss();
 				}

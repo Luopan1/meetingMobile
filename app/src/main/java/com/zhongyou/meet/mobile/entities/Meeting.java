@@ -17,6 +17,16 @@ public class Meeting implements Parcelable, Entity {
     private String description;
 
     private String startTime;
+    private int isRecord;//是否录制
+
+    public int getIsRecord() {
+        return isRecord;
+    }
+
+    public void setIsRecord(int isRecord) {
+        this.isRecord = isRecord;
+    }
+
 
     private int totalParticipants;
 
@@ -179,6 +189,9 @@ public class Meeting implements Parcelable, Entity {
         return result;
     }
 
+    public Meeting() {
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -190,6 +203,7 @@ public class Meeting implements Parcelable, Entity {
         dest.writeString(this.title);
         dest.writeString(this.description);
         dest.writeString(this.startTime);
+        dest.writeInt(this.isRecord);
         dest.writeInt(this.totalParticipants);
         dest.writeInt(this.totalAttendance);
         dest.writeInt(this.screenshotFrequency);
@@ -199,14 +213,12 @@ public class Meeting implements Parcelable, Entity {
         dest.writeInt(this.type);
     }
 
-    public Meeting() {
-    }
-
     protected Meeting(Parcel in) {
         this.id = in.readString();
         this.title = in.readString();
         this.description = in.readString();
         this.startTime = in.readString();
+        this.isRecord = in.readInt();
         this.totalParticipants = in.readInt();
         this.totalAttendance = in.readInt();
         this.screenshotFrequency = in.readInt();

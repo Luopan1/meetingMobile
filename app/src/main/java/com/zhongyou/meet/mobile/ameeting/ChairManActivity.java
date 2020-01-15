@@ -171,6 +171,9 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 	private com.elvishew.xlog.Logger mLogger;
 	private NewAudienceVideoAdapter mVideoAdapter;
 	private int model = 0;
+	private String mResourceId;
+	private String mSid;
+	private String mRecordUid;
 
 
 	@SuppressLint("HandlerLeak")
@@ -436,6 +439,8 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 			broadcasterLayout.setVisibility(View.VISIBLE);
 		}
 
+		mSpilteView.setText("均分模式");
+
 	}
 
 	private void changeViewLayout() {
@@ -478,17 +483,21 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 			mDelegateAdapter.clear();
 			if (currentMaterial == null) {
 				mVideoAdapter.setItemSize(DisplayUtil.getHeight(this) - AutoSizeUtils.dp2px(this, 10), DisplayUtil.getWidth(this) - AutoSizeUtils.dp2px(this, 10));
+
+				OnePlusNLayoutHelper helper = new OnePlusNLayoutHelper(3);
+				helper.setItemCount(3);
+				helper.setColWeights(new float[]{50f});
+				helper.setRowWeight(50f);
+				mVideoAdapter.setLayoutHelper(helper);
 			} else {
 				mVideoAdapter.setItemSize(DisplayUtil.dip2px(this, 70), DisplayUtil.dip2px(this, 114));
+				MyGridLayoutHelper mGridLayoutHelper = new MyGridLayoutHelper(2);
+				mGridLayoutHelper.setItemCount(8);
+				mGridLayoutHelper.setGap(10);
+				mGridLayoutHelper.setAutoExpand(false);
+				mVideoAdapter.setLayoutHelper(mGridLayoutHelper);
+
 			}
-
-			mVideoAdapter.notifyDataSetChanged();
-
-			OnePlusNLayoutHelper helper = new OnePlusNLayoutHelper(3);
-			helper.setItemCount(3);
-			helper.setColWeights(new float[]{50f});
-			helper.setRowWeight(50f);
-			mVideoAdapter.setLayoutHelper(helper);
 
 			mVideoAdapter.notifyDataSetChanged();
 			mDelegateAdapter.addAdapter(mVideoAdapter);
@@ -519,11 +528,20 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 			mDelegateAdapter.addAdapter(mVideoAdapter);
 		} else if (dataSize == 5) {
 			mDelegateAdapter.clear();
-			mVideoAdapter.notifyDataSetChanged();
 
-			StaggeredGridLayoutHelper helper = new StaggeredGridLayoutHelper(2, 10);
-			helper.setItemCount(5);
-			mVideoAdapter.setLayoutHelper(helper);
+			if (currentMaterial == null) {
+				StaggeredGridLayoutHelper helper = new StaggeredGridLayoutHelper(2, 10);
+				helper.setItemCount(5);
+				mVideoAdapter.setLayoutHelper(helper);
+			} else {
+				mVideoAdapter.setItemSize(DisplayUtil.dip2px(this, 70), DisplayUtil.dip2px(this, 114));
+				MyGridLayoutHelper mGridLayoutHelper = new MyGridLayoutHelper(2);
+				mGridLayoutHelper.setItemCount(8);
+				mGridLayoutHelper.setGap(10);
+				mGridLayoutHelper.setAutoExpand(false);
+				mVideoAdapter.setLayoutHelper(mGridLayoutHelper);
+			}
+
 			mVideoAdapter.notifyDataSetChanged();
 			mDelegateAdapter.addAdapter(mVideoAdapter);
 		} else if (dataSize == 6) {
@@ -1200,6 +1218,33 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 						runOnUiThread(() -> Toast.makeText(ChairManActivity.this, "信令系统登录成功", Toast.LENGTH_SHORT).show());
 					}
 					agoraAPI.channelJoin(channelName);
+
+					if (Constant.isNeedRecord) {
+						Map<String, String> map = new HashMap<>();
+						map.put("cname", meetingJoin.getMeeting().getId());
+						map.put("uid", String.valueOf(uid));
+						map.put("clientRequest", "{}");
+						ApiClient.getInstance().startRecordVideo(map, new OkHttpCallback<com.alibaba.fastjson.JSONObject>() {
+							@Override
+							public void onSuccess(com.alibaba.fastjson.JSONObject json) {
+								mLogger.e(JSON.toJSONString(json));
+								if (json.getInteger("errcode") != 0) {
+									ToastUtils.showToast(json.getString("errmsg"));
+
+								} else {
+									mResourceId = json.getJSONObject("data").getJSONObject("result").getString("resourceId");
+									mSid = json.getJSONObject("data").getJSONObject("result").getString("sid");
+									mRecordUid = json.getJSONObject("data").getJSONObject("result").getString("uid");
+								}
+							}
+
+							@Override
+							public void onFailure(int errorCode, BaseException exception) {
+								super.onFailure(errorCode, exception);
+								mLogger.e(exception.getMessage());
+							}
+						});
+					}
 				});
 
 			}
@@ -1586,7 +1631,7 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 			//如果mode==2 两人退出一个时 集合大小为0
 			// 如果mode==1, 两人退出一个时  集合大小为1
 			//如果 mode==3时 两人退出一个时 集合大小为1
-			if (model == 1||model==3) {
+			if (model == 1 || model == 3) {
 				if (mVideoAdapter.getDataSize() == 1) {
 					if (mVideoAdapter.isHaveChairMan()) {
 						mVideoAdapter.removeItem(mVideoAdapter.getChairManPosition());
@@ -1597,6 +1642,9 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 					broadcasterLayout.addView(localBroadcasterSurfaceView);
 					broadcasterLayout.setVisibility(View.VISIBLE);
 					broadcasterLayout.setVisibility(View.VISIBLE);
+				}else {
+					SpliteViews();
+					broadcasterLayout.setVisibility(View.GONE);
 				}
 			} else if (model == 2) {
 				if (mVideoAdapter.getDataSize() <= 0) {//此时列表中没有参会人或者观众 就直接将主持人画面移动到大的视图
@@ -1653,7 +1701,7 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 	}
 
 	private void SpliteViews() {
-
+		mSpilteView.setText("退出均分");
 		//主持人在列表中 则将大的broadcasterView的视频加入到receclerview中去  将主持人移动到集合第一个去
 		if (mVideoAdapter.isHaveChairMan()) {
 			mLogger.e("主持人再列表中");
@@ -1913,6 +1961,7 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 					}
 				}
 			}
+			stopRecordVideo();
 			agoraAPI.channelDelAttr(channelName, DOC_INFO);
 			HashMap<String, String> params = new HashMap<String, String>();
 			params.put("clientUid", "" + config().mUid);
@@ -1932,6 +1981,7 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 		});
 		Button finishMeetingButton = contentView.findViewById(R.id.right);
 		finishMeetingButton.setOnClickListener(view -> {
+			stopRecordVideo();
 			if (finishTips.getVisibility() == View.VISIBLE) {
 				ApiClient.getInstance().finishMeeting(TAG, meetingJoin.getMeeting().getId(), memberCount, finishMeetingCallback);
 				exitDialog.cancel();
@@ -2515,10 +2565,10 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 			}
 
 
-			if (isSplitMode&&currentMaterial==null){
+			if (isSplitMode && currentMaterial == null) {
 				full_screen.setVisibility(View.GONE);
-			}else {
-				full_screen.setVisibility(View.GONE);
+			} else {
+				full_screen.setVisibility(View.VISIBLE);
 			}
 
 
@@ -3069,6 +3119,33 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 
 		}
 		return super.dispatchTouchEvent(ev);
+	}
+
+	private void stopRecordVideo() {
+		if (Constant.isNeedRecord) {
+
+			HashMap<String, String> map = new HashMap<>();
+			map.put("sid", mSid);
+			map.put("resourceId", mResourceId);
+			map.put("cname", meetingJoin.getMeeting().getId());
+			map.put("uid", mRecordUid);
+			mLogger.e(JSON.toJSONString(map));
+			ApiClient.getInstance().stopRecordVideo(this, map, new OkHttpCallback<com.alibaba.fastjson.JSONObject>() {
+				@Override
+				public void onSuccess(com.alibaba.fastjson.JSONObject json) {
+					if (json.getInteger("errcode") != 0) {
+						ToastUtils.showToast(ChairManActivity.this, json.getString("errmsg"));
+					}
+				}
+
+				@Override
+				public void onFailure(int errorCode, BaseException exception) {
+					super.onFailure(errorCode, exception);
+					mLogger.e(exception.getMessage());
+				}
+			});
+		}
+
 	}
 
 

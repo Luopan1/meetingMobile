@@ -509,11 +509,11 @@ public class MyGridLayoutHelper extends BaseLayoutHelper {
 
 					if (params.getViewPosition()<=2){
 						left = helper.getPaddingLeft() + mMarginLeft + mPaddingLeft + mSizePerSpan * (1) + (1)* mHGap;
-						top=maxSize*params.getViewPosition()+index * mVGap;
+						top=maxSize*params.getViewPosition()+ mVGap/2;
 						bottom = top + maxSize;
 					}else if (params.getViewPosition()>=3&&params.getViewPosition()<=6){
 						left=0;
-						top=maxSize*(params.getViewPosition()-3)+index * mVGap;
+						top=maxSize*(params.getViewPosition()-3)+mVGap/2;
 						bottom=top + maxSize;
 					}else if (params.getViewPosition()>6&&params.getViewPosition()<=7){
 						left = helper.getPaddingLeft() + mMarginLeft + mPaddingLeft + mSizePerSpan * (1) + (1)* mHGap;
@@ -522,6 +522,8 @@ public class MyGridLayoutHelper extends BaseLayoutHelper {
 					}
 				}
 				right = left + orientationHelper.getDecoratedMeasurementInOther(view);
+
+				Log.e(TAG,"item: "+params.getViewPosition()+"--- index: "+index+"---  left: "+left+"----   top: "+top+"---   right: "+right+"----   bottom: "+bottom);
 			} else {
 				if (weighted) {
 					top = helper.getPaddingTop() + mMarginTop + mPaddingTop;

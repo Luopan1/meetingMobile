@@ -23,6 +23,7 @@ public class Constant {
 
 	//0 为主持人 1 为参会人  2为观众 默认为观众
 	public static int videoType = 2;
+	public static boolean isNeedRecord=false;
 
 	/**
 	 * 检查更新地址

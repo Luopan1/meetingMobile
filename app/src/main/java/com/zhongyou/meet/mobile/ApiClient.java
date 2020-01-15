@@ -493,4 +493,19 @@ public class ApiClient {
         }
         okHttpUtil.get(BuildConfig.API_DOMAIN_NAME+"/osg/"+env+"/android/config",tag,callback);
     }
+
+    /**
+     * 开始录制
+     * */
+    public void startRecordVideo( Map<String, String> values, OkHttpCallback callback){
+        okHttpUtil.post(BuildConfig.API_DOMAIN_NAME+"/osg/app/meeting/startRecordVideo",getCommonHead(),values,callback);
+    }
+
+
+    /**
+     * 结束录制
+     * */
+    public void stopRecordVideo(Object tag, Map<String, String> values, OkHttpCallback callback){
+        okHttpUtil.post(BuildConfig.API_DOMAIN_NAME+"/osg/app/meeting/stopRecordVideo",getCommonHead(),values,callback);
+    }
 }

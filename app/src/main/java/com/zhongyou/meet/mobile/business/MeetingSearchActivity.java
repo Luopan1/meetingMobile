@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.zhongyou.meet.mobile.ApiClient;
 import com.zhongyou.meet.mobile.BaseException;
+import com.zhongyou.meet.mobile.Constant;
 import com.zhongyou.meet.mobile.R;
 import com.zhongyou.meet.mobile.business.adapter.ForumMeetingAdapter;
 import com.zhongyou.meet.mobile.business.adapter.GeneralAdapter;
@@ -259,6 +260,14 @@ public class MeetingSearchActivity extends BasicActivity {
     private void initDialog(final Meeting meeting) {
         View view = View.inflate(mContext, R.layout.dialog_meeting_input_code, null);
         final EditText codeEdit = view.findViewById(R.id.code);
+
+        //需要录制
+        if(meeting.getIsRecord()==1){
+            Constant.isNeedRecord=true;
+        }else {
+            Constant.isNeedRecord=false;
+        }
+
         view.findViewById(R.id.confirm).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
