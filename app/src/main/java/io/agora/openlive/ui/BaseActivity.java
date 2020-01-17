@@ -213,4 +213,8 @@ public abstract class BaseActivity extends AppCompatActivity {
     public void  showToastyInfo(String message){
         Toasty.info(this,message,Toast.LENGTH_SHORT,true).show();
     }
+
+    public void  showToastyWarn(String message){
+        Toasty.warning(this,message,Toast.LENGTH_SHORT,true).show();
+    }
 }

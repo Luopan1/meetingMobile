@@ -297,6 +297,14 @@ public class NewAudienceVideoAdapter extends DelegateAdapter.Adapter<NewAudience
 					}
 				}
 			}));
+			holder.itemView.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					if (listener!=null){
+						listener.onItemClick(recyclerView,v,position);
+					}
+				}
+			});
 		} else {
 			holder.chairManHint.setVisibility(View.GONE);
 			holder.itemView.setVisibility(View.VISIBLE);
@@ -308,6 +316,15 @@ public class NewAudienceVideoAdapter extends DelegateAdapter.Adapter<NewAudience
 					}
 				}
 			}));
+
+			holder.itemView.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					if (listener!=null){
+						listener.onItemClick(recyclerView,v,position);
+					}
+				}
+			});
 			holder.nameText.setText(audienceVideo.getName());
 			if (BuildConfig.DEBUG) {
 				holder.nameText.setVisibility(View.VISIBLE);

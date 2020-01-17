@@ -17,6 +17,18 @@ public class MeetingMaterialsPublish implements Parcelable {
 
     private int priority;
 
+    private String type;
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+
+
     private String createDate;
 
     private String updateDate;
@@ -110,6 +122,9 @@ public class MeetingMaterialsPublish implements Parcelable {
         return Objects.hash(id, url, name, materialsId, priority, createDate, updateDate);
     }
 
+    public MeetingMaterialsPublish() {
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -122,11 +137,9 @@ public class MeetingMaterialsPublish implements Parcelable {
         dest.writeString(this.name);
         dest.writeString(this.materialsId);
         dest.writeInt(this.priority);
+        dest.writeString(this.type);
         dest.writeString(this.createDate);
         dest.writeString(this.updateDate);
-    }
-
-    public MeetingMaterialsPublish() {
     }
 
     protected MeetingMaterialsPublish(Parcel in) {
@@ -135,6 +148,7 @@ public class MeetingMaterialsPublish implements Parcelable {
         this.name = in.readString();
         this.materialsId = in.readString();
         this.priority = in.readInt();
+        this.type = in.readString();
         this.createDate = in.readString();
         this.updateDate = in.readString();
     }

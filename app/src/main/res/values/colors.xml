@@ -140,6 +140,7 @@
 
     <color name="cl_default">#424242</color>
     <color name="cl_error">#ffffff</color>
+    <color name="image_background_color">#6F6F6F</color>
 
 
 

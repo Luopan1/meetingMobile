@@ -84,6 +84,7 @@ import com.zhongyou.meet.mobile.entities.MeetingMaterialsPublish;
 import com.zhongyou.meet.mobile.event.ForumRevokeEvent;
 import com.zhongyou.meet.mobile.event.ForumSendEvent;
 import com.zhongyou.meet.mobile.persistence.Preferences;
+import com.zhongyou.meet.mobile.utils.DensityUtil;
 import com.zhongyou.meet.mobile.utils.DisplayUtil;
 import com.zhongyou.meet.mobile.utils.OkHttpCallback;
 import com.zhongyou.meet.mobile.utils.RxBus;
@@ -98,6 +99,7 @@ import com.zhongyou.meet.mobile.view.SpaceItemDecoration;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 
 import java.io.File;
@@ -173,6 +175,7 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 
 	private static final String DOC_INFO = "doc_info";
 	private static final String CALLING_AUDIENCE = "calling_audience";
+
 
 	private RecyclerView mAudienceRecyclerView;
 	private MyGridLayoutHelper mGridLayoutHelper;
@@ -295,9 +298,9 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 				case 1:
 					mOperaTools.setVisibility(View.VISIBLE);
 					//视频播放底部操作栏
-					if (currentMaterial!=null&&!currentMaterial.isVideo()){
+					/*if (currentMaterial != null && !currentMaterial.isVideo()) {
 						findViewById(R.id.ll_bottom_bar).setVisibility(View.VISIBLE);
-					}
+					}*/
 					showOperatorHandler.sendEmptyMessageDelayed(0, Constant.delayTime);
 					break;
 			}
@@ -348,6 +351,7 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 	private LinearLayout mOperaTools;
 	private TransformersTip mTransformersTipPop;
 	private View mRootView;
+	private TextView mPlayVideoText;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -687,6 +691,8 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 		mSpilteView = findViewById(R.id.spliteView);
 		full_screen = findViewById(R.id.full_screen);
 
+		mPlayVideoText = findViewById(R.id.playVideo);
+
 		full_screen.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -917,9 +923,9 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 		mDelegateAdapter.addAdapter(mVideoAdapter);
 		mAudienceRecyclerView.setAdapter(mDelegateAdapter);
 
-		mVideoAdapter.setOnDoucleClickListener(new NewAudienceVideoAdapter.onDoubleClickListener() {
+		mVideoAdapter.setOnItemClickListener(new NewAudienceVideoAdapter.OnItemClickListener() {
 			@Override
-			public void onDoubleClick(View parent, View view, int position) {
+			public void onItemClick(RecyclerView parent, View view, int position) {
 				if (isSplitMode || currentMaterial != null) {
 					return;
 				}
@@ -1013,13 +1019,21 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 			if (currentMaterial != null) {
 				if (position > 0) {
 					position--;
+					stopPlayVideo();
 					MeetingMaterialsPublish currentMaterialPublish = currentMaterial.getMeetingMaterialsPublishList().get(position);
-					docImage.setVisibility(View.VISIBLE);
-					String imageUrl = ImageHelper.getThumb(currentMaterialPublish.getUrl());
-					Picasso.with(ChairManActivity.this).load(imageUrl).into(docImage);
-					pageText.setVisibility(View.VISIBLE);
-					pageText.setText("第" + currentMaterialPublish.getPriority() + "/" + currentMaterial.getMeetingMaterialsPublishList().size() + "页");
+					if (currentMaterialPublish.getType().equals("1")) {
+						PlayVideo();
+						setTextViewDrawableTop(mPlayVideoText, R.drawable.icon_play);
+					} else {
+						findViewById(R.id.app_video_box).setVisibility(View.GONE);
+						mPlayVideoText.setVisibility(View.GONE);
+						docImage.setVisibility(View.VISIBLE);
+						String imageUrl = ImageHelper.getThumb(currentMaterialPublish.getUrl());
+						Picasso.with(ChairManActivity.this).load(imageUrl).into(docImage);
+						pageText.setVisibility(View.VISIBLE);
+					}
 
+					pageText.setText("第" + currentMaterialPublish.getPriority() + "/" + currentMaterial.getMeetingMaterialsPublishList().size() + "页");
 					try {
 						JSONObject jsonObject = new JSONObject();
 						jsonObject.put("material_id", currentMaterial.getId());
@@ -1042,13 +1056,20 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 			if (currentMaterial != null) {
 				if (position < (currentMaterial.getMeetingMaterialsPublishList().size() - 1)) {
 					position++;
+					stopPlayVideo();
 					MeetingMaterialsPublish currentMaterialPublish = currentMaterial.getMeetingMaterialsPublishList().get(position);
-					docImage.setVisibility(View.VISIBLE);
-					String imageUrl = ImageHelper.getThumb(currentMaterialPublish.getUrl());
-					Picasso.with(ChairManActivity.this).load(imageUrl).into(docImage);
+					if (currentMaterialPublish.getType().equals("1")) {
+						PlayVideo();
+						setTextViewDrawableTop(mPlayVideoText, R.drawable.icon_play);
+					} else {
+						mPlayVideoText.setVisibility(View.GONE);
+						findViewById(R.id.app_video_box).setVisibility(View.GONE);
+						docImage.setVisibility(View.VISIBLE);
+						String imageUrl = ImageHelper.getThumb(currentMaterialPublish.getUrl());
+						Picasso.with(ChairManActivity.this).load(imageUrl).into(docImage);
+					}
 					pageText.setVisibility(View.VISIBLE);
 					pageText.setText("第" + currentMaterialPublish.getPriority() + "/" + currentMaterial.getMeetingMaterialsPublishList().size() + "页");
-
 					try {
 						JSONObject jsonObject = new JSONObject();
 						jsonObject.put("material_id", currentMaterial.getId());
@@ -1059,7 +1080,8 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 						e.printStackTrace();
 					}
 				} else {
-					Toast.makeText(ChairManActivity.this, "当前是最后一张了", Toast.LENGTH_SHORT).show();
+//					Toast.makeText(ChairManActivity.this, "当前是最后一张了", Toast.LENGTH_SHORT).show();
+					showToastyWarn("当前是最后一张了");
 				}
 			} else {
 				Toast.makeText(ChairManActivity.this, "没找到ppt", Toast.LENGTH_SHORT).show();
@@ -1071,10 +1093,11 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 		exitDocButton.setOnClickListener(view -> {
 			mLogger.e("退出ppt");
 
-			if (player!=null){
+			if (player != null) {
 				player.stopPlay();
 				player.onDestroy();
 			}
+
 			findViewById(R.id.app_video_box).setVisibility(View.GONE);
 			isFullScreen = false;
             /*docImage.setVisibility(View.GONE);
@@ -1570,6 +1593,7 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 
 		@Override
 		public void onSuccess(Bucket<Material> materialBucket) {
+			mLogger.e(JSON.toJSONString(materialBucket.toString()));
 			changeViewByPPTModel(materialBucket.getData());
 		}
 
@@ -1610,6 +1634,8 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 			}
 		}
 
+		findViewById(R.id.app_video_box).setVisibility(View.GONE);
+
 		//如果是分屏模式 清除掉ppt的时候 需要重新分屏
 		mLogger.e("isSplitMode:   " + isSplitMode + "-----  model:  " + model + "--------   mVideoAdapter.getDataSize():  " + mVideoAdapter.getDataSize());
 		if (isSplitMode) {
@@ -1617,7 +1643,7 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 			//如果mode==2 两人退出一个时 集合大小为0
 			// 如果mode==1, 两人退出一个时  集合大小为1
 			//如果 mode==3时 两人退出一个时 集合大小为1
-			if (model == 1||model==3) {
+			if (model == 1 || model == 3) {
 				if (mVideoAdapter.getDataSize() == 1) {
 					if (mVideoAdapter.isHaveChairMan()) {
 						mVideoAdapter.removeItem(mVideoAdapter.getChairManPosition());
@@ -1681,6 +1707,7 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 		broadcasterSmallLayout.setVisibility(View.GONE);
 		mSpilteView.setVisibility(View.VISIBLE);
 		model = 0;
+		position = 0;
 	}
 
 	private void SpliteViews() {
@@ -2133,7 +2160,6 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 	private OkHttpCallback setMaterialCallback = new OkHttpCallback<Bucket>() {
 		@Override
 		public void onSuccess(Bucket bucket) {
-			Log.v("material_set", bucket.toString());
 			if (pptDetailDialog != null && pptDetailDialog.isShowing()) {
 				pptDetailDialog.dismiss();
 			}
@@ -2255,7 +2281,9 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 		broadcasterSmallLayout.setVisibility(View.GONE);
 		broadcasterSmallView.setVisibility(View.GONE);
 	}
+
 	private PlayerView player;
+
 	/**
 	 * 播放本地视频
 	 */
@@ -2265,48 +2293,29 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 		String uri = sdCard + File.separator + name;
 		return uri;
 	}
+
 	private void changeViewByPPTModel(Material material) {
 
 		if (currentMaterial == null && material != null) {
 			currentMaterial = material;
 		}
-		mLogger.e(JSON.toJSONString(currentMaterial.toString()));
 
-		if (currentMaterial!=null&&!currentMaterial.isVideo()){
-			findViewById(R.id.app_video_box).setVisibility(View.VISIBLE);
-			String url = "http://9890.vod.myqcloud.com/9890_4e292f9a3dd011e6b4078980237cc3d3.f20.mp4";
-			player = new PlayerView(this)
-					.setTitle("什么")
-					.setScaleType(PlayStateParams.wrapcontent)
-					.forbidTouch(true)
-					.hideBack(true)
-					.setShowSpeed(true)
-					.hideFullscreen(true)
-					.hideHideTopBar(true)
-					.hideMenu(true)
-					.hideRotation(true)
-					.hideSteam(true)
-					.hideMenu(true)
-					.showThumbnail(new OnShowThumbnailListener() {
-						@Override
-						public void onShowThumbnail(ImageView ivThumbnail) {
-							Glide.with(ChairManActivity.this)
-									.load(R.mipmap.logo)
-									.placeholder(R.color.cl_default)
-									.error(R.color.cl_error)
-									.into(ivThumbnail);
-						}
-					})
-					.setPlaySource(url)
-					.setPlayerBackListener(new OnPlayerBackListener() {
-						@Override
-						public void onPlayerBack() {
-							//这里可以简单播放器点击返回键
-							mLogger.e("videoPlayer  onPlayerBack");
-							findViewById(R.id.app_video_box).setVisibility(View.GONE);
-						}
-					}).startPlay();
-		}else {
+
+	/*	MeetingMaterialsPublish e1 = new MeetingMaterialsPublish();
+		e1.setCreateDate(System.currentTimeMillis() + "");
+		e1.setId(System.currentTimeMillis() + "");
+		e1.setType("1");
+		e1.setPriority(4);
+		e1.setUrl("http://9890.vod.myqcloud.com/9890_4e292f9a3dd011e6b4078980237cc3d3.f20.mp4");
+		currentMaterial.getMeetingMaterialsPublishList().add(e1);*/
+
+		MeetingMaterialsPublish currentMaterialPublish = currentMaterial.getMeetingMaterialsPublishList().get(position);
+
+		if (currentMaterial != null && currentMaterialPublish.getType().equals("1")) {
+			PlayVideo();
+		} else {
+			findViewById(R.id.app_video_box).setVisibility(View.GONE);
+			mPlayVideoText.setVisibility(View.GONE);
 			docLayout.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View view) {
@@ -2340,25 +2349,23 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 
 //			fullScreenButton.setVisibility(View.VISIBLE);
 
-			position = 0;
-			MeetingMaterialsPublish currentMaterialPublish = currentMaterial.getMeetingMaterialsPublishList().get(position);
-
-			pageText.setVisibility(View.VISIBLE);
-			pageText.setText("第" + currentMaterialPublish.getPriority() + "/" + currentMaterial.getMeetingMaterialsPublishList().size() + "页");
-
 			String imageUrl = ImageHelper.getThumb(currentMaterialPublish.getUrl());
 			Picasso.with(ChairManActivity.this).load(imageUrl).into(docImage);
 
-			try {
-				JSONObject jsonObject = new JSONObject();
-				jsonObject.put("material_id", currentMaterial.getId());
-				jsonObject.put("doc_index", position);
-				agoraAPI.channelSetAttr(channelName, DOC_INFO, jsonObject.toString());
-//                agoraAPI.messageChannelSend(channelName, jsonObject.toString(), "");
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
 		}
+
+		try {
+			JSONObject jsonObject = new JSONObject();
+			jsonObject.put("material_id", currentMaterial.getId());
+			jsonObject.put("doc_index", position);
+			agoraAPI.channelSetAttr(channelName, DOC_INFO, jsonObject.toString());
+//                agoraAPI.messageChannelSend(channelName, jsonObject.toString(), "");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		pageText.setVisibility(View.VISIBLE);
+		pageText.setText("第" + currentMaterialPublish.getPriority() + "/" + currentMaterial.getMeetingMaterialsPublishList().size() + "页");
 
 		docLayout.setVisibility(View.VISIBLE);
 		//非全屏状态：画面背景为PPT内容，主持人+各参会人画面悬浮在PPT内容上，悬浮窗口不能移动（该状态3种角色统一）；
@@ -2376,9 +2383,6 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 			full_screen.setVisibility(View.VISIBLE);
 		}
 		mSpilteView.setVisibility(View.GONE);
-
-
-
 
 
 	}
@@ -2594,9 +2598,9 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 			}
 
 
-			if (isSplitMode&&currentMaterial==null){
+			if (isSplitMode && currentMaterial == null) {
 				full_screen.setVisibility(View.GONE);
-			}else {
+			} else {
 				full_screen.setVisibility(View.GONE);
 			}
 
@@ -2959,6 +2963,7 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 		}
 	}
 
+
 	@Override
 	protected void onStart() {
 		super.onStart();
@@ -3162,5 +3167,91 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 		return super.dispatchTouchEvent(ev);
 	}
 
+
+	private void stopPlayVideo() {
+		if (player != null) {
+			player.pausePlay();
+		}
+		agoraAPI.channelSetAttr(channelName, Constant.VIDEO, Constant.PAUSEVIDEO);
+		mPlayVideoText.setText("播放");
+		setTextViewDrawableTop(mPlayVideoText, R.drawable.icon_play);
+	}
+
+	public void PlayVideo() {
+		findViewById(R.id.app_video_box).setVisibility(View.VISIBLE);
+		docImage.setVisibility(View.GONE);
+		mPlayVideoText.setVisibility(View.VISIBLE);
+		mPlayVideoText.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if (player != null) {
+					if (player.isPlaying()) {
+						player.pausePlay();
+						agoraAPI.channelSetAttr(channelName, Constant.VIDEO, Constant.PAUSEVIDEO);
+						mPlayVideoText.setText("播放");
+						setTextViewDrawableTop(mPlayVideoText, R.drawable.icon_play);
+					} else {
+						agoraAPI.channelSetAttr(channelName, Constant.VIDEO, Constant.PLAYVIDEO);
+						player.startPlay();
+						mPlayVideoText.setText("暂停");
+						setTextViewDrawableTop(mPlayVideoText, R.drawable.icon_pause);
+					}
+				}
+			}
+		});
+
+		if (player == null) {
+
+			player = new PlayerView(this)
+					.setTitle("什么")
+					.setScaleType(PlayStateParams.wrapcontent)
+					.forbidTouch(true)
+					.hideBack(true)
+					.hideBottonBar(true)
+					.setShowSpeed(true)
+					.hideFullscreen(true)
+					.hideHideTopBar(true)
+					.hideMenu(true)
+					.hideRotation(true)
+					.hideSteam(true)
+					.hideMenu(true)
+					.showThumbnail(new OnShowThumbnailListener() {
+						@Override
+						public void onShowThumbnail(ImageView ivThumbnail) {
+//						String imageUrl = ImageHelper.getThumAndCrop(currentMaterial.getMeetingMaterialsPublishList().get(position).getUrl(), DensityUtil.dip2px(ChairManActivity.this, 235), DensityUtil.dip2px(ChairManActivity.this, 139));
+							Glide.with(ChairManActivity.this)
+									.load(R.mipmap.logo)
+									.placeholder(R.color.cl_default)
+									.error(R.color.cl_error)
+									.centerCrop()
+									.into(ivThumbnail);
+						}
+					})
+					.setPlaySource(currentMaterial.getMeetingMaterialsPublishList().get(position).getUrl())
+					.setPlayerBackListener(new OnPlayerBackListener() {
+						@Override
+						public void onPlayerBack() {
+							//这里可以简单播放器点击返回键
+							mLogger.e("videoPlayer  onPlayerBack");
+							findViewById(R.id.app_video_box).setVisibility(View.GONE);
+						}
+					});
+		} else {
+			player.setPlaySource(currentMaterial.getMeetingMaterialsPublishList().get(position).getUrl()).showThumbnail(new OnShowThumbnailListener() {
+				@Override
+				public void onShowThumbnail(ImageView ivThumbnail) {
+//						String imageUrl = ImageHelper.getThumAndCrop(currentMaterial.getMeetingMaterialsPublishList().get(position).getUrl(), DensityUtil.dip2px(ChairManActivity.this, 235), DensityUtil.dip2px(ChairManActivity.this, 139));
+					Glide.with(ChairManActivity.this)
+							.load(R.mipmap.logo)
+							.placeholder(R.color.cl_default)
+							.error(R.color.cl_error)
+							.centerCrop()
+							.into(ivThumbnail);
+				}
+			});
+		}
+
+
+	}
 
 }

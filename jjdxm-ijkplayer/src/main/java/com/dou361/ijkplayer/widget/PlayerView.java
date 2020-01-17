@@ -585,7 +585,7 @@ public class PlayerView {
 		} catch (Throwable e) {
 			Log.e(TAG, "loadLibraries error", e);
 		}
-		screenWidthPixels = mContext.getResources().getDisplayMetrics().widthPixels- ResourceUtils.getNavigationBarHeight(mActivity);
+		screenWidthPixels = mContext.getResources().getDisplayMetrics().widthPixels - ResourceUtils.getNavigationBarHeight(mActivity);
 		audioManager = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
 		mMaxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
 		if (rootView == null) {
@@ -1030,9 +1030,10 @@ public class PlayerView {
 				query.id(R.id.app_video_freeTie).visible();
 
 			} else {
-				Log.e(TAG, "startPlay: "+playerSupport );
+				Log.e(TAG, "startPlay: " + playerSupport);
 				if (playerSupport) {
 					query.id(R.id.app_video_loading).gone();
+					query.id(R.id.ll_bottom_bar).gone();
 					videoView.start();
 				} else {
 					showStatus(mActivity.getResources().getString(R.string.not_support));
@@ -1183,6 +1184,11 @@ public class PlayerView {
 			isLive = false;
 		}
 		return isLive;
+	}
+
+	public boolean isPlaying() {
+
+		return videoView.isPlaying();
 	}
 
 	/**
@@ -1352,7 +1358,7 @@ public class PlayerView {
 		query.id(R.id.simple_player_settings_container).gone();
 		query.id(R.id.simple_player_select_stream_container).gone();
 		if (isShowControlPanl) {
-			Log.e(TAG, "operatorPanl: "+ isHideBottonBar);
+			Log.e(TAG, "operatorPanl: " + isHideBottonBar);
 			ll_topbar.setVisibility(isHideTopBar ? View.GONE : View.VISIBLE);
 			ll_bottombar.setVisibility(isHideBottonBar ? View.GONE : View.VISIBLE);
 			if (isLive) {
@@ -1392,7 +1398,7 @@ public class PlayerView {
 
 			}
 
-			Log.e(TAG, "operatorPanl: "+ isHideBottonBar +"   isForbidHideControlPanl: "+isForbidHideControlPanl);
+			Log.e(TAG, "operatorPanl: " + isHideBottonBar + "   isForbidHideControlPanl: " + isForbidHideControlPanl);
 			if (isHideBottonBar) {
 				ll_bottombar.setVisibility(View.GONE);
 			} else {
@@ -1438,7 +1444,7 @@ public class PlayerView {
 		volumeController.setProgress(audioManager.getStreamVolume(AudioManager.STREAM_MUSIC) * 100 / mMaxVolume);
 		brightnessController.setProgress((int) (mActivity.getWindow().getAttributes().screenBrightness * 100));
 		settingsContainer.setVisibility(View.VISIBLE);
-		Log.e(TAG, "showMenu: "+isForbidHideControlPanl );
+		Log.e(TAG, "showMenu: " + isForbidHideControlPanl);
 		if (!isForbidHideControlPanl) {
 			ll_topbar.setVisibility(View.GONE);
 			ll_bottombar.setVisibility(View.GONE);
@@ -1679,7 +1685,7 @@ public class PlayerView {
 						query.id(R.id.app_video_box).height(initHeight, false);
 					} else {
 						int heightPixels = mActivity.getResources().getDisplayMetrics().heightPixels;
-						int widthPixels = mActivity.getResources().getDisplayMetrics().widthPixels-ResourceUtils.getNavigationBarHeight(mActivity);
+						int widthPixels = mActivity.getResources().getDisplayMetrics().widthPixels - ResourceUtils.getNavigationBarHeight(mActivity);
 						query.id(R.id.app_video_box).height(Math.min(heightPixels, widthPixels), false);
 					}
 					updateFullScreenButton();
@@ -1727,6 +1733,10 @@ public class PlayerView {
 		setFullScreen(fullScreen);
 	}
 
+	public int getCurrentPlayPosition() {
+		return videoView.getCurrentPosition();
+	}
+
 
 	/**
 	 * 隐藏状态界面
@@ -1748,7 +1758,7 @@ public class PlayerView {
 	 * 隐藏所有界面
 	 */
 	private void hideAll() {
-		Log.e(TAG, "hideAll: "+isForbidHideControlPanl );
+		Log.e(TAG, "hideAll: " + isForbidHideControlPanl);
 		if (!isForbidHideControlPanl) {
 			ll_topbar.setVisibility(View.GONE);
 			ll_bottombar.setVisibility(View.GONE);
@@ -1761,7 +1771,7 @@ public class PlayerView {
 	 */
 	private void showStreamSelectView() {
 		this.streamSelectView.setVisibility(View.VISIBLE);
-		Log.e(TAG, "showStreamSelectView:  "+isForbidHideControlPanl);
+		Log.e(TAG, "showStreamSelectView:  " + isForbidHideControlPanl);
 		if (!isForbidHideControlPanl) {
 			ll_topbar.setVisibility(View.GONE);
 			ll_bottombar.setVisibility(View.GONE);
@@ -2108,9 +2118,10 @@ public class PlayerView {
 			if (!isForbidTouch) {
 				operatorPanl();
 			}
-			if (ll_bottombar.getVisibility()==View.GONE){
+			/*if (ll_bottombar.getVisibility() == View.GONE) {
 				ll_bottombar.setVisibility(View.VISIBLE);
-			}
+
+			}*/
 			return true;
 		}
 	}
