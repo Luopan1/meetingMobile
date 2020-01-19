@@ -487,12 +487,11 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 			mVideoAdapter.notifyDataSetChanged();
 
 		} else {
-			MyGridLayoutHelper mGridLayoutHelper = new MyGridLayoutHelper(2);
+			GridLayoutHelper mGridLayoutHelper = new GridLayoutHelper(2);
 			mGridLayoutHelper.setItemCount(8);
 			mGridLayoutHelper.setAutoExpand(false);
 			mAudienceRecyclerView.removeItemDecoration(mDecor);
 			mAudienceRecyclerView.addItemDecoration(mDecor);
-
 			mVideoAdapter.setLayoutHelper(mGridLayoutHelper);
 		}
 

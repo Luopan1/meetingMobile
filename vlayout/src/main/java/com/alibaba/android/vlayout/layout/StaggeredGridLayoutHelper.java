@@ -370,8 +370,16 @@ public class StaggeredGridLayoutHelper extends BaseLayoutHelper {
                     start =getHeight(mContext)/4;
                     otherStart = 0;
                     end = start+view.getMeasuredHeight();
-//					otherEnd=end;
+                    otherEnd=getWidth(mContext)/2;
                     Log.e(TAG, "itemCount==3   计算后： " + "left: " + otherStart + "---   top" + start + "---  right:" + otherEnd + "----  bottom:" + end);
+                }
+                if (params.getViewAdapterPosition()==2){
+                    Log.e(TAG, "itemCount==3  position==2 计算前： " + "left: " + otherStart + "---   top" + start + "---  right:" + otherEnd + "----  bottom:" + end);
+                    otherStart=getWidth(mContext)/2;
+                    start=getHeight(mContext)/2;
+                    otherEnd=getWidth(mContext);
+                    end=getHeight(mContext);
+                    Log.e(TAG, "itemCount==3  position==2 计算前： " + "left: " + otherStart + "---   top" + start + "---  right:" + otherEnd + "----  bottom:" + end);
                 }
             } else if (getItemCount() == 4) {
                 if (params.getViewPosition() == 0) {
