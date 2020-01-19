@@ -11,6 +11,7 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.GridLayout;
 import android.widget.ImageView;
@@ -56,8 +57,8 @@ public class NewAudienceVideoAdapter extends DelegateAdapter.Adapter<NewAudience
 	}
 
 	public synchronized void insertItem(AudienceVideo audienceVideo) {
-		for (int i = 0; i <audienceVideos.size() ; i++) {
-			if (audienceVideos.get(i).getUid()==audienceVideo.getUid()){
+		for (int i = 0; i < audienceVideos.size(); i++) {
+			if (audienceVideos.get(i).getUid() == audienceVideo.getUid()) {
 				return;
 			}
 		}
@@ -70,15 +71,15 @@ public class NewAudienceVideoAdapter extends DelegateAdapter.Adapter<NewAudience
 		}
 	}
 
-	public void setVisibility(int visibility){
+	public void setVisibility(int visibility) {
 		for (AudienceVideo audienceVideo : this.audienceVideos) {
-			if (visibility==View.VISIBLE){
-				if (audienceVideo!=null&&audienceVideo.getSurfaceView()!=null){
+			if (visibility == View.VISIBLE) {
+				if (audienceVideo != null && audienceVideo.getSurfaceView() != null) {
 					audienceVideo.getSurfaceView().setVisibility(View.VISIBLE);
 				}
 
-			}else {
-				if (audienceVideo!=null&&audienceVideo.getSurfaceView()!=null){
+			} else {
+				if (audienceVideo != null && audienceVideo.getSurfaceView() != null) {
 					audienceVideo.getSurfaceView().setVisibility(View.GONE);
 				}
 			}
@@ -126,12 +127,12 @@ public class NewAudienceVideoAdapter extends DelegateAdapter.Adapter<NewAudience
 			AudienceVideo audienceVideo = iterator.next();
 			if (audienceVideo.getUid() == uid) {
 
-				if (null!=audienceVideo.getSurfaceView()){
+				if (null != audienceVideo.getSurfaceView()) {
 					audienceVideo.getSurfaceView().setZOrderMediaOverlay(false);
 					audienceVideo.getSurfaceView().setZOrderOnTop(false);
 					stripSurfaceView(audienceVideo.getSurfaceView());
 				}
-				Log.e("deleteItem", "deleteItem: "+iterator.toString());
+				Log.e("deleteItem", "deleteItem: " + iterator.toString());
 //                Log.v("delete", "1--" + audienceVideos.size() + "--position--" + position);
 				iterator.remove();
 //                Log.v("delete", "2--" + audienceVideos.size());
@@ -141,16 +142,17 @@ public class NewAudienceVideoAdapter extends DelegateAdapter.Adapter<NewAudience
 	}
 
 
-	public synchronized void deleteItemById(int uid){
-		for (int i = 0; i <audienceVideos.size() ; i++) {
-			if (audienceVideos.get(i).getUid()==uid){
+	public synchronized void deleteItemById(int uid) {
+		for (int i = 0; i < audienceVideos.size(); i++) {
+			if (audienceVideos.get(i).getUid() == uid) {
 				audienceVideos.remove(i);
-				Log.e("deleteItemById", "deleteItem: i==="+i);
+				Log.e("deleteItemById", "deleteItem: i===" + i);
 				notifyItemRemoved(i);
 				break;
 			}
 		}
 	}
+
 	public boolean isHaveChairMan() {
 		for (int i = 0; i < audienceVideos.size(); i++) {
 			if (audienceVideos.get(i).isBroadcaster()) {
@@ -161,9 +163,9 @@ public class NewAudienceVideoAdapter extends DelegateAdapter.Adapter<NewAudience
 	}
 
 
-	public int getPositionById(int uid){
-		for (int i = 0; i <audienceVideos.size() ; i++) {
-			if (audienceVideos.get(i).getUid()==uid){
+	public int getPositionById(int uid) {
+		for (int i = 0; i < audienceVideos.size(); i++) {
+			if (audienceVideos.get(i).getUid() == uid) {
 				return i;
 
 			}
@@ -227,7 +229,7 @@ public class NewAudienceVideoAdapter extends DelegateAdapter.Adapter<NewAudience
 	public void setItemSize(int height, int width) {
 		this.height = height;
 		this.width = width;
-		notifyDataSetChanged();
+//		notifyDataSetChanged();
 	}
 
 	public AudienceVideoViewHolder getHolder() {
@@ -235,11 +237,9 @@ public class NewAudienceVideoAdapter extends DelegateAdapter.Adapter<NewAudience
 	}
 
 
-
-
 	@Override
 	public void onBindViewHolder(@NonNull final AudienceVideoViewHolder holder, final int position) {
-		if (mLayoutHelper instanceof StaggeredGridLayoutHelper) {
+		/*if (mLayoutHelper instanceof StaggeredGridLayoutHelper) {
 			if (position == 0 || position == 3) {
 				ViewGroup.LayoutParams layoutParams = holder.itemView.getLayoutParams();
 				layoutParams.width = DisplayUtil.getWidth(context) / 2;
@@ -268,7 +268,48 @@ public class NewAudienceVideoAdapter extends DelegateAdapter.Adapter<NewAudience
 			layoutParams.width = width;
 			layoutParams.height = height;
 			holder.itemView.setLayoutParams(layoutParams);
+		}*/
+		ViewGroup.LayoutParams mLayoutParams =holder.itemView.getLayoutParams();
+		mLayoutParams.width=DisplayUtil.dip2px(context,116);
+		mLayoutParams.height=DisplayUtil.dip2px(context,70);
+		if (mLayoutHelper instanceof StaggeredGridLayoutHelper) {
+			switch (getItemCount()) {
+				case 0:
+					break;
+				case 1:
+					mLayoutParams.width = getWidth(context);
+					mLayoutParams.height = getHeight(context);
+					break;
+				case 2:
+					mLayoutParams.width = getWidth(context) / 2;
+					mLayoutParams.height = getHeight(context);
+					break;
+				case 3:
+				case 4:
+					mLayoutParams.width = getWidth(context) / 2;
+					mLayoutParams.height = getHeight(context) / 2;
+					break;
+				case 5:
+				case 6:
+					mLayoutParams.width = getWidth(context) / 2;
+					mLayoutParams.height = getHeight(context) / 3;
+					break;
+				case 7:
+				case 8:
+					mLayoutParams.width = getWidth(context) / 4;
+					mLayoutParams.height = getHeight(context) / 2;
+					break;
+
+			}
+
+		} else {
+			Log.e("NewAudienceVideoAdapter", "onBindViewHolder: ----"+DisplayUtil.dip2px(context, 70) );
+
 		}
+
+		holder.itemView.setLayoutParams(mLayoutParams);
+
+		Log.e("NewAudienceVideoAdapter", "height: "+ holder.itemView.getHeight()+"-----  width:  "+holder.itemView.getWidth());
 
 		//Logger.e("width    "+holder.itemView.getLayoutParams().width+"-----height    "+holder.itemView.getLayoutParams().height);
 		if (position == 8) {
@@ -300,8 +341,8 @@ public class NewAudienceVideoAdapter extends DelegateAdapter.Adapter<NewAudience
 			holder.itemView.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					if (listener!=null){
-						listener.onItemClick(recyclerView,v,position);
+					if (listener != null) {
+						listener.onItemClick(recyclerView, v, position);
 					}
 				}
 			});
@@ -320,8 +361,8 @@ public class NewAudienceVideoAdapter extends DelegateAdapter.Adapter<NewAudience
 			holder.itemView.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					if (listener!=null){
-						listener.onItemClick(recyclerView,v,position);
+					if (listener != null) {
+						listener.onItemClick(recyclerView, v, position);
 					}
 				}
 			});
@@ -350,8 +391,7 @@ public class NewAudienceVideoAdapter extends DelegateAdapter.Adapter<NewAudience
 			final SurfaceView surfaceView = audienceVideo.getSurfaceView();
 			surfaceView.setZOrderMediaOverlay(true);
 			stripSurfaceView(surfaceView);
-			surfaceView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-			holder.videoLayout.addView(surfaceView, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+			holder.videoLayout.addView(surfaceView,new VirtualLayoutManager.LayoutParams(VirtualLayoutManager.LayoutParams.MATCH_PARENT,VirtualLayoutManager.LayoutParams.MATCH_PARENT));
 		}
 
 
@@ -374,7 +414,7 @@ public class NewAudienceVideoAdapter extends DelegateAdapter.Adapter<NewAudience
 	}
 
 	private void stripSurfaceView(SurfaceView view) {
-		if(view==null){
+		if (view == null) {
 			return;
 		}
 		ViewParent parent = view.getParent();
@@ -459,6 +499,25 @@ public class NewAudienceVideoAdapter extends DelegateAdapter.Adapter<NewAudience
 	public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
 		super.onDetachedFromRecyclerView(recyclerView);
 		this.recyclerView = null;
+	}
+
+	/**
+	 * @return 屏幕宽度 in pixel
+	 */
+	public static int getWidth(Context context) {
+		WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+
+		int width = wm.getDefaultDisplay().getWidth();
+		return width;
+	}
+
+	/**
+	 * @return 屏幕高度 in pixel
+	 */
+	public static int getHeight(Context context) {
+		WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+		int height = wm.getDefaultDisplay().getHeight();
+		return height;
 	}
 }
 

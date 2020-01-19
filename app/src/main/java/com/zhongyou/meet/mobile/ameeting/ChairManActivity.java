@@ -446,10 +446,10 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 		helper.setVGap(10);
 		helper.setHGap(10);
 		helper.setItemCount(8);
-		mVideoAdapter.setItemSize(DisplayUtil.dip2px(this, 70), DisplayUtil.dip2px(this, 114));
 		mVideoAdapter.setLayoutHelper(helper);
 		mVideoAdapter.notifyDataSetChanged();
 		mDelegateAdapter.addAdapter(mVideoAdapter);
+		mAudienceRecyclerView.addItemDecoration(new SpaceItemDecoration(10,10,0,0));
 
 
 		if (currentMaterial != null) {
@@ -466,165 +466,29 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 		mLogger.e("集合大小：%d", dataSize);
 		mLogger.e(currentMaterial == null);
 
+
 		if (dataSize == 1) {
 			return;
-		} else if (dataSize == 2) {
-
-			mDelegateAdapter.clear();
-			if (currentMaterial == null) {
-
-
-				GridLayoutHelper mGridLayoutHelper = new GridLayoutHelper(2);
-				mGridLayoutHelper.setWeights(new float[]{50f});
-				mGridLayoutHelper.setWeights(new float[]{50f});
-				mVideoAdapter.setItemSize(DisplayUtil.getHeight(this) - AutoSizeUtils.dp2px(this, 10), DisplayUtil.getWidth(this) / 2 - AutoSizeUtils.dp2px(this, 10));
-				mVideoAdapter.notifyDataSetChanged();
-				mGridLayoutHelper.setItemCount(8);
-				mVideoAdapter.setLayoutHelper(mGridLayoutHelper);
-
-			} else {
-				mVideoAdapter.setItemSize(DisplayUtil.dip2px(this, 70), DisplayUtil.dip2px(this, 114));
-				mVideoAdapter.notifyDataSetChanged();
-
-				MyGridLayoutHelper mGridLayoutHelper = new MyGridLayoutHelper(2);
-				mGridLayoutHelper.setItemCount(8);
-				mGridLayoutHelper.setGap(10);
-				mGridLayoutHelper.setAutoExpand(false);
-				mVideoAdapter.setLayoutHelper(mGridLayoutHelper);
-			}
-
-
-			mVideoAdapter.notifyDataSetChanged();
-			mDelegateAdapter.addAdapter(mVideoAdapter);
-		} else if (dataSize == 3) {
-			mDelegateAdapter.clear();
-			if (currentMaterial == null) {
-				mVideoAdapter.setItemSize(DisplayUtil.getHeight(this) - AutoSizeUtils.dp2px(this, 10), DisplayUtil.getWidth(this) - AutoSizeUtils.dp2px(this, 10));
-			} else {
-				mVideoAdapter.setItemSize(DisplayUtil.dip2px(this, 70), DisplayUtil.dip2px(this, 114));
-			}
-
-			mVideoAdapter.notifyDataSetChanged();
-
-			OnePlusNLayoutHelper helper = new OnePlusNLayoutHelper(3);
-			helper.setItemCount(3);
-			helper.setColWeights(new float[]{50f});
-			helper.setRowWeight(50f);
-			mVideoAdapter.setLayoutHelper(helper);
-
-			mVideoAdapter.notifyDataSetChanged();
-			mDelegateAdapter.addAdapter(mVideoAdapter);
-
-		} else if (dataSize == 4) {
-			mDelegateAdapter.clear();
-			if (currentMaterial == null) {
-				mVideoAdapter.setItemSize(DisplayUtil.getHeight(this) / 2 - AutoSizeUtils.dp2px(this, 10), DisplayUtil.getWidth(this) / 2 - AutoSizeUtils.dp2px(this, 10));
-				mVideoAdapter.notifyDataSetChanged();
-
-				GridLayoutHelper mGridLayoutHelper = new GridLayoutHelper(2);
-				mGridLayoutHelper.setWeights(new float[]{50f});
-				mGridLayoutHelper.setItemCount(4);
-				mVideoAdapter.setLayoutHelper(mGridLayoutHelper);
-			} else {
-				mVideoAdapter.setItemSize(DisplayUtil.dip2px(this, 70), DisplayUtil.dip2px(this, 114));
-				mVideoAdapter.notifyDataSetChanged();
-
-				MyGridLayoutHelper mGridLayoutHelper = new MyGridLayoutHelper(2);
-				mGridLayoutHelper.setItemCount(4);
-				mGridLayoutHelper.setGap(10);
-				mGridLayoutHelper.setAutoExpand(false);
-				mVideoAdapter.setLayoutHelper(mGridLayoutHelper);
-			}
-
-
-			mVideoAdapter.notifyDataSetChanged();
-			mDelegateAdapter.addAdapter(mVideoAdapter);
-		} else if (dataSize == 5) {
-			mDelegateAdapter.clear();
-			mVideoAdapter.notifyDataSetChanged();
-
-			StaggeredGridLayoutHelper helper = new StaggeredGridLayoutHelper(2, 10);
-			helper.setItemCount(5);
-			mVideoAdapter.setLayoutHelper(helper);
-			mVideoAdapter.notifyDataSetChanged();
-			mDelegateAdapter.addAdapter(mVideoAdapter);
-		} else if (dataSize == 6) {
-			mDelegateAdapter.clear();
-			if (currentMaterial == null) {
-				mVideoAdapter.setItemSize(DisplayUtil.getHeight(this) / 3 - AutoSizeUtils.dp2px(this, 20), DisplayUtil.getWidth(this) / 2 - AutoSizeUtils.dp2px(this, 20));
-				mVideoAdapter.notifyDataSetChanged();
-				GridLayoutHelper helper = new GridLayoutHelper(2);
-				helper.setWeights(new float[]{50f});
-				helper.setItemCount(6);
-				mVideoAdapter.setLayoutHelper(helper);
-
-			} else {
-				mVideoAdapter.setItemSize(DisplayUtil.dip2px(this, 70), DisplayUtil.dip2px(this, 114));
-				mVideoAdapter.notifyDataSetChanged();
-				MyGridLayoutHelper mGridLayoutHelper = new MyGridLayoutHelper(2);
-				mGridLayoutHelper.setItemCount(6);
-				mGridLayoutHelper.setGap(10);
-				mGridLayoutHelper.setAutoExpand(false);
-				mVideoAdapter.setLayoutHelper(mGridLayoutHelper);
-			}
-
-			mVideoAdapter.notifyDataSetChanged();
-			mDelegateAdapter.addAdapter(mVideoAdapter);
-		} else if (dataSize == 7) {
-			mDelegateAdapter.clear();
-			if (currentMaterial == null) {
-				mVideoAdapter.setItemSize(DisplayUtil.getHeight(this) / 2 - AutoSizeUtils.dp2px(this, 10), DisplayUtil.getWidth(this) / 4 - AutoSizeUtils.dp2px(this, 10));
-				mVideoAdapter.notifyDataSetChanged();
-
-				GridLayoutHelper helper = new GridLayoutHelper(4);
-				helper.setSpanSizeLookup(new GridLayoutHelper.SpanSizeLookup() {
-					@Override
-					public int getSpanSize(int position) {
-						if (position == 4) {
-							return 2;
-						}
-						return 1;
-					}
-				});
-				helper.setWeights(new float[]{100f / 4});
-				helper.setItemCount(7);
-				mVideoAdapter.setLayoutHelper(helper);
-
-			} else {
-				mVideoAdapter.setItemSize(DisplayUtil.dip2px(this, 70), DisplayUtil.dip2px(this, 114));
-				mVideoAdapter.notifyDataSetChanged();
-				MyGridLayoutHelper mGridLayoutHelper = new MyGridLayoutHelper(2);
-				mGridLayoutHelper.setItemCount(6);
-				mGridLayoutHelper.setGap(10);
-				mGridLayoutHelper.setAutoExpand(false);
-				mVideoAdapter.setLayoutHelper(mGridLayoutHelper);
-			}
-
-
-			mVideoAdapter.notifyDataSetChanged();
-			mDelegateAdapter.addAdapter(mVideoAdapter);
-		} else if (dataSize >= 8) {
-			mDelegateAdapter.clear();
-			if (currentMaterial == null) {
-				mVideoAdapter.setItemSize(DisplayUtil.getHeight(this) / 2 - AutoSizeUtils.dp2px(this, 10), DisplayUtil.getWidth(this) / 4 - AutoSizeUtils.dp2px(this, 10));
-				mVideoAdapter.notifyDataSetChanged();
-				GridLayoutHelper helper = new GridLayoutHelper(4);
-				helper.setWeights(new float[]{100f / 4});
-				helper.setItemCount(8);
-				mVideoAdapter.setLayoutHelper(helper);
-			} else {
-				mVideoAdapter.setItemSize(DisplayUtil.dip2px(this, 70), DisplayUtil.dip2px(this, 114));
-				mVideoAdapter.notifyDataSetChanged();
-				MyGridLayoutHelper mGridLayoutHelper = new MyGridLayoutHelper(2);
-				mGridLayoutHelper.setItemCount(6);
-				mGridLayoutHelper.setGap(10);
-				mGridLayoutHelper.setAutoExpand(false);
-				mVideoAdapter.setLayoutHelper(mGridLayoutHelper);
-			}
-
-			mVideoAdapter.notifyDataSetChanged();
-			mDelegateAdapter.addAdapter(mVideoAdapter);
 		}
+		mDelegateAdapter.clear();
+		if (currentMaterial == null) {
+			mAudienceRecyclerView.addItemDecoration(new SpaceItemDecoration(0,0,0,0));
+			StaggeredGridLayoutHelper staggeredGridLayoutHelper = new StaggeredGridLayoutHelper(dataSize < 7 ? 2 : 4, 2, this);
+			mVideoAdapter.notifyDataSetChanged();
+			mVideoAdapter.setLayoutHelper(staggeredGridLayoutHelper);
+		} else {
+			MyGridLayoutHelper mGridLayoutHelper = new MyGridLayoutHelper(2);
+			mGridLayoutHelper.setItemCount(8);
+			mGridLayoutHelper.setGap(10);
+			mGridLayoutHelper.setAutoExpand(false);
+			mVideoAdapter.setLayoutHelper(mGridLayoutHelper);
+			mAudienceRecyclerView.addItemDecoration(new SpaceItemDecoration(10,10,0,0));
+		}
+
+		mVideoAdapter.notifyDataSetChanged();
+		mDelegateAdapter.addAdapter(mVideoAdapter);
+
+
 	}
 
 
@@ -917,6 +781,8 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 		mAudienceRecyclerView.setRecycledViewPool(viewPool);
 		viewPool.setMaxRecycledViews(0, 10);
 		mAudienceRecyclerView.setLayoutManager(mVirtualLayoutManager);
+
+		mAudienceRecyclerView.addItemDecoration(new SpaceItemDecoration(10,10,0,0));
 
 		mVideoAdapter = new NewAudienceVideoAdapter(this, mGridLayoutHelper);
 		mVideoAdapter.setItemSize(DisplayUtil.dip2px(this, 70), DisplayUtil.dip2px(this, 114));
@@ -1654,6 +1520,9 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 					broadcasterLayout.addView(localBroadcasterSurfaceView);
 					broadcasterLayout.setVisibility(View.VISIBLE);
 					broadcasterLayout.setVisibility(View.VISIBLE);
+				} else {
+					SpliteViews();
+					mSpilteView.setText("退出均分");
 				}
 			} else if (model == 2) {
 				if (mVideoAdapter.getDataSize() <= 0) {//此时列表中没有参会人或者观众 就直接将主持人画面移动到大的视图
@@ -1664,7 +1533,7 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 					broadcasterLayout.removeAllViews();
 					localBroadcasterSurfaceView.setVisibility(View.VISIBLE);
 					broadcasterLayout.addView(localBroadcasterSurfaceView);
-					broadcasterLayout.setVisibility(View.VISIBLE);
+					//broadcasterLayout.setVisibility(View.VISIBLE);
 					broadcasterLayout.setVisibility(View.VISIBLE);
 
 				} else {

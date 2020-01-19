@@ -2441,7 +2441,9 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 
 				if(currentMaterial!=null){
 					if (currentMaterial.getMeetingMaterialsPublishList().get(doc_index).getType().equals("1")){
-						stopPlayVideo();
+						if (player!=null){
+							player.stopPlay();
+						}
 						player=null;
 						findViewById(R.id.app_video_box).setVisibility(View.GONE);
 					}
