@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout  xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@drawable/shap_rantage_blue"
     android:layout_width="114dp"
     android:padding="@dimen/my_px_3"
-    android:layout_margin="@dimen/my_px_10"
     android:layout_height="70dp">
 
     <FrameLayout
@@ -14,6 +13,7 @@
         android:layout_height="match_parent" />
 
     <TextView
+        android:layout_centerInParent="true"
         android:visibility="gone"
         android:id="@+id/chairManHint"
         android:textSize="14sp"
@@ -23,6 +23,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
     <TextView
+        android:layout_alignParentRight="true"
         android:id="@+id/label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -34,6 +35,7 @@
         android:textSize="8sp" />
 
     <TextView
+        android:layout_alignParentBottom="true"
         android:id="@+id/name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -56,4 +58,4 @@
         android:layout_marginBottom="1dp"
         android:src="@drawable/ic_volume_status" />
 
-</FrameLayout>
+</RelativeLayout>

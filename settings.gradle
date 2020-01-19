@@ -1,1 +1,1 @@
-include ':app', ':IosDialog', ':test', ':citypicker', ':MeetingCamera', ':photolib', ':YCUpdateLib', ':vlayout', ':anglePop'
+include ':app', ':IosDialog', ':test', ':citypicker', ':MeetingCamera', ':photolib', ':YCUpdateLib', ':vlayout', ':anglePop', ':jjdxm-ijkplayer'

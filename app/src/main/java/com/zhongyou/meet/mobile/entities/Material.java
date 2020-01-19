@@ -8,6 +8,27 @@ import java.util.Objects;
 
 public class Material implements Parcelable {
 
+    private boolean isVideo;
+
+    public boolean isVideo() {
+        return isVideo;
+    }
+
+    public void setVideo(boolean video) {
+        isVideo = video;
+    }
+
+    private String type;
+
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
     private String id;
 
     private String createDate;
@@ -111,6 +132,9 @@ public class Material implements Parcelable {
         return Objects.hash(id, createDate, updateDate, userId, name, auditStatus, meetingMaterialsPublishList);
     }
 
+    public Material() {
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -118,6 +142,8 @@ public class Material implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeByte(this.isVideo ? (byte) 1 : (byte) 0);
+        dest.writeString(this.type);
         dest.writeString(this.id);
         dest.writeString(this.createDate);
         dest.writeString(this.updateDate);
@@ -127,10 +153,9 @@ public class Material implements Parcelable {
         dest.writeTypedList(this.meetingMaterialsPublishList);
     }
 
-    public Material() {
-    }
-
     protected Material(Parcel in) {
+        this.isVideo = in.readByte() != 0;
+        this.type = in.readString();
         this.id = in.readString();
         this.createDate = in.readString();
         this.updateDate = in.readString();

@@ -50,5 +50,16 @@ project.ext {
     libSupportV7 = "com.android.support:appcompat-v7:${supportVersion}"
     libSupportAppcompat = "com.android.support:appcompat-v7:${supportVersion}"
     libSupportDesign = "com.android.support:design:${supportVersion}"
+
+
+
+
+
+    //library版本
+    jjdxm_minSdkVersion = 9
+    jjdxm_versionCode = 1
+    jjdxm_versionName = "1.0.0"
+    jjdxm_v4 = "com.android.support:support-v4:${supportVersion}"
+    jjdxm_v7 = "com.android.support:appcompat-v7:${supportVersion}"
 }
 

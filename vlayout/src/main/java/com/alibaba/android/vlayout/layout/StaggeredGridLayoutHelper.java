@@ -38,6 +38,7 @@ import com.alibaba.android.vlayout.Range;
 import com.alibaba.android.vlayout.VirtualLayoutManager;
 import com.alibaba.android.vlayout.VirtualLayoutManager.LayoutStateWrapper;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.view.ViewCompat;
@@ -45,6 +46,8 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.LayoutParams;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
 
 import static android.support.v7.widget.LinearLayoutManager.INVALID_OFFSET;
 import static com.alibaba.android.vlayout.VirtualLayoutManager.HORIZONTAL;
@@ -60,7 +63,7 @@ import static com.alibaba.android.vlayout.VirtualLayoutManager.VERTICAL;
  */
 public class StaggeredGridLayoutHelper extends BaseLayoutHelper {
 
-    private static final String TAG = "Staggered";
+    private static final String TAG = "StaggeredGridLayout";
 
     private static final String LOOKUP_BUNDLE_KEY = "StaggeredGridLayoutHelper_LazySpanLookup";
 
@@ -91,6 +94,7 @@ public class StaggeredGridLayoutHelper extends BaseLayoutHelper {
     private boolean mLayoutWithAnchor;
 
     private int anchorPosition;
+    private Context mContext;
 
     private WeakReference<VirtualLayoutManager> mLayoutManager = null;
 
@@ -105,8 +109,22 @@ public class StaggeredGridLayoutHelper extends BaseLayoutHelper {
         this(1, 0);
     }
 
+    public StaggeredGridLayoutHelper(Context context) {
+        this(1, 0, context);
+    }
+
+    public StaggeredGridLayoutHelper(int lanes, Context context) {
+        this(lanes, 0, context);
+    }
+
     public StaggeredGridLayoutHelper(int lanes) {
         this(lanes, 0);
+    }
+
+    public StaggeredGridLayoutHelper(int lanes, int gap, Context context) {
+        setLane(lanes);
+        setGap(gap);
+        this.mContext = context;
     }
 
     public StaggeredGridLayoutHelper(int lanes, int gap) {
@@ -295,6 +313,7 @@ public class StaggeredGridLayoutHelper extends BaseLayoutHelper {
                 start = currentSpan.getEndLine(defaultNewViewLine, orientationHelper);
 
                 if (isStartLine) {
+                    Log.e(TAG, "layoutViews  isStartLine: " + isStartLine);
                     start += computeStartSpace(helper, layoutInVertical, true, isOverLapMargin);
                 } else {
                     if (mLayoutWithAnchor) {
@@ -304,12 +323,14 @@ public class StaggeredGridLayoutHelper extends BaseLayoutHelper {
                             start += (layoutInVertical ? mVGap : mHGap);
                         }
                     } else {
+                        Log.e(TAG, "layoutViews:   mLayoutWithAnchor " + mLayoutWithAnchor);
                         start += (layoutInVertical ? mVGap : mHGap);
                     }
                 }
                 end = start + orientationHelper.getDecoratedMeasurement(view);
             } else {
                 if (isEndLine) {
+                    Log.e(TAG, "layoutViews: isEndLine  " + isEndLine);
                     end = currentSpan.getStartLine(defaultNewViewLine, orientationHelper) - (layoutInVertical ?
                             mMarginBottom + mPaddingRight : mMarginRight + mPaddingRight);
                     //Log.d(TAG, "endLine " + position + " " + end);
@@ -342,11 +363,74 @@ public class StaggeredGridLayoutHelper extends BaseLayoutHelper {
 
             int otherEnd = otherStart + orientationHelper.getDecoratedMeasurementInOther(view);
 
+            VirtualLayoutManager.LayoutParams params = (VirtualLayoutManager.LayoutParams) view.getLayoutParams();
+            if (getItemCount() == 3) {
+                if (params.getViewPosition() == 0) {
+                    start = start + getHeight(mContext) / 2 - end / 2;
+                    otherStart = 0;
+                    end = end + end / 2;
+//					otherEnd=end;
+                }
+            } else if (getItemCount() == 4) {
+                if (params.getViewPosition() == 0) {
+                    Log.e(TAG, "itemCount==4   计算前： " + "left: " + otherStart + "---   top" + start + "---  right:" + otherEnd + "----  bottom:" + end);
+//                    start = 0;
+                    end = start + view.getMeasuredHeight();
+                    otherEnd = getWidth(mContext) / 2;
+                    otherStart=0;
+                    Log.e(TAG, "itemCount==4   计算后： " + "left: " + otherStart + "---   top" + start + "---  right:" + otherEnd + "----  bottom:" + end);
+                }
+
+            } else if (getItemCount() == 5) {
+                if (params.getViewPosition() == 0) {
+                    Log.e(TAG, getItemCount() + "    计算前： " + "left: " + otherStart + "---   top" + start + "---  right:" + otherEnd + "----  bottom:" + end);
+//
+                    start = (getHeight(mContext) - view.getMeasuredHeight() * 2) / 2;
+                    end = start + view.getMeasuredHeight();
+//					otherStart = 0;
+//					otherEnd = getWidth(mContext) / 2;
+//
+//					end = start + view.getMeasuredHeight();
+//
+//					Log.e(TAG, "计算后： " + "start: " + start + "---   otherStart" + otherStart + "----  end:" + end + "---  otherEnd:" + otherEnd);
+                }
+            } else if (getItemCount() == 6) {
+                if (params.getViewPosition() == 0) {
+                    Log.e(TAG, getItemCount() + "    计算前： " + "left: " + otherStart + "---   top" + start + "---  right:" + otherEnd + "----  bottom:" + end);
+                    end = (getHeight(mContext) - mVGap*3) / 3 - view.getMeasuredHeight() / 2 + start;
+                    start = -view.getMeasuredHeight() / 2;
+                    Log.e(TAG, getItemCount() + "    计算后： " + "left: " + otherStart + "---   top" + start + "---  right:" + otherEnd + "----  bottom:" + end);
+                }
+            } else if (getItemCount() == 7) {
+                if (params.getViewPosition() == 4) {
+//					Log.e(TAG, getItemCount()+"    计算前： " + "left: " + otherStart + "---   top" + start + "---  right:" + otherEnd + "----  bottom:" + end);
+//					otherStart=(getWidth(mContext)-((getWidth(mContext)-mVGap*3)/4)*3)/2;
+                    otherStart = view.getMeasuredWidth() / 2;
+                    otherEnd = otherStart + view.getMeasuredWidth();
+//					Log.e(TAG, getItemCount()+"    计算后： " + "left: " + otherStart + "---   top" + start + "---  right:" + otherEnd + "----  bottom:" + end);
+                } else if (params.getViewPosition() == 5) {
+
+                    otherStart = getWidth(mContext) / 2;
+                    otherEnd = otherStart + view.getMeasuredWidth();
+
+                } else if (params.getViewPosition() == 6) {
+                    Log.e(TAG, getItemCount() + "    计算前： " + "left: " + otherStart + "---   top" + start + "---  right:" + otherEnd + "----  bottom:" + end);
+                    otherStart = getWidth(mContext) - view.getMeasuredWidth();
+                    otherEnd = otherStart + view.getMeasuredWidth();
+                    Log.e(TAG, getItemCount() + "    计算后： " + "left: " + otherStart + "---   top" + start + "---  right:" + otherEnd + "----  bottom:" + end);
+                }
+            }
+
             if (layoutInVertical) {
+                //int left, int top, int right, int bottom
+                Log.e(TAG, "layoutViews:   layoutInVertical  " + layoutInVertical);
                 layoutChildWithMargin(view, otherStart, start, otherEnd, end, helper);
             } else {
                 layoutChildWithMargin(view, start, otherStart, end, otherEnd, helper);
             }
+
+
+            Log.e(TAG, params.getViewPosition() + "start: " + start + "---   otherStart" + otherStart + "----  end:" + end + "---  otherEnd:" + otherEnd);
 
             updateRemainingSpans(currentSpan, layoutState.getLayoutDirection(), targetLine, orientationHelper);
 
@@ -1412,6 +1496,26 @@ public class StaggeredGridLayoutHelper extends BaseLayoutHelper {
                     INVALID_SPAN_ID);
         }
 
+    }
+
+    /**
+     * @return 屏幕宽度 in pixel
+     */
+    public static int getWidth(Context context) {
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+
+        int width = wm.getDefaultDisplay().getWidth();
+        return width;
+    }
+
+    /**
+     * @return 屏幕高度 in pixel
+     */
+    public static int getHeight(Context context) {
+
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        int height = wm.getDefaultDisplay().getHeight();
+        return height;
     }
 
 }

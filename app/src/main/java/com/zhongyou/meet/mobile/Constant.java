@@ -16,6 +16,10 @@ public class Constant {
 	public static final String EQUALLY = "equally";
 	public static final String BIGSCREEN = "bigScreen";
 
+	public static final String VIDEO="video";
+	public static final String PLAYVIDEO="playVideo";
+	public static final String PAUSEVIDEO="pauseVideo";
+
 	public static boolean isChairMan = false;
 	static boolean debug = BuildConfig.DEBUG;
 
