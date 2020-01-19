@@ -366,10 +366,12 @@ public class StaggeredGridLayoutHelper extends BaseLayoutHelper {
             VirtualLayoutManager.LayoutParams params = (VirtualLayoutManager.LayoutParams) view.getLayoutParams();
             if (getItemCount() == 3) {
                 if (params.getViewPosition() == 0) {
-                    start = start + getHeight(mContext) / 2 - end / 2;
+                    Log.e(TAG, "itemCount==3   计算前： " + "left: " + otherStart + "---   top" + start + "---  right:" + otherEnd + "----  bottom:" + end);
+                    start =getHeight(mContext)/4;
                     otherStart = 0;
-                    end = end + end / 2;
+                    end = start+view.getMeasuredHeight();
 //					otherEnd=end;
+                    Log.e(TAG, "itemCount==3   计算后： " + "left: " + otherStart + "---   top" + start + "---  right:" + otherEnd + "----  bottom:" + end);
                 }
             } else if (getItemCount() == 4) {
                 if (params.getViewPosition() == 0) {

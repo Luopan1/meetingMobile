@@ -239,36 +239,7 @@ public class NewAudienceVideoAdapter extends DelegateAdapter.Adapter<NewAudience
 
 	@Override
 	public void onBindViewHolder(@NonNull final AudienceVideoViewHolder holder, final int position) {
-		/*if (mLayoutHelper instanceof StaggeredGridLayoutHelper) {
-			if (position == 0 || position == 3) {
-				ViewGroup.LayoutParams layoutParams = holder.itemView.getLayoutParams();
-				layoutParams.width = DisplayUtil.getWidth(context) / 2;
-				layoutParams.height = DisplayUtil.getHeight(context) / 2;
-				holder.itemView.setLayoutParams(layoutParams);
-			} else {
-				ViewGroup.LayoutParams layoutParams = holder.itemView.getLayoutParams();
-				layoutParams.width = DisplayUtil.getWidth(context) / 2;
-				layoutParams.height = DisplayUtil.getHeight(context) / 3;
-				holder.itemView.setLayoutParams(layoutParams);
-			}
-		}else if (mLayoutHelper instanceof OnePlusNLayoutHelper){
-			if (position==0){
-				ViewGroup.LayoutParams layoutParams = holder.itemView.getLayoutParams();
-				layoutParams.width = DisplayUtil.getWidth(context) / 2;
-				layoutParams.height = DisplayUtil.getHeight(context);
-				holder.itemView.setLayoutParams(layoutParams);
-			}else if (position==1||position==2){
-				ViewGroup.LayoutParams layoutParams = holder.itemView.getLayoutParams();
-				layoutParams.width = DisplayUtil.getWidth(context) / 2;
-				layoutParams.height = DisplayUtil.getHeight(context)/2;
-				holder.itemView.setLayoutParams(layoutParams);
-			}
-		} else {
-			ViewGroup.LayoutParams layoutParams = holder.itemView.getLayoutParams();
-			layoutParams.width = width;
-			layoutParams.height = height;
-			holder.itemView.setLayoutParams(layoutParams);
-		}*/
+
 		ViewGroup.LayoutParams mLayoutParams = holder.itemView.getLayoutParams();
 		mLayoutParams.width = DisplayUtil.dip2px(context, 116);
 		mLayoutParams.height = DisplayUtil.dip2px(context, 70);
@@ -350,7 +321,7 @@ public class NewAudienceVideoAdapter extends DelegateAdapter.Adapter<NewAudience
 			});
 			holder.nameText.setText(audienceVideo.getName());
 			if (BuildConfig.DEBUG) {
-				holder.nameText.setVisibility(View.VISIBLE);
+				holder.nameText.setVisibility(View.GONE);
 			} else {
 				holder.nameText.setVisibility(View.GONE);
 			}
@@ -373,11 +344,8 @@ public class NewAudienceVideoAdapter extends DelegateAdapter.Adapter<NewAudience
 			final SurfaceView surfaceView = audienceVideo.getSurfaceView();
 			surfaceView.setZOrderMediaOverlay(true);
 			stripSurfaceView(surfaceView);
-			if (mLayoutHelper instanceof StaggeredGridLayoutHelper) {
-				holder.videoLayout.addView(surfaceView, mLayoutParams);
-			} else {
-				holder.videoLayout.addView(surfaceView, new VirtualLayoutManager.LayoutParams(VirtualLayoutManager.LayoutParams.MATCH_PARENT, VirtualLayoutManager.LayoutParams.MATCH_PARENT));
-			}
+			holder.videoLayout.addView(surfaceView, new VirtualLayoutManager.LayoutParams(VirtualLayoutManager.LayoutParams.MATCH_PARENT, VirtualLayoutManager.LayoutParams.MATCH_PARENT));
+
 
 		}
 
