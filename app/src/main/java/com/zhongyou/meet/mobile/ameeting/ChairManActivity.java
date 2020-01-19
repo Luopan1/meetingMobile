@@ -134,6 +134,7 @@ import q.rorbin.badgeview.Badge;
 import q.rorbin.badgeview.QBadgeView;
 import rx.Subscription;
 import rx.functions.Action1;
+import tv.danmaku.ijk.media.player.IMediaPlayer;
 
 public class ChairManActivity extends BaseActivity implements AGEventHandler {
 
@@ -292,18 +293,42 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 				case 0:
 					mOperaTools.setVisibility(View.GONE);
 					findViewById(R.id.ll_bottom_bar).setVisibility(View.GONE);//视频播放底部操作栏
+					if (isPlayComplete){
+						findViewById(R.id.app_video_status_text).setVisibility(View.VISIBLE);
+					}
 					if (mTransformersTipPop != null) {
 						if (mTransformersTipPop.isShowing()) {
 							mTransformersTipPop.dismissTip();
 						}
 					}
+					mPlayVideoText.setVisibility(View.GONE);
 					break;
 				case 1:
 					mOperaTools.setVisibility(View.VISIBLE);
+					if(currentMaterial!=null){
+						if (currentMaterial.getMeetingMaterialsPublishList().get(position).getType().equals("1")){
+							mPlayVideoText.setVisibility(View.VISIBLE);
+							findViewById(R.id.app_video_status_text).setVisibility(View.GONE);
+						}else {
+							mPlayVideoText.setVisibility(View.GONE);
+						}
+					}else {
+						mPlayVideoText.setVisibility(View.GONE);
+					}
+					if (player != null) {
+						if (player.isPlaying()) {
+							setTextViewDrawableTop(mPlayVideoText, R.drawable.icon_pause);
+						} else {
+							setTextViewDrawableTop(mPlayVideoText, R.drawable.icon_play);
+						}
+					}
+
 					//视频播放底部操作栏
 					/*if (currentMaterial != null && !currentMaterial.isVideo()) {
 						findViewById(R.id.ll_bottom_bar).setVisibility(View.VISIBLE);
 					}*/
+
+
 					showOperatorHandler.sendEmptyMessageDelayed(0, Constant.delayTime);
 					break;
 			}
@@ -3113,6 +3138,7 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 		setTextViewDrawableTop(mPlayVideoText, R.drawable.icon_play);
 	}
 
+	private boolean isPlayComplete;
 	public void PlayVideo() {
 		findViewById(R.id.app_video_box).setVisibility(View.VISIBLE);
 		docImage.setVisibility(View.GONE);
@@ -3124,12 +3150,10 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 					if (player.isPlaying()) {
 						player.pausePlay();
 						agoraAPI.channelSetAttr(channelName, Constant.VIDEO, Constant.PAUSEVIDEO);
-						mPlayVideoText.setText("播放");
 						setTextViewDrawableTop(mPlayVideoText, R.drawable.icon_play);
 					} else {
 						agoraAPI.channelSetAttr(channelName, Constant.VIDEO, Constant.PLAYVIDEO);
 						player.startPlay();
-						mPlayVideoText.setText("暂停");
 						setTextViewDrawableTop(mPlayVideoText, R.drawable.icon_pause);
 					}
 				}
@@ -3187,6 +3211,18 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 			});
 		}
 
+		player.setOnPlayStatusListener(new PlayerView.PlayStatus() {
+			@Override
+			public void statusChange(int newStatus) {
+				if (newStatus==PlayStateParams.STATE_COMPLETED){
+					setTextViewDrawableTop(mPlayVideoText,R.drawable.icon_play);
+					findViewById(R.id.app_video_status_text).setVisibility(View.VISIBLE);
+					isPlayComplete=true;
+				}else if (newStatus==PlayStateParams.STATE_PLAYING){
+					isPlayComplete=false;
+				}
+			}
+		});
 
 	}
 

@@ -1566,7 +1566,20 @@ public class PlayerView {
 	/**
 	 * 状态改变同步UI
 	 */
+
+	public interface  PlayStatus{
+		void statusChange(int newStatus);
+	}
+
+	public PlayStatus mPlayStatusListener;
+	public void setOnPlayStatusListener(PlayStatus statusListener ){
+		this.mPlayStatusListener=statusListener;
+	}
 	private void statusChange(int newStatus) {
+		if (mPlayStatusListener!=null){
+			mPlayStatusListener.statusChange(newStatus);
+		}
+
 		if (newStatus == PlayStateParams.STATE_COMPLETED) {
 			status = PlayStateParams.STATE_COMPLETED;
 			currentPosition = 0;
@@ -1669,8 +1682,10 @@ public class PlayerView {
 	 */
 	private void showStatus(String statusText) {
 		query.id(R.id.app_video_replay).visible();
+
 		query.id(R.id.app_video_status_text).text(statusText);
 	}
+
 
 	/**
 	 * 界面方向改变是刷新界面

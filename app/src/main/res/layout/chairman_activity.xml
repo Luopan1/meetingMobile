@@ -103,6 +103,7 @@
                     android:textSize="14dp"/>
 
                 <ImageView
+                    android:visibility="gone"
                     android:id="@+id/app_video_replay_icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -297,12 +298,23 @@
 
 
             <ImageView
+                android:visibility="gone"
                 android:id="@+id/play_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:layout_marginTop="8dp"
                 android:src="@drawable/simple_player_center_play"/>
+
+            <TextView
+                android:drawableTop="@drawable/icon_play"
+                android:id="@+id/playVideo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_marginTop="8dp"
+                android:textColor="@color/white"
+                 />
 
         </RelativeLayout>
         </RelativeLayout>
@@ -535,18 +547,7 @@
                 tools:visibility="visible">
 
 
-                <TextView
-                    android:id="@+id/playVideo"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="8dp"
-                    android:layout_weight="1"
-                    android:background="@color/transparent"
-                    android:drawableTop="@drawable/icon_play"
-                    android:gravity="center"
-                    android:text="播放"
-                    android:textColor="@color/white"
-                    android:textSize="14sp" />
+
 
                 <TextView
                     android:id="@+id/preview"
