@@ -1552,6 +1552,10 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 						} else {
 							mLogger.e("当前是取消ppt模式");
 							stopPlayVideo();
+							if (player != null) {
+								player.stopPlay();
+								player.onDestroy();
+							}
 							findViewById(R.id.app_video_box).setVisibility(View.GONE);
 							model = -1;
 							pageText.setVisibility(View.GONE);
