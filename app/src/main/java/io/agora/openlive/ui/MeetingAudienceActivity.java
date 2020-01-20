@@ -3225,6 +3225,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 //				}
 //			}
 //		});
+		findViewById(R.id.app_video_status_text).setVisibility(View.GONE);
 		if (currentMaterial == null) {
 			findViewById(R.id.app_video_box).setVisibility(View.GONE);
 			return;
@@ -3280,6 +3281,16 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 				}
 			});
 		}
+
+		player.setOnPlayStatusListener(new PlayerView.PlayStatus() {
+			@Override
+			public void statusChange(int newStatus) {
+				if (newStatus == PlayStateParams.STATE_COMPLETED) {
+					findViewById(R.id.app_video_status_text).setVisibility(View.VISIBLE);
+				}
+			}
+		});
+
 	}
 
 	private void stopPlayVideo() {

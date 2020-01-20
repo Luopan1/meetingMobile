@@ -3150,6 +3150,7 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 
 	public void PlayVideo() {
 		findViewById(R.id.app_video_box).setVisibility(View.VISIBLE);
+		findViewById(R.id.app_video_status_text).setVisibility(View.GONE);
 		docImage.setVisibility(View.GONE);
 		mPlayVideoText.setVisibility(View.VISIBLE);
 		mPlayVideoText.setOnClickListener(new View.OnClickListener() {
@@ -3219,7 +3220,6 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 				}
 			});
 		}
-
 		player.setOnPlayStatusListener(new PlayerView.PlayStatus() {
 			@Override
 			public void statusChange(int newStatus) {
