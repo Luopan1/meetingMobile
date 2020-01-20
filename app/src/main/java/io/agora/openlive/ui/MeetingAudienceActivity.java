@@ -1492,6 +1492,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 						if (!TextUtils.isEmpty(value)) {
 							mLogger.e("当前是ppt模式");
 							isDocShow = true;
+							exitSpliteMode();
 							try {
 								JSONObject jsonObject = new JSONObject(value);
 								if (jsonObject.has("material_id") && jsonObject.has("doc_index")) {
@@ -1632,14 +1633,16 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 									if (remoteBroadcasterSurfaceView != null) {
 										stripSurfaceView(remoteBroadcasterSurfaceView);
 									}
-									AudienceVideo audienceVideo = new AudienceVideo();
-									audienceVideo.setUid(Integer.parseInt(meetingJoin.getHostUser().getClientUid()));
-									audienceVideo.setName("主持人" + meetingJoin.getHostUser().getHostUserName());
-									audienceVideo.setBroadcaster(true);
-									audienceVideo.setSurfaceView(remoteBroadcasterSurfaceView);
-									mVideoAdapter.getAudienceVideoLists().add(audienceVideo);
-									mVideoAdapter.notifyDataSetChanged();
-									broadcasterLayout.removeAllViews();
+									if (isHostCommeIn){
+										AudienceVideo audienceVideo = new AudienceVideo();
+										audienceVideo.setUid(Integer.parseInt(meetingJoin.getHostUser().getClientUid()));
+										audienceVideo.setName("主持人" + meetingJoin.getHostUser().getHostUserName());
+										audienceVideo.setBroadcaster(true);
+										audienceVideo.setSurfaceView(remoteBroadcasterSurfaceView);
+										mVideoAdapter.getAudienceVideoLists().add(audienceVideo);
+										mVideoAdapter.notifyDataSetChanged();
+										broadcasterLayout.removeAllViews();
+									}
 								}
 							}
 
@@ -2978,6 +2981,7 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 				mVideoAdapter.setLayoutHelper(staggeredGridLayoutHelper);
 				mVideoAdapter.notifyDataSetChanged();
 
+
 			} else {
 				MyGridLayoutHelper mGridLayoutHelper = new MyGridLayoutHelper(2);
 				mGridLayoutHelper.setItemCount(8);
@@ -3227,7 +3231,6 @@ public class MeetingAudienceActivity extends BaseActivity implements AGEventHand
 		}
 
 		docImage.setVisibility(View.GONE);
-
 		findViewById(R.id.app_video_box).setVisibility(View.VISIBLE);
 
 		if (player == null) {

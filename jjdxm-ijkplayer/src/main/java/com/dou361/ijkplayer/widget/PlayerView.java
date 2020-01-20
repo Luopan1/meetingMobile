@@ -1,5 +1,6 @@
 package com.dou361.ijkplayer.widget;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
@@ -1040,8 +1041,45 @@ public class PlayerView {
 				}
 			}
 		}
+
+		if (videoView.isPlaying()) {
+			query.id(R.id.app_video_loading).gone();
+
+		}
+		loaddingHandler.sendEmptyMessageDelayed(0, 1000);
 		return this;
 	}
+
+
+	@SuppressLint("HandlerLeak")
+	Handler loaddingHandler = new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
+			super.handleMessage(msg);
+			switch (msg.what) {
+				case 0:
+					if (videoView.isPlaying()) {
+						query.id(R.id.app_video_loading).gone();
+						if (loaddingHandler.hasMessages(0)){
+							loaddingHandler.removeMessages(0);
+						}
+					} else {
+						if (status == PlayStateParams.STATE_COMPLETED) {
+							query.id(R.id.app_video_loading).gone();
+							if (loaddingHandler.hasMessages(0)){
+								loaddingHandler.removeMessages(0);
+							}
+						}
+						query.id(R.id.app_video_loading).visible();
+						loaddingHandler.sendEmptyMessageDelayed(0, 1000);
+					}
+
+					break;
+
+
+			}
+		}
+	};
 
 	/**
 	 * 设置视频名称

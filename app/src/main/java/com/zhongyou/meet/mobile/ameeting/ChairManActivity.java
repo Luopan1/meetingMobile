@@ -134,7 +134,6 @@ import q.rorbin.badgeview.Badge;
 import q.rorbin.badgeview.QBadgeView;
 import rx.Subscription;
 import rx.functions.Action1;
-import tv.danmaku.ijk.media.player.IMediaPlayer;
 
 public class ChairManActivity extends BaseActivity implements AGEventHandler {
 
@@ -293,7 +292,7 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 				case 0:
 					mOperaTools.setVisibility(View.GONE);
 					findViewById(R.id.ll_bottom_bar).setVisibility(View.GONE);//视频播放底部操作栏
-					if (isPlayComplete){
+					if (isPlayComplete) {
 						findViewById(R.id.app_video_status_text).setVisibility(View.VISIBLE);
 					}
 					if (mTransformersTipPop != null) {
@@ -305,14 +304,14 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 					break;
 				case 1:
 					mOperaTools.setVisibility(View.VISIBLE);
-					if(currentMaterial!=null){
-						if (currentMaterial.getMeetingMaterialsPublishList().get(position).getType().equals("1")){
+					if (currentMaterial != null) {
+						if (currentMaterial.getMeetingMaterialsPublishList().get(position).getType().equals("1")) {
 							mPlayVideoText.setVisibility(View.VISIBLE);
 							findViewById(R.id.app_video_status_text).setVisibility(View.GONE);
-						}else {
+						} else {
 							mPlayVideoText.setVisibility(View.GONE);
 						}
-					}else {
+					} else {
 						mPlayVideoText.setVisibility(View.GONE);
 					}
 					if (player != null) {
@@ -487,6 +486,11 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 			broadcasterLayout.setVisibility(View.VISIBLE);
 		}
 
+		if (mVideoAdapter.getDataSize()>=1){
+			mAudienceRecyclerView.setVisibility(View.VISIBLE);
+		}else {
+			mAudienceRecyclerView.setVisibility(View.GONE);
+		}
 		mSpilteView.setText("均分模式");
 
 	}
@@ -498,7 +502,8 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 		mLogger.e(currentMaterial == null);
 
 
-		if (dataSize == 1) {
+		if (dataSize == 1||dataSize==0) {
+			exitSpliteMode();
 			return;
 		}
 
@@ -1020,6 +1025,7 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 
 			docLayout.setVisibility(View.GONE);
 			agoraAPI.channelDelAttr(channelName, DOC_INFO);
+			agoraAPI.channelSetAttr(channelName, Constant.VIDEO, Constant.STOPVIDEO);
 			/*if (currentAudience == null) {
 				if (currentMaterial == null) {
 					fullScreenButton.setVisibility(View.VISIBLE);
@@ -1029,6 +1035,7 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 			} else {
 				fullScreenButton.setVisibility(View.VISIBLE);
 			}*/
+			position=0;
 
 
 		});
@@ -2003,6 +2010,7 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 		RecyclerView recyclerViewTV = view.findViewById(R.id.meeting_doc_list);
 		FocusFixedLinearLayoutManager gridlayoutManager = new FocusFixedLinearLayoutManager(this); // 解决快速长按焦点丢失问题.
 		gridlayoutManager.setOrientation(GridLayoutManager.HORIZONTAL);
+		recyclerViewTV.addItemDecoration(new SpaceItemDecoration((int) (getResources().getDimension(R.dimen.my_px_20)), 0, (int) (getResources().getDimension(R.dimen.my_px_20)), 0));
 		recyclerViewTV.setLayoutManager(gridlayoutManager);
 		recyclerViewTV.setFocusable(false);
 		MaterialAdapter materialAdapter = new MaterialAdapter(this, materials);
@@ -2148,7 +2156,7 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 		layoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
 		layoutParams.setMargins(0, DisplayUtil.dip2px(this, 0), DisplayUtil.dip2px(this, 16), DisplayUtil.dip2px(this, 60));
 		mAudienceRecyclerView.setLayoutParams(layoutParams);
-
+		mAudienceRecyclerView.addItemDecoration(mDecor);
 		mDelegateAdapter.clear();
 
 		mVideoAdapter.setItemSize(DisplayUtil.dip2px(this, 70), DisplayUtil.dip2px(this, 114));
@@ -3139,6 +3147,7 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 	}
 
 	private boolean isPlayComplete;
+
 	public void PlayVideo() {
 		findViewById(R.id.app_video_box).setVisibility(View.VISIBLE);
 		docImage.setVisibility(View.GONE);
@@ -3214,12 +3223,13 @@ public class ChairManActivity extends BaseActivity implements AGEventHandler {
 		player.setOnPlayStatusListener(new PlayerView.PlayStatus() {
 			@Override
 			public void statusChange(int newStatus) {
-				if (newStatus==PlayStateParams.STATE_COMPLETED){
-					setTextViewDrawableTop(mPlayVideoText,R.drawable.icon_play);
+				if (newStatus == PlayStateParams.STATE_COMPLETED) {
+					setTextViewDrawableTop(mPlayVideoText, R.drawable.icon_play);
 					findViewById(R.id.app_video_status_text).setVisibility(View.VISIBLE);
-					isPlayComplete=true;
-				}else if (newStatus==PlayStateParams.STATE_PLAYING){
-					isPlayComplete=false;
+					isPlayComplete = true;
+					agoraAPI.channelSetAttr(channelName, Constant.VIDEO, Constant.STOPVIDEO);
+				} else if (newStatus == PlayStateParams.STATE_PLAYING) {
+					isPlayComplete = false;
 				}
 			}
 		});

@@ -19,6 +19,7 @@ public class Constant {
 	public static final String VIDEO="video";
 	public static final String PLAYVIDEO="playVideo";
 	public static final String PAUSEVIDEO="pauseVideo";
+	public static final String STOPVIDEO="stopVideo";
 
 	public static boolean isChairMan = false;
 	static boolean debug = BuildConfig.DEBUG;
