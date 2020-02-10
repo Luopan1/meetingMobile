@@ -54,18 +54,19 @@ public class MaterialAdapter extends RecyclerView.Adapter<MaterialAdapter.ViewHo
         Material material = materials.get(position);
 
         viewHolder.nameText.setText(material.getName());
-        String imageUrl = ImageHelper.getThumb(material.getMeetingMaterialsPublishList().get(0).getUrl());
-        Picasso.with(mContext).load(imageUrl).into(viewHolder.imageView);
-        viewHolder.countText.setText(String.format("%d张", material.getMeetingMaterialsPublishList().size()));
-        viewHolder.uploadTimeText.setText(String.format("%s上传", material.getCreateDate()));
+        if (material.getMeetingMaterialsPublishList().size()>0){
+            String imageUrl = ImageHelper.getThumb(material.getMeetingMaterialsPublishList().get(0).getUrl());
+            Picasso.with(mContext).load(imageUrl).into(viewHolder.imageView);
+            viewHolder.countText.setText(String.format("%d张", material.getMeetingMaterialsPublishList().size()));
+            viewHolder.uploadTimeText.setText(String.format("%s上传", material.getCreateDate()));
 
-        if (onClickListener != null) {
-            viewHolder.itemView.setOnClickListener(v -> {
-                int layoutPos = viewHolder.getLayoutPosition();
-                onClickListener.onPreviewButtonClick(v, material,  layoutPos);
-            });
+            if (onClickListener != null) {
+                viewHolder.itemView.setOnClickListener(v -> {
+                    int layoutPos = viewHolder.getLayoutPosition();
+                    onClickListener.onPreviewButtonClick(v, material,  layoutPos);
+                });
+            }
         }
-
     }
 
     @Override

@@ -1,0 +1,17 @@
+int attr ad_arrowExtraOffsetX 0x7f040001
+int attr ad_arrowExtraOffsetY 0x7f040002
+int attr ad_arrowGravity 0x7f040003
+int attr ad_arrowHeight 0x7f040004
+int attr ad_bgColor 0x7f040005
+int attr ad_radius 0x7f040006
+int attr ad_shadowColor 0x7f040007
+int attr ad_shadowSize 0x7f040008
+int[] styleable ArrowDrawable { 0x7f040001, 0x7f040002, 0x7f040003, 0x7f040004, 0x7f040005, 0x7f040006, 0x7f040007, 0x7f040008 }
+int styleable ArrowDrawable_ad_arrowExtraOffsetX 0
+int styleable ArrowDrawable_ad_arrowExtraOffsetY 1
+int styleable ArrowDrawable_ad_arrowGravity 2
+int styleable ArrowDrawable_ad_arrowHeight 3
+int styleable ArrowDrawable_ad_bgColor 4
+int styleable ArrowDrawable_ad_radius 5
+int styleable ArrowDrawable_ad_shadowColor 6
+int styleable ArrowDrawable_ad_shadowSize 7

@@ -19,6 +19,7 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
+import com.qiniu.android.utils.Json;
 import com.zhongyou.meet.mobile.ApiClient;
 import com.zhongyou.meet.mobile.BaseException;
 import com.zhongyou.meet.mobile.BuildConfig;
@@ -26,7 +27,9 @@ import com.zhongyou.meet.mobile.Constant;
 import com.zhongyou.meet.mobile.R;
 import com.zhongyou.meet.mobile.entities.Bucket;
 import com.zhongyou.meet.mobile.entities.MeetingJoinStats;
+import com.zhongyou.meet.mobile.entities.UserData;
 import com.zhongyou.meet.mobile.entities.Version;
+import com.zhongyou.meet.mobile.entities.Wechat;
 import com.zhongyou.meet.mobile.entities.base.BaseBean;
 import com.zhongyou.meet.mobile.event.SetUserChatEvent;
 import com.zhongyou.meet.mobile.event.UserStateEvent;
@@ -36,8 +39,10 @@ import com.zhongyou.meet.mobile.service.WSService;
 import com.zhongyou.meet.mobile.utils.DeviceUtil;
 import com.zhongyou.meet.mobile.utils.Installation;
 import com.zhongyou.meet.mobile.utils.Logger;
+import com.zhongyou.meet.mobile.utils.Login.LoginHelper;
 import com.zhongyou.meet.mobile.utils.OkHttpCallback;
 import com.zhongyou.meet.mobile.utils.RxBus;
+import com.zhongyou.meet.mobile.utils.ToastUtils;
 import com.zhongyou.meet.mobile.utils.statistics.ZYAgent;
 import com.zhongyou.meet.mobile.wxapi.WXEntryActivity;
 
@@ -61,7 +66,7 @@ public class HomeActivity extends BasicActivity implements View.OnClickListener 
 	private ViewPager viewPager;
 	private LinearLayout bottomLayout;
 	private RadioGroup radioGroup;
-	private RadioButton mettingRadio, discussRadio, logRadio,myRadio;
+	private RadioButton mettingRadio, discussRadio, logRadio, myRadio;
 
 	private HomePagerAdapter mHomePagerAdapter;
 
@@ -114,7 +119,6 @@ public class HomeActivity extends BasicActivity implements View.OnClickListener 
 	}
 
 
-
 	private OkHttpCallback meetingJoinStatsCallback = new OkHttpCallback<Bucket<MeetingJoinStats>>() {
 
 		@Override
@@ -160,6 +164,8 @@ public class HomeActivity extends BasicActivity implements View.OnClickListener 
 						break;
 				}
 			}
+
+
 		});
 
 		viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -183,9 +189,9 @@ public class HomeActivity extends BasicActivity implements View.OnClickListener 
 					case 3:
 						myRadio.setChecked(true);
 						break;
-						default:
-							Logger.v("HomeActivity","onPageSelected has no current position:"+position);
-							break;
+					default:
+						Logger.v("HomeActivity", "onPageSelected has no current position:" + position);
+						break;
 				}
 			}
 
@@ -194,6 +200,7 @@ public class HomeActivity extends BasicActivity implements View.OnClickListener 
 
 			}
 		});
+
 
 		mHomePagerAdapter = new HomePagerAdapter(getSupportFragmentManager());
 		mFragments = new ArrayList<>();
@@ -226,10 +233,57 @@ public class HomeActivity extends BasicActivity implements View.OnClickListener 
 		super.onResume();
 		setState(WSService.isPhoneOnline());
 		if (!TextUtils.isEmpty(Preferences.getToken())) {
-			ApiClient.getInstance().requestUser();
+			getUserInfo();
 		}
 	}
 
+
+	private void getUserInfo(){
+		if (Preferences.isLogin()) {
+			ApiClient.getInstance().requestUser(this, new OkHttpCallback<com.alibaba.fastjson.JSONObject>() {
+				@Override
+				public void onSuccess(com.alibaba.fastjson.JSONObject json) {
+					com.orhanobut.logger.Logger.e(json.toString());
+
+					if (json.getInteger("errcode")==40003||json.getInteger("errcode")==40001){
+						ToastUtils.showToast("登陆信息已过期 请重新登陆");
+						LoginHelper.logoutCustom(HomeActivity.this);
+						startActivity(new Intent(HomeActivity.this,WXEntryActivity.class));
+						finish();
+						return;
+					}
+
+					UserData entity=JSON.parseObject(json.getJSONObject("data").toJSONString(),UserData.class);
+
+
+					if (entity == null ||  entity.getUser() == null) {
+						return;
+					}
+//					Logger.i(JSON.toJSONString(entity));
+
+//                    BindActivity.actionStart(WXEntryActivity.this,true,true);
+
+					Wechat wechat = entity.getWechat();
+					if (wechat != null) {
+						LoginHelper.savaWeChat(wechat);
+					}
+				}
+
+
+
+				@Override
+				public void onFailure(int errorCode, BaseException exception) {
+					com.orhanobut.logger.Logger.e(exception.getMessage());
+					if (errorCode==40003||errorCode==40001){
+						ToastUtils.showToast("登陆信息已过期 请重新登陆");
+						startActivity(new Intent(HomeActivity.this,WXEntryActivity.class));
+						finish();
+					}
+				}
+			});
+		}
+
+	}
 	@Override
 	protected void onRestart() {
 		super.onRestart();
@@ -417,12 +471,12 @@ public class HomeActivity extends BasicActivity implements View.OnClickListener 
 		subscription.unsubscribe();
 
 		try {
-			if (phoneReceiver!=null){
+			if (phoneReceiver != null) {
 				unregisterReceiver(phoneReceiver);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-		}finally {
+		} finally {
 			super.onDestroy();
 			if (WSService.isOnline()) {
 				//当前状态在线,可切换离线

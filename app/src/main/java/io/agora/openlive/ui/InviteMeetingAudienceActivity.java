@@ -655,7 +655,7 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
             @Override
             public void onFailure(int errorCode, BaseException exception) {
                 super.onFailure(errorCode, exception);
-                Toast.makeText(InviteMeetingAudienceActivity.this, exception.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(InviteMeetingAudienceActivity.this,"网络连接超时 请重试", Toast.LENGTH_SHORT).show();
             }
         };
     }
@@ -703,7 +703,7 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
         @Override
         public void onFailure(int errorCode, BaseException exception) {
             super.onFailure(errorCode, exception);
-            Toast.makeText(InviteMeetingAudienceActivity.this, errorCode + "---" + exception.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(InviteMeetingAudienceActivity.this, "网络连接失败 请重试", Toast.LENGTH_SHORT).show();
         }
     };
 

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger version="3"><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="main$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/luopan/AndroidProject/work/mobile-expostor/anglePop/src/main/res"/><source path="/Users/luopan/AndroidProject/work/mobile-expostor/anglePop/build/generated/res/rs/release"/><source path="/Users/luopan/AndroidProject/work/mobile-expostor/anglePop/build/generated/res/resValues/release"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="main" generated-set="main$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/luopan/AndroidProject/work/mobile-expostor/anglePop/src/main/res"><file path="/Users/luopan/AndroidProject/work/mobile-expostor/anglePop/src/main/res/values/attrs.xml" qualifiers=""><declare-styleable name="ArrowDrawable">
+        
+        <attr format="reference|color" name="ad_bgColor"/>
+        
+        <attr format="reference|color" name="ad_shadowColor"/>
+        
+        <attr format="dimension" name="ad_arrowHeight"/>
+        
+        <attr format="dimension" name="ad_shadowSize"/>
+        
+        <attr format="dimension" name="ad_radius"/>
+        
+        <attr format="dimension" name="ad_arrowExtraOffsetX"/>
+        
+        <attr format="dimension" name="ad_arrowExtraOffsetY"/>
+        
+        <attr name="ad_arrowGravity">
+            <flag name="to_top_align_start" value="65"/>
+            <flag name="to_top_center" value="129"/>
+            <flag name="to_top_align_end" value="257"/>
+
+            <flag name="align_top_to_start" value="34"/>
+            <flag name="align_top_to_end" value="514"/>
+
+            <flag name="center_to_start" value="36"/>
+            <flag name="center_to_end" value="516"/>
+
+            <flag name="align_bottom_to_start" value="40"/>
+            <flag name="align_bottom_to_end" value="520"/>
+
+            <flag name="to_bottom_align_start" value="80"/>
+            <flag name="to_bottom_center" value="144"/>
+            <flag name="to_bottom_align_end" value="272"/>
+        </attr>
+    </declare-styleable></file></source><source path="/Users/luopan/AndroidProject/work/mobile-expostor/anglePop/build/generated/res/rs/release"/><source path="/Users/luopan/AndroidProject/work/mobile-expostor/anglePop/build/generated/res/resValues/release"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="release$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/luopan/AndroidProject/work/mobile-expostor/anglePop/src/release/res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="release" generated-set="release$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/luopan/AndroidProject/work/mobile-expostor/anglePop/src/release/res"/></dataSet><mergedItems><configuration qualifiers=""><declare-styleable name="ArrowDrawable">
+        
+        <attr format="reference|color" name="ad_bgColor"/>
+        
+        <attr format="reference|color" name="ad_shadowColor"/>
+        
+        <attr format="dimension" name="ad_arrowHeight"/>
+        
+        <attr format="dimension" name="ad_shadowSize"/>
+        
+        <attr format="dimension" name="ad_radius"/>
+        
+        <attr format="dimension" name="ad_arrowExtraOffsetX"/>
+        
+        <attr format="dimension" name="ad_arrowExtraOffsetY"/>
+        
+        <attr name="ad_arrowGravity">
+            <flag name="to_top_align_start" value="65"/>
+            <flag name="to_top_center" value="129"/>
+            <flag name="to_top_align_end" value="257"/>
+
+            <flag name="align_top_to_start" value="34"/>
+            <flag name="align_top_to_end" value="514"/>
+
+            <flag name="center_to_start" value="36"/>
+            <flag name="center_to_end" value="516"/>
+
+            <flag name="align_bottom_to_start" value="40"/>
+            <flag name="align_bottom_to_end" value="520"/>
+
+            <flag name="to_bottom_align_start" value="80"/>
+            <flag name="to_bottom_center" value="144"/>
+            <flag name="to_bottom_align_end" value="272"/>
+        </attr>
+    </declare-styleable></configuration></mergedItems></merger>

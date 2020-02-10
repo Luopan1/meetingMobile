@@ -1,0 +1,13 @@
+int attr layoutManager 0x7f040001
+int attr reverseLayout 0x7f040002
+int attr spanCount 0x7f040003
+int attr stackFromEnd 0x7f040004
+int dimen item_touch_helper_max_drag_scroll_per_frame 0x7f080001
+int id item_touch_helper_previous_elevation 0x7f0c0001
+int id tag_layout_helper_bg 0x7f0c0002
+int[] styleable RecyclerView { 0x10100c4, 0x7f040001, 0x7f040002, 0x7f040003, 0x7f040004 }
+int styleable RecyclerView_android_orientation 0
+int styleable RecyclerView_layoutManager 1
+int styleable RecyclerView_reverseLayout 2
+int styleable RecyclerView_spanCount 3
+int styleable RecyclerView_stackFromEnd 4

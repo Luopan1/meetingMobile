@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v4.widget.TextViewCompat;
@@ -14,6 +15,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -24,7 +26,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.scwang.smartrefresh.header.MaterialHeader;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.zhongyou.meet.mobile.ApiClient;
+import com.zhongyou.meet.mobile.BaseApplication;
 import com.zhongyou.meet.mobile.BaseException;
 import com.zhongyou.meet.mobile.R;
 import com.zhongyou.meet.mobile.business.adapter.ForumMeetingAdapter;
@@ -42,21 +52,28 @@ import com.zhongyou.meet.mobile.entities.base.BaseArrayBean;
 import com.zhongyou.meet.mobile.event.ForumSendEvent;
 import com.zhongyou.meet.mobile.persistence.Preferences;
 import com.zhongyou.meet.mobile.utils.Logger;
+import com.zhongyou.meet.mobile.utils.Login.LoginHelper;
 import com.zhongyou.meet.mobile.utils.OkHttpCallback;
 import com.zhongyou.meet.mobile.utils.RxBus;
+import com.zhongyou.meet.mobile.utils.ToastUtils;
 import com.zhongyou.meet.mobile.utils.UIDUtil;
+import com.zhongyou.meet.mobile.wxapi.WXEntryActivity;
 
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeoutException;
 
 import io.agora.openlive.ui.MeetingInitActivity;
+import okio.Timeout;
 import rx.Subscription;
 
 public class MeetingsFragment extends BaseFragment {
 
 	private Subscription subscription;
-	private SwipeRefreshLayout swipeRefreshLayout;
+	private SmartRefreshLayout swipeRefreshLayout;
 	private RecyclerView recyclerView;
 	private LinearLayoutManager mLayoutManager;
 	private MeetingAdapter meetingAdapter;
@@ -65,7 +82,7 @@ public class MeetingsFragment extends BaseFragment {
 	private ForumMeetingAdapter forumMeetingAdapter;
 	private ArrayList<ForumMeeting> forumMeetingList = new ArrayList<>();
 
-	private View v_public,v_invite;
+	private View v_public, v_invite;
 
 	public static final int TYPE_PUBLIC_MEETING = 0;
 	public static final int TYPE_PRIVATE_MEETING = 1;
@@ -77,6 +94,7 @@ public class MeetingsFragment extends BaseFragment {
 	private int currentMeetingListPageIndex = TYPE_PUBLIC_MEETING;
 	private TextView mEmptyView;
 	private FrameLayout frameLayout;
+	private GeneralAdapter mGeneralAdapter;
 
 	@Override
 	public String getStatisticsTag() {
@@ -137,8 +155,9 @@ public class MeetingsFragment extends BaseFragment {
 		forumMeetingAdapter = new ForumMeetingAdapter(mContext, onForumMeetingItemClickListener);
 		forumMeetingAdapter.addData(forumMeetingList);
 
-		//设置会议tag
-		showMeeting(currentMeetingListPageIndex);
+	/*	//设置会议tag
+		showMeeting(currentMeetingListPageIndex);*/
+
 		checkAdminAccount();
 
 		subscription = RxBus.handleMessage(o -> {
@@ -208,13 +227,24 @@ public class MeetingsFragment extends BaseFragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.meeting_fragment, null, false);
 		swipeRefreshLayout = view.findViewById(R.id.mSwipeRefreshLayout);
-		swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+		swipeRefreshLayout.setRefreshHeader(new MaterialHeader(BaseApplication.getInstance()));
+		swipeRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
 			@Override
-			public void onRefresh() {
+			public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+				currentPage=1;
 				showMeeting(currentMeetingListPageIndex);
 			}
 		});
 
+		swipeRefreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
+			@Override
+			public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
+				currentPage++;
+				showMeeting(currentMeetingListPageIndex);
+			}
+		});
+
+		swipeRefreshLayout.autoRefresh();
 
 		view.findViewById(R.id.txt_search).setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -295,11 +325,13 @@ public class MeetingsFragment extends BaseFragment {
 		public void onClick(View v) {
 			switch (v.getId()) {
 				case R.id.tv_meet_public:
+					currentPage=1;
 					showMeeting(TYPE_PUBLIC_MEETING);
 					v_invite.setVisibility(View.GONE);
 					v_public.setVisibility(View.VISIBLE);
 					break;
 				case R.id.tv_meet_invite:
+					currentPage=1;
 					showMeeting(TYPE_PRIVATE_MEETING);
 					v_invite.setVisibility(View.VISIBLE);
 					v_public.setVisibility(View.GONE);
@@ -328,7 +360,7 @@ public class MeetingsFragment extends BaseFragment {
 				showPrivateMeeting();
 				break;
 			default:
-				Logger.v("MeetdingsFragment","showMeeting has no current type:"+type);
+				Logger.v("MeetdingsFragment", "showMeeting has no current type:" + type);
 				break;
 		}
 	}
@@ -367,38 +399,78 @@ public class MeetingsFragment extends BaseFragment {
 
 	/**
 	 * 请求会议类型
+	 *
 	 * @param type
 	 */
+	private int currentPage = 1;
+
 	private void requestMeetings(int type) {
-		swipeRefreshLayout.setRefreshing(true);
-		apiClient.getAllMeeting(TAG, null, type, meetingsCallback);
+		apiClient.getAllMeeting(TAG, null, type, currentPage, meetingsCallback);
 	}
 
-	private OkHttpCallback meetingsCallback = new OkHttpCallback<BaseArrayBean<Meeting>>() {
+	private OkHttpCallback meetingsCallback = new OkHttpCallback<JSONObject>() {
 
 		@Override
-		public void onSuccess(final BaseArrayBean<Meeting> meetingBucket) {
-			if (meetingBucket.getData().size() > 0) {
-				Logger.i("", meetingBucket.toString());
-				meetingAdapter = new MeetingAdapter(mContext, meetingBucket.getData(), onMeetingListItemClickListener);
-				recyclerView.setAdapter(new GeneralAdapter(meetingAdapter));
-				loadForumListSuccessView();
-			} else {
+		public void onSuccess(final JSONObject meetingBucket) {
+			com.orhanobut.logger.Logger.e(meetingBucket.toJSONString());
+			if (meetingBucket.getInteger("errcode")==40001){
+				ToastUtils.showToast("登陆信息已失效 请重新登陆");
+				LoginHelper.logoutCustom(getActivity()==null?BaseApplication.getInstance():getActivity());
+				startActivity(new Intent(getActivity(), WXEntryActivity.class));
+				if (getActivity()!=null){
+					getActivity().finish();
+				}
+				return;
+			}
+
+			JSONArray jsonArray = meetingBucket.getJSONObject("data").getJSONArray("list");
+			List<Meeting> meetings = jsonArray.toJavaList(Meeting.class);
+			if (meetingBucket.getJSONObject("data").getInteger("totalPage") <= currentPage) {
+				swipeRefreshLayout.setEnableLoadMore(false);
+			}else {
+				swipeRefreshLayout.setEnableLoadMore(true);
+			}
+
+			if (currentPage==1){
+				meetingAdapter=null;
+			}
+
+			if (currentPage==1&&meetings.size()<=0){
 				loadForumListFaildView();
 			}
+			/*if (meetings.size() > 0) {*/
+				if (meetingAdapter==null){
+					meetingAdapter = new MeetingAdapter(mContext, meetings, onMeetingListItemClickListener);
+					mGeneralAdapter = new GeneralAdapter(meetingAdapter);
+					recyclerView.setAdapter(mGeneralAdapter);
+				}else {
+					meetingAdapter.notifyDataSetChanged(meetings);
+				}
+
+				if (meetingAdapter.getItemCount()<=0){
+					loadForumListFaildView();
+				}else {
+					loadForumListSuccessView();
+				}
+
+			/*} else {
+				loadForumListFaildView();
+			}*/
 		}
 
 		@Override
 		public void onFailure(int errorCode, BaseException exception) {
 			super.onFailure(errorCode, exception);
-			loadForumListFaildView();
-			Toast.makeText(mContext, exception.getMessage(), Toast.LENGTH_SHORT).show();
+//			loadForumListFaildView();
+			ToastUtils.showToast("网络连接失败 请重试");
+//			Toast.makeText(mContext, exception.getMessage(), Toast.LENGTH_SHORT).show();
 		}
 
 		@Override
 		public void onFinish() {
 			super.onFinish();
-			swipeRefreshLayout.setRefreshing(false);
+			swipeRefreshLayout.finishRefresh();
+			swipeRefreshLayout.finishLoadMore();
 		}
 	};
 
@@ -473,7 +545,10 @@ public class MeetingsFragment extends BaseFragment {
 			@Override
 			public void onFailure(int errorCode, BaseException exception) {
 				super.onFailure(errorCode, exception);
-				Toast.makeText(mContext, exception.getMessage(), Toast.LENGTH_SHORT).show();
+				if(errorCode!=-1){
+					Toast.makeText(mContext, exception.getMessage(), Toast.LENGTH_SHORT).show();
+				}
+
 			}
 		};
 	}
@@ -493,7 +568,9 @@ public class MeetingsFragment extends BaseFragment {
 		@Override
 		public void onFailure(int errorCode, BaseException exception) {
 			super.onFailure(errorCode, exception);
-			Toast.makeText(mContext, exception.getMessage(), Toast.LENGTH_SHORT).show();
+			if(errorCode!=-1){
+				Toast.makeText(mContext, exception.getMessage(), Toast.LENGTH_SHORT).show();
+			}
 		}
 	};
 
@@ -512,7 +589,9 @@ public class MeetingsFragment extends BaseFragment {
 
 			@Override
 			public void onFailure(int errorCode, BaseException exception) {
-				Toast.makeText(mContext, "网络异常，请稍后重试！", Toast.LENGTH_SHORT).show();
+				if(errorCode!=-1){
+					Toast.makeText(mContext, exception.getMessage(), Toast.LENGTH_SHORT).show();
+				}
 			}
 
 		};

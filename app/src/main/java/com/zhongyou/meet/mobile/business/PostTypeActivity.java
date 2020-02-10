@@ -89,7 +89,7 @@ public class PostTypeActivity extends BaseDataBindingActivity<ActivityPosttypeBi
 			super.onFailure(errorCode, exception);
 			String errorMsg = "错误码：" + errorCode + "，错误信息：" + exception.getMessage();
 			ZYAgent.onEvent(PostTypeActivity.this, errorMsg);
-			ToastUtils.showToast(errorMsg);
+//			ToastUtils.showToast(errorMsg);
 		}
 	};
 

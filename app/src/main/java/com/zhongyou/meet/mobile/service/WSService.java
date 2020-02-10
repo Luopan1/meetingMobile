@@ -780,10 +780,11 @@ public class WSService extends Service {
         public void call(final Object... args) {
             ZYAgent.onEvent(getApplicationContext(),"ON_FORUM_SEND_CONTENT");
             Log.i("wsserver", "Listener ON_FORUM_SEND_CONTENT=="+args);
-            ForumSendEvent event = new ForumSendEvent();
-            JSONObject json = (JSONObject) args[0];
-            ChatMesData.PageDataEntity entity = new ChatMesData.PageDataEntity();
+
             try {
+                ForumSendEvent event = new ForumSendEvent();
+                JSONObject json = (JSONObject) args[0];
+                ChatMesData.PageDataEntity entity = new ChatMesData.PageDataEntity();
                 entity.setContent(json.getString("content"));
                 entity.setId(json.getString("id"));
                 entity.setMsgType(0);
@@ -796,11 +797,12 @@ public class WSService extends Service {
                 entity.setLocalState(0);
                 entity.setMeetingId(json.getString("meetingId"));
                 entity.setAtailUserId(json.getString("atailUserId"));
+                event.setEntity(entity);
+                RxBus.sendMessage(event);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            event.setEntity(entity);
-            RxBus.sendMessage(event);
+
 
 
         }

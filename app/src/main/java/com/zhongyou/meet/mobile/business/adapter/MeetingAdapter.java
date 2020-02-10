@@ -12,6 +12,7 @@ import com.zhongyou.meet.mobile.R;
 import com.zhongyou.meet.mobile.entities.Meeting;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -20,15 +21,20 @@ import java.util.ArrayList;
 public class MeetingAdapter extends OpenPresenter {
 
     private Context mContext;
-    private ArrayList<Meeting> meetings;
+    private List<Meeting> meetings;
 
     private GeneralAdapter mAdapter;
     private OnItemClickListener listener;
 
-    public MeetingAdapter(Context context, ArrayList<Meeting> meetings, OnItemClickListener listener) {
+    public MeetingAdapter(Context context, List<Meeting> meetings, OnItemClickListener listener) {
         this.mContext = context;
         this.meetings = meetings;
         this.listener = listener;
+    }
+
+    public void notifyDataSetChanged(List<Meeting> meetings){
+        this.meetings.addAll(meetings);
+        this.mAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -40,6 +46,8 @@ public class MeetingAdapter extends OpenPresenter {
     public int getItemCount() {
         return meetings != null ? meetings.size() : 0;
     }
+
+
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {

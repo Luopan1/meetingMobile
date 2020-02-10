@@ -3,6 +3,7 @@ package com.zhongyou.meet.mobile;
 import android.graphics.Typeface;
 import android.support.multidex.MultiDex;
 import android.support.multidex.MultiDexApplication;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
@@ -27,8 +28,8 @@ public class BaseApplication extends MultiDexApplication {
 	public static final String TAG = "BaseApplication";
 
 	private static BaseApplication instance;
-
 	private Socket mSocket;
+
 
 
 	@Override
@@ -37,7 +38,7 @@ public class BaseApplication extends MultiDexApplication {
 		com.orhanobut.logger.Logger.addLogAdapter(new AndroidLogAdapter());
 		instance = this;
 		MultiDex.install(this);
-		getHostUrl();
+//		getHostUrl();
 
 		Toasty.Config.getInstance()
 				.setToastTypeface(Typeface.createFromAsset(getAssets(), "PCap Terminal.otf"))
@@ -83,40 +84,6 @@ public class BaseApplication extends MultiDexApplication {
         });*/
 	}
 
-	private void getHostUrl() {
-		ApiClient.getInstance().getHttpBaseUrl(this, new OkHttpCallback<com.alibaba.fastjson.JSONObject>() {
-
-			@Override
-			public void onSuccess(com.alibaba.fastjson.JSONObject entity) {
-
-				if (entity.getInteger("errcode")==0.0){
-					Constant.WEBSOCKETURL=entity.getJSONObject("data").getJSONObject("staticRes").getString("websocket");
-					Constant.APIHOSTURL=entity.getJSONObject("data").getJSONObject("staticRes").getString("domain");
-					Constant.DOWNLOADURL=entity.getJSONObject("data").getJSONObject("staticRes").getString("apiDownloadUrl");
-					com.orhanobut.logger.Logger.e("webSocket:="+Constant.WEBSOCKETURL);
-					com.orhanobut.logger.Logger.e("ApiHost:="+Constant.APIHOSTURL);
-					com.orhanobut.logger.Logger.e("DownLoadUrl:="+Constant.DOWNLOADURL);
-					if (Constant.WEBSOCKETURL==null||Constant.APIHOSTURL==null){
-						return;
-					}
-					initSocket();
-					ApiClient.getInstance().urlConfig(staticResCallback);
-				}
-
-			}
-
-			@Override
-			public void onFailure(int errorCode, BaseException exception) {
-				com.orhanobut.logger.Logger.e(exception.getMessage());
-				Toasty.error(getInstance(),exception.getMessage(), Toast.LENGTH_SHORT, true).show();
-			}
-
-			@Override
-			public void onFinish() {
-
-			}
-		});
-	}
 
 	public static BaseApplication getInstance() {
 		return instance;
@@ -167,6 +134,23 @@ public class BaseApplication extends MultiDexApplication {
 	}
 
 	public Socket getSocket() {
+		if (mSocket == null) {
+			try {
+				IO.Options options = new IO.Options();
+				options.forceNew = false;
+				options.reconnection = true;
+				options.reconnectionDelay = 1000;
+				options.reconnectionDelayMax = 5000;
+				options.reconnectionAttempts = 10;
+				options.query = "userId=" + Preferences.getUserId();
+				return IO.socket(Constant.WEBSOCKETURL, options);
+
+			} catch (URISyntaxException e) {
+				Logger.i(TAG, "初始化WebSocket失败" + e.getMessage());
+				TCAgent.onEvent(this, "WebSocket", "初始化WebSocket失败" + e.getMessage());
+				throw new RuntimeException(e);
+			}
+		}
 		return mSocket;
 	}
 

@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.orhanobut.logger.Logger;
 import com.zhongyou.meet.mobile.ApiClient;
 import com.zhongyou.meet.mobile.BaseException;
 import com.zhongyou.meet.mobile.BuildConfig;
@@ -131,7 +132,13 @@ public class SettingActivity extends BasicActivity {
             @Override
             public void onFailure(int errorCode, BaseException exception) {
                 super.onFailure(errorCode, exception);
-                Toast.makeText(mContext, "" + exception.getMessage(), Toast.LENGTH_SHORT).show();
+                Logger.e("errorCode:"+errorCode);
+                if (errorCode!=-1){
+                    Toast.makeText(mContext, "" + exception.getMessage(), Toast.LENGTH_SHORT).show();
+                }else {
+                    Toast.makeText(mContext, "服务器异常  请稍后再试", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
     }

@@ -115,31 +115,21 @@ public class DiscussFragment extends BaseFragment {
 			if (o instanceof ForumSendEvent) {
 
 				ChatMesData.PageDataEntity entity=((ForumSendEvent) o).getEntity();
-				Observable.create((Observable.OnSubscribe<ForumMeeting>) subscriber -> {
-
-					for (ForumMeeting forumMeeting : forumMeetingAdapter.getData()) {
-						subscriber.onNext(forumMeeting);
-					}
-
-				}).subscribeOn(Schedulers.io())
-						.observeOn(AndroidSchedulers.mainThread())
-						.subscribe(forumMeeting -> {
-							if (entity.getMeetingId().equals(forumMeeting.getMeetingId())) {
-								updateForumListUnReadInformationAndAtailFlag(forumMeeting, entity, forumMeetingAdapter);
-							}
-						});
-
 				for (ForumMeeting forumMeeting : forumMeetingAdapter.getData()) {
-
-
 					if (entity.getMeetingId().equals(forumMeeting.getMeetingId())) {
-
-						getActivity().runOnUiThread(() -> updateForumListUnReadInformationAndAtailFlag(forumMeeting, entity, forumMeetingAdapter));
+						if (getActivity()!=null){
+							getActivity().runOnUiThread(new Runnable() {
+								@Override
+								public void run() {
+									updateForumListUnReadInformationAndAtailFlag(forumMeeting, entity, forumMeetingAdapter);
+								}
+							});
+						}
 					}
 				}
+
 			}
 		});
-
 		mSearchView.setOnClickListener(v -> {
 			Intent searchMeetingIntent = new Intent(DiscussFragment.this.getContext(), MeetingSearchActivity.class);
 			searchMeetingIntent.putExtra(KEY_MEETING_TYPE, MeetingsFragment.TYPE_PUBLIC_MEETING);

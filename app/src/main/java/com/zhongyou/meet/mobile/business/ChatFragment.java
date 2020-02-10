@@ -258,8 +258,10 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 
 					} else {
 						getActivity().runOnUiThread(() -> {
-							adapter.addData(adapter.getData().size(), ((ForumSendEvent) o).getEntity());
-							recyclerViewChat.smoothScrollToPosition(adapter.getData().size());
+							if (adapter!=null){
+								adapter.addData(adapter.getData().size(), ((ForumSendEvent) o).getEntity());
+								recyclerViewChat.smoothScrollToPosition(adapter.getData().size());
+							}
 						});
 
 					}

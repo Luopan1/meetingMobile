@@ -1,10 +1,12 @@
 package com.zhongyou.meet.mobile.business;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -87,8 +89,32 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
 	@Override
 	public void onMyVisible() {
 		super.onMyVisible();
+//		getUserInfo();
+
+		if (!TextUtils.isEmpty(Preferences.getUserName())) {
+			mTv_name.setText(Preferences.getUserName());
+		}
 
 
+		if (getActivity() == null) {
+			return;
+		}
+
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+			if (getActivity().isDestroyed()) {
+				return;
+			}
+		}
+		if (mImg_face == null) {
+			return;
+		}
+		if (!TextUtils.isEmpty(Preferences.getUserPhoto())) {
+			Glide.with(getActivity()).load(Preferences.getUserPhoto()).asBitmap()
+					.diskCacheStrategy(DiskCacheStrategy.ALL)
+					.error(R.mipmap.baby_default_avatar)
+					.placeholder(R.drawable.tx)
+					.into(mImg_face);
+		}
 	}
 
 	private void getUserInfo() {
@@ -130,7 +156,7 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
 		if (!Preferences.isLogin()) {
 			return;
 		}
-		ApiClient.getInstance().requestUser(this, new OkHttpCallback<BaseBean<UserData>>() {
+		ApiClient.getInstance().requestUserOld(this, new OkHttpCallback<BaseBean<UserData>>() {
 			@Override
 			public void onSuccess(BaseBean<UserData> entity) {
 				if (entity == null || entity.getData() == null || entity.getData().getUser() == null) {
@@ -144,6 +170,19 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
 //                initCurrentItem();
 				if (wechat != null) {
 					LoginHelper.savaWeChat(wechat);
+				}
+
+				if (getActivity() == null) {
+					return;
+				}
+
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+					if (getActivity().isDestroyed()) {
+						return;
+					}
+				}
+				if (mImg_face == null) {
+					return;
 				}
 				if (!TextUtils.isEmpty(user.getPhoto())) {
 					Glide.with(getActivity()).load(user.getPhoto()).asBitmap()

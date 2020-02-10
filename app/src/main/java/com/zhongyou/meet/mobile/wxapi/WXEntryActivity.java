@@ -83,7 +83,6 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
 	private BasePopupView mLoadingDialog;
 
 
-
 	@Override
 	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 		super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -94,7 +93,7 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
 	public void onPermissionsGranted(int i, @NonNull List<String> list) {
 		/*registerDevice();
 
-		*/
+		 */
 
 
 	}
@@ -132,7 +131,7 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.login_activity);
-			Log.e("onCreate++","onCreate");
+		Log.e("onCreate++", "onCreate");
 
 
 		wchatLoginImage = findViewById(R.id.layout_wx);
@@ -151,9 +150,9 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
 		});
 
 		reToWx();
-		if (TextUtils.isEmpty(Preferences.getWeiXinHead())){
+		if (TextUtils.isEmpty(Preferences.getWeiXinHead())) {
 			getHostUrl(2);
-		}else {
+		} else {
 			getHostUrl(1);
 		}
 
@@ -167,18 +166,29 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
 
 
 	protected void initView() {
-		Logger.e("initViews");
+		Logger.e("initViews-------------------------------");
 		if (Preferences.isLogin()) {
-			Logger.e("Preferences.isLogin()");
+			String userMobile = Preferences.getUserMobile();
 
-			ApiClient.getInstance().requestUser(this, new OkHttpCallback<BaseBean<UserData>>() {
+			if (TextUtils.isEmpty(userMobile)) {
+				BindActivity.actionStart(WXEntryActivity.this, true, false);
+			} else if (Preferences.isUserinfoEmpty()) {
+				UserInfoActivity.actionStart(WXEntryActivity.this, true, true);
+			} else {
+				startActivity(new Intent(WXEntryActivity.this, HomeActivity.class));
+			}
+			finish();
+		/*	ApiClient.getInstance().requestUser(this, new OkHttpCallback<BaseBean<UserData>>() {
+
+
+
 				@Override
 				public void onSuccess(BaseBean<UserData> entity) {
 					if (entity == null || entity.getData() == null || entity.getData().getUser() == null) {
 						Toast.makeText(WXEntryActivity.this, "用户数据为空", Toast.LENGTH_SHORT).show();
 						return;
 					}
-					Logger.i(JSON.toJSONString(entity));
+//					Logger.i(JSON.toJSONString(entity));
 
 //                    BindActivity.actionStart(WXEntryActivity.this,true,true);
 
@@ -186,22 +196,13 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
 					if (wechat != null) {
 						LoginHelper.savaWeChat(wechat);
 					}
-
-					//验证用户是否存在
-					User user = entity.getData().getUser();
-
-					if (TextUtils.isEmpty(user.getMobile())) {
-						BindActivity.actionStart(WXEntryActivity.this, true, false);
-					} else if (Preferences.isUserinfoEmpty()) {
-						boolean isUserAuthByHEZY = user.getAuditStatus() == 1;
-						UserInfoActivity.actionStart(WXEntryActivity.this, true, isUserAuthByHEZY);
-					} else {
-						startActivity(new Intent(WXEntryActivity.this, HomeActivity.class));
-					}
-
-					finish();
 				}
-			});
+
+				@Override
+				public void onFailure(int errorCode, BaseException exception) {
+					super.onFailure(errorCode, exception);
+				}
+			});*/
 		}
 
 		mWxApi.handleIntent(getIntent(), this);
@@ -220,7 +221,7 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
 	}
 
 	private void getHostUrl(int type) {
-		if (type==1){
+		if (type == 1) {
 			mLoadingDialog = new XPopup.Builder(this)
 					.dismissOnBackPressed(false)
 					.dismissOnTouchOutside(false)
@@ -228,41 +229,43 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
 					.show();
 		}
 
-		ApiClient.getInstance().getHttpBaseUrl(this, new OkHttpCallback<com.alibaba.fastjson.JSONObject>() {
+		registerDevice();
 
-			@Override
-			public void onSuccess(com.alibaba.fastjson.JSONObject entity) {
-
-				if (entity.getInteger("errcode") == 0.0) {
-					Constant.WEBSOCKETURL = entity.getJSONObject("data").getJSONObject("staticRes").getString("websocket");
-					Constant.APIHOSTURL = entity.getJSONObject("data").getJSONObject("staticRes").getString("domain");
-					Constant.DOWNLOADURL = entity.getJSONObject("data").getJSONObject("staticRes").getString("apiDownloadUrl");
-					com.orhanobut.logger.Logger.e("webSocket:=" + Constant.WEBSOCKETURL);
-					com.orhanobut.logger.Logger.e("ApiHost:=" + Constant.APIHOSTURL);
-					com.orhanobut.logger.Logger.e("DownLoadUrl:=" + Constant.DOWNLOADURL);
-					if (Constant.WEBSOCKETURL == null || Constant.APIHOSTURL == null) {
-						return;
-					}
-					registerDevice();
-
-				}
-
-			}
-
-			@Override
-			public void onFailure(int errorCode, BaseException exception) {
-				com.orhanobut.logger.Logger.e(exception.getMessage());
-				if (mLoadingDialog!=null){
-					mLoadingDialog.dismiss();
-				}
-				Toasty.error(getInstance(), exception.getMessage(), Toast.LENGTH_SHORT, true).show();
-			}
-
-			@Override
-			public void onFinish() {
-
-			}
-		});
+//		ApiClient.getInstance().getHttpBaseUrl(this, new OkHttpCallback<com.alibaba.fastjson.JSONObject>() {
+//
+//			@Override
+//			public void onSuccess(com.alibaba.fastjson.JSONObject entity) {
+//
+//				if (entity.getInteger("errcode") == 0.0) {
+//					Constant.WEBSOCKETURL = entity.getJSONObject("data").getJSONObject("staticRes").getString("websocket");
+//					Constant.APIHOSTURL = entity.getJSONObject("data").getJSONObject("staticRes").getString("domain");
+//					Constant.DOWNLOADURL = entity.getJSONObject("data").getJSONObject("staticRes").getString("apiDownloadUrl");
+//					com.orhanobut.logger.Logger.e("webSocket:=" + Constant.WEBSOCKETURL);
+//					com.orhanobut.logger.Logger.e("ApiHost:=" + Constant.APIHOSTURL);
+//					com.orhanobut.logger.Logger.e("DownLoadUrl:=" + Constant.DOWNLOADURL);
+//					if (Constant.WEBSOCKETURL == null || Constant.APIHOSTURL == null) {
+//						return;
+//					}
+//
+//
+//				}
+//
+//			}
+//
+//			@Override
+//			public void onFailure(int errorCode, BaseException exception) {
+//				com.orhanobut.logger.Logger.e(exception.getMessage());
+//				if (mLoadingDialog!=null){
+//					mLoadingDialog.dismiss();
+//				}
+//				Toasty.error(getInstance(), exception.getMessage(), Toast.LENGTH_SHORT, true).show();
+//			}
+//
+//			@Override
+//			public void onFinish() {
+//
+//			}
+//		});
 	}
 
 
@@ -270,7 +273,7 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
 	 * 上传设备信息
 	 */
 	private void registerDevice() {
-		Logger.e(Constant.APIHOSTURL);
+		Logger.e(Constant.getAPIHOSTURL());
 		String uuid = Installation.id(this);
 		DisplayMetrics metric = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(metric);
@@ -320,6 +323,7 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
 	};
 
 	private void initEntry() {
+		Logger.e("initEntry  ++++++++++++++++");
 		if (EasyPermissions.hasPermissions(this, perms)) {
 			Logger.e("hasPermissions");
 			initView();
@@ -329,12 +333,25 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
 	}
 
 	private void versionCheck() {
-		Logger.e(Constant.DOWNLOADURL);
+		Logger.e(Constant.getDOWNLOADURL());
+
+		if (mLoadingDialog == null) {
+			mLoadingDialog = new XPopup.Builder(this)
+					.dismissOnBackPressed(false)
+					.dismissOnTouchOutside(false)
+					.asLoading("正在加载中")
+					.show();
+		} else {
+			if (mLoadingDialog.isDismiss()) {
+				mLoadingDialog.show();
+			}
+		}
 		ApiClient.getInstance().versionCheck(this, new OkHttpCallback<BaseBean<Version>>() {
 			@Override
 			public void onSuccess(BaseBean<Version> entity) {
 				Version version = entity.getData();
-				if (version == null || version.getImportance() == 0||version.getImportance()==1) {
+				if (version == null || version.getImportance() == 0 || version.getImportance() == 1) {
+					Logger.e("1111111   initEntry");
 					initEntry();
 					return;
 				}
@@ -344,13 +361,13 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
 					/*startActivity(new Intent(getApplication(), UpdateActivity.class).putExtra("version", version));
 					finish();*/
 					isForceUpDate = true;
-				} else if (version.getImportance() == 2||version.getImportance()==3) {
+				} else if (version.getImportance() == 2 || version.getImportance() == 3) {
 					//弹窗提醒更新
 					isForceUpDate = false;
 				}
 
 				try {
-					if (ApkUtil.compareVersion(version.getVersionDesc(),BuildConfig.VERSION_NAME)>0){
+					if (ApkUtil.compareVersion(version.getVersionDesc(), BuildConfig.VERSION_NAME) > 0) {
 						UpdateUtils.APP_UPDATE_DOWN_APK_PATH = getResources().getString(R.string.app_name) + File.separator + "download";
 						String desc = version.getName() + "\n" + "最新版本:" + version.getVersionDesc();
 						UpdateFragment updateFragment = UpdateFragment.showFragment(WXEntryActivity.this,
@@ -358,7 +375,7 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
 								version.getName() + "-" + version.getVersionDesc(),
 								desc, BuildConfig.APPLICATION_ID);
 
-						if (mLoadingDialog!=null){
+						if (mLoadingDialog != null) {
 							mLoadingDialog.dismiss();
 						}
 
@@ -367,6 +384,7 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
 							public void onClick(int i) {
 								//点击下载 1   暂停下载 1  或者下次再说 0
 								if (i == 0) {
+									Logger.e("222222   initEntry");
 									initEntry();
 								} else if (i == 1) {
 									int downloadStatus = updateFragment.getDownloadStatus();
@@ -379,7 +397,8 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
 
 							}
 						});
-					}else {
+					} else {
+						Logger.e("33333   initEntry");
 						initEntry();
 					}
 
@@ -388,19 +407,28 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
 				}
 
 
-
 			}
 
 
 			@Override
 			public void onFailure(int errorCode, BaseException exception) {
 				super.onFailure(errorCode, exception);
-				if (mLoadingDialog!=null){
+				if (mLoadingDialog != null) {
 					mLoadingDialog.dismiss();
 				}
-				Toasty.error(WXEntryActivity.this,exception.getMessage(),Toast.LENGTH_SHORT,true).show();
-				Logger.e(exception.getMessage());
-//                initEntry();
+				/*Toasty.error(WXEntryActivity.this,exception.getMessage(),Toast.LENGTH_SHORT,true).show();
+				Logger.e(exception.getMessage());*/
+				Logger.e("4444444   initEntry");
+				initEntry();
+			}
+
+			@Override
+			public void onFinish() {
+				super.onFinish();
+				if (mLoadingDialog != null) {
+					mLoadingDialog.dismiss();
+				}
+//				initEntry();
 			}
 		});
 	}
@@ -474,7 +502,18 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
 
 
 	private void requestWechatLogin(String code, String state) {
-		Logger.e(Constant.APIHOSTURL);
+		Logger.e(Constant.getAPIHOSTURL() + "----------------------");
+		if (mLoadingDialog != null) {
+			if (!mLoadingDialog.isShow()) {
+				mLoadingDialog.show();
+			}
+		} else {
+			mLoadingDialog = new XPopup.Builder(this)
+					.dismissOnBackPressed(false)
+					.dismissOnTouchOutside(false)
+					.asLoading("正在加载中")
+					.show();
+		}
 		ApiClient.getInstance().requestWechat(code, state, this, new OkHttpCallback<BaseBean<LoginWechat>>() {
 
 			@Override
@@ -510,6 +549,9 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
 			@Override
 			public void onFinish() {
 				cancelDialog();
+				if (mLoadingDialog != null) {
+					mLoadingDialog.dismiss();
+				}
 			}
 		});
 	}

@@ -19,6 +19,7 @@ import com.zhongyou.meet.mobile.BuildConfig;
 import com.zhongyou.meet.mobile.Constant;
 import com.zhongyou.meet.mobile.entities.base.BaseBean;
 import com.zhongyou.meet.mobile.persistence.Preferences;
+import com.zhongyou.meet.mobile.utils.Login.LoginHelper;
 import com.zhongyou.meet.mobile.wxapi.WXEntryActivity;
 
 
@@ -53,8 +54,8 @@ public class OkHttpUtil {
     private OkHttpUtil() {
         OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder();
 
-        clientBuilder.connectTimeout(10, TimeUnit.SECONDS);
-        clientBuilder.readTimeout(10, TimeUnit.SECONDS);
+        clientBuilder.connectTimeout(30, TimeUnit.SECONDS);
+        clientBuilder.readTimeout(30, TimeUnit.SECONDS);
         clientBuilder.writeTimeout(30, TimeUnit.SECONDS);
 
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
@@ -99,7 +100,7 @@ public class OkHttpUtil {
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.code() == 502) {
                     BaseException exception = new BaseException("服务器502,请稍后重试");
-                    callbackFailure(response.code(), callback, exception);
+                    callbackFailure(-1, callback, exception);
                     return;
                 }
                 if (response.body() != null) {
@@ -114,9 +115,14 @@ public class OkHttpUtil {
                             } else if (baseBean.isTokenError()) {
                                 mContext.sendBroadcast(new Intent(BuildConfig.APPLICATION_ID + Constant.RELOGIN_ACTION).putExtra("active", false));
                                 Preferences.clear();
+                                LoginHelper.logoutCustom(BaseApplication.getInstance());
                                 mContext.startActivity(new Intent(mContext, WXEntryActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                             } else {
-                                callbackFailure(response.code(), callback, new BaseException(baseBean.getErrmsg()));
+                                if (response.code()==400){
+                                    callbackFailure(-1, callback, new BaseException(baseBean.getErrmsg()));
+                                }else {
+                                    callbackFailure(response.code(), callback, new BaseException(baseBean.getErrmsg()));
+                                }
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -124,12 +130,12 @@ public class OkHttpUtil {
                         }
                     } else {
                         BaseException exception = new BaseException("服务器resString==null,请稍后重试");
-                        callbackFailure(response.code(), callback, exception);
+                        callbackFailure(-1, callback, exception);
                     }
 
                 } else {
                     BaseException exception = new BaseException("服务器bady==null,请稍后重试");
-                    callbackFailure(response.code(), callback, exception);
+                    callbackFailure(-1, callback, exception);
                 }
             }
         });

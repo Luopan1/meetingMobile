@@ -133,7 +133,7 @@ public class PhoneRegisterActivity extends BaseDataBindingActivity<PhoneRegistLa
                         countDownTimer.cancel();
                         notificationHandler.sendEmptyMessage(SHOW_VERIFICATION_BTN);
                         mBinding.btnPhoneRequestVerificationCode.setText("获取验证码");
-                        ToastUtils.showToast(errorMsg);
+//                        ToastUtils.showToast(errorMsg);
                     }
                 });
 
@@ -201,7 +201,7 @@ public class PhoneRegisterActivity extends BaseDataBindingActivity<PhoneRegistLa
             super.onFailure(errorCode, exception);
             String errorMsg = "错误信息：" + exception.getMessage();
             ZYAgent.onEvent(PhoneRegisterActivity.this, "错误码：" + errorCode + "，" + errorMsg);
-            ToastUtils.showToast(errorMsg);
+//            ToastUtils.showToast(errorMsg);
         }
 
         @Override

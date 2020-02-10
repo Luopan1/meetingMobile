@@ -1,0 +1,9 @@
+com.alibaba.android.vlayout
+attr layoutManager
+attr reverseLayout
+attr spanCount
+attr stackFromEnd
+dimen item_touch_helper_max_drag_scroll_per_frame
+id item_touch_helper_previous_elevation
+id tag_layout_helper_bg
+styleable RecyclerView android_orientation layoutManager reverseLayout spanCount stackFromEnd
