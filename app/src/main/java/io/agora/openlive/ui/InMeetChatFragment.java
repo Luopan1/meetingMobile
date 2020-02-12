@@ -227,8 +227,9 @@ public class InMeetChatFragment extends BaseFragment implements InMeetingAdapter
             }else if(msg.obj instanceof ChatMesData.PageDataEntity){
                 ((ChatMesData.PageDataEntity)msg.obj).setLocalState(2);
                 dataChat.set(msg.what,((ChatMesData.PageDataEntity)msg.obj));
-                adapter.notifyItemChanged(msg.what);
-
+                if (adapter!=null){
+                    adapter.notifyItemChanged(msg.what);
+                }
             }
 
         }

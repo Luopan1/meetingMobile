@@ -235,6 +235,10 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 							return;
 						}
 					}
+
+					if (getActivity()==null||adapter==null){
+						return;
+					}
 					if (((ForumSendEvent) o).getEntity().getUserId().equals(Preferences.getUserId())) {
 						getActivity().runOnUiThread(() -> {
 							for (ChatMesData.PageDataEntity data : adapter.getData()) {
@@ -274,54 +278,60 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 							return;
 						}
 					}
-					getActivity().runOnUiThread(new Runnable() {
-						@Override
-						public void run() {
-							for (ChatMesData.PageDataEntity datum : adapter.getData()) {
-								if (datum.getId().equals(((ForumRevokeEvent) o).getEntity().getId())) {
-									datum.setMsgType(1);
-									adapter.notifyItemChanged(adapter.getData().indexOf(datum));
-									if (progressDialog != null && progressDialog.isShowing()) {
-										progressDialog.dismiss();
+					if (adapter!=null&&getActivity()!=null){
+						getActivity().runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								for (ChatMesData.PageDataEntity datum : adapter.getData()) {
+									if (datum.getId().equals(((ForumRevokeEvent) o).getEntity().getId())) {
+										datum.setMsgType(1);
+										adapter.notifyItemChanged(adapter.getData().indexOf(datum));
+										if (progressDialog != null && progressDialog.isShowing()) {
+											progressDialog.dismiss();
+										}
 									}
 								}
 							}
-						}
-					});
+						});
+					}
 
 				} else if (o instanceof SocketStatus) {
 					//socket连接成功 如果有发送中的消息 尝试重新发送 并且改变状态
 					if (((SocketStatus) o).getIsConnected()) {
 						if (getActivity() != null) {
-							getActivity().runOnUiThread(new Runnable() {
-								@Override
-								public void run() {
-									for (int i = 0; i < adapter.getData().size(); i++) {
-										if (adapter.getData().get(i).getLocalState() == 1) {
-											sendAction(System.currentTimeMillis(), adapter.getData().get(i).getContent());
+							if (adapter!=null){
+								getActivity().runOnUiThread(new Runnable() {
+									@Override
+									public void run() {
+										for (int i = 0; i < adapter.getData().size(); i++) {
+											if (adapter.getData().get(i).getLocalState() == 1) {
+												sendAction(System.currentTimeMillis(), adapter.getData().get(i).getContent());
+											}
 										}
 									}
-								}
-							});
+								});
+							}
+
 						}
 					} else {
 						//断开了socket的连接
 						if (getActivity() == null) {
 							return;
 						}
-						getActivity().runOnUiThread(new Runnable() {
-							@Override
-							public void run() {
-								for (int i = 0; i < adapter.getData().size(); i++) {
-									//正在发送中 就改变状态 改成发送失败
-									if (adapter.getData().get(i).getLocalState() == 1) {
-										adapter.getData().get(i).setLocalState(2);
-										adapter.notifyItemChanged(i);
+						if (adapter!=null){
+							getActivity().runOnUiThread(new Runnable() {
+								@Override
+								public void run() {
+									for (int i = 0; i < adapter.getData().size(); i++) {
+										//正在发送中 就改变状态 改成发送失败
+										if (adapter.getData().get(i).getLocalState() == 1) {
+											adapter.getData().get(i).setLocalState(2);
+											adapter.notifyItemChanged(i);
+										}
 									}
 								}
-							}
-						});
-
+							});
+						}
 					}
 
 				}

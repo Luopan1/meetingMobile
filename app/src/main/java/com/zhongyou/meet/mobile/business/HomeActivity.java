@@ -288,7 +288,7 @@ public class HomeActivity extends BasicActivity implements View.OnClickListener 
 	protected void onRestart() {
 		super.onRestart();
 
-		registerReceiver(phoneReceiver, intentFilter);
+//		registerReceiver(phoneReceiver, intentFilter);
 
 		if (TextUtils.isEmpty(Preferences.getToken())) {
 			startActivity(new Intent(this, WXEntryActivity.class));
