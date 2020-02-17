@@ -190,11 +190,11 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 //									int i = adapter.getData().indexOf(entity);
 //									adapter.getData().get(i).setContent(Preferences.getImgUrl() + key);
 									entity.setUpLoadScuucess(true);
-									entity.setContent( Constant.getImageHost()+ key);
+									entity.setContent( Preferences.getImgUrl()+ key);
 									HashMap<String, Object> params = new HashMap<String, Object>();
 									params.put("meetingId", mMeetingId);
 									params.put("ts", ts);
-									params.put("content", Constant.getImageHost()+ key);
+									params.put("content", Preferences.getImgUrl()+ key);
 									params.put("type", 1);
 									ApiClient.getInstance().expostorPostChatMessage(TAG, expostorStatsCallback, params);
 

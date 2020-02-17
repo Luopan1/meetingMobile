@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.zhongyou.meet.mobile.BaseApplication;
+import com.zhongyou.meet.mobile.BuildConfig;
 import com.zhongyou.meet.mobile.Constant;
 
 
@@ -417,7 +418,7 @@ public class Preferences {
     }
 
     public static String getImgUrl() {
-        return Constant.getImageHost();
+        return getPreferences().getString(PREFERENCE_IMG_URL, BuildConfig.DEBUG?"http://syimage.zhongyouie.com/":"http://image.zhongyouie.com/");
     }
 
     public static void setImgUrl(String str) {

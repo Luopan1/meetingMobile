@@ -531,7 +531,7 @@ public class UserInfoActivity extends BaseDataBindingActivity<UserinfoActivityBi
 		Logger.i(TAG, "key " + key);
 		if (!TextUtils.isEmpty(key)) {
 			if (TextUtils.isEmpty(Preferences.getImgUrl())) {
-//				ApiClient.getInstance().getImageUrlPath(TAG,imgePathCallBack(key));
+				ApiClient.getInstance().getImageUrlPath(TAG,imgePathCallBack(key));
 				ApiClient.getInstance().urlConfig(staticResCallback(key));
 			} else {
 				Map<String, String> params = new HashMap<>();

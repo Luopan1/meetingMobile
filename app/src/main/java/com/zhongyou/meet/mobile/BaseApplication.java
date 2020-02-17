@@ -135,6 +135,8 @@ public class BaseApplication extends com.jess.arms.base.BaseApplication {
 				.setSupportDP(false)
 				.setSupportSP(false)
 				.setSupportSubunits(Subunits.PT);
+
+		ApiClient.getInstance().urlConfig(staticResCallback);
 	}
 
 	/*private void getHostUrl() {
@@ -154,7 +156,7 @@ public class BaseApplication extends com.jess.arms.base.BaseApplication {
 						return;
 					}
 
-					ApiClient.getInstance().urlConfig(staticResCallback);
+
 				}
 
 			}

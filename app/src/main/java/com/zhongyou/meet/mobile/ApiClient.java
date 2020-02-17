@@ -478,9 +478,9 @@ public class ApiClient {
      * 获取地址前缀
      * */
 
-   /* public void getImageUrlPath(Object tag, OkHttpCallback callback){
+    public void getImageUrlPath(Object tag, OkHttpCallback callback){
         okHttpUtil.get(Constant.getAPIHOSTURL()+"/osg/resource/host/image",tag,callback);
-    }*/
+    }
 
     /**
      * 获取服务器地址
