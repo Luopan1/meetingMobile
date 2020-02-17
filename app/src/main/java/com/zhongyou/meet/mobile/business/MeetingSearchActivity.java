@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -20,9 +21,15 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.scwang.smartrefresh.header.MaterialHeader;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.zhongyou.meet.mobile.ApiClient;
 import com.zhongyou.meet.mobile.BaseException;
-import com.zhongyou.meet.mobile.Constant;
 import com.zhongyou.meet.mobile.R;
 import com.zhongyou.meet.mobile.business.adapter.ForumMeetingAdapter;
 import com.zhongyou.meet.mobile.business.adapter.GeneralAdapter;
@@ -43,6 +50,7 @@ import com.zhongyou.meet.mobile.utils.statistics.ZYAgent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import es.dmoral.toasty.Toasty;
@@ -50,7 +58,7 @@ import io.agora.openlive.ui.MeetingInitActivity;
 
 public class MeetingSearchActivity extends BasicActivity {
 
-    private SwipeRefreshLayout swipeRefreshLayout;
+    private SmartRefreshLayout swipeRefreshLayout;
     private RecyclerView recyclerView;
     private EditText searchEdit;
     private TextView cancelText;
@@ -60,6 +68,7 @@ public class MeetingSearchActivity extends BasicActivity {
     //会议类型
     private int meetingType;
     private ForumMeetingAdapter forumMeetingAdapter;
+    private String mKeyWords;
 
     @Override
     public String getStatisticsTag() {
@@ -75,7 +84,7 @@ public class MeetingSearchActivity extends BasicActivity {
 
     private ForumMeetingAdapter.OnItemClickListener onForumMeetingItemClickListener = (view, forumMeeting, position) -> {
         forumMeeting.setNewMsgCnt(0);
-        if (forumMeeting.isAtailFlag()){
+        if (forumMeeting.isAtailFlag()) {
             forumMeeting.setAtailFlag(!forumMeeting.isAtailFlag());
         }
         forumMeetingAdapter.notifyItemChanged(position);
@@ -92,18 +101,29 @@ public class MeetingSearchActivity extends BasicActivity {
 
     private void initView() {
         swipeRefreshLayout = findViewById(R.id.mSwipeRefreshLayout);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        swipeRefreshLayout.setRefreshHeader(new MaterialHeader(this));
+        swipeRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
             @Override
-            public void onRefresh() {
-                if (TextUtils.isEmpty(searchEdit.getText())) {
+            public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+                mKeyWords = searchEdit.getText().toString();
+                if (TextUtils.isEmpty(mKeyWords)) {
                     Toast.makeText(mContext, "搜索会议名称不能为空", Toast.LENGTH_SHORT).show();
                 } else {
-                    requestMeetings(searchEdit.getText().toString(), meetingType);
+                    currentPage=1;
+                    mKeyWords=searchEdit.getText().toString();
+                    requestMeetings(mKeyWords, meetingType);
                 }
             }
         });
 
 
+        swipeRefreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
+            @Override
+            public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
+                currentPage++;
+                requestMeetings(mKeyWords, meetingType);
+            }
+        });
 
         searchEdit = findViewById(R.id.search_text);
 
@@ -121,9 +141,10 @@ public class MeetingSearchActivity extends BasicActivity {
                     if (TextUtils.isEmpty(searchEdit.getText())) {
                         Toast.makeText(mContext, "搜索会议名称不能为空", Toast.LENGTH_SHORT).show();
                     } else {
-                        requestMeetings(searchEdit.getText().toString(), meetingType);
+                        swipeRefreshLayout.autoRefresh();
+//						requestMeetings(searchEdit.getText().toString(), meetingType);
                         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                        imm.hideSoftInputFromWindow(searchEdit.getWindowToken(),0) ;
+                        imm.hideSoftInputFromWindow(searchEdit.getWindowToken(), 0);
                     }
                     return true;
                 } else {
@@ -177,8 +198,9 @@ public class MeetingSearchActivity extends BasicActivity {
         setResult(meetingType);
     }
 
+    private int currentPage = 1;
+
     private void requestMeetings(String meetingTitle, int meetingType) {
-        swipeRefreshLayout.setRefreshing(true);
         if (meetingType == MeetingsFragment.TYPE_FORUM_MEETING) {
             Map<String, String> params = new HashMap<>();
             params.put(ApiClient.PAGE_NO, "1");
@@ -188,36 +210,56 @@ public class MeetingSearchActivity extends BasicActivity {
             }
             apiClient.getAllForumMeeting(TAG, params, forumMeetingsCallback);
         } else {
-            apiClient.getAllMeeting(TAG, meetingTitle, meetingType, meetingsCallback);
+            apiClient.getAllMeeting(TAG, meetingTitle, meetingType, currentPage, meetingsCallback);
         }
     }
 
-    private OkHttpCallback meetingsCallback = new OkHttpCallback<BaseArrayBean<Meeting>>() {
+    private GeneralAdapter mGeneralAdapter;
+    private OkHttpCallback meetingsCallback = new OkHttpCallback<JSONObject>() {
 
         @Override
-        public void onSuccess(final BaseArrayBean<Meeting> meetingBucket) {
-            if (meetingBucket.getData().size() > 0) {
-                Logger.i("", meetingBucket.toString());
-                meetingAdapter = new MeetingAdapter(mContext, meetingBucket.getData(), onItemClickListener);
-                recyclerView.setAdapter(new GeneralAdapter(meetingAdapter));
-                recyclerView.setVisibility(View.VISIBLE);
-                emptyText.setVisibility(View.GONE);
+        public void onSuccess(final JSONObject meetingBucket) {
+
+
+            JSONArray jsonArray = meetingBucket.getJSONObject("data").getJSONArray("list");
+            List<Meeting> meetings = jsonArray.toJavaList(Meeting.class);
+            if (meetingBucket.getJSONObject("data").getInteger("totalPage") <= currentPage) {
+                swipeRefreshLayout.setEnableLoadMore(false);
+                swipeRefreshLayout.setNoMoreData(true);
+            } else {
+                swipeRefreshLayout.setEnableLoadMore(true);
+                swipeRefreshLayout.setNoMoreData(false);
+            }
+
+            if (currentPage == 1) {
+                meetingAdapter = null;
+            }
+            if (meetings.size() > 0) {
+                if (meetingAdapter == null) {
+                    meetingAdapter = new MeetingAdapter(mContext, meetings, onItemClickListener);
+                    mGeneralAdapter = new GeneralAdapter(meetingAdapter);
+                    recyclerView.setAdapter(mGeneralAdapter);
+                } else {
+                    meetingAdapter.notifyDataSetChanged(meetings);
+                }
             } else {
                 recyclerView.setVisibility(View.GONE);
                 emptyText.setVisibility(View.VISIBLE);
             }
+
         }
 
         @Override
         public void onFailure(int errorCode, BaseException exception) {
             super.onFailure(errorCode, exception);
-            Toasty.error(mContext, exception.getMessage(), Toast.LENGTH_SHORT, true).show();
+//            Toasty.error(mContext, exception.getMessage(), Toast.LENGTH_SHORT, true).show();
         }
 
         @Override
         public void onFinish() {
             super.onFinish();
-            swipeRefreshLayout.setRefreshing(false);
+            swipeRefreshLayout.finishRefresh();
+            swipeRefreshLayout.finishLoadMore();
         }
     };
 
@@ -245,13 +287,14 @@ public class MeetingSearchActivity extends BasicActivity {
             super.onFailure(errorCode, exception);
             ZYAgent.onEvent(getApplicationContext(), exception.getMessage());
 //            ToastUtils.showToast("请求讨论区数据失败");
-            Toasty.error(mContext, exception.getMessage(), Toast.LENGTH_SHORT, true).show();
+//            Toasty.error(mContext, exception.getMessage(), Toast.LENGTH_SHORT, true).show();
         }
 
         @Override
         public void onFinish() {
             super.onFinish();
-            swipeRefreshLayout.setRefreshing(false);
+            swipeRefreshLayout.finishRefresh();
+            swipeRefreshLayout.finishLoadMore();
         }
     };
 
@@ -260,14 +303,6 @@ public class MeetingSearchActivity extends BasicActivity {
     private void initDialog(final Meeting meeting) {
         View view = View.inflate(mContext, R.layout.dialog_meeting_input_code, null);
         final EditText codeEdit = view.findViewById(R.id.code);
-
-        //需要录制
-        if(meeting.getIsRecord()==1){
-            Constant.isNeedRecord=true;
-        }else {
-            Constant.isNeedRecord=false;
-        }
-
         view.findViewById(R.id.confirm).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -275,9 +310,9 @@ public class MeetingSearchActivity extends BasicActivity {
                     @Override
                     public void run() {
                         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                        imm.hideSoftInputFromWindow(searchEdit.getWindowToken(),0) ;
+                        imm.hideSoftInputFromWindow(searchEdit.getWindowToken(), 0);
                     }
-                },100);
+                }, 100);
 
                 dialog.dismiss();
                 if (!TextUtils.isEmpty(codeEdit.getText())) {
@@ -317,7 +352,7 @@ public class MeetingSearchActivity extends BasicActivity {
             @Override
             public void onFailure(int errorCode, BaseException exception) {
                 super.onFailure(errorCode, exception);
-                Toasty.error(mContext, exception.getMessage(), Toast.LENGTH_SHORT, true).show();
+//                Toasty.error(mContext, exception.getMessage(), Toast.LENGTH_SHORT, true).show();
 //                Toast.makeText(mContext, exception.getMessage(), Toast.LENGTH_SHORT).show();
             }
         };
@@ -338,7 +373,7 @@ public class MeetingSearchActivity extends BasicActivity {
         @Override
         public void onFailure(int errorCode, BaseException exception) {
             super.onFailure(errorCode, exception);
-            Toasty.error(mContext, exception.getMessage(), Toast.LENGTH_SHORT, true).show();
+//            Toasty.error(mContext, exception.getMessage(), Toast.LENGTH_SHORT, true).show();
         }
     };
 
@@ -358,7 +393,7 @@ public class MeetingSearchActivity extends BasicActivity {
             @Override
             public void onFailure(int errorCode, BaseException exception) {
                 Toast.makeText(mContext, "网络异常，请稍后重试！", Toast.LENGTH_SHORT).show();
-                Toasty.error(mContext, exception.getMessage(), Toast.LENGTH_SHORT, true).show();
+//                Toasty.error(mContext, exception.getMessage(), Toast.LENGTH_SHORT, true).show();
             }
 
         };

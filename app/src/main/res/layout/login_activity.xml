@@ -106,7 +106,7 @@
             android:layout_marginRight="@dimen/dp27"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/dp42"
-            android:background="@drawable/drawable_login"
+            android:background="@drawable/wechat_icon"
             android:text="@string/bt_login"
             android:textSize="@dimen/sp16"
             android:textColor="@color/white" />
@@ -120,7 +120,7 @@
         android:focusable="true"
         android:id="@+id/layout_wx"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/dp50"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:gravity="center"
         android:orientation="vertical"
@@ -131,10 +131,19 @@
             android:layout_centerVertical="true"
             android:background="@drawable/h"/>
         <ImageView
+            android:scaleType="centerCrop"
+            android:id="@+id/icon"
             android:layout_width="@dimen/dp50"
             android:layout_height="@dimen/dp50"
+            android:layout_centerInParent="true"
+            android:background="@drawable/icon_wechat"/>
+        <TextView
+            android:layout_marginTop="40pt"
+            android:text="微信登陆"
             android:layout_centerHorizontal="true"
-            android:background="@drawable/wechat_icon"/>
+            android:layout_below="@+id/icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
 
     </RelativeLayout>
 

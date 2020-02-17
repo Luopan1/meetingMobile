@@ -80,6 +80,8 @@
         <activity android:name=".UserInfoActivity" /> <!-- 微信登录页面 -->
         <activity
             android:name=".wxapi.WXEntryActivity"
+            android:theme="@style/translucentTheme"
+            android:screenOrientation="portrait"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

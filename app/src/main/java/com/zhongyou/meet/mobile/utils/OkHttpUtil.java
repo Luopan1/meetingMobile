@@ -83,6 +83,11 @@ public class OkHttpUtil {
 
     private void request(final Request request, final OkHttpCallback callback) {
 
+        if (!NetUtils.isNetworkConnected(mContext)){
+            ToastUtils.showToast("当前无网络连接 请检查网络");
+            return;
+        }
+
         callback.onStart();
 
         call = okHttpClient.newCall(request);
@@ -99,7 +104,8 @@ public class OkHttpUtil {
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.code() == 502) {
                     BaseException exception = new BaseException("服务器502,请稍后重试");
-                    callbackFailure(response.code(), callback, exception);
+                    callbackFailure(-2, callback, exception);
+                    ToastUtils.showToast("服务器异常 请稍后再试");
                     return;
                 }
                 if (response.body() != null) {
@@ -116,20 +122,29 @@ public class OkHttpUtil {
                                 Preferences.clear();
                                 mContext.startActivity(new Intent(mContext, WXEntryActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                             } else {
-                                callbackFailure(response.code(), callback, new BaseException(baseBean.getErrmsg()));
+                                if (response.code()==400){
+                                    callbackFailure(-2, callback, new BaseException(baseBean.getErrmsg()));
+                                    ToastUtils.showToast("服务器异常 请稍后再试");
+                                }else {
+                                    callbackFailure(response.code(), callback, new BaseException(baseBean.getErrmsg()));
+                                    ToastUtils.showToast("服务器异常 请稍后再试");
+                                }
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
                             callbackFailure(response.code(), callback, new BaseException(e.getMessage()));
+
                         }
                     } else {
                         BaseException exception = new BaseException("服务器resString==null,请稍后重试");
-                        callbackFailure(response.code(), callback, exception);
+                        callbackFailure(-2, callback, exception);
+                        ToastUtils.showToast("服务器返回数据异常 请稍后再试");
                     }
 
                 } else {
                     BaseException exception = new BaseException("服务器bady==null,请稍后重试");
-                    callbackFailure(response.code(), callback, exception);
+                    ToastUtils.showToast("服务器返回数据异常 请稍后再试");
+                    callbackFailure(-2, callback, exception);
                 }
             }
         });

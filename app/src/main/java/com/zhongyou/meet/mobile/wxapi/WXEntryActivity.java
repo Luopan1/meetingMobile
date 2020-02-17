@@ -1,6 +1,7 @@
 package com.zhongyou.meet.mobile.wxapi;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +15,7 @@ import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -53,6 +55,7 @@ import com.zhongyou.meet.mobile.utils.ApkUtil;
 import com.zhongyou.meet.mobile.utils.DeviceUtil;
 import com.zhongyou.meet.mobile.utils.Installation;
 import com.zhongyou.meet.mobile.utils.Login.LoginHelper;
+import com.zhongyou.meet.mobile.utils.NetUtils;
 import com.zhongyou.meet.mobile.utils.OkHttpCallback;
 import com.zhongyou.meet.mobile.utils.RxBus;
 import com.zhongyou.meet.mobile.utils.ToastUtils;
@@ -126,11 +129,14 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
 			Manifest.permission.WRITE_EXTERNAL_STORAGE
 	};
 
+
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+
 		setContentView(R.layout.login_activity);
-			Log.e("onCreate++","onCreate");
 
 
 		wchatLoginImage = findViewById(R.id.layout_wx);
@@ -140,6 +146,10 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
 			@Override
 			public void onClick(View view) {
 				if (EasyPermissions.hasPermissions(WXEntryActivity.this, perms)) {
+					if (!NetUtils.isNetworkConnected(WXEntryActivity.this)){
+						ToastUtils.showToast("当前无网络连接 请检查网络");
+						return;
+					}
 					wchatLogin();
 				} else {
 					EasyPermissions.requestPermissions(WXEntryActivity.this, "请授予必要的权限", 0, perms);
@@ -166,46 +176,21 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
 
 
 	protected void initView() {
-		Log.e("initView()","initViews");
 		if (Preferences.isLogin()) {
-			Log.e("initView()","Preferences.isLogin()");
+			String userMobile = Preferences.getUserMobile();
 
-			ApiClient.getInstance().requestUser(this, new OkHttpCallback<BaseBean<UserData>>() {
-				@Override
-				public void onSuccess(BaseBean<UserData> entity) {
-					if (entity == null || entity.getData() == null || entity.getData().getUser() == null) {
-						Toast.makeText(WXEntryActivity.this, "用户数据为空", Toast.LENGTH_SHORT).show();
-						return;
-					}
-					Log.e("initView", "onSuccess: "+JSON.toJSONString(entity));
-
-//                    BindActivity.actionStart(WXEntryActivity.this,true,true);
-
-					Wechat wechat = entity.getData().getWechat();
-					if (wechat != null) {
-						LoginHelper.savaWeChat(wechat);
-					}
-
-					//验证用户是否存在
-					User user = entity.getData().getUser();
-
-					if (TextUtils.isEmpty(user.getMobile())) {
-						BindActivity.actionStart(WXEntryActivity.this, true, false);
-					} else if (Preferences.isUserinfoEmpty()) {
-						boolean isUserAuthByHEZY = user.getAuditStatus() == 1;
-						UserInfoActivity.actionStart(WXEntryActivity.this, true, isUserAuthByHEZY);
-					} else {
-						startActivity(new Intent(WXEntryActivity.this, HomeActivity.class));
-					}
-
-					finish();
-				}
-			});
+			if (TextUtils.isEmpty(userMobile)) {
+				BindActivity.actionStart(WXEntryActivity.this, true, false);
+			} else if (Preferences.isUserinfoEmpty()) {
+				UserInfoActivity.actionStart(WXEntryActivity.this, true, true);
+			} else {
+				startActivity(new Intent(WXEntryActivity.this, HomeActivity.class));
+			}
+			finish();
 		}else {
 			if (mLoadingDialog!=null){
 				mLoadingDialog.dismiss();
 			}
-			Log.e("initView", "initView: 11111" );
 		}
 
 		mWxApi.handleIntent(getIntent(), this);
@@ -223,57 +208,15 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
 
 	}
 
-	private void getHostUrl(int type) {
-		if (type==1){
-			mLoadingDialog = new XPopup.Builder(this)
-					.dismissOnBackPressed(false)
-					.dismissOnTouchOutside(false)
-					.asLoading("正在加载中")
-					.show();
-		}
-
-		ApiClient.getInstance().getHttpBaseUrl(this, new OkHttpCallback<com.alibaba.fastjson.JSONObject>() {
-
-			@Override
-			public void onSuccess(com.alibaba.fastjson.JSONObject entity) {
-
-				if (entity.getInteger("errcode") == 0.0) {
-					Constant.WEBSOCKETURL = entity.getJSONObject("data").getJSONObject("staticRes").getString("websocket");
-					Constant.APIHOSTURL = entity.getJSONObject("data").getJSONObject("staticRes").getString("domain");
-					Constant.DOWNLOADURL = entity.getJSONObject("data").getJSONObject("staticRes").getString("apiDownloadUrl");
-					com.orhanobut.logger.Logger.e("webSocket:=" + Constant.WEBSOCKETURL);
-					com.orhanobut.logger.Logger.e("ApiHost:=" + Constant.APIHOSTURL);
-					com.orhanobut.logger.Logger.e("DownLoadUrl:=" + Constant.DOWNLOADURL);
-					if (Constant.WEBSOCKETURL == null || Constant.APIHOSTURL == null) {
-						return;
-					}
-					registerDevice();
-
-				}
-
-			}
-
-			@Override
-			public void onFailure(int errorCode, BaseException exception) {
-				com.orhanobut.logger.Logger.e(exception.getMessage());
-				if (mLoadingDialog!=null){
-					mLoadingDialog.dismiss();
-				}
-				Toasty.error(getInstance(), exception.getMessage(), Toast.LENGTH_SHORT, true).show();
-			}
-
-			@Override
-			public void onFinish() {
-
-			}
-		});
-	}
-
 
 	/**
 	 * 上传设备信息
 	 */
 	private void registerDevice() {
+		if (!NetUtils.isNetworkConnected(this)){
+			ToastUtils.showToast("当前无网络连接");
+			return;
+		}
 		mLoadingDialog = new XPopup.Builder(this)
 				.dismissOnBackPressed(false)
 				.dismissOnTouchOutside(false)
@@ -338,7 +281,10 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
 	}
 
 	private void versionCheck() {
-		Logger.e(Constant.DOWNLOADURL);
+		if (!NetUtils.isNetworkConnected(this)){
+			ToastUtils.showToast("当前无网络连接");
+			return;
+		}
 		ApiClient.getInstance().versionCheck(this, new OkHttpCallback<BaseBean<Version>>() {
 			@Override
 			public void onSuccess(BaseBean<Version> entity) {
@@ -409,8 +355,6 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
 				if (mLoadingDialog!=null){
 					mLoadingDialog.dismiss();
 				}
-				Toasty.error(WXEntryActivity.this,exception.getMessage(),Toast.LENGTH_SHORT,true).show();
-				Logger.e(exception.getMessage());
 //                initEntry();
 			}
 		});
@@ -485,7 +429,10 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
 
 
 	private void requestWechatLogin(String code, String state) {
-		Logger.e(Constant.APIHOSTURL);
+		if (!NetUtils.isNetworkConnected(this)){
+			ToastUtils.showToast("当前无网络连接");
+			return;
+		}
 		ApiClient.getInstance().requestWechat(code, state, this, new OkHttpCallback<BaseBean<LoginWechat>>() {
 
 			@Override

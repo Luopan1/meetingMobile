@@ -26,7 +26,9 @@ import com.zhongyou.meet.mobile.Constant;
 import com.zhongyou.meet.mobile.R;
 import com.zhongyou.meet.mobile.entities.Bucket;
 import com.zhongyou.meet.mobile.entities.MeetingJoinStats;
+import com.zhongyou.meet.mobile.entities.UserData;
 import com.zhongyou.meet.mobile.entities.Version;
+import com.zhongyou.meet.mobile.entities.Wechat;
 import com.zhongyou.meet.mobile.entities.base.BaseBean;
 import com.zhongyou.meet.mobile.event.SetUserChatEvent;
 import com.zhongyou.meet.mobile.event.UserStateEvent;
@@ -36,8 +38,10 @@ import com.zhongyou.meet.mobile.service.WSService;
 import com.zhongyou.meet.mobile.utils.DeviceUtil;
 import com.zhongyou.meet.mobile.utils.Installation;
 import com.zhongyou.meet.mobile.utils.Logger;
+import com.zhongyou.meet.mobile.utils.Login.LoginHelper;
 import com.zhongyou.meet.mobile.utils.OkHttpCallback;
 import com.zhongyou.meet.mobile.utils.RxBus;
+import com.zhongyou.meet.mobile.utils.ToastUtils;
 import com.zhongyou.meet.mobile.utils.statistics.ZYAgent;
 import com.zhongyou.meet.mobile.wxapi.WXEntryActivity;
 
@@ -229,6 +233,7 @@ public class HomeActivity extends BasicActivity implements View.OnClickListener 
 		setState(WSService.isPhoneOnline());
 		if (!TextUtils.isEmpty(Preferences.getToken())) {
 			ApiClient.getInstance().requestUser();
+			getUserInfo();
 		}
 	}
 
@@ -242,6 +247,54 @@ public class HomeActivity extends BasicActivity implements View.OnClickListener 
 			startActivity(new Intent(this, WXEntryActivity.class));
 			finish();
 		}
+	}
+
+
+	private void getUserInfo(){
+		if (Preferences.isLogin()) {
+			ApiClient.getInstance().requestUserNew(this, new OkHttpCallback<com.alibaba.fastjson.JSONObject>() {
+				@Override
+				public void onSuccess(com.alibaba.fastjson.JSONObject json) {
+					com.orhanobut.logger.Logger.e(json.toString());
+
+					if (json.getInteger("errcode")==40003||json.getInteger("errcode")==40001){
+						ToastUtils.showToast("登陆信息已过期 请重新登陆");
+						LoginHelper.logoutCustom(HomeActivity.this);
+						startActivity(new Intent(HomeActivity.this,WXEntryActivity.class));
+						finish();
+						return;
+					}
+
+					UserData entity=JSON.parseObject(json.getJSONObject("data").toJSONString(),UserData.class);
+
+
+					if (entity == null ||  entity.getUser() == null) {
+						return;
+					}
+//					Logger.i(JSON.toJSONString(entity));
+
+//                    BindActivity.actionStart(WXEntryActivity.this,true,true);
+
+					Wechat wechat = entity.getWechat();
+					if (wechat != null) {
+						LoginHelper.savaWeChat(wechat);
+					}
+				}
+
+
+
+				@Override
+				public void onFailure(int errorCode, BaseException exception) {
+					com.orhanobut.logger.Logger.e(exception.getMessage());
+					if (errorCode==40003||errorCode==40001){
+						ToastUtils.showToast("登陆信息已过期 请重新登陆");
+						startActivity(new Intent(HomeActivity.this,WXEntryActivity.class));
+						finish();
+					}
+				}
+			});
+		}
+
 	}
 
 

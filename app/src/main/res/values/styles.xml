@@ -32,6 +32,13 @@
         <item name="android:screenOrientation">landscape</item>
     </style>
 
+    <style name="translucentTheme"  parent="AppTheme">
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:screenOrientation">landscape</item>
+    </style>
+
     <style name="NotificationUIText">
         <item name="android:textColor">@android:color/white</item>
         <item name="android:textSize">12sp</item>

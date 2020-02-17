@@ -1,6 +1,7 @@
 package com.zhongyou.meet.mobile.business;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -16,6 +17,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.zhongyou.meet.mobile.ApiClient;
+import com.zhongyou.meet.mobile.BaseApplication;
 import com.zhongyou.meet.mobile.R;
 import com.zhongyou.meet.mobile.UserInfoActivity;
 import com.zhongyou.meet.mobile.entities.User;
@@ -26,8 +28,10 @@ import com.zhongyou.meet.mobile.event.UserUpdateEvent;
 import com.zhongyou.meet.mobile.persistence.Preferences;
 import com.zhongyou.meet.mobile.utils.Logger;
 import com.zhongyou.meet.mobile.utils.Login.LoginHelper;
+import com.zhongyou.meet.mobile.utils.NetUtils;
 import com.zhongyou.meet.mobile.utils.OkHttpCallback;
 import com.zhongyou.meet.mobile.utils.RxBus;
+import com.zhongyou.meet.mobile.utils.ToastUtils;
 
 
 /**
@@ -87,7 +91,7 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
 	@Override
 	public void onMyVisible() {
 		super.onMyVisible();
-
+		getUserInfo();
 
 	}
 
@@ -130,6 +134,23 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
 		if (!Preferences.isLogin()) {
 			return;
 		}
+		if (!NetUtils.isNetworkConnected(getActivity()==null? BaseApplication.getInstance():getActivity())){
+			ToastUtils.showToast("当前无网络连接");
+			Glide.with(getActivity()).asBitmap().load(R.drawable.tx)
+					.into(mImg_face);
+			mTv_name.setText("");
+			swipeRefreshLayout.setRefreshing(false);
+			return;
+		}
+
+		if(mImg_face!=null){
+			Glide.with(BaseApplication.getInstance()).load(Preferences.getUserPhoto())
+					.diskCacheStrategy(DiskCacheStrategy.ALL)
+					.error(R.drawable.tx)
+					.placeholder(R.drawable.tx)
+					.into(mImg_face);
+		}
+
 		ApiClient.getInstance().requestUser(this, new OkHttpCallback<BaseBean<UserData>>() {
 			@Override
 			public void onSuccess(BaseBean<UserData> entity) {
@@ -142,13 +163,21 @@ public class ProfileFragment extends BaseFragment implements View.OnClickListene
 				LoginHelper.savaUser(user);
 				com.orhanobut.logger.Logger.i(JSON.toJSONString(entity));
 //                initCurrentItem();
+				if (getActivity()==null||mImg_face==null){
+					return;
+				}
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+					if (getActivity().isDestroyed()){
+						return;
+					}
+				}
 				if (wechat != null) {
 					LoginHelper.savaWeChat(wechat);
 				}
 				if (!TextUtils.isEmpty(user.getPhoto())) {
 					Glide.with(getActivity()).asBitmap().load(user.getPhoto())
 							.diskCacheStrategy(DiskCacheStrategy.ALL)
-							.error(R.mipmap.baby_default_avatar)
+							.error(R.drawable.tx)
 							.placeholder(R.drawable.tx)
 							.into(mImg_face);
 				}

@@ -123,9 +123,9 @@ public class ApiClient {
         okHttpUtil.get(Constant.getAPIHOSTURL() + "/osg/app/meeting/all?title=" + meetingName, getCommonHead(), null, callback);
     }
 
-    public void getAllMeeting(Object tag, String meetingName, int type, OkHttpCallback callback) {
-        String url = Constant.getAPIHOSTURL() + "/osg/app/meeting/list";
-        url += "?type=" + type;
+    public void getAllMeeting(Object tag, String meetingName, int type, int pageNumber, OkHttpCallback callback) {
+        String url = Constant.getAPIHOSTURL() + "/osg/app/meeting/listPage";
+        url += "?type=" + type + "&pageNo=" + pageNumber;
 
         if (!TextUtils.isEmpty(meetingName))
             url += "&title=" + meetingName;
@@ -256,6 +256,9 @@ public class ApiClient {
      * @param callback
      */
     public void requestUser(Object tag, OkHttpCallback<BaseBean<UserData>> callback) {
+        okHttpUtil.get(Constant.getAPIHOSTURL() + "/osg/app/user", getCommonHead(), null, callback, tag);
+    }
+    public void requestUserNew(Object tag, OkHttpCallback<com.alibaba.fastjson.JSONObject> callback) {
         okHttpUtil.get(Constant.getAPIHOSTURL() + "/osg/app/user", getCommonHead(), null, callback, tag);
     }
 
