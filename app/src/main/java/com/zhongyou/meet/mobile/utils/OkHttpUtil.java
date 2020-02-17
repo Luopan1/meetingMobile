@@ -80,6 +80,8 @@ public class OkHttpUtil {
     }
 
     private Call call;
+    private int count=0;
+
 
     private void request(final Request request, final OkHttpCallback callback) {
 
@@ -118,9 +120,15 @@ public class OkHttpUtil {
                                 Object object = gson.fromJson(resString, callback.mType);
                                 callbackSuccess(object, callback);
                             } else if (baseBean.isTokenError()) {
+                                if (count!=0){
+                                    return;
+                                }
+                                count++;
                                 mContext.sendBroadcast(new Intent(BuildConfig.APPLICATION_ID + Constant.RELOGIN_ACTION).putExtra("active", false));
                                 Preferences.clear();
-                                mContext.startActivity(new Intent(mContext, WXEntryActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                                callbackFailure(baseBean.getErrcode(),callback,new BaseException(baseBean.getErrmsg()));
+                                mContext.startActivity(new Intent(mContext, WXEntryActivity.class).putExtra("isBadToken",true).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+
                             } else {
                                 if (response.code()==400){
                                     callbackFailure(-2, callback, new BaseException(baseBean.getErrmsg()));

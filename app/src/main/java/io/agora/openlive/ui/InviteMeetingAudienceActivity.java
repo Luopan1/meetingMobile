@@ -831,7 +831,7 @@ public class InviteMeetingAudienceActivity extends BaseActivity implements AGEve
 
 		@Override
 		public void onSuccess(Bucket<Material> materialBucket) {
-			Log.v("material", materialBucket.toString());
+
 			currentMaterial = materialBucket.getData();
 			Collections.sort(currentMaterial.getMeetingMaterialsPublishList(), (o1, o2) -> (o1.getPriority() < o2.getPriority()) ? -1 : 1);
 

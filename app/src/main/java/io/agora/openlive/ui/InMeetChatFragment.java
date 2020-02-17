@@ -223,7 +223,9 @@ public class InMeetChatFragment extends BaseFragment implements InMeetingAdapter
             }else if(msg.what == 12){
 //                dataChat.add((ChatMesData.PageDataEntity) msg.obj);
 //                initLastData(dataChat,true);
-                adapter.notifyItemChanged(msg.arg1);
+                if (adapter!=null){
+                    adapter.notifyItemChanged(msg.arg1);
+                }
             }else if(msg.what==14){
                 if(progressDialog !=null && progressDialog.isShowing()){
                     ToastUtils.showToast("网络出现问题");
@@ -235,12 +237,17 @@ public class InMeetChatFragment extends BaseFragment implements InMeetingAdapter
             }else if(msg.obj instanceof ChatMesData.PageDataEntity&&msg.what!=17){
                 ((ChatMesData.PageDataEntity)msg.obj).setLocalState(2);
                 dataChat.set(msg.what,((ChatMesData.PageDataEntity)msg.obj));
-                adapter.notifyItemChanged(msg.what);
+                if (adapter!=null){
+                    adapter.notifyItemChanged(msg.what);
+                }
 
             }else if (msg.obj instanceof ChatMesData.PageDataEntity&&msg.what==17){
                 ((ChatMesData.PageDataEntity)msg.obj).setLocalState(0);
                 dataChat.set(charMessgageWhat,((ChatMesData.PageDataEntity)msg.obj));
-                adapter.notifyItemChanged(charMessgageWhat);
+                if (adapter!=null){
+                    adapter.notifyItemChanged(charMessgageWhat);
+                }
+
             }
         }
     };

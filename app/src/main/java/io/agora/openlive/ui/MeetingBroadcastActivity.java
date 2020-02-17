@@ -756,13 +756,16 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                     }
                     Logger.e(account + "退出信令频道"+"----uid:="+uid);
                     agoraAPI.channelQueryUserNum(channelName);
-                    Audience audience = audienceHashMap.remove(Integer.parseInt(account));
-                    updateAudienceList();
-                    if (audience != null) {
-                        if (BuildConfig.DEBUG) {
-                            Toast.makeText(MeetingBroadcastActivity.this, audience.getUname() + "退出信令频道", Toast.LENGTH_SHORT).show();
+                    if (account!=null){
+                        Audience audience = audienceHashMap.remove(Integer.parseInt(account));
+                        updateAudienceList();
+                        if (audience != null) {
+                            if (BuildConfig.DEBUG) {
+                                Toast.makeText(MeetingBroadcastActivity.this, audience.getUname() + "退出信令频道", Toast.LENGTH_SHORT).show();
+                            }
                         }
                     }
+
 
                 });
             }
@@ -864,10 +867,13 @@ public class MeetingBroadcastActivity extends BaseActivity implements AGEventHan
                                 fullScreenButton.setVisibility(View.GONE);
                             }
                         } else {
-                            currentAiducenceId = Integer.parseInt(value);
-                            nextButton.setVisibility(View.VISIBLE);
-                            previewButton.setVisibility(View.VISIBLE);
-                            exitDocButton.setVisibility(View.VISIBLE);
+                            if (value!=null&&!value.isEmpty()){
+                                currentAiducenceId = Integer.parseInt(value);
+                                nextButton.setVisibility(View.VISIBLE);
+                                previewButton.setVisibility(View.VISIBLE);
+                                exitDocButton.setVisibility(View.VISIBLE);
+                            }
+
                         }
                     }
 

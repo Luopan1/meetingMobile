@@ -199,7 +199,7 @@ public abstract class BasicActivity extends FragmentActivity implements View.OnC
                         dialog.show();
                     }
                 } else {
-                    createDialog().show();
+                   /* createDialog().show();*/
                 }
             } else {
                 finish();

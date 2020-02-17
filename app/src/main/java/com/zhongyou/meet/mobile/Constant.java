@@ -5,6 +5,7 @@ package com.zhongyou.meet.mobile;
  */
 
 public class Constant {
+	public static int DEVICE_FIRM = -1;
 
 	public static String APIHOSTURL = "http://osg.apitest.zhongyouie.cn";
 	public static String WEBSOCKETURL = "";

@@ -116,6 +116,7 @@ public class HomeActivity extends BasicActivity implements View.OnClickListener 
 			params.put("leaveType", 1);
 			ApiClient.getInstance().meetingJoinStats(TAG, meetingJoinStatsCallback, params);
 		}
+
 	}
 
 
@@ -241,8 +242,6 @@ public class HomeActivity extends BasicActivity implements View.OnClickListener 
 	protected void onRestart() {
 		super.onRestart();
 
-		registerReceiver(phoneReceiver, intentFilter);
-
 		if (TextUtils.isEmpty(Preferences.getToken())) {
 			startActivity(new Intent(this, WXEntryActivity.class));
 			finish();
@@ -255,15 +254,7 @@ public class HomeActivity extends BasicActivity implements View.OnClickListener 
 			ApiClient.getInstance().requestUserNew(this, new OkHttpCallback<com.alibaba.fastjson.JSONObject>() {
 				@Override
 				public void onSuccess(com.alibaba.fastjson.JSONObject json) {
-					com.orhanobut.logger.Logger.e(json.toString());
 
-					if (json.getInteger("errcode")==40003||json.getInteger("errcode")==40001){
-						ToastUtils.showToast("登陆信息已过期 请重新登陆");
-						LoginHelper.logoutCustom(HomeActivity.this);
-						startActivity(new Intent(HomeActivity.this,WXEntryActivity.class));
-						finish();
-						return;
-					}
 
 					UserData entity=JSON.parseObject(json.getJSONObject("data").toJSONString(),UserData.class);
 
@@ -462,15 +453,12 @@ public class HomeActivity extends BasicActivity implements View.OnClickListener 
 	protected void onStop() {
 		super.onStop();
 
-		unregisterReceiver(phoneReceiver);
-
 	}
 
 	@Override
 	public void onDestroy() {
-
 		subscription.unsubscribe();
-
+		unregisterReceiver(phoneReceiver);
 		try {
 			if (phoneReceiver!=null){
 				unregisterReceiver(phoneReceiver);

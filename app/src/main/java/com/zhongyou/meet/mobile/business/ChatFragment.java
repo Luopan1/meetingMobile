@@ -180,7 +180,10 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 												showToast("上传失败");
 												entity.setLocalState(2);
 												entity.setUpLoadScuucess(false);
-												adapter.notifyItemChanged(adapter.getData().indexOf(entity));
+												if (adapter!=null){
+													adapter.notifyItemChanged(adapter.getData().indexOf(entity));
+												}
+
 											}
 										});
 									}
@@ -201,7 +204,10 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 								} else {
 									entity.setUpLoadScuucess(false);
 									entity.setLocalState(2);
-									adapter.notifyItemChanged(adapter.getData().indexOf(entity));
+									if (adapter!=null){
+										adapter.notifyItemChanged(adapter.getData().indexOf(entity));
+									}
+
 									showToast("上传失败" + info.error);
 								}
 							}
@@ -241,6 +247,9 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 					}
 					if (((ForumSendEvent) o).getEntity().getUserId().equals(Preferences.getUserId())) {
 						getActivity().runOnUiThread(() -> {
+							if (adapter==null){
+								return;
+							}
 							for (ChatMesData.PageDataEntity data : adapter.getData()) {
 								if (data.getTs() == ((ForumSendEvent) o).getEntity().getTs()) {
 									int index = adapter.getData().indexOf(data);
@@ -262,8 +271,11 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 
 					} else {
 						getActivity().runOnUiThread(() -> {
-							adapter.addData(adapter.getData().size(), ((ForumSendEvent) o).getEntity());
-							recyclerViewChat.smoothScrollToPosition(adapter.getData().size());
+							if (adapter!=null){
+								adapter.addData(adapter.getData().size(), ((ForumSendEvent) o).getEntity());
+								recyclerViewChat.smoothScrollToPosition(adapter.getData().size());
+							}
+
 						});
 
 					}
@@ -279,6 +291,9 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 					getActivity().runOnUiThread(new Runnable() {
 						@Override
 						public void run() {
+							if (adapter==null){
+								return;
+							}
 							for (ChatMesData.PageDataEntity datum : adapter.getData()) {
 								if (datum.getId().equals(((ForumRevokeEvent) o).getEntity().getId())) {
 									datum.setMsgType(1);
@@ -298,11 +313,14 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 							getActivity().runOnUiThread(new Runnable() {
 								@Override
 								public void run() {
-									for (int i = 0; i < adapter.getData().size(); i++) {
-										if (adapter.getData().get(i).getLocalState() == 1) {
-											sendAction(System.currentTimeMillis(), adapter.getData().get(i).getContent());
+									if (adapter!=null){
+										for (int i = 0; i < adapter.getData().size(); i++) {
+											if (adapter.getData().get(i).getLocalState() == 1) {
+												sendAction(System.currentTimeMillis(), adapter.getData().get(i).getContent());
+											}
 										}
 									}
+
 								}
 							});
 						}
@@ -314,6 +332,9 @@ public class ChatFragment extends BaseFragment implements chatAdapter.onClickCal
 						getActivity().runOnUiThread(new Runnable() {
 							@Override
 							public void run() {
+								if (adapter==null){
+									return;
+								}
 								for (int i = 0; i < adapter.getData().size(); i++) {
 									//正在发送中 就改变状态 改成发送失败
 									if (adapter.getData().get(i).getLocalState() == 1) {

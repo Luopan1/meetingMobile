@@ -117,6 +117,9 @@ public class DiscussFragment extends BaseFragment {
 				ChatMesData.PageDataEntity entity=((ForumSendEvent) o).getEntity();
 				for (ForumMeeting forumMeeting : forumMeetingAdapter.getData()) {
 					if (entity.getMeetingId().equals(forumMeeting.getMeetingId())) {
+						if (getActivity()==null){
+							return;
+						}
 						getActivity().runOnUiThread(new Runnable() {
 							@Override
 							public void run() {
@@ -124,16 +127,6 @@ public class DiscussFragment extends BaseFragment {
 							}
 						});
 
-					}
-				}
-
-
-				for (ForumMeeting forumMeeting : forumMeetingAdapter.getData()) {
-
-
-					if (entity.getMeetingId().equals(forumMeeting.getMeetingId())) {
-
-						getActivity().runOnUiThread(() -> updateForumListUnReadInformationAndAtailFlag(forumMeeting, entity, forumMeetingAdapter));
 					}
 				}
 			}

@@ -58,6 +58,7 @@ import com.zhongyou.meet.mobile.utils.Login.LoginHelper;
 import com.zhongyou.meet.mobile.utils.NetUtils;
 import com.zhongyou.meet.mobile.utils.OkHttpCallback;
 import com.zhongyou.meet.mobile.utils.RxBus;
+import com.zhongyou.meet.mobile.utils.StatusBarUtils;
 import com.zhongyou.meet.mobile.utils.ToastUtils;
 import com.zhongyou.meet.mobile.utils.statistics.ZYAgent;
 
@@ -85,7 +86,7 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
 
 	private Subscription subscription;
 	private BasePopupView mLoadingDialog;
-
+	private boolean mIsBadToken;
 
 
 	@Override
@@ -134,9 +135,12 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-
+		StatusBarUtils.setStatusBarColor(this,R.color.white);
+		StatusBarUtils.setLightStatusBar(this,true,false);
 		setContentView(R.layout.login_activity);
+
+
+		mIsBadToken = getIntent().getBooleanExtra("isBadToken", false);
 
 
 		wchatLoginImage = findViewById(R.id.layout_wx);
@@ -176,9 +180,15 @@ public class WXEntryActivity extends FragmentActivity implements IWXAPIEventHand
 
 
 	protected void initView() {
+		if (mIsBadToken){
+			Logger.e("当前token异常 需要重新登陆");
+			if(mLoadingDialog!=null){
+				mLoadingDialog.dismiss();
+			}
+			return;
+		}
 		if (Preferences.isLogin()) {
 			String userMobile = Preferences.getUserMobile();
-
 			if (TextUtils.isEmpty(userMobile)) {
 				BindActivity.actionStart(WXEntryActivity.this, true, false);
 			} else if (Preferences.isUserinfoEmpty()) {
