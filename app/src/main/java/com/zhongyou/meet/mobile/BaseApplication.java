@@ -64,6 +64,8 @@ public class BaseApplication extends MultiDexApplication {
 		TCAgent.init(this);
 		TCAgent.setReportUncaughtExceptions(true);
 
+		initSocket();
+
       /*  //获取图片地址
         ApiClient.getInstance().getImageUrlPath(TAG, new OkHttpCallback<BaseBean<Object>>() {
             @Override
@@ -123,7 +125,7 @@ public class BaseApplication extends MultiDexApplication {
 			options.reconnectionDelayMax = 5000;
 			options.reconnectionAttempts = 10;
 			options.query = "userId=" + Preferences.getUserId();
-			mSocket = IO.socket(Constant.WEBSOCKETURL, options);
+			mSocket = IO.socket(Constant.getWEBSOCKETURL(), options);
 			Logger.i(TAG, "初始化WebSocket成功");
 			TCAgent.onEvent(this, "WebSocket", "初始化WebSocket成功");
 		} catch (URISyntaxException e) {
@@ -143,7 +145,7 @@ public class BaseApplication extends MultiDexApplication {
 				options.reconnectionDelayMax = 5000;
 				options.reconnectionAttempts = 10;
 				options.query = "userId=" + Preferences.getUserId();
-				return IO.socket(Constant.WEBSOCKETURL, options);
+				return IO.socket(Constant.getWEBSOCKETURL(), options);
 
 			} catch (URISyntaxException e) {
 				Logger.i(TAG, "初始化WebSocket失败" + e.getMessage());
